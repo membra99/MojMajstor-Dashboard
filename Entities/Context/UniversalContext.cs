@@ -13,6 +13,8 @@ namespace Entities.Context
         #region MainDataDataSET
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductAttributes> ProductAttributes { get; set; }
+        public DbSet<Categories> Categories { get; set; }
 
         #endregion
 
@@ -21,6 +23,28 @@ namespace Entities.Context
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasKey(x => x.ProductId);
+
+                entity.HasOne(x => x.Categories)
+                .WithMany(x => x.Products)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ProductAttributes>(entity =>
+            {
+                entity.HasKey(x => x.ProductAttributeId);
+
+                entity.HasOne(x => x.Categories)
+                .WithMany(x => x.ProductAttributes)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Product)
+                .WithMany(x => x.ProductAttributes)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Categories>(entity =>
+            {
+                entity.HasKey(x => x.CategoryId);
             });
         }
     }

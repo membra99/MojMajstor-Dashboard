@@ -1,15 +1,20 @@
-﻿using Entities.Universal.MainData;
+﻿using AutoMapper;
+using Entities.Context;
+using Entities.Universal.MainData;
+using Universal.DTO.IDTO;
 
 namespace Services
 {
-    public class MainDataServices
+    public class MainDataServices : BaseServices
     {
-        public Product test()
+        public MainDataServices(MainContext context, IMapper mapper) : base(context, mapper)
         {
-            var x = new Product();
-            x.ProductId = 1;
-            x.ProductName = "Test";
+        }
 
+        public Product test(ProductIDTO prod)
+        {
+            
+            var x = _mapper.Map<Product>(prod);
             return x;
         }
     }

@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text;
 using Services;
 using Entities.Universal.MainData;
+using Universal.DTO.IDTO;
 
 namespace Universal.Controllers
 {
@@ -20,10 +21,10 @@ namespace Universal.Controllers
         }
 
         [Route("test1")]
-        [HttpGet]
-        public async Task<ActionResult<Product>> test1()
+        [HttpPost]
+        public async Task<ActionResult<Product>> test1(ProductIDTO prod)
         {
-            var result = _mainDataServices.test(); // call the main
+            var result = _mainDataServices.test(prod); // call the main
             return result;
         }
     }

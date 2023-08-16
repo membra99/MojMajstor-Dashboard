@@ -21,6 +21,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<MainDataServices>();
 builder.Services.AddControllersWithViews();
 var app = builder.Build();

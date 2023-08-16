@@ -9,8 +9,8 @@ namespace Entities.Mapping
     {
         public UniversalMappingProfile()
         {
-            CreateMap<Product, ProductIDTO>();
-            CreateMap<ProductODTO, Product>();
+            CreateMap<Product, ProductODTO>();
+            CreateMap<ProductIDTO, Product>();
         }
     }
 }
