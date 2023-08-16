@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using Universal.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Universal.Controllers
 {
@@ -26,7 +25,7 @@ namespace Universal.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }
