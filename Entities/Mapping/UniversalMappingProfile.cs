@@ -11,6 +11,12 @@ namespace Entities.Mapping
         {
             CreateMap<Product, ProductODTO>();
             CreateMap<ProductIDTO, Product>();
+
+            CreateMap<Categories, CategoriesODTO>();
+            CreateMap<CategoriesIDTO, Categories>();
+
+            CreateMap<ProductAttributes, ProductAttributesODTO>();
+            CreateMap<ProductAttributesIDTO, ProductAttributes>();
         }
     }
 }

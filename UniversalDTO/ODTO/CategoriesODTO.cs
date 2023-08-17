@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.Universal.MainData
+namespace Universal.DTO.ODTO
 {
-    public class Categories
+    public class CategoriesODTO
     {
         public int CategoryId { get; set; }
         public int? ParentCategoryId { get; set; }
         public string? CategoryName { get; set; }
         public bool IsAttribute { get; set; }
         public bool? IsActive { get; set; }
-
-        public ICollection<ProductAttributes> ProductAttributes { get; set; }
-        public ICollection<Product> Products { get; set; }
     }
 }
