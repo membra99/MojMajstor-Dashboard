@@ -21,5 +21,6 @@ namespace Universal.DTO.IDTO
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public SaleIDTO? SaleIDTO { get; set; }
+        public SeoIDTO? SeoIDTO { get; set; }
     }
 }

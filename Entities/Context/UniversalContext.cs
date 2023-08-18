@@ -20,6 +20,7 @@ namespace Entities.Context
         public DbSet<Users> Users { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleType> SaleTypes { get; set; }
+        public DbSet<Seo> Seos { get; set; }
 
 
         #endregion
@@ -31,6 +32,10 @@ namespace Entities.Context
                 entity.HasKey(x => x.ProductId);
 
                 entity.HasOne(x => x.Categories)
+                .WithMany(x => x.Products)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Seo)
                 .WithMany(x => x.Products)
                 .OnDelete(DeleteBehavior.Restrict);
             });
@@ -98,6 +103,12 @@ namespace Entities.Context
                 entity.HasOne(x => x.SaleType)
                 .WithMany(x => x.Sales)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+            modelBuilder.Entity<Seo>(entity =>
+            {
+                entity.HasKey(x => x.SeoId);
 
             });
         }
