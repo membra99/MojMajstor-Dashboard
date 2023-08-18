@@ -10,6 +10,7 @@ namespace Entities.Universal.MainData
     {
         public int ProductId { get; set; }
         public int CategoriesId { get; set; }
+        public int? DeclarationId { get; set; }
         public int? SeoId { get; set; }
         public string? ProductName { get; set; }
         public double Price { get; set; }
@@ -23,6 +24,7 @@ namespace Entities.Universal.MainData
         public DateTime UpdatedAt { get; set; }
 
         public Categories Categories { get; set; }
+        public Declaration? Declaration { get; set; }
         public Seo? Seo { get; set; }
         public ICollection<ProductAttributes> ProductAttributes { get; set; }
         public ICollection<Media> Medias { get; set; }
