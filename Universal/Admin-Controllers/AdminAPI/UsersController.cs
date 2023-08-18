@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Mvc;
 using Services;
+using Services.Authorization;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Universal.Admin_Controllers.AdminAPI
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -33,6 +37,25 @@ namespace Universal.Admin_Controllers.AdminAPI
             try
             {
                 return await _userDataServices.EditUser(userIDTO);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Authenticate")]
+        public async Task<IActionResult> LoginUser(AuthenticateRequest model)
+        {
+            try
+            {
+                var user = await _userDataServices.Authenticate(model);
+                if (user == null)
+                {
+                    return Unauthorized(); // Return 401 Unauthorized status
+                }
+                return Ok(user);
             }
             catch (Exception e)
             {

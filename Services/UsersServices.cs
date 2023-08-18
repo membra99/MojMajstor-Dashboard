@@ -2,6 +2,7 @@
 using Entities.Context;
 using Entities.Universal.MainData;
 using Microsoft.EntityFrameworkCore;
+using Services.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,38 @@ using System.Text;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Services
 {
     public class UsersServices : BaseServices
     {
-        public UsersServices(MainContext context, IMapper mapper) : base(context, mapper)
+        private readonly IJwtUtils _jwtUtils;
+
+        public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils) : base(context, mapper)
         {
+            _jwtUtils = jwtUtils;
         }
 
         #region Users
+
+        public Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
+        {
+            var user = _context.Users.SingleOrDefault(x => x.Email == model.Username);
+
+            if (user != null) {
+                if (!BCrypt.Net.BCrypt.Verify(model.Password, user.Password)) user = null; //failed password authentication
+            }
+            
+            // return null if user not found
+            if (user == null) return null;
+
+            // authentication successful so generate jwt token
+            var token = _jwtUtils.GenerateJwtToken(user);
+
+            AuthenticateResponse authenticateResponse = new AuthenticateResponse(user, token);
+            return Task.FromResult(authenticateResponse);
+        }
 
         private IQueryable<UsersODTO> GetUsers(int id)
         {
