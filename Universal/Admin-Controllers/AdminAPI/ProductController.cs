@@ -29,6 +29,39 @@ namespace Universal.Controllers
             return product;
         }
 
+        [HttpGet("GetAllProducts")]
+        public async Task<ActionResult<IEnumerable<ProductODTO>>> GetAll()
+        {
+            var products = await _mainDataServices.GetAllProducts();
+            if (products == null)
+            {
+                return NotFound();
+            }
+            return products;
+        }
+
+        [HttpGet("GetCategories")]
+        public async Task<ActionResult<IEnumerable<ChildODTO2>>> GetCategories()
+        {
+            var categories = await _mainDataServices.GetCategory();
+            if (categories == null)
+            {
+                return NotFound();
+            }
+            return categories;
+        }
+
+        [HttpGet("GetProductDataByCategoryName")]
+        public async Task<ActionResult<ParentChildODTO>> GetProductDatas(int Id)
+        {
+            var products = await _mainDataServices.GetTree(Id);
+            if (products == null)
+            {
+                return NotFound();
+            }
+            return products;
+        }
+
         //PUT: api/Product
         [HttpPut]
         public async Task<ActionResult<ProductODTO>> PutProduct(ProductIDTO productIDTO)

@@ -17,6 +17,19 @@ namespace Entities.Mapping
 
             CreateMap<ProductAttributes, ProductAttributesODTO>();
             CreateMap<ProductAttributesIDTO, ProductAttributes>();
+
+            CreateMap<Media, MediaODTO>();
+            CreateMap<MediaIDTO, Media>();
+
+            CreateMap<MediaType, MediaTypeODTO>();
+            CreateMap<MediaTypeIDTO, MediaType>();
+
+            CreateMap<Users, UsersODTO>()
+                .ForMember(dest => dest.ImageSrc, source => source.MapFrom(m => m.Media.Src));
+            CreateMap<UsersIDTO, Users>();
+
+            CreateMap<Sale, SaleODTO>();
+            CreateMap<SaleIDTO, Sale>();
         }
     }
 }
