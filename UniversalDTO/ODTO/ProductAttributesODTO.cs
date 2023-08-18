@@ -14,4 +14,13 @@ namespace Universal.DTO.ODTO
         public bool IsDev { get; set; }
         public string? Value { get; set; }
     }
+
+    public class AttributeODTO
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
+        public List<string> Value { get; set; }
+
+    }
+    
 }

@@ -30,6 +30,8 @@ namespace Entities.Mapping
 
             CreateMap<Sale, SaleODTO>();
             CreateMap<SaleIDTO, Sale>();
+
+            CreateMap<Seo, SaleODTO>();
         }
     }
 }

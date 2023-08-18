@@ -20,6 +20,8 @@ namespace Entities.Context
         public DbSet<Users> Users { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleType> SaleTypes { get; set; }
+        public DbSet<Seo> Seos { get; set; }
+        public DbSet<Declaration> Declarations { get; set; }
 
 
         #endregion
@@ -31,6 +33,14 @@ namespace Entities.Context
                 entity.HasKey(x => x.ProductId);
 
                 entity.HasOne(x => x.Categories)
+                .WithMany(x => x.Products)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Seo)
+                .WithMany(x => x.Products)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Declaration)
                 .WithMany(x => x.Products)
                 .OnDelete(DeleteBehavior.Restrict);
             });
@@ -51,54 +61,6 @@ namespace Entities.Context
             modelBuilder.Entity<Categories>(entity =>
             {
                 entity.HasKey(x => x.CategoryId);
-            });
-
-            modelBuilder.Entity<MediaType>(entity =>
-            {
-                entity.HasKey(x => x.MediaTypeId);
-            });
-
-            modelBuilder.Entity<Media>(entity =>
-            {
-                entity.HasKey(x => x.MediaId);
-
-                entity.HasOne(x => x.MediaType)
-                .WithMany(x => x.Medias)
-                .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(x => x.Product)
-                .WithMany(x => x.Medias)
-                .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            modelBuilder.Entity<Users>(entity =>
-            {
-                entity.HasKey(x => x.UsersId);
-
-                entity.HasOne(x => x.Media)
-                .WithMany(x => x.Users)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            });
-
-            modelBuilder.Entity<SaleType>(entity =>
-            {
-                entity.HasKey(x => x.SaleTypeId);
-
-            });
-
-            modelBuilder.Entity<Sale>(entity =>
-            {
-                entity.HasKey(x => x.SaleId);
-
-                entity.HasOne(x => x.Product)
-                .WithMany(x => x.Sales)
-                .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(x => x.SaleType)
-                .WithMany(x => x.Sales)
-                .OnDelete(DeleteBehavior.Restrict);
-
             });
         }
     }

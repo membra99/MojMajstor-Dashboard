@@ -4,6 +4,7 @@ using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20230818114956_Seo")]
+    partial class Seo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,43 +48,6 @@ namespace Entities.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Declaration", b =>
-                {
-                    b.Property<int>("DeclarationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeclarationId"));
-
-                    b.Property<string>("ConsumerRights")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CountryOfOrigin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeclarationName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Distributor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameAndTypeOfProduct")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DeclarationId");
-
-                    b.ToTable("Declarations");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Media", b =>
@@ -146,9 +112,6 @@ namespace Entities.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeclarationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -179,8 +142,6 @@ namespace Entities.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoriesId");
-
-                    b.HasIndex("DeclarationId");
 
                     b.HasIndex("SeoId");
 
@@ -215,113 +176,6 @@ namespace Entities.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductAttributes");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Sale", b =>
-                {
-                    b.Property<int>("SaleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleId"));
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SaleTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SaleId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleTypeId");
-
-                    b.ToTable("Sales");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.SaleType", b =>
-                {
-                    b.Property<int>("SaleTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleTypeId"));
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SaleTypeId");
-
-                    b.ToTable("SaleTypes");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
-                {
-                    b.Property<int>("UsersId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsersId"));
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MediaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Zip")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UsersId");
-
-                    b.HasIndex("MediaId");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Sale", b =>
@@ -476,19 +330,12 @@ namespace Entities.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Entities.Universal.MainData.Declaration", "Declaration")
-                        .WithMany("Products")
-                        .HasForeignKey("DeclarationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Entities.Universal.MainData.Seo", "Seo")
                         .WithMany("Products")
                         .HasForeignKey("SeoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Categories");
-
-                    b.Navigation("Declaration");
 
                     b.Navigation("Seo");
                 });
@@ -545,11 +392,6 @@ namespace Entities.Migrations
                 {
                     b.Navigation("ProductAttributes");
 
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Declaration", b =>
-                {
                     b.Navigation("Products");
                 });
 

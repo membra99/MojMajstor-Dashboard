@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Entities.Context;
+using Entities.Migrations;
 using Entities.Universal.MainData;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Index.HPRtree;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
@@ -104,8 +106,15 @@ namespace Services
 
         public async Task<ProductODTO> AddProduct(ProductIDTO productIDTO)
         {
+            int seo = 0;
+            if(productIDTO.SeoIDTO.GoogleKeywords != null || productIDTO.SeoIDTO.GoogleKeywords != null)
+            {
+                seo = await AddSeo(productIDTO.SeoIDTO.GoogleDesc, productIDTO.SeoIDTO.GoogleKeywords);
+            }
+
             var product = _mapper.Map<Product>(productIDTO);
             product.ProductId = 0;
+            product.SeoId = (seo != 0) ? seo : null;
             _context.Products.Add(product);
 
             await SaveContextChangesAsync();
@@ -128,6 +137,20 @@ namespace Services
             }
 
             return await GetProductsById(product.ProductId);
+        }
+
+        public async Task<int> AddSeo(string googleDesc, string googleKeywords)
+        {
+            Entities.Universal.MainData.Seo seo = new Entities.Universal.MainData.Seo();
+            seo.SeoId = 0;
+            seo.GoogleDesc = googleDesc;
+            seo.GoogleKeywords = googleKeywords;
+            _context.Seos.Add(seo);
+            await SaveContextChangesAsync();
+
+            return await (from x in _context.Seos
+                    where x.SeoId == seo.SeoId
+                    select x.SeoId).SingleOrDefaultAsync();
         }
 
         public async Task<ParentChildODTO> GetTree(int Id)
@@ -184,10 +207,11 @@ namespace Services
         }
         
 
-        public async Task<ProductODTO> EditProduct(ProductIDTO productIDTO)
-        {
-            var product = _mapper.Map<Product>(productIDTO);
-            _context.Entry(product).State = EntityState.Modified;
+            foreach (var item in prodAttr)
+            {
+                item.ProductId = productIDTO.ProductId;
+                _context.Entry(product).State = EntityState.Modified;
+            }
             await SaveContextChangesAsync();
 
             return await GetProductsById(product.ProductId);
@@ -215,21 +239,21 @@ namespace Services
 
         public async Task<List<ChildODTO2>> GetCategory()
         {
-            var categories = await _context.Categories.Where(x => x.ParentCategoryId== null).SingleOrDefaultAsync();
+            var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId== null).SingleOrDefaultAsync();
 
-            var cat = ReturnChildren(categories.CategoryId);
+            var cat = ReturnChildren(categoriesRoot.CategoryId);
             
             ChildODTO child = new ChildODTO();
-            child.CategoryId = categories.CategoryId;
+            child.CategoryId = categoriesRoot.CategoryId;
             child.IsAttribute = false;
-            child.ParentCategoryId = categories.ParentCategoryId;
+            child.ParentCategoryId = categoriesRoot.ParentCategoryId;
             child.Values = null;
             cat.Insert(0, child);
-            var a = (from y in cat
+            var CategoryWithoutAttr = (from y in cat
                     where y.IsAttribute == false
                     select y).ToList();
             List<ChildODTO2> children= new List<ChildODTO2>();
-            foreach (var item in a)
+            foreach (var item in CategoryWithoutAttr)
             {
                 ChildODTO2 ch = new ChildODTO2();
                 ch.CategoryId = item.CategoryId;
@@ -239,6 +263,31 @@ namespace Services
             }
 
             return children;
+        }
+
+        public async Task<List<AttributeODTO>> GetAttribute(int CategoryId)
+        {
+            List<AttributeODTO> category = await (from x in _context.Categories
+                                            where x.ParentCategoryId == CategoryId
+                                            select new AttributeODTO
+                                            {
+                                                CategoryId = x.CategoryId,
+                                                CategoryName = x.CategoryName
+                                            }).ToListAsync();
+
+            List<AttributeODTO> retval = new List<AttributeODTO>();
+            foreach (var item in category)
+            {
+                AttributeODTO attributeValue = new AttributeODTO();
+                attributeValue.CategoryId = item.CategoryId;
+                attributeValue.CategoryName = item.CategoryName;
+                attributeValue.Value = await (from x in _context.ProductAttributes
+                                              where x.CategoriesId == item.CategoryId
+                                              select x.Value).Distinct().ToListAsync();
+                retval.Add(attributeValue);
+            }
+
+            return retval;
         }
 
         #endregion Product
