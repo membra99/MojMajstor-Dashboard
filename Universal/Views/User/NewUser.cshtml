@@ -1,0 +1,61 @@
+﻿@model Universal.DTO.ViewDTO.UserIDTO
+
+@{
+	ViewData["Title"] = "New User";
+}
+
+<div class="col-6 bg-light mx-auto rounded-3">
+	<div class="form-group">
+		@using (Html.BeginForm("TEMPnewUSER", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		{
+			<div class="mb-3">
+				@Html.DropDownListFor(model => model.RoleId, Model.Role.Select(role => new SelectListItem(){ Value = role.Id.ToString(), Text = role.Name }), "Select Role", new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.RoleId, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
+				@Html.ValidationMessageFor(model => model.Email, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.FirstName, new { @class="form-control", placeholder = "First Name"})
+				@Html.ValidationMessageFor(model => model.FirstName, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.LastName, new { @class="form-control", placeholder = "Last Name"})
+				@Html.ValidationMessageFor(model => model.LastName, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.Phone, new { @class="form-control", placeholder = "Phone"})
+				@Html.ValidationMessageFor(model => model.Phone, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.Address, new { @class="form-control", placeholder = "Address"})
+				@Html.ValidationMessageFor(model => model.Address, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.City, new { @class="form-control", placeholder = "City"})
+				@Html.ValidationMessageFor(model => model.City, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.Zip, new { @class="form-control", placeholder = "Zip"})
+				@Html.ValidationMessageFor(model => model.Zip, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.Country, new { @class="form-control", placeholder = "Country"})
+				@Html.ValidationMessageFor(model => model.Country, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
+				@Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				<input type="file" name="Avatar" runat="server" class="form-control" />
+				@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })
+
+			</div>
+			<div class="mx-auto mb-3 w-50">
+				<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
+			</div>
+		}
+	</div>
+</div>

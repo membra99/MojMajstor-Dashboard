@@ -5,9 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"] - Universal</title>
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
 </head>
 <body>
 	<div class="container m-0 p-0 bg-light">
@@ -16,7 +16,8 @@
 		<aside class="bg-info side-navigation">
 			@Html.ActionLink("DOT", "Index", "Dashboard", null, new { @class = "text-light"})
 			<ul class="navbar-nav">
-				<li class="nav-item">@Html.ActionLink("Users", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Users", "TEMPallUSER", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("New Users", "TEMPUSER", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Products", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Categories", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
@@ -32,6 +33,8 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
