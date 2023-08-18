@@ -25,14 +25,15 @@ namespace Services
 
         #region Users
 
-        public Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
+        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var user = _context.Users.SingleOrDefault(x => x.Email == model.Username);
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == model.Username);
 
-            if (user != null) {
+            if (user != null)
+            {
                 if (!BCrypt.Net.BCrypt.Verify(model.Password, user.Password)) user = null; //failed password authentication
             }
-            
+
             // return null if user not found
             if (user == null) return null;
 
@@ -40,7 +41,7 @@ namespace Services
             var token = _jwtUtils.GenerateJwtToken(user);
 
             AuthenticateResponse authenticateResponse = new AuthenticateResponse(user, token);
-            return Task.FromResult(authenticateResponse);
+            return authenticateResponse;
         }
 
         private IQueryable<UsersODTO> GetUsers(int id)
@@ -90,6 +91,6 @@ namespace Services
             return userODTO;
         }
 
-        #endregion
+        #endregion Users
     }
 }
