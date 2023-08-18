@@ -9,7 +9,7 @@ namespace Universal.DTO.ODTO
     public class ProductAttributesODTO
     {
         public int ProductAttributeId { get; set; }
-        public int? CategoryId { get; set; }
+        public int? CategoriesId { get; set; }
         public int ProductId { get; set; }
         public bool IsDev { get; set; }
         public string? Value { get; set; }

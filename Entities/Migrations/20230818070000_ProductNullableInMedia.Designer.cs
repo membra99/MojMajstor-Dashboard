@@ -4,6 +4,7 @@ using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20230818070000_ProductNullableInMedia")]
+    partial class ProductNullableInMedia
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,59 +173,6 @@ namespace Entities.Migrations
                     b.ToTable("ProductAttributes");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.Sale", b =>
-                {
-                    b.Property<int>("SaleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleId"));
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SaleTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SaleId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleTypeId");
-
-                    b.ToTable("Sales");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.SaleType", b =>
-                {
-                    b.Property<int>("SaleTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SaleTypeId"));
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SaleTypeId");
-
-                    b.ToTable("SaleTypes");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
                 {
                     b.Property<int>("UsersId")
@@ -325,25 +275,6 @@ namespace Entities.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.Sale", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Product", "Product")
-                        .WithMany("Sales")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Universal.MainData.SaleType", "SaleType")
-                        .WithMany("Sales")
-                        .HasForeignKey("SaleTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("SaleType");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
                 {
                     b.HasOne("Entities.Universal.MainData.Media", "Media")
@@ -376,13 +307,6 @@ namespace Entities.Migrations
                     b.Navigation("Medias");
 
                     b.Navigation("ProductAttributes");
-
-                    b.Navigation("Sales");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.SaleType", b =>
-                {
-                    b.Navigation("Sales");
                 });
 #pragma warning restore 612, 618
         }

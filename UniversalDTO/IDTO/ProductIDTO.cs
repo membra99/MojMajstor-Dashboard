@@ -9,7 +9,7 @@ namespace Universal.DTO.IDTO
     public class ProductIDTO
     {
         public int ProductId { get; set; }
-        public int CategoryId { get; set; }
+        public int CategoriesId { get; set; }
         public string? ProductName { get; set; }
         public double Price { get; set; }
         public bool IsOnSale { get; set; }
@@ -20,5 +20,6 @@ namespace Universal.DTO.IDTO
         public string? ProductCode { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public SaleIDTO? SaleIDTO { get; set; }
     }
 }

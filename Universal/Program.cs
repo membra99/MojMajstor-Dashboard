@@ -23,6 +23,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<MainDataServices>();
+builder.Services.AddScoped<UsersServices>();
 builder.Services.AddControllersWithViews();
 var app = builder.Build();
 

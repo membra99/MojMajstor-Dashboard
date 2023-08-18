@@ -3,6 +3,8 @@ using Entities.Context;
 using Entities.Universal.MainData;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Index.HPRtree;
+using System.ComponentModel;
+using System.Security.Cryptography.X509Certificates;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 
@@ -14,11 +16,8 @@ namespace Services
         {
         }
 
-        public Product test(ProductIDTO prod)
-        {
-            var x = _mapper.Map<Product>(prod);
-            return x;
-        }
+        public List<ChildODTO> children = new List<ChildODTO>();
+        int i = 0;
 
         #region Categories
 
@@ -33,6 +32,8 @@ namespace Services
         {
             return await GetCategories(id).AsNoTracking().SingleOrDefaultAsync();
         }
+
+
 
         public async Task<CategoriesODTO> AddCategory(CategoriesIDTO categoriesIDTO)
         {
@@ -49,21 +50,6 @@ namespace Services
         {
             var categories = _mapper.Map<Categories>(categoriesIDTO);
             _context.Entry(categories).State = EntityState.Modified;
-
-            var prod = await _context.Products.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-            foreach (var item in prod)
-            {
-                item.CategoriesId = categories.CategoryId;
-                _context.Entry(item).State = EntityState.Modified;
-            }
-
-            var prodAttr = await _context.ProductAttributes.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-            foreach (var item in prodAttr)
-            {
-                item.CategoriesId = categories.CategoryId;
-                _context.Entry(item).State = EntityState.Modified;
-            }
-
             await SaveContextChangesAsync();
 
             return await GetCategoriesById(categories.CategoryId);
@@ -111,6 +97,11 @@ namespace Services
             return await GetProducts(id).AsNoTracking().SingleOrDefaultAsync();
         }
 
+        public async Task<List<ProductODTO>> GetAllProducts()
+        {
+            return await GetProducts(0).AsNoTracking().ToListAsync();
+        }
+
         public async Task<ProductODTO> AddProduct(ProductIDTO productIDTO)
         {
             var product = _mapper.Map<Product>(productIDTO);
@@ -119,21 +110,84 @@ namespace Services
 
             await SaveContextChangesAsync();
 
+            if (product.IsOnSale == true)
+            {
+                SaleIDTO sale = new SaleIDTO();
+                sale.Value = productIDTO.SaleIDTO.Value;
+                sale.SaleTypeId = productIDTO.SaleIDTO.SaleTypeId;
+                sale.StartDate = productIDTO.SaleIDTO.StartDate;
+                sale.EndDate = productIDTO.SaleIDTO.EndDate;
+                sale.IsActive = true;
+                sale.ProductId = product.ProductId;
+
+                var SaleForDB = _mapper.Map<Sale>(sale);
+
+                _context.Sales.Add(SaleForDB);
+
+                await SaveContextChangesAsync();
+            }
+
             return await GetProductsById(product.ProductId);
         }
+
+        public async Task<ParentChildODTO> GetTree(int Id)
+        {
+            ParentChildODTO retval = new ParentChildODTO();
+            var parentCategoryID = await _context.Categories.Where(x => x.CategoryId== Id).Select(x => x.ParentCategoryId).SingleOrDefaultAsync();
+            bool notRoot = true;
+            List<ParentODTO> parents= new List<ParentODTO>();
+            while (notRoot)
+            {
+                ParentODTO parent = new ParentODTO();
+                var currentCategories = await _context.Categories.Where(x => x.CategoryId == parentCategoryID).SingleOrDefaultAsync();
+                parent.CategoryId = currentCategories.CategoryId;
+                parent.IsRoot = (currentCategories.ParentCategoryId == null) ? true : false;
+                parents.Add(parent);
+                parentCategoryID = currentCategories.ParentCategoryId;
+                if(currentCategories.ParentCategoryId == null)
+                {
+                    notRoot = false;
+                }
+            }
+
+            retval.ParentCategory = parents;
+            retval.ChildCategory = ReturnChildren(Id);
+
+            return retval;
+        }
+        
+        public List<ChildODTO> ReturnChildren(int Id)
+        {
+            var categoryList = _context.Categories.Where(x => x.ParentCategoryId == Id).ToList();
+            foreach (var item in categoryList)
+            {
+                ChildODTO child = new ChildODTO();
+                child.CategoryId = item.CategoryId;
+                child.IsAttribute = item.IsAttribute;
+                child.ParentCategoryId = item.ParentCategoryId;
+                if (child.IsAttribute == true)
+                {
+                    var val = _context.ProductAttributes.Where(x => x.CategoriesId == child.CategoryId).Select(x => x.Value).ToList();
+                    child.Values= val;
+                    child.ParentCategoryId = Id;
+
+                }
+                children.Add(child);
+
+            }
+            if(children.Count() > i)
+            {
+                ReturnChildren(children[i++].CategoryId);
+            }
+            
+            return children;
+        }
+        
 
         public async Task<ProductODTO> EditProduct(ProductIDTO productIDTO)
         {
             var product = _mapper.Map<Product>(productIDTO);
-            var prodAttr = await _context.ProductAttributes.Where(x => x.ProductId == product.ProductId).ToListAsync();
-
             _context.Entry(product).State = EntityState.Modified;
-
-            foreach (var item in prodAttr)
-            {
-                item.ProductId = productIDTO.ProductId;
-                _context.Entry(product).State = EntityState.Modified;
-            }
             await SaveContextChangesAsync();
 
             return await GetProductsById(product.ProductId);
@@ -144,17 +198,47 @@ namespace Services
             var product = await _context.Products.FindAsync(id);
             if (product == null) return null;
 
+            var productODTO = await GetProductsById(id);
+
             var prodAttr = await _context.ProductAttributes.Where(x => x.ProductId == product.ProductId).ToListAsync();
             foreach (var item in prodAttr)
             {
                 _context.ProductAttributes.Remove(item);
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Products.Remove(product);
             await SaveContextChangesAsync();
 
-            var productODTO = await GetProductsById(id);
+            
             return productODTO;
+        }
+
+        public async Task<List<ChildODTO2>> GetCategory()
+        {
+            var categories = await _context.Categories.Where(x => x.ParentCategoryId== null).SingleOrDefaultAsync();
+
+            var cat = ReturnChildren(categories.CategoryId);
+            
+            ChildODTO child = new ChildODTO();
+            child.CategoryId = categories.CategoryId;
+            child.IsAttribute = false;
+            child.ParentCategoryId = categories.ParentCategoryId;
+            child.Values = null;
+            cat.Insert(0, child);
+            var a = (from y in cat
+                    where y.IsAttribute == false
+                    select y).ToList();
+            List<ChildODTO2> children= new List<ChildODTO2>();
+            foreach (var item in a)
+            {
+                ChildODTO2 ch = new ChildODTO2();
+                ch.CategoryId = item.CategoryId;
+                ch.ParentCategoryId= item.ParentCategoryId;
+                ch.CategoryName = _context.Categories.Where(x => x.CategoryId == item.CategoryId).Select(x => x.CategoryName).SingleOrDefault();
+                children.Add(ch);
+            }
+
+            return children;
         }
 
         #endregion Product
@@ -206,5 +290,6 @@ namespace Services
         }
 
         #endregion ProductAttributes
+     
     }
 }
