@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Universal</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
+</head>
+<body>
+	<div class="container m-0 p-0 bg-light">
+		<header class="bg-dark header-navigation">
+		</header>
+		<aside class="bg-info side-navigation">
+			@Html.ActionLink("DOT", "Index", "Dashboard", null, new { @class = "text-light"})
+			<ul class="navbar-nav">
+				<li class="nav-item">@Html.ActionLink("Users", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Products", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Categories", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
+			</ul>
+		</aside>
+		<div style="display: flex;">
+			<main role="main" class="content-offset">
+				@RenderBody()
+			</main>
+		</div>
+	</div>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

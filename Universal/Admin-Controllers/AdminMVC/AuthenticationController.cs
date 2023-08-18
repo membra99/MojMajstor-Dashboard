@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Universal.DTO.IDTO;
+using Universal.DTO.ViewDTO;
 
 namespace Universal.Controllers
 {
-	public class AuthenticationController : Controller
+    public class AuthenticationController : Controller
 	{
 		public IActionResult Index()
 		{
@@ -14,7 +14,7 @@ namespace Universal.Controllers
 		public IActionResult Login(LoginIDTO loginIDTO)
 		{
 			if (!ModelState.IsValid) return View("../Authentication/Login");
-			return Content("Validation Success");
+			return RedirectToAction("Index", "Dashboard");
 		}
 
 	}

@@ -1,26 +1,9 @@
-﻿@model Universal.DTO.IDTO.LoginIDTO
+﻿@model Universal.DTO.ViewDTO.LoginIDTO
 
 @{
 	ViewData["Title"] = "Login";
+	Layout = "../Shared/_LayoutLogin.cshtml";
 }
-<style>
-	*{
-		font-family: 'Lucida Console';
-	}
-
-	.admin-login-background {
-		width: 100vw;
-		height: 100vh;
-		background-image: url(/images/admin_background.jpg);
-		background-position: center;
-		background-size: cover;
-		background-repeat: no-repeat;
-	}
-
-	.logo-login{
-		width: 25%;
-	}
-</style>
 
 <div class="admin-login-background d-flex align-items-center justify-content-center">
 	<div class="col-4 bg-light mx-auto p-5 rounded-3">
