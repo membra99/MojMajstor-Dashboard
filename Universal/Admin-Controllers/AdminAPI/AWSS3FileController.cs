@@ -12,7 +12,7 @@ namespace Universal.Admin_Controllers.AdminAPI
         private readonly IAWSS3FileService _AWSS3FileService;
         public AWSS3FileController(IAWSS3FileService AWSS3FileService)
         {
-            this._AWSS3FileService = AWSS3FileService;
+           _AWSS3FileService = AWSS3FileService;
         }
 
         [Route("UploadFile")]

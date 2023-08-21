@@ -3,6 +3,7 @@ using Entities.Context;
 using Entities.Universal.MainData;
 using Microsoft.EntityFrameworkCore;
 using Services.Authorization;
+using Services.AWS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using Universal.DTO.ViewDTO;
 using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Services
@@ -17,10 +19,12 @@ namespace Services
     public class UsersServices : BaseServices
     {
         private readonly IJwtUtils _jwtUtils;
+        private readonly IAWSS3FileService _AWSS3FileService;
 
-        public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils) : base(context, mapper)
+        public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IAWSS3FileService AWSS3FileService) : base(context, mapper)
         {
             _jwtUtils = jwtUtils;
+            _AWSS3FileService = AWSS3FileService;
         }
 
         #region Users
@@ -72,6 +76,30 @@ namespace Services
             await SaveContextChangesAsync();
 
             return await GetUserById(user.UsersId);
+        }
+
+        public async Task<MediaODTO> UploadUserPicture(AWSFileUpload awsFile)
+        {
+            bool successUpload = false;
+
+            if (awsFile.Attachments.Count > 0)
+                successUpload = await _AWSS3FileService.UploadFile(awsFile);
+
+            if (successUpload)
+            {
+                var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
+                var media = new Media();
+                media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
+                media.Src = key.First();
+                media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == "Avatar").MediaTypeId;
+                _context.Medias.Add(media);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<MediaODTO>(media);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<UsersODTO> EditUser(UsersIDTO userIDTO)

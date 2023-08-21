@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,5 +26,6 @@ namespace Universal.DTO.IDTO
 		[Required]
 		public string Password { get; set; }
         public string? Role { get; set; }
+        public IFormFile? Avatar { get; set; }
     }
 }
