@@ -1,11 +1,14 @@
+using Amazon.S3;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Services;
 using Services.Authorization;
+using Services.AWS;
 using Services.Helpers;
 using System.Configuration;
+using static Universal.DTO.CommonModels.CommonModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +51,12 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<MainDataServices>();
+//configure aws services
+var appSettingsSectionAws = builder.Configuration.GetSection("ServiceConfiguration");
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.Configure<ServiceConfiguration>(appSettingsSectionAws);
+builder.Services.AddTransient<IAWSS3FileService, AWSS3FileService>();
+builder.Services.AddTransient<IAWSS3BucketHelper, AWSS3BucketHelper>();
 // configure for JWT Auth
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 builder.Services.AddScoped<UsersServices>();

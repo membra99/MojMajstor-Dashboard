@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Http;
 
 namespace Universal.DTO.CommonModels
 {
@@ -46,6 +47,21 @@ namespace Universal.DTO.CommonModels
             public string? lastName { get; set; }
             public string? username { get; set; }
             public string? token { get; set; }
+        }
+
+
+        //AWS models
+        public class AWSFileUpload
+        {
+            public List<IFormFile> Attachments { get; set; }
+        }
+        public class ServiceConfiguration
+        {
+            public AWSS3Configuration AWSS3 { get; set; }
+        }
+        public class AWSS3Configuration
+        {
+            public string BucketName { get; set; }
         }
 
     }
