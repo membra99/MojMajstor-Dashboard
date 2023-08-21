@@ -1,9 +1,11 @@
-﻿@{
+﻿@model List<Universal.DTO.ODTO.UsersODTO>
+
+@{
 	ViewData["Title"] = "All Users";
 }
 
 <div>
-	<table id="userTable" class="display">
+	<table id="userTable" class="table table-striped display text-center">
 		<thead>
 			<tr>
 				<th>Role</th>
@@ -15,7 +17,6 @@
 				<th>City</th>
 				<th>Zip</th>
 				<th>Country</th>
-
 			</tr>
 		</thead>
 		<tbody>
@@ -24,6 +25,27 @@
 </div>
 
 @section Scripts
-{
-	<script src="/js/User/users.js"></script>
+	{
+	<script>
+		console.log(@Json.Serialize(Model))
+		$(document).ready(function () {
+			$('#userTable').DataTable({
+				data: @Json.Serialize(Model),
+				columns: [
+					{ data: "role" }, 
+					{ data: "email" },
+					{ data: "firstName" },
+					{ data: "lastName" },
+					{ data: "phone" },
+					{ data: "address" },
+					{ data: "city" },
+					{ data: "zip" },
+					{ data: "country" },
+				],
+				columnDefs: [
+					{ targets: '_all', className: 'dt-left' }
+				],
+			});
+		});
+	</script>
 }

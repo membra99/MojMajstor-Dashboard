@@ -16,3 +16,8 @@
     margin-left: 210px;
     width: 100vw;
 }
+
+.content-wrapper {
+    display: flex;
+    width: 99vw;
+}

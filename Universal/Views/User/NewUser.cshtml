@@ -1,16 +1,21 @@
-﻿@model Universal.DTO.ViewDTO.UserIDTO
+﻿@model Universal.DTO.IDTO.UsersIDTO
 
 @{
 	ViewData["Title"] = "New User";
 }
 
-<div class="col-6 bg-light mx-auto rounded-3">
+<div class="col-5 bg-light mx-auto rounded-3">
 	<div class="form-group">
-		@using (Html.BeginForm("TEMPnewUSER", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		@using (Html.BeginForm("AddUser", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 		{
 			<div class="mb-3">
-				@Html.DropDownListFor(model => model.RoleId, Model.Role.Select(role => new SelectListItem(){ Value = role.Id.ToString(), Text = role.Name }), "Select Role", new { @class="form-control" })
-				@Html.ValidationMessageFor(model => model.RoleId, null, new { @class="text-danger" })
+				@Html.DropDownListFor(model => model.Role, new List<SelectListItem>
+					{
+						new SelectListItem() { Text = "User", Value = "User"},
+						new SelectListItem() { Text = "Admin", Value = "Admin"}
+					},
+				"Select Role", new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.Role, null, new { @class="text-danger" })
 			</div>
 			<div class="mb-3">
 				@Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
@@ -50,7 +55,7 @@
 			</div>
 			<div class="mb-3">
 				<input type="file" name="Avatar" runat="server" class="form-control" />
-				@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })
+				@*@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })*@
 
 			</div>
 			<div class="mx-auto mb-3 w-50">

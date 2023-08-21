@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="API-Controllers\" />
+    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
 </Project>
