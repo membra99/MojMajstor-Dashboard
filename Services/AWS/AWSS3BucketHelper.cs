@@ -87,7 +87,7 @@ namespace Services.AWS
             {
                 BucketName = _settings.AWSS3.BucketName
             };
-            return _amazonS3.ListObjectsV2Async(req).Result.S3Objects.Where(e => e.Key.Contains(fileName)).Select(e => e.Key).ToList();
+            return _amazonS3.ListObjectsV2Async(req).Result.S3Objects.Where(e => e.Key.Contains(fileName)).Select(e => _settings.AWSS3.BucketURL + "DOT/" + e.Key).ToList();
         }
 
         public async Task<Stream> GetFile(string key)

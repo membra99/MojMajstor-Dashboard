@@ -62,6 +62,7 @@ namespace Universal.DTO.CommonModels
         public class AWSS3Configuration
         {
             public string BucketName { get; set; }
+            public string BucketURL { get; set; }
         }
 
     }

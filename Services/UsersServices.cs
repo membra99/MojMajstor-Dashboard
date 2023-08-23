@@ -90,7 +90,7 @@ namespace Services
                 var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
                 var media = new Media();
                 media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
-                media.Src = key.First();
+                media.Src = "DOT/" + key.First();
                 media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == "Avatar").MediaTypeId;
                 _context.Medias.Add(media);
                 await _context.SaveChangesAsync();
