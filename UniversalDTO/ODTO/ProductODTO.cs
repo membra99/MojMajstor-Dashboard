@@ -11,6 +11,7 @@ namespace Universal.DTO.ODTO
         public int ProductId { get; set; }
         public int CategoriesId { get; set; }
         public string? ProductName { get; set; }
+        public int? DeclarationId { get; set; }
         public double Price { get; set; }
         public bool IsOnSale { get; set; }
         public string? Description { get; set; }

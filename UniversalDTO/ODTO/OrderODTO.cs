@@ -9,7 +9,7 @@ namespace Universal.DTO.ODTO
     public class OrderODTO
     {
         public int OrderId { get; set; }
-        public int UserId { get; set; }
+        public int UsersId { get; set; }
         public DateTime OrderDate { get; set; }
         public string? OrderStatus { get; set; }
         public string? Email { get; set; }

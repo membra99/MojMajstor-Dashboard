@@ -438,19 +438,7 @@ namespace Services
 
         public async Task<List<OrderODTO>> GetAllOrder()
         {
-            var orders = await _context.Orders.ToListAsync();
-            List<OrderODTO> orderList = new List<OrderODTO>();
-            foreach (var item in orders)
-            {
-                OrderODTO order = new OrderODTO();
-                order.OrderId= item.OrderId;
-                order.Email = await _context.Users.Where(x => x.UsersId == item.UsersId).Select(x => x.Email).SingleOrDefaultAsync();
-                order.OrderDate = item.OrderDate;
-                order.UpdatedAt = item.UpdatedAt;
-                orderList.Add(order);
-            }
-
-            return orderList;
+            return await _context.Orders.Include(x => x.Users).Select(x => _mapper.Map<OrderODTO>(x)).ToListAsync();
         }
 
         public async Task<FullOrderODTO> GetFullOrderById(int id)
@@ -490,13 +478,15 @@ namespace Services
             return fullOrder;
         }
 
-        public async Task EditOrder(int id, string status)
+        public async Task<OrderODTO> EditOrder(int id, string status)
         {
             var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
             order.OrderStatus = status;
             _context.Entry(order).State = EntityState.Modified;
 
             await SaveContextChangesAsync();
+
+            return await GetOrderById(order.OrderId);
         }
 
 
@@ -526,6 +516,72 @@ namespace Services
             }
         }
 
+        public async Task<OrderODTO> DeleteOrder(int id)
+        {
+            var orders = await _context.Orders.FindAsync(id);
+            if (orders == null) return null;
+
+            var ordersODTO = await GetOrderById(id);
+
+            _context.Orders.Remove(orders);
+            await SaveContextChangesAsync();
+
+            return ordersODTO;
+        }
+
+        #endregion
+
+        #region Declaration
+
+        private IQueryable<DeclarationODTO> GetDeclarations(int id)
+        {
+            return from x in _context.Declarations
+                   where (id == 0 || x.DeclarationId == id)
+                   select _mapper.Map<DeclarationODTO>(x);
+        }
+
+        public async Task<DeclarationODTO> GetDeclarationById(int id)
+        {
+            return await GetDeclarations(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<List<DeclarationODTO>> GetAll()
+        {
+            return await _context.Declarations.Select(x => _mapper.Map<DeclarationODTO>(x)).ToListAsync();
+        }
+
+        public async Task<DeclarationODTO> AddDeclaration(DeclarationIDTO declarationIDTO)
+        {
+            var declaration = _mapper.Map<Declaration>(declarationIDTO);
+            declaration.DeclarationId = 0;
+            _context.Declarations.Add(declaration);
+
+            await SaveContextChangesAsync();
+
+            return await GetDeclarationById(declaration.DeclarationId);
+        }
+
+        public async Task<DeclarationODTO> EditDeclaration(DeclarationIDTO declarationIDTO)
+        {
+            var declaration = _mapper.Map<Declaration>(declarationIDTO);
+            _context.Entry(declaration).State = EntityState.Modified;
+            await SaveContextChangesAsync();
+
+            return await GetDeclarationById(declaration.DeclarationId);
+        }
+
+        public async Task<DeclarationODTO> DeleteDeclaration(int id)
+        {
+            var declaration = await _context.Declarations.FindAsync(id);
+            if (declaration == null) return null;
+
+            var declarationODTO = await GetDeclarationById(id);
+
+            _context.Declarations.Remove(declaration);
+            await SaveContextChangesAsync();
+
+            return declarationODTO;
+        }
 
         #endregion
     }

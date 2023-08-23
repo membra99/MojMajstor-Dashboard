@@ -1,30 +1,27 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
-using System.Net;
 
 namespace Universal.Admin_Controllers.AdminAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController
+    public class DeclarationController
     {
         private readonly MainDataServices _mainDataServices;
 
-        public OrderController(MainDataServices mainServices)
+        public DeclarationController(MainDataServices mainServices)
         {
             _mainDataServices = mainServices;
         }
 
-        [HttpPost]
-        public async Task<ActionResult> PostSiteContent(OrderDetailsIDTO orderIDTO)
+        [HttpGet("ById")]
+        public async Task<ActionResult<DeclarationODTO>> GetDeclarationsById(int id)
         {
             try
             {
-                await _mainDataServices.PostOrder(orderIDTO);
-                return new OkResult();
+                return await _mainDataServices.GetDeclarationById(id);
             }
             catch (Exception e)
             {
@@ -33,11 +30,11 @@ namespace Universal.Admin_Controllers.AdminAPI
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<OrderODTO>>> GetAllOrders()
+        public async Task<ActionResult<IEnumerable<DeclarationODTO>>> GetAll()
         {
             try
             {
-                return await _mainDataServices.GetAllOrder();
+                return await _mainDataServices.GetAll();
             }
             catch (Exception e)
             {
@@ -45,12 +42,12 @@ namespace Universal.Admin_Controllers.AdminAPI
             }
         }
 
-        [HttpGet("GetFullOrderById")]
-        public async Task<ActionResult<FullOrderODTO>> GetFullOrderByIds(int id)
+        [HttpPost]
+        public async Task<ActionResult<DeclarationODTO>> PostDeclaration(DeclarationIDTO declarationIDTO)
         {
             try
             {
-                return await _mainDataServices.GetFullOrderById(id);
+               return await _mainDataServices.AddDeclaration(declarationIDTO);
             }
             catch (Exception e)
             {
@@ -59,11 +56,11 @@ namespace Universal.Admin_Controllers.AdminAPI
         }
 
         [HttpPut]
-        public async Task<ActionResult<OrderODTO>> PutOrder(int id, string status)
+        public async Task<ActionResult<DeclarationODTO>> PutDeclaration(DeclarationIDTO declarationIDTO)
         {
             try
             {
-                return await _mainDataServices.EditOrder(id, status);
+               return await _mainDataServices.EditDeclaration(declarationIDTO);
             }
             catch (Exception e)
             {
@@ -72,11 +69,11 @@ namespace Universal.Admin_Controllers.AdminAPI
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<OrderODTO>> DeleteOrders(int id)
+        public async Task<ActionResult<DeclarationODTO>> DeleteDeclarations(int id)
         {
             try
             {
-                return await _mainDataServices.DeleteOrder(id);
+                return await _mainDataServices.DeleteDeclaration(id);
             }
             catch (Exception e)
             {
