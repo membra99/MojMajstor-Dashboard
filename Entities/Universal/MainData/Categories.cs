@@ -10,10 +10,14 @@ namespace Entities.Universal.MainData
     {
         public int CategoryId { get; set; }
         public int? ParentCategoryId { get; set; }
+        public int? SeoId { get; set; }
+        public int? MediaId { get; set; }
         public string? CategoryName { get; set; }
         public bool IsAttribute { get; set; }
         public bool? IsActive { get; set; }
 
+        public Seo? Seo { get; set; }
+        public Media? Media { get; set; }
         public ICollection<ProductAttributes> ProductAttributes { get; set; }
         public ICollection<Product> Products { get; set; }
     }

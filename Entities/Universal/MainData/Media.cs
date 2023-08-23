@@ -17,5 +17,8 @@ namespace Entities.Universal.MainData
         public MediaType MediaType { get; set; }
         public Product? Product { get; set; }
         public ICollection<Users> Users { get; set; }
+        public ICollection<Categories> Categories { get; set; }
+        public ICollection<Tag> Tags { get; set; }
+        public ICollection<SiteContent> SiteContents { get; set; }
     }
 }

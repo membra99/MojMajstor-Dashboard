@@ -70,7 +70,7 @@ namespace Services
         {
             var user = _mapper.Map<Users>(userIDTO);
             user.UsersId = 0;
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = (user.Password != null) ? BCrypt.Net.BCrypt.HashPassword(user.Password) : null;
             _context.Users.Add(user);
 
             await SaveContextChangesAsync();

@@ -29,5 +29,6 @@ namespace Entities.Universal.MainData
         public ICollection<ProductAttributes> ProductAttributes { get; set; }
         public ICollection<Media> Medias { get; set; }
         public ICollection<Sale> Sales { get; set; }
+        public ICollection<OrderDetails> OrderDetails { get; set; }
     }
 }

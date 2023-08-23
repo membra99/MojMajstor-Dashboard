@@ -22,6 +22,11 @@ namespace Entities.Context
         public DbSet<SaleType> SaleTypes { get; set; }
         public DbSet<Seo> Seos { get; set; }
         public DbSet<Declaration> Declarations { get; set; }
+        public DbSet<SiteContent> SiteContents { get; set; }
+        public DbSet<SiteContentType> SiteContentTypes { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
 
 
         #endregion
@@ -61,6 +66,15 @@ namespace Entities.Context
             modelBuilder.Entity<Categories>(entity =>
             {
                 entity.HasKey(x => x.CategoryId);
+
+                entity.HasOne(x => x.Seo)
+                .WithMany(x => x.Categories)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Media)
+                .WithMany(x => x.Categories)
+                .OnDelete(DeleteBehavior.Restrict);
+
             });
 
             modelBuilder.Entity<MediaType>(entity =>
@@ -119,6 +133,66 @@ namespace Entities.Context
             modelBuilder.Entity<Declaration>(entity =>
             {
                 entity.HasKey(x => x.DeclarationId);
+            });
+
+            modelBuilder.Entity<Tag>(entity =>
+            {
+                entity.HasKey(x => x.TagId);
+
+                entity.HasOne(x => x.Media)
+                .WithMany(x => x.Tags)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+            modelBuilder.Entity<SiteContent>(entity =>
+            {
+                entity.HasKey(x => x.SiteContentId);
+
+                entity.HasOne(x => x.Seo)
+                .WithMany(x => x.SiteContents)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Tag)
+                .WithMany(x => x.SiteContents)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Media)
+                .WithMany(x => x.SiteContents)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.SiteContentType)
+                .WithMany(x => x.SiteContents)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+            modelBuilder.Entity<SiteContentType>(entity =>
+            {
+                entity.HasKey(x => x.SiteContentTypeId);
+
+            });
+
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasKey(x => x.OrderId);
+
+                entity.HasOne(x => x.Users)
+                .WithMany(x => x.Orders)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<OrderDetails>(entity =>
+            {
+                entity.HasKey(x => x.OrderDetailsId);
+
+                entity.HasOne(x => x.Order)
+               .WithMany(x => x.OrderDetails)
+               .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Product)
+               .WithMany(x => x.OrderDetails)
+               .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

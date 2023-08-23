@@ -2,7 +2,9 @@
 using Entities.Context;
 using Entities.Migrations;
 using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using NetTopologySuite.Index.HPRtree;
 using System.ComponentModel;
 using System.Security.Cryptography;
@@ -14,8 +16,11 @@ namespace Services
 {
     public class MainDataServices : BaseServices
     {
-        public MainDataServices(MainContext context, IMapper mapper) : base(context, mapper)
+        public static UsersServices _userServices;
+
+        public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices) : base(context, mapper)
         {
+            _userServices = usersServices;
         }
 
         public List<ChildODTO> children = new List<ChildODTO>();
@@ -37,8 +42,15 @@ namespace Services
 
         public async Task<CategoriesODTO> AddCategory(CategoriesIDTO categoriesIDTO)
         {
+            int seo = 0;
+            if (categoriesIDTO.SeoIDTO.GoogleKeywords != null || categoriesIDTO.SeoIDTO.GoogleKeywords != null)
+            {
+                seo = await AddSeo(categoriesIDTO.SeoIDTO.GoogleDesc, categoriesIDTO.SeoIDTO.GoogleKeywords);
+            }
+
             var categories = _mapper.Map<Categories>(categoriesIDTO);
             categories.CategoryId = 0;
+            categories.SeoId = (seo != 0) ? seo : null;
             _context.Categories.Add(categories);
 
             await SaveContextChangesAsync();
@@ -332,5 +344,189 @@ namespace Services
         }
 
         #endregion ProductAttributes
+
+        #region SiteContent
+
+        private IQueryable<SiteContentODTO> GetSiteContent(int id)
+        {
+            return from x in _context.SiteContents
+                   where (id == 0 || x.SiteContentId == id)
+                   select _mapper.Map<SiteContentODTO>(x);
+        }
+
+        public async Task<SiteContentODTO> GetSiteContentById(int id)
+        {
+            return await GetSiteContent(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+
+        public async Task<SiteContentODTO> AddSiteContent(SiteContentIDTO siteContentIDTO)
+        {
+            int seo = 0;
+            if (siteContentIDTO.SeoIDTO.GoogleKeywords != null || siteContentIDTO.SeoIDTO.GoogleKeywords != null)
+            {
+                seo = await AddSeo(siteContentIDTO.SeoIDTO.GoogleDesc, siteContentIDTO.SeoIDTO.GoogleKeywords);
+            }
+
+            var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);
+            siteContent.SiteContentTypeId = 0;
+            siteContent.SeoId = (seo != 0) ? seo : null;
+            _context.SiteContents.Add(siteContent);
+
+            await SaveContextChangesAsync();
+
+            return await GetSiteContentById(siteContent.SiteContentId);
+        }
+
+        public async Task<SiteContentODTO> EditSiteContent(SiteContentIDTO siteContentIDTO)
+        {
+            var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);
+            _context.Entry(siteContent).State = EntityState.Modified;
+
+            var seo = await _context.Seos.Where(x => x.SeoId == siteContentIDTO.SeoId).SingleOrDefaultAsync();
+            seo.GoogleDesc = siteContent.Seo.GoogleDesc;
+            seo.GoogleKeywords = siteContent.Seo.GoogleKeywords;
+
+            _context.Entry(seo).State = EntityState.Modified;
+
+            await SaveContextChangesAsync();
+
+            return await GetSiteContentById(siteContent.SiteContentId);
+        }
+
+        public async Task<SiteContentODTO> DeleteSiteContent(int id)
+        {
+            var siteContent = await _context.SiteContents.FindAsync(id);
+            if (siteContent == null) return null;
+
+            var siteContentODTO = await GetSiteContentById(id);
+
+            _context.SiteContents.Remove(siteContent);
+            await SaveContextChangesAsync();
+
+            return siteContentODTO;
+        }
+
+        #endregion
+
+        #region Order
+
+        private IQueryable<OrderODTO> GetOrders(int id)
+        {
+            return from x in _context.Orders
+                   where (id == 0 || x.OrderId == id)
+                   select _mapper.Map<OrderODTO>(x);
+        }
+
+        public async Task<OrderODTO> GetOrderById(int id)
+        {
+            return await GetOrders(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
+        {
+            var isUserExist = await _context.Users.Where(x => x.Email== usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
+            int UserID = isUserExist;
+            if (isUserExist == 0)
+            {
+                    var user = await _userServices.AddUser(usersIDTO);
+                    UserID = user.UsersId;
+            }
+
+            return UserID;
+        }
+
+        public async Task<List<OrderODTO>> GetAllOrder()
+        {
+            var orders = await _context.Orders.ToListAsync();
+            List<OrderODTO> orderList = new List<OrderODTO>();
+            foreach (var item in orders)
+            {
+                OrderODTO order = new OrderODTO();
+                order.OrderId= item.OrderId;
+                order.Email = await _context.Users.Where(x => x.UsersId == item.UsersId).Select(x => x.Email).SingleOrDefaultAsync();
+                order.OrderDate = item.OrderDate;
+                order.UpdatedAt = item.UpdatedAt;
+                orderList.Add(order);
+            }
+
+            return orderList;
+        }
+
+        public async Task<FullOrderODTO> GetFullOrderById(int id)
+        {
+            var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
+            FullOrderODTO fullOrder = new FullOrderODTO();
+            fullOrder.OrderId = id;
+            var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
+            fullOrder.Address = user.Address;
+            fullOrder.City = user.City;
+            fullOrder.Zip = user.Zip;
+            fullOrder.Phone = user.Phone;
+            fullOrder.Name = user.FirstName + " " + user.LastName;
+            fullOrder.Status = order.OrderStatus;
+
+            var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
+            List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
+            foreach (var item in products)
+            {
+                var product = await _context.Products.Where(x => x.ProductId == item).SingleOrDefaultAsync();
+                ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
+                productODTO.ProductId = item;
+                productODTO.ProductName = product.ProductName;
+                productODTO.CategoriesId = product.CategoriesId;
+                productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
+                productODTO.Price = product.Price;
+                productODTO.Quantity = await _context.OrderDetails.Where(x => x.ProductId == item && x.OrderId == id).Select(x => x.Quantity).SingleOrDefaultAsync();
+
+                productList.Add(productODTO);
+            }
+
+            fullOrder.TotalPrice = (from x in productList
+                                    select x.Quantity * Convert.ToInt32(x.Price)).Sum();
+
+            fullOrder.ProductODTO = productList;
+
+            return fullOrder;
+        }
+
+        public async Task EditOrder(int id, string status)
+        {
+            var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
+            order.OrderStatus = status;
+            _context.Entry(order).State = EntityState.Modified;
+
+            await SaveContextChangesAsync();
+        }
+
+
+        public async Task PostOrder(OrderDetailsIDTO orderIDTO)
+        {
+            var userId = await AnonimusOrRegistredUser(orderIDTO.UsersIDTO);
+            OrderIDTO order = new OrderIDTO();
+            order.OrderId = 0;
+            order.UsersId = userId;
+            order.OrderDate = DateTime.Now;
+            order.OrderStatus = "On hold";
+
+            var orderForDB = _mapper.Map<Order>(order);
+
+            _context.Orders.Add(orderForDB);
+            await SaveContextChangesAsync();
+
+            var NewOrder = await GetOrderById(orderForDB.OrderId);
+
+            foreach (var item in orderIDTO.ProductList)
+            {
+                OrderDetails orderDetails = new OrderDetails();
+                orderDetails.OrderId = NewOrder.OrderId;
+                orderDetails.ProductId = item;
+                _context.OrderDetails.Add(orderDetails);
+                await SaveContextChangesAsync();
+            }
+        }
+
+
+        #endregion
     }
 }

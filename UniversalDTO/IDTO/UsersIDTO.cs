@@ -23,8 +23,7 @@ namespace Universal.DTO.IDTO
         public string? City { get; set; }
         public string? Zip { get; set; }
         public string? Country { get; set; }
-		[Required]
-		public string Password { get; set; }
+		public string? Password { get; set; }
         public string? Role { get; set; }
         public IFormFile? Avatar { get; set; }
     }

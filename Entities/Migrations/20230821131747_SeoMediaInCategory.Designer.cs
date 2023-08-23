@@ -4,6 +4,7 @@ using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20230821131747_SeoMediaInCategory")]
+    partial class SeoMediaInCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,59 +140,6 @@ namespace Entities.Migrations
                     b.HasKey("MediaTypeId");
 
                     b.ToTable("MediaTypes");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OrderStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.OrderDetails", b =>
-                {
-                    b.Property<int>("OrderDetailsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailsId"));
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderDetailsId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Product", b =>
@@ -352,89 +302,6 @@ namespace Entities.Migrations
                     b.ToTable("Seos");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.SiteContent", b =>
-                {
-                    b.Property<int>("SiteContentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SiteContentId"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MediaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SeoId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SiteContentTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SiteContentId");
-
-                    b.HasIndex("MediaId");
-
-                    b.HasIndex("SeoId");
-
-                    b.HasIndex("SiteContentTypeId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("SiteContents");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.SiteContentType", b =>
-                {
-                    b.Property<int>("SiteContentTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SiteContentTypeId"));
-
-                    b.Property<string>("SiteContentTypeName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SiteContentTypeId");
-
-                    b.ToTable("SiteContentTypes");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Tag", b =>
-                {
-                    b.Property<int>("TagId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TagId"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MediaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TagId");
-
-                    b.HasIndex("MediaId");
-
-                    b.ToTable("Tags");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
                 {
                     b.Property<int>("UsersId")
@@ -470,6 +337,7 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
@@ -519,36 +387,6 @@ namespace Entities.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("MediaType");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Users", "Users")
-                        .WithMany("Orders")
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.OrderDetails", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Universal.MainData.Product", "Product")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -616,47 +454,6 @@ namespace Entities.Migrations
                     b.Navigation("SaleType");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.SiteContent", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Media", "Media")
-                        .WithMany("SiteContents")
-                        .HasForeignKey("MediaId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Entities.Universal.MainData.Seo", "Seo")
-                        .WithMany("SiteContents")
-                        .HasForeignKey("SeoId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Entities.Universal.MainData.SiteContentType", "SiteContentType")
-                        .WithMany("SiteContents")
-                        .HasForeignKey("SiteContentTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Entities.Universal.MainData.Tag", "Tag")
-                        .WithMany("SiteContents")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Media");
-
-                    b.Navigation("Seo");
-
-                    b.Navigation("SiteContentType");
-
-                    b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Tag", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Media", "Media")
-                        .WithMany("Tags")
-                        .HasForeignKey("MediaId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Media");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
                 {
                     b.HasOne("Entities.Universal.MainData.Media", "Media")
@@ -683,10 +480,6 @@ namespace Entities.Migrations
                 {
                     b.Navigation("Categories");
 
-                    b.Navigation("SiteContents");
-
-                    b.Navigation("Tags");
-
                     b.Navigation("Users");
                 });
 
@@ -695,16 +488,9 @@ namespace Entities.Migrations
                     b.Navigation("Medias");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.Product", b =>
                 {
                     b.Navigation("Medias");
-
-                    b.Navigation("OrderDetails");
 
                     b.Navigation("ProductAttributes");
 
@@ -721,23 +507,6 @@ namespace Entities.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Products");
-
-                    b.Navigation("SiteContents");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.SiteContentType", b =>
-                {
-                    b.Navigation("SiteContents");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Tag", b =>
-                {
-                    b.Navigation("SiteContents");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
-                {
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

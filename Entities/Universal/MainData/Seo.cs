@@ -13,5 +13,7 @@ namespace Entities.Universal.MainData
         public string? GoogleKeywords { get; set; }
 
         public ICollection<Product> Products { get; set; }
+        public ICollection<Categories> Categories { get; set; }
+        public ICollection<SiteContent> SiteContents { get; set; }
     }
 }

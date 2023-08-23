@@ -32,6 +32,9 @@ namespace Entities.Mapping
             CreateMap<SaleIDTO, Sale>();
 
             CreateMap<Seo, SaleODTO>();
+
+            CreateMap<Order, OrderODTO>();
+            CreateMap<OrderIDTO, Order>();
         }
     }
 }

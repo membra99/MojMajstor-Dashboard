@@ -4,6 +4,7 @@ using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20230822063740_SiteContentAndType")]
+    partial class SiteContentAndType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,59 +140,6 @@ namespace Entities.Migrations
                     b.HasKey("MediaTypeId");
 
                     b.ToTable("MediaTypes");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OrderStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.OrderDetails", b =>
-                {
-                    b.Property<int>("OrderDetailsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailsId"));
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderDetailsId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Product", b =>
@@ -470,6 +420,7 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
@@ -519,36 +470,6 @@ namespace Entities.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("MediaType");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Users", "Users")
-                        .WithMany("Orders")
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.OrderDetails", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Universal.MainData.Product", "Product")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -695,16 +616,9 @@ namespace Entities.Migrations
                     b.Navigation("Medias");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.Product", b =>
                 {
                     b.Navigation("Medias");
-
-                    b.Navigation("OrderDetails");
 
                     b.Navigation("ProductAttributes");
 
@@ -733,11 +647,6 @@ namespace Entities.Migrations
             modelBuilder.Entity("Entities.Universal.MainData.Tag", b =>
                 {
                     b.Navigation("SiteContents");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
-                {
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

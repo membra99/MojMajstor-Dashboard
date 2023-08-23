@@ -14,6 +14,8 @@ namespace Services
     {
         protected readonly MainContext _context;
         protected readonly IMapper _mapper;
+        protected readonly UsersServices _usersServices;
+
 
         public BaseServices(MainContext context)
         {
@@ -24,6 +26,13 @@ namespace Services
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public BaseServices(MainContext context, IMapper mapper, UsersServices usersServices)
+        {
+            _context = context;
+            _mapper = mapper;
+            _usersServices = usersServices;
         }
 
         protected async Task SaveContextChangesAsync(IDbContextTransaction dbContextTransaction = null)
