@@ -8,29 +8,60 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NetTopologySuite.Index.HPRtree;
+using Services.AWS;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Services
 {
     public class MainDataServices : BaseServices
     {
         public static UsersServices _userServices;
+		private readonly IAWSS3FileService _AWSS3FileService;
 
-        public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices) : base(context, mapper)
+		public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService) : base(context, mapper)
         {
             _userServices = usersServices;
-        }
+			_AWSS3FileService = AWSS3FileService;
+		}
 
-        public List<ChildODTO> children = new List<ChildODTO>();
+		public List<ChildODTO> children = new List<ChildODTO>();
         private int i = 0;
 
-        #region Categories
+		#region FileUploads
+		public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int productId)
+		{
+			bool successUpload = false;
 
-        private IQueryable<CategoriesODTO> GetCategories(int id)
+			if (awsFile.Attachments.Count > 0)
+				successUpload = await _AWSS3FileService.UploadFile(awsFile);
+
+			if (successUpload)
+			{
+				var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
+				var media = new Media();
+                media.ProductId = productId;
+				media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
+				media.Src = "DOT/" + key.First();
+				media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
+				_context.Medias.Add(media);
+				await _context.SaveChangesAsync();
+				return _mapper.Map<MediaODTO>(media);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		#endregion
+
+		#region Categories
+
+		private IQueryable<CategoriesODTO> GetCategories(int id)
         {
             return from x in _context.Categories
                    where (id == 0 || x.CategoryId == id)
@@ -547,7 +578,7 @@ namespace Services
             return await GetDeclarations(id).AsNoTracking().SingleOrDefaultAsync();
         }
 
-        public async Task<List<DeclarationODTO>> GetAll()
+        public async Task<List<DeclarationODTO>> GetAllDeclarations()
         {
             return await _context.Declarations.Select(x => _mapper.Map<DeclarationODTO>(x)).ToListAsync();
         }

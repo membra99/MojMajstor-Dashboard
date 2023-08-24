@@ -15,7 +15,6 @@ namespace Universal.DTO.ViewDTO
 	{
 		[Required]
 		public int RoleId { get; set; }
-		public List<(int Id, string Name)> Role { get; set; } = new List<(int Id, string Name)>() { (1, "User"), (2, "Admin") };
 		[Required]
 		public string Email { get; set; }
 		[Required]

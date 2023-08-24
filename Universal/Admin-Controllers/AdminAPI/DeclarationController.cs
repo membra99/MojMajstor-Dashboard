@@ -34,7 +34,7 @@ namespace Universal.Admin_Controllers.AdminAPI
         {
             try
             {
-                return await _mainDataServices.GetAll();
+                return await _mainDataServices.GetAllDeclarations();
             }
             catch (Exception e)
             {

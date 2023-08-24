@@ -1,0 +1,165 @@
+﻿@model Universal.DTO.ViewDTO.DataIDTO
+
+@{
+	ViewData["Title"] = "New Data";
+}
+
+<div class="col-5 bg-light mx-auto rounded-3">
+	<div class="form-group">
+		@using (Html.BeginForm("AddData", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		{
+			<div class="mb-3">
+				<h2>Product</h2>
+			</div>
+			<div class="mb-3">
+				@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
+			new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
+			"Select Category", new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class="form-control", placeholder = "Product Name" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextAreaFor(model => model.ProductIDTO.Description, 10, 1, new { @class="form-control", placeholder = "Description" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class="text-danger" })
+			</div>
+			@*<div class="mb-3">
+		@Html.TextBoxFor(model => model.ProductIDTO.Specification, null, new { @class="form-control", placeholder = "Specification" })
+		@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class="text-danger" })
+		</div>*@
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type="number", @class="form-control", placeholder="Price" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.Price, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On Sale:")
+				@Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class="" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.IsOnSale, null, new { @id="onSaleCheck", @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended:")
+				@Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class="" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.Recommended, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best Product:")
+				@Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class="" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.BestProduct, null, new { @class="text-danger" })
+			</div>
+
+			<div class="mb-3">
+				<h2>Sale</h2>
+			</div>
+			<div class="mb-3">
+				@Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
+			new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
+			"Select Sale Type", new { @class="form-control", disabled="disabled" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled="disabled" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
+			</div>
+
+			<div class="mb-3">
+				<h2>SEO</h2>
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="form-control", placeholder = "Google Description" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="form-control", placeholder = "Google Keywords" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="text-danger" })
+			</div>
+
+			<div class="mb-3">
+				<h2>Feature Image</h2>
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.FeaturedImage, null, new { type="file", @class="form-control", runat="server" })
+				@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class="text-danger" })
+			</div>
+			<div class="mb-3">
+				<h2>Gallery Images</h2>
+			</div>
+			<div class="mb-3">
+				@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file", @class="form-control", runat="server" , multiple="multiple" })
+				@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" })
+			</div>
+
+			<div class="mb-3">
+				<h2>Decleration</h2>
+			</div>
+			<div class="mb-3">
+				@Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
+			new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
+			"Select Declaration", new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class="text-danger" })
+			</div>
+
+			<div class="mb-3">
+				<h2>Attributes</h2>
+			</div>
+			<div id="attributeArea" class="mb-3">
+			</div>
+
+			<div class="mx-auto mb-3 w-50">
+				<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
+			</div>
+		}
+	</div>
+</div>
+
+@section Scripts{
+	<script>
+		$(document).ready(function () {
+			$("#ProductIDTO_IsOnSale").change(function () {
+				if (this.checked) {
+					$("input[name*='SaleIDTO'], select[name*='SaleIDTO']").removeAttr("disabled");
+				}
+				else {
+					$("input[name*='SaleIDTO'], select[name*='SaleIDTO']").attr("disabled", true);
+				}
+			});
+
+			$("#ProductIDTO_CategoriesId").change(function () {
+				$.ajax({
+					type: "GET",
+					url: "/Dashboard/AllAttributesByCategory",
+					data: { CategoryId: $(this).val() },
+					success: function (data) {
+						$("#attributeArea").html("");
+						$.each(data.data, function (index, attribute) {
+							if (attribute.value.length > 0) {
+								let attributesOptions = ""
+								$.each(attribute.value, function (index, value) {
+									attributesOptions += "<option value='" + value + "'>" + value + "</option>"
+								});
+								let htmlAttributes = "<label>" + attribute.categoryName + "</label><div class='mb-3'><input type='hidden' name='ProductAttributeTypes[]' value='" + attribute.categoryId + "'><select name='ProductAttributeValues[]' class='form-control'>" + attributesOptions + "</select></div>";
+								$("#attributeArea").append(htmlAttributes);
+							}							
+						});
+					},
+					error: function () {
+						alert("Error on getting attributes!");
+					}
+				})
+			})
+		});
+	</script>
+}

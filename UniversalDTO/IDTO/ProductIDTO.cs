@@ -20,8 +20,8 @@ namespace Universal.DTO.IDTO
 		public bool Recommended { get; set; }
 		public bool BestProduct { get; set; }
 		public string? ProductCode { get; set; }
-		public DateTime CreatedAt { get; set; }
-		public DateTime UpdatedAt { get; set; }
+		public DateTime CreatedAt { get; set; } = DateTime.Now;
+		public DateTime UpdatedAt { get; set; } = DateTime.Now;
 		public SaleIDTO? SaleIDTO { get; set; }
         public SeoIDTO? SeoIDTO { get; set; }
     }
