@@ -64,6 +64,10 @@ namespace Universal.Admin_Controllers.AdminMVC
                 var media = await _userDataServices.UploadUserPicture(awsFile);
                 if (media != null) userIDTO.MediaId = media.MediaId;
                 var users = await _userDataServices.AddUser(userIDTO);
+                if(users == null) {
+                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+                    return View("../User/NewUser");
+                }
                 return RedirectToAction("AllUsers", "Dashboard");
             }
             catch (Exception ex)

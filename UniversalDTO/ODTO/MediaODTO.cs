@@ -9,9 +9,12 @@ namespace Universal.DTO.ODTO
     public class MediaODTO
     {
         public int MediaId { get; set; }
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public int MediaTypeId { get; set; }
         public string? Src { get; set; }
         public string? Extension { get; set; }
+        public string? MetaTitle { get; set; }
+        public string? MetaDescription { get; set; }
+        public string? AltTitle { get; set; }
     }
 }

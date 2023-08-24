@@ -2,6 +2,7 @@
 using Entities.Context;
 using Entities.Universal.MainData;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Index.HPRtree;
 using Services.Authorization;
 using Services.AWS;
 using System;
@@ -68,6 +69,11 @@ namespace Services
 
         public async Task<UsersODTO> AddUser(UsersIDTO userIDTO)
         {
+            var CheckUser = await _context.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
+            if(CheckUser != null)
+            {
+                return null;
+            }
             var user = _mapper.Map<Users>(userIDTO);
             user.UsersId = 0;
             user.Password = (user.Password != null) ? BCrypt.Net.BCrypt.HashPassword(user.Password) : null;
@@ -90,8 +96,10 @@ namespace Services
                 var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
                 var media = new Media();
                 media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
-                media.Src = "DOT/" + key.First();
+                media.Src = key.First();
                 media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == "Avatar").MediaTypeId;
+                var index = media.Src.LastIndexOf('/');
+                media.MetaTitle = media.Src.Substring(index + 1);
                 _context.Medias.Add(media);
                 await _context.SaveChangesAsync();
                 return _mapper.Map<MediaODTO>(media);

@@ -3,8 +3,10 @@ using Entities.Context;
 using Entities.Migrations;
 using Entities.Universal.MainData;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NetTopologySuite.Index.HPRtree;
 using System.ComponentModel;
 using System.Security.Cryptography;
@@ -582,6 +584,25 @@ namespace Services
 
             return declarationODTO;
         }
+
+        #endregion
+
+        #region Media
+
+        public async Task<List<MediaODTO>> GetAllMedia()
+        {
+            var media = await _context.Medias.Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+
+            foreach (var item in media)
+            {
+                var index = item.Src.LastIndexOf('/');
+                item.Src = item.Src.Substring(index+1);
+            }
+
+            return media;
+        }
+
+        //public async Task<List<MediaODTO>> DeleteMultipleMedia()
 
         #endregion
     }
