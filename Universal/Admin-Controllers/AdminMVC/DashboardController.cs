@@ -97,7 +97,7 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             try
             {
-                var declaration = await _mainDataServices.GetAll();
+                var declaration = await _mainDataServices.GetAllDeclarations();
                 return View("../Declaration/Declaration", declaration);
             }
             catch (Exception ex)
@@ -155,5 +155,97 @@ namespace Universal.Admin_Controllers.AdminMVC
                 return View("Home");
             }
         }
-    }
+
+		#region Data/Products
+		public async Task<IActionResult> AllData()
+		{
+			try
+			{
+				var users = await _mainDataServices.GetAllProducts();
+				return View("../Data/Data", users);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+
+		}
+		public async Task<IActionResult> NewData()
+		{
+			var categories = await _mainDataServices.GetCategory();
+			var declarations = await _mainDataServices.GetAllDeclarations();
+			return View("../Data/NewData", new DataIDTO
+			{
+				CategoriesODTOs = categories,
+				DeclarationODTOs = declarations,
+				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
+				{
+					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
+				}
+			});
+		}
+		public async Task<IActionResult> AllAttributesByCategory(int categoryId)
+		{
+			var attributes = await _mainDataServices.GetAttribute(categoryId);
+			return Json(new { data = attributes });
+		}
+		public async Task<IActionResult> AddData(DataIDTO dataIDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				var categories = await _mainDataServices.GetCategory();
+				var declarations = await _mainDataServices.GetAllDeclarations();
+				return View("../Data/NewData", new DataIDTO
+				{
+					CategoriesODTOs = categories,
+					DeclarationODTOs = declarations,
+					SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
+				{
+					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
+				}
+				});
+			}
+			try
+			{
+				var product = await _mainDataServices.AddProduct(dataIDTO.ProductIDTO);
+
+				AWSFileUpload awsFile = new AWSFileUpload();
+				awsFile.Attachments = new List<IFormFile>();
+				if (dataIDTO.FeaturedImage != null)
+					awsFile.Attachments.Add(dataIDTO.FeaturedImage);
+				//await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId); //TODO vrv puca zbog aws
+
+				foreach (IFormFile file in dataIDTO.GalleryImages)
+				{
+					awsFile.Attachments = new List<IFormFile>
+					{
+						file
+					};
+					await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
+				}
+
+				var attributes = dataIDTO.ProductAttributeTypes.Zip(dataIDTO.ProductAttributeValues, (type, value) => new Tuple<int, string>(type, value)).ToList();
+				foreach (var attribute in attributes)
+				{
+					ProductAttributesIDTO productAttributesIDTO = new ProductAttributesIDTO()
+					{
+						CategoriesId = attribute.Item1,
+						Value = attribute.Item2,
+						ProductId = product.ProductId,
+						IsDev = false //TODO check how IsDev is set
+					};
+					_mainDataServices.AddProductAttributes(productAttributesIDTO);
+				}
+
+				return RedirectToAction("AllData", "Dashboard");
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+		#endregion
+	}
 }
