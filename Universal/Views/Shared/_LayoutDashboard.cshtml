@@ -8,6 +8,19 @@
 	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+	<script>
+		tinymce.init({
+			selector: 'textarea#tiny',
+					plugins: [
+				'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+				'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+				'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+			],
+			toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
+				'bullist numlist checklist outdent indent | removeformat | code table help'
+		})
+	</script>
 </head>
 <body>
 	<div class="container m-0 p-0">
@@ -22,6 +35,11 @@
 				<li class="nav-item">@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Categories", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Pages", "AllSiteContent", "Dashboard", new {type = "Page"}, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Blog", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Orders", "AllOrders", "Dashboard", null, new{ @class = "nav-link" })</li>
 			</ul>
 		</aside>
 		<div class="content-wrapper bg-light">

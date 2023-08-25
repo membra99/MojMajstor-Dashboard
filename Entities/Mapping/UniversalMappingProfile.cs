@@ -39,6 +39,9 @@ namespace Entities.Mapping
 
             CreateMap<Declaration, DeclarationODTO>();
             CreateMap<DeclarationIDTO, Declaration>();
-        }
+
+			CreateMap<SiteContent, SiteContentODTO>();
+			CreateMap<SiteContentIDTO, SiteContent>();
+		}
     }
 }

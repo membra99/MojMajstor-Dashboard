@@ -29,7 +29,21 @@ namespace Universal.Admin_Controllers.AdminAPI
             }
         }
 
-        [HttpPut]
+		[HttpGet("AllByType")]
+		public async Task<ActionResult<IEnumerable<SiteContentODTO>>> GetAllSiteContentByTypes(string type)
+		{
+			try
+			{
+				return await _mainDataServices.GetAllSiteContentByType(type);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
+
+
+		[HttpPut]
         public async Task<ActionResult<SiteContentODTO>> PutSiteContent(SiteContentIDTO siteContentIDTO)
         {
             try

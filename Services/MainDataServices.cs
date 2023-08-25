@@ -392,6 +392,12 @@ namespace Services
             return await GetSiteContent(id).AsNoTracking().SingleOrDefaultAsync();
         }
 
+        public async Task<List<SiteContentODTO>> GetAllSiteContentByType(string Type)
+        {
+            var siteContentType = await _context.SiteContentTypes.Where(x => x.SiteContentTypeName == Type).Select(x => x.SiteContentTypeId).SingleOrDefaultAsync();
+            return await _context.SiteContents.Where(x => x.SiteContentTypeId == siteContentType && x.IsActive == true).Select(x => _mapper.Map<SiteContentODTO>(x)).ToListAsync();
+        } 
+
 
         public async Task<SiteContentODTO> AddSiteContent(SiteContentIDTO siteContentIDTO)
         {

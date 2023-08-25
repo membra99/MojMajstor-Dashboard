@@ -1,0 +1,41 @@
+﻿@model List<Universal.DTO.ODTO.OrderODTO>
+
+@{
+	ViewData["Title"] = "All Orders";
+}
+
+<div>
+	<table id="orderTable" class="table table-striped display text-center">
+		<thead>
+			<tr>
+				<th>OrderNumber</th>
+				<th>Email</th>
+				<th>CreatedAt</th>
+				<th>UpdatedAt</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+@section Scripts
+	{
+	<script>
+		console.log(@Json.Serialize(Model))
+		$(document).ready(function () {
+			$('#orderTable').DataTable({
+				data: @Json.Serialize(Model),
+				columns: [
+					{ data: "orderId" },
+					{ data: "email" },
+					{ data: "orderDate" },
+					{ data: "updatedAt" },
+				],
+				columnDefs: [
+					{ targets: '_all', className: 'dt-left' }
+				],
+			});
+		});
+	</script>
+}

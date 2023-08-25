@@ -4,6 +4,7 @@ using Services.AWS;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using Universal.DTO.ViewDTO;
+using Universal.DTO.ViewDTO;
 using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Universal.Admin_Controllers.AdminMVC
@@ -29,17 +30,37 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Home");
 		}
 
-		public IActionResult NewUser()
+        public IActionResult NewUser()
+        {
+            return View("../User/NewUser");
+        }
+
+		public IActionResult NewDeclaration()
 		{
-			return View("../User/NewUser");
+			return View("../Declaration/NewDeclaration");
 		}
-		#region Users
+
 		public async Task<IActionResult> AllUsers()
+        {
+            try
+            {
+                var users = await _userDataServices.GetAllUsers();
+                return View("../User/Users", users);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+
+        }
+
+		public async Task<IActionResult> AllSiteContent(string type)
 		{
 			try
 			{
-				var users = await _userDataServices.GetAllUsers();
-				return View("../User/Users", users);
+				var siteContent = await _mainDataServices.GetAllSiteContentByType(type);
+				return View("../SiteContent/SiteContents", siteContent);
 			}
 			catch (Exception ex)
 			{
@@ -48,28 +69,55 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 
 		}
-		public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
-		{
+
+        public async Task<IActionResult> AllOrders()
+        {
+			try
+			{
+				var orders = await _mainDataServices.GetAllOrder();
+                foreach (var item in orders)
+                {
+                    string newDate = item.OrderDate.ToString("yyyy-MM-dd HH:mm:ss");
+                    item.OrderDate = DateTime.Parse(newDate);
+
+					string updatedDate = item.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss");
+					item.UpdatedAt = DateTime.Parse(updatedDate);
+				}
+				return View("../Order/Order", orders);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+
+		}
+
+		public async Task<IActionResult> AllDeclaration()
+        {
+            try
+            {
+                var declaration = await _mainDataServices.GetAll();
+                return View("../Declaration/Declaration", declaration);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+
+        }
+
+        public async Task<IActionResult> AddDeclarations(DeclarationIDTO declarationIDTO)
+        {
 			if (!ModelState.IsValid)
 			{
-				return View("../User/NewUser");
+				return View("../Declaration/NewDeclaration", new DeclarationIDTO());
 			}
 			try
 			{
-				//						FILE UPLOAD SYSTEM
-				AWSFileUpload awsFile = new AWSFileUpload();
-				awsFile.Attachments = new List<IFormFile>();
-				if (userIDTO.Avatar != null)
-					awsFile.Attachments.Add(userIDTO.Avatar);
-				var media = await _userDataServices.UploadUserPicture(awsFile);
-				if (media != null) userIDTO.MediaId = media.MediaId;
-				var users = await _userDataServices.AddUser(userIDTO);
-				if (users == null)
-				{
-					ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-					return View("../User/NewUser");
-				}
-				return RedirectToAction("AllUsers", "Dashboard");
+				var declaration = await _mainDataServices.AddDeclaration(declarationIDTO);
+				return RedirectToAction("AllDeclaration", "Dashboard");
 			}
 			catch (Exception ex)
 			{
@@ -77,98 +125,35 @@ namespace Universal.Admin_Controllers.AdminMVC
 				return View("Home");
 			}
 		}
-		#endregion
 
-		#region Data/Products
-		public async Task<IActionResult> AllData()
-		{
-			try
-			{
-				var users = await _mainDataServices.GetAllProducts();
-				return View("../Data/Data", users);
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
+        public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("../User/NewUser", new UsersIDTO());
+            }
 
-		}
-		public async Task<IActionResult> NewData()
-		{
-			var categories = await _mainDataServices.GetCategory();
-			var declarations = await _mainDataServices.GetAllDeclarations();
-			return View("../Data/NewData", new DataIDTO
-			{
-				CategoriesODTOs = categories,
-				DeclarationODTOs = declarations,
-				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
-				{
-					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
-				}
-			});
-		}
-		public async Task<IActionResult> AllAttributesByCategory(int categoryId)
-		{
-			var attributes = await _mainDataServices.GetAttribute(categoryId);
-			return Json(new { data = attributes });
-		}
-		public async Task<IActionResult> AddData(DataIDTO dataIDTO)
-		{
-			if (!ModelState.IsValid)
-			{
-				var categories = await _mainDataServices.GetCategory();
-				var declarations = await _mainDataServices.GetAllDeclarations();
-				return View("../Data/NewData", new DataIDTO
-				{
-					CategoriesODTOs = categories,
-					DeclarationODTOs = declarations,
-					SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
-				{
-					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
-				}
-				});
-			}
-			try
-			{
-				var product = await _mainDataServices.AddProduct(dataIDTO.ProductIDTO);
-
-				AWSFileUpload awsFile = new AWSFileUpload();
-				awsFile.Attachments = new List<IFormFile>();
-				if (dataIDTO.FeaturedImage != null)
-					awsFile.Attachments.Add(dataIDTO.FeaturedImage);
-				//await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId); //TODO vrv puca zbog aws
-
-				foreach (IFormFile file in dataIDTO.GalleryImages)
-				{
-					awsFile.Attachments = new List<IFormFile>
-					{
-						file
-					};
-					await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
-				}
-
-				var attributes = dataIDTO.ProductAttributeTypes.Zip(dataIDTO.ProductAttributeValues, (type, value) => new Tuple<int, string>(type, value)).ToList();
-				foreach (var attribute in attributes)
-				{
-					ProductAttributesIDTO productAttributesIDTO = new ProductAttributesIDTO()
-					{
-						CategoriesId = attribute.Item1,
-						Value = attribute.Item2,
-						ProductId = product.ProductId,
-						IsDev = false //TODO check how IsDev is set
-					};
-					_mainDataServices.AddProductAttributes(productAttributesIDTO);
-				}
-
-				return RedirectToAction("AllData", "Dashboard");
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
-		}
-		#endregion
-	}
+            //						FILE UPLOAD SYSTEM
+            AWSFileUpload awsFile = new AWSFileUpload();
+            awsFile.Attachments = new List<IFormFile>();
+            if (userIDTO.Avatar != null)
+                awsFile.Attachments.Add(userIDTO.Avatar);
+            try
+            {
+                var media = await _userDataServices.UploadUserPicture(awsFile);
+                if (media != null) userIDTO.MediaId = media.MediaId;
+                var users = await _userDataServices.AddUser(userIDTO);
+                if(users == null) {
+                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+                    return View("../User/NewUser");
+                }
+                return RedirectToAction("AllUsers", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+    }
 }

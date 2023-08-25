@@ -1,0 +1,47 @@
+﻿@model List<Universal.DTO.ODTO.SiteContentODTO>
+
+@{
+	ViewData["Title"] = "All SiteContents";
+}
+
+<div>
+	<table id="siteContentTable" class="table table-striped display text-center">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>SiteContentTypeId</th>
+				<th>MediaId</th>
+				<th>SeoId</th>
+				<th>TagId</th>
+				<th>Content</th>
+				<th>IsActive</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+@section Scripts
+	{
+	<script>
+		console.log(@Json.Serialize(Model))
+		$(document).ready(function () {
+			$('#siteContentTable').DataTable({
+				data: @Json.Serialize(Model),
+				columns: [
+					{ data: "title" },
+					{ data: "siteContentTypeId" },
+					{ data: "mediaId" },
+					{ data: "seoId" },
+					{ data: "tagId" },
+					{ data: "content" },
+					{ data: "isActive" },
+				],
+				columnDefs: [
+					{ targets: '_all', className: 'dt-left' }
+				],
+			});
+		});
+	</script>
+}
