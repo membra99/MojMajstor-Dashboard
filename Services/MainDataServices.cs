@@ -21,47 +21,49 @@ namespace Services
     public class MainDataServices : BaseServices
     {
         public static UsersServices _userServices;
-		private readonly IAWSS3FileService _AWSS3FileService;
+        private readonly IAWSS3FileService _AWSS3FileService;
 
-		public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService) : base(context, mapper)
+        public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService) : base(context, mapper)
         {
             _userServices = usersServices;
-			_AWSS3FileService = AWSS3FileService;
-		}
+            _AWSS3FileService = AWSS3FileService;
+        }
 
-		public List<ChildODTO> children = new List<ChildODTO>();
+        public List<ChildODTO> children = new List<ChildODTO>();
         private int i = 0;
 
-		#region FileUploads
-		public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int productId)
-		{
-			bool successUpload = false;
+        #region FileUploads
 
-			if (awsFile.Attachments.Count > 0)
-				successUpload = await _AWSS3FileService.UploadFile(awsFile);
+        public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int productId)
+        {
+            bool successUpload = false;
 
-			if (successUpload)
-			{
-				var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
-				var media = new Media();
+            if (awsFile.Attachments.Count > 0)
+                successUpload = await _AWSS3FileService.UploadFile(awsFile);
+
+            if (successUpload)
+            {
+                var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
+                var media = new Media();
                 media.ProductId = productId;
-				media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
-				media.Src = "DOT/" + key.First();
-				media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
-				_context.Medias.Add(media);
-				await _context.SaveChangesAsync();
-				return _mapper.Map<MediaODTO>(media);
-			}
-			else
-			{
-				return null;
-			}
-		}
-		#endregion
+                media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
+                media.Src = "DOT/" + key.First();
+                media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
+                _context.Medias.Add(media);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<MediaODTO>(media);
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-		#region Categories
+        #endregion FileUploads
 
-		private IQueryable<CategoriesODTO> GetCategories(int id)
+        #region Categories
+
+        private IQueryable<CategoriesODTO> GetCategories(int id)
         {
             return from x in _context.Categories
                    where (id == 0 || x.CategoryId == id)
@@ -105,10 +107,10 @@ namespace Services
             var categories = await _context.Categories.FindAsync(id);
             if (categories == null) return null;
 
-            var prodAttr = await _context.ProductAttributes.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-            foreach (var item in prodAttr)
+            var Attr = await _context.Attributes.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
+            foreach (var item in Attr)
             {
-                _context.ProductAttributes.Remove(item);
+                _context.Attributes.Remove(item);
                 await SaveContextChangesAsync();
             }
 
@@ -231,12 +233,13 @@ namespace Services
                 child.CategoryId = item.CategoryId;
                 child.IsAttribute = item.IsAttribute;
                 child.ParentCategoryId = item.ParentCategoryId;
-                if (child.IsAttribute == true)
-                {
-                    var val = _context.ProductAttributes.Where(x => x.CategoriesId == child.CategoryId).Select(x => x.Value).ToList();
-                    child.Values = val;
-                    child.ParentCategoryId = Id;
-                }
+                //TODO proveriti da li ovo treba da ostane
+                //if (child.IsAttribute == true)
+                //{
+                //    var val = _context.ProductAttributes.Where(x => x.CategoriesId == child.CategoryId).Select(x => x.Value).ToList();
+                //    child.Values = val;
+                //    child.ParentCategoryId = Id;
+                //}
                 children.Add(child);
             }
             if (children.Count() > i)
@@ -303,30 +306,31 @@ namespace Services
             return children;
         }
 
-        public async Task<List<AttributeODTO>> GetAttribute(int CategoryId)
-        {
-            List<AttributeODTO> category = await (from x in _context.Categories
-                                                  where x.ParentCategoryId == CategoryId
-                                                  select new AttributeODTO
-                                                  {
-                                                      CategoryId = x.CategoryId,
-                                                      CategoryName = x.CategoryName
-                                                  }).ToListAsync();
+        //public async Task<List<AttributeODTO>> GetAttribute(int CategoryId)
+        //{
+        //    List<AttributeODTO> category = await (from x in _context.Categories
+        //                                          where x.ParentCategoryId == CategoryId
+        //                                          select new AttributeODTO
+        //                                          {
+        //                                              CategoryId = x.CategoryId,
+        //                                              CategoryName = x.CategoryName
+        //                                          }).ToListAsync();
 
-            List<AttributeODTO> retval = new List<AttributeODTO>();
-            foreach (var item in category)
-            {
-                AttributeODTO attributeValue = new AttributeODTO();
-                attributeValue.CategoryId = item.CategoryId;
-                attributeValue.CategoryName = item.CategoryName;
-                attributeValue.Value = await (from x in _context.ProductAttributes
-                                              where x.CategoriesId == item.CategoryId
-                                              select x.Value).Distinct().ToListAsync();
-                retval.Add(attributeValue);
-            }
+        //    List<AttributeODTO> retval = new List<AttributeODTO>();
+        //    TODO proveriti da li ovo treba
+        //    foreach (var item in category)
+        //    {
+        //        AttributeODTO attributeValue = new AttributeODTO();
+        //        attributeValue.CategoryId = item.CategoryId;
+        //        attributeValue.CategoryName = item.CategoryName;
+        //        attributeValue.Value = await (from x in _context.ProductAttributes
+        //                                      where x.CategoriesId == item.CategoryId
+        //                                      select x.Value).Distinct().ToListAsync();
+        //        retval.Add(attributeValue);
+        //    }
 
-            return retval;
-        }
+        //    return retval;
+        //}
 
         #endregion Product
 
@@ -396,8 +400,7 @@ namespace Services
         {
             var siteContentType = await _context.SiteContentTypes.Where(x => x.SiteContentTypeName == Type).Select(x => x.SiteContentTypeId).SingleOrDefaultAsync();
             return await _context.SiteContents.Where(x => x.SiteContentTypeId == siteContentType && x.IsActive == true).Select(x => _mapper.Map<SiteContentODTO>(x)).ToListAsync();
-        } 
-
+        }
 
         public async Task<SiteContentODTO> AddSiteContent(SiteContentIDTO siteContentIDTO)
         {
@@ -446,7 +449,7 @@ namespace Services
             return siteContentODTO;
         }
 
-        #endregion
+        #endregion SiteContent
 
         #region Order
 
@@ -464,12 +467,12 @@ namespace Services
 
         public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
         {
-            var isUserExist = await _context.Users.Where(x => x.Email== usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
+            var isUserExist = await _context.Users.Where(x => x.Email == usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
             int UserID = isUserExist;
             if (isUserExist == 0)
             {
-                    var user = await _userServices.AddUser(usersIDTO);
-                    UserID = user.UsersId;
+                var user = await _userServices.AddUser(usersIDTO);
+                UserID = user.UsersId;
             }
 
             return UserID;
@@ -479,7 +482,7 @@ namespace Services
         {
             var orders = await _context.Orders.Include(x => x.Users).Select(x => _mapper.Map<OrderODTO>(x)).ToListAsync();
             return orders;
-		}
+        }
 
         public async Task<FullOrderODTO> GetFullOrderById(int id)
         {
@@ -529,7 +532,6 @@ namespace Services
             return await GetOrderById(order.OrderId);
         }
 
-
         public async Task PostOrder(OrderDetailsIDTO orderIDTO)
         {
             var userId = await AnonimusOrRegistredUser(orderIDTO.UsersIDTO);
@@ -569,7 +571,7 @@ namespace Services
             return ordersODTO;
         }
 
-        #endregion
+        #endregion Order
 
         #region Declaration
 
@@ -623,7 +625,7 @@ namespace Services
             return declarationODTO;
         }
 
-        #endregion
+        #endregion Declaration
 
         #region Media
 
@@ -634,7 +636,7 @@ namespace Services
             foreach (var item in media)
             {
                 var index = item.Src.LastIndexOf('/');
-                item.Src = item.Src.Substring(index+1);
+                item.Src = item.Src.Substring(index + 1);
             }
 
             return media;
@@ -642,6 +644,85 @@ namespace Services
 
         //public async Task<List<MediaODTO>> DeleteMultipleMedia()
 
-        #endregion
+        #endregion Media
+
+        #region Attributes
+
+        private IQueryable<AttributesODTO> GetAttributes(int id)
+        {
+            return from x in _context.Attributes.Include(x => x.Categories)
+                   where (id == 0 || x.AttributesId == id)
+                   select _mapper.Map<AttributesODTO>(x);
+        }
+
+        public async Task<AttributesODTO> GetAttributesById(int id)
+        {
+            return await GetAttributes(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<List<CategoriesODTO>> GetAllAttributesByCategoryName(int categoryId)
+        {
+            var attributes = await _context.Categories.Where(x => x.ParentCategoryId == categoryId && x.IsAttribute == true).Select(x => _mapper.Map<CategoriesODTO>(x)).ToListAsync();
+            return attributes;
+        }
+
+        public async Task<List<CategoriesODTO>> GetAllCategoriesWithAttributes()
+        {
+            var categoryWithAttr = new List<Categories>();
+            var attributes = await _context.Categories.Where(x => x.IsAttribute == true).Select(x => x.ParentCategoryId).Distinct().ToListAsync();
+            foreach (var attr in attributes)
+            {
+                var x = await _context.Categories.Where(x => x.CategoryId == attr).SingleOrDefaultAsync();
+                categoryWithAttr.Add(x);
+            }
+            return _mapper.Map<List<CategoriesODTO>>(categoryWithAttr);
+        }
+
+        public async Task<List<AttributesODTO>> GetAllAttributesValueByAttributeName(int categoryId)
+        {
+            var attributes = await _context.Attributes.Include(x => x.Categories).Where(x => x.CategoriesId == categoryId).Select(x => _mapper.Map<AttributesODTO>(x)).ToListAsync();
+            return attributes;
+        }
+
+        public async Task<AttributesODTO> AddAttributes(AttributesIDTO attributesIDTO)
+        {
+            var attributes = _mapper.Map<Attributes>(attributesIDTO);
+            attributes.AttributesId = 0;
+            var isAttribute = await _context.Categories.Where(x => x.CategoryId == attributes.CategoriesId).Select(x => x.IsAttribute).FirstOrDefaultAsync();
+            if (isAttribute == true)
+            {
+                _context.Attributes.Add(attributes);
+
+                await SaveContextChangesAsync();
+
+                return await GetAttributesById(attributes.AttributesId);
+            }
+            else
+                return null;
+        }
+
+        public async Task<AttributesODTO> EditAttributes(AttributesIDTO attributesIDTO)
+        {
+            var attributes = _mapper.Map<Attributes>(attributesIDTO);
+            _context.Entry(attributes).State = EntityState.Modified;
+            await SaveContextChangesAsync();
+
+            return await GetAttributesById(attributes.AttributesId);
+        }
+
+        public async Task<AttributesODTO> DeleteAttributes(int id)
+        {
+            var attributes = await _context.Attributes.FindAsync(id);
+            if (attributes == null) return null;
+
+            var attributesODTO = await GetAttributesById(id);
+
+            _context.Attributes.Remove(attributes);
+            await SaveContextChangesAsync();
+
+            return attributesODTO;
+        }
+
+        #endregion Attributes
     }
 }

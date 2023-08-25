@@ -51,16 +51,16 @@ namespace Universal.Controllers
             return categories;
         }
 
-        [HttpGet("GetAttributes")]
-        public async Task<ActionResult<IEnumerable<AttributeODTO>>> GetAttributes(int CategoryId)
-        {
-            var categories = await _mainDataServices.GetAttribute(CategoryId);
-            if (categories == null)
-            {
-                return NotFound();
-            }
-            return categories;
-        }
+        //[HttpGet("GetAttributes")]
+        //public async Task<ActionResult<IEnumerable<AttributeODTO>>> GetAttributes(int CategoryId)
+        //{
+        //    var categories = await _mainDataServices.GetAttribute(CategoryId);
+        //    if (categories == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return categories;
+        //}
 
         [HttpGet("GetProductDataByCategoryName")]
         public async Task<ActionResult<ParentChildODTO>> GetProductDatas(int Id)

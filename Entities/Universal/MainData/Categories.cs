@@ -18,7 +18,7 @@ namespace Entities.Universal.MainData
 
         public Seo? Seo { get; set; }
         public Media? Media { get; set; }
-        public ICollection<ProductAttributes> ProductAttributes { get; set; }
+        public ICollection<Attributes> Attributes { get; set; }
         public ICollection<Product> Products { get; set; }
     }
 }

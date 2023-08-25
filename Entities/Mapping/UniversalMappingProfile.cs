@@ -40,8 +40,12 @@ namespace Entities.Mapping
             CreateMap<Declaration, DeclarationODTO>();
             CreateMap<DeclarationIDTO, Declaration>();
 
-			CreateMap<SiteContent, SiteContentODTO>();
-			CreateMap<SiteContentIDTO, SiteContent>();
-		}
+            CreateMap<SiteContent, SiteContentODTO>();
+            CreateMap<SiteContentIDTO, SiteContent>();
+
+            CreateMap<Attributes, AttributesODTO>()
+                .ForMember(dest => dest.CategoryName, source => source.MapFrom(m => m.Categories.CategoryName));
+            CreateMap<AttributesIDTO, Attributes>();
+        }
     }
 }

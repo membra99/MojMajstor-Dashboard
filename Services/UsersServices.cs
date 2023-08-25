@@ -57,12 +57,12 @@ namespace Services
                    select _mapper.Map<UsersODTO>(x);
         }
 
-		public async Task<List<UsersODTO>> GetAllUsers()
-		{
-			return await GetUsers(0).AsNoTracking().ToListAsync();
-		}
+        public async Task<List<UsersODTO>> GetAllUsers()
+        {
+            return await GetUsers(0).AsNoTracking().ToListAsync();
+        }
 
-		public async Task<UsersODTO> GetUserById(int id)
+        public async Task<UsersODTO> GetUserById(int id)
         {
             return await GetUsers(id).AsNoTracking().SingleOrDefaultAsync();
         }
@@ -70,7 +70,7 @@ namespace Services
         public async Task<UsersODTO> AddUser(UsersIDTO userIDTO)
         {
             var CheckUser = await _context.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
-            if(CheckUser != null)
+            if (CheckUser != null)
             {
                 return null;
             }

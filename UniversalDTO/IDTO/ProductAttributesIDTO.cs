@@ -9,9 +9,8 @@ namespace Universal.DTO.IDTO
     public class ProductAttributesIDTO
     {
         public int ProductAttributeId { get; set; }
-        public int? CategoriesId { get; set; }
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public bool IsDev { get; set; }
-        public string? Value { get; set; }
+        public int? AttributesId { get; set; }
     }
 }

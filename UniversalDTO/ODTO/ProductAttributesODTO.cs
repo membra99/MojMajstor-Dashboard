@@ -9,18 +9,15 @@ namespace Universal.DTO.ODTO
     public class ProductAttributesODTO
     {
         public int ProductAttributeId { get; set; }
-        public int? CategoriesId { get; set; }
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public bool IsDev { get; set; }
-        public string? Value { get; set; }
+        public int? AttributesId { get; set; }
     }
 
-    public class AttributeODTO
-    {
-        public int CategoryId { get; set; }
-        public string CategoryName { get; set; }
-        public List<string> Value { get; set; }
-
-    }
-    
+    //public class AttributeODTO
+    //{
+    //    public int CategoryId { get; set; }
+    //    public string CategoryName { get; set; }
+    //    public List<string> Value { get; set; }
+    //}
 }

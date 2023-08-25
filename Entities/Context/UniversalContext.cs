@@ -27,9 +27,9 @@ namespace Entities.Context
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<Attributes> Attributes { get; set; }
 
-
-        #endregion
+        #endregion MainDataDataSET
 
         private void UniversalModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,7 +54,7 @@ namespace Entities.Context
             {
                 entity.HasKey(x => x.ProductAttributeId);
 
-                entity.HasOne(x => x.Categories)
+                entity.HasOne(x => x.Attributes)
                 .WithMany(x => x.ProductAttributes)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -74,7 +74,6 @@ namespace Entities.Context
                 entity.HasOne(x => x.Media)
                 .WithMany(x => x.Categories)
                 .OnDelete(DeleteBehavior.Restrict);
-
             });
 
             modelBuilder.Entity<MediaType>(entity =>
@@ -102,13 +101,11 @@ namespace Entities.Context
                 entity.HasOne(x => x.Media)
                 .WithMany(x => x.Users)
                 .OnDelete(DeleteBehavior.Restrict);
-
             });
 
             modelBuilder.Entity<SaleType>(entity =>
             {
                 entity.HasKey(x => x.SaleTypeId);
-
             });
 
             modelBuilder.Entity<Sale>(entity =>
@@ -122,7 +119,6 @@ namespace Entities.Context
                 entity.HasOne(x => x.SaleType)
                 .WithMany(x => x.Sales)
                 .OnDelete(DeleteBehavior.Restrict);
-
             });
 
             modelBuilder.Entity<Seo>(entity =>
@@ -142,7 +138,6 @@ namespace Entities.Context
                 entity.HasOne(x => x.Media)
                 .WithMany(x => x.Tags)
                 .OnDelete(DeleteBehavior.Restrict);
-
             });
 
             modelBuilder.Entity<SiteContent>(entity =>
@@ -164,13 +159,11 @@ namespace Entities.Context
                 entity.HasOne(x => x.SiteContentType)
                 .WithMany(x => x.SiteContents)
                 .OnDelete(DeleteBehavior.Restrict);
-
             });
 
             modelBuilder.Entity<SiteContentType>(entity =>
             {
                 entity.HasKey(x => x.SiteContentTypeId);
-
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -193,6 +186,14 @@ namespace Entities.Context
                 entity.HasOne(x => x.Product)
                .WithMany(x => x.OrderDetails)
                .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<Attributes>(entity =>
+            {
+                entity.HasKey(x => x.AttributesId);
+
+                entity.HasOne(x => x.Categories)
+                .WithMany(x => x.Attributes)
+                .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
