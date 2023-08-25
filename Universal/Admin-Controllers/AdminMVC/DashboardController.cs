@@ -75,14 +75,6 @@ namespace Universal.Admin_Controllers.AdminMVC
 			try
 			{
 				var orders = await _mainDataServices.GetAllOrder();
-                foreach (var item in orders)
-                {
-                    string newDate = item.OrderDate.ToString("yyyy-MM-dd HH:mm:ss");
-                    item.OrderDate = DateTime.Parse(newDate);
-
-					string updatedDate = item.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss");
-					item.UpdatedAt = DateTime.Parse(updatedDate);
-				}
 				return View("../Order/Order", orders);
 			}
 			catch (Exception ex)

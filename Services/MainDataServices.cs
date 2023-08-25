@@ -477,8 +477,9 @@ namespace Services
 
         public async Task<List<OrderODTO>> GetAllOrder()
         {
-            return await _context.Orders.Include(x => x.Users).Select(x => _mapper.Map<OrderODTO>(x)).ToListAsync();
-        }
+            var orders = await _context.Orders.Include(x => x.Users).Select(x => _mapper.Map<OrderODTO>(x)).ToListAsync();
+            return orders;
+		}
 
         public async Task<FullOrderODTO> GetFullOrderById(int id)
         {

@@ -10,10 +10,10 @@ namespace Universal.DTO.ODTO
     {
         public int OrderId { get; set; }
         public int UsersId { get; set; }
-        public DateTime OrderDate { get; set; }
+        public string OrderDate { get; set; }
         public string? OrderStatus { get; set; }
         public string? Email { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string UpdatedAt { get; set; }
 
     }
 
