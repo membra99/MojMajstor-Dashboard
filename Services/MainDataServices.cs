@@ -278,7 +278,7 @@ namespace Services
             return productODTO;
         }
 
-        public async Task<List<ChildODTO2>> GetCategory()
+        public async Task<List<ChildODTO2>> GetCategories()
         {
             var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId == null).SingleOrDefaultAsync();
 

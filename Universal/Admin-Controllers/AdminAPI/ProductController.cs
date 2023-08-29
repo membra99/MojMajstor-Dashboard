@@ -43,7 +43,7 @@ namespace Universal.Controllers
         [HttpGet("GetCategories")]
         public async Task<ActionResult<IEnumerable<ChildODTO2>>> GetCategories()
         {
-            var categories = await _mainDataServices.GetCategory();
+            var categories = await _mainDataServices.GetCategories();
             if (categories == null)
             {
                 return NotFound();

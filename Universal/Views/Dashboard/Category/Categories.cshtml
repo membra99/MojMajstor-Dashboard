@@ -1,0 +1,185 @@
+﻿@model Universal.DTO.ViewDTO.CategoryAttributeIDTO
+
+@{
+	ViewData["Title"] = "Categories";
+}
+
+<style>
+	ul, #main-list {
+		list-style-type: none;
+	}
+
+	#main-list {
+		margin: 0;
+		padding: 0;
+	}
+
+	.multi-cat {
+		cursor: pointer;
+		user-select: none;
+	}
+
+		.multi-cat::before {
+			content: "\25B6";
+			color: black;
+			display: inline-block;
+			margin-right: 6px;
+		}
+
+	.multi-cat-down::before {
+		transform: rotate(90deg);
+	}
+
+	.nested {
+		display: none;
+	}
+
+	.active {
+		display: block;
+	}
+
+	.btn-format {
+		width: 25px;
+		height: 25px;
+		padding: 0;
+		margin: 0;
+		margin-right: 3px;
+		line-height: 0;
+	}
+
+	.category-name {
+		margin-right: 20px;
+	}
+</style>
+
+<div class="col-10">
+	<ul id="main-list">
+	</ul>
+</div>
+
+<div id="add-edit-modal" class="modal" tabindex="-1" role="dialog">
+	@using (Html.BeginForm("ACTION", "CONTROLLER", FormMethod.Post, new { @id = "form-add-delete" }))
+	{
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="add-edit-title" class="modal-title"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div id="add-edit-body" class="modal-body">
+					@Html.HiddenFor(model => model.CategoryIDTO.CategoryId, new { @id="input-category" })
+					@Html.HiddenFor(model => model.CategoryIDTO.ParentCategoryId, new { @id="input-parent" })
+					@Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control", placeholder = "Category Name" })
+					<label>Is Attribute:</label>
+					@Html.CheckBoxFor(model => model.CategoryIDTO.IsAttribute, new { @id="is-attribute" })
+				</div>
+				<div class="modal-footer">
+					<input type="submit" class="btn btn-primary" value="Save" />
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+<div id="delete-modal" class="modal" tabindex="-1" role="dialog">
+	@using (Html.BeginForm("DeleteCategory", "Dashboard", FormMethod.Post))
+	{
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Delete Category</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Are you sure you want to delete the category?</p>
+					<input id="input-delete" type="hidden" name="categoryId"/>
+				</div>
+				<div class="modal-footer">
+					<input type="submit" class="btn btn-primary" value="Delete" />
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+@section Scripts{
+	<script>
+		let categories = @Json.Serialize(Model.AllCategories);
+
+		for (let i = 0; i < categories.length; i++) {
+			for (let j = 0; j < categories[i].length; j++) {
+				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
+					let children = $(".child_of_" + categories[i][j].categoryId)
+					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + "'></ul>");
+
+					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
+
+					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row'><span class='multi-cat'>"
+						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span>"
+						+ "<button class='btn-add btn btn-success btn-format' data-cat-id='" + categories[i][j].categoryId + "'>+</button>"
+						+ "<button class='btn-edit btn btn-warning btn-format' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'>/</button>"
+						+ "<button class='btn-delete btn btn-danger btn-format' data-cat-id='" + categories[i][j].categoryId + "'>*</button></div>");
+				}
+				else {
+					$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+						+ "<div class='mb-2 d-flex flex-row'><span class='category-name'>" + categories[i][j].categoryName + "</span>"
+						+ "<button class='btn-add btn btn-success btn-format' data-cat-id='" + categories[i][j].categoryId + "'>+</button>"
+						+ "<button class='btn-edit btn btn-warning btn-format' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'>/</button>"
+						+ "<button class='btn-delete btn btn-danger btn-format' data-cat-id='" + categories[i][j].categoryId + "'>*</button></div></li>");
+				}
+			}
+		}
+
+		let catrgory_elements = document.getElementsByClassName("multi-cat");
+		for (let i = 0; i < catrgory_elements.length; i++) {
+			catrgory_elements[i].addEventListener("click", function () {
+				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active");
+				this.classList.toggle("multi-cat-down");
+			});
+		}
+
+		//v v v BUTTONS v v v
+		let add_buttons = document.getElementsByClassName("btn-add");
+		for (let i = 0; i < add_buttons.length; i++) {
+			add_buttons[i].addEventListener("click", function () {
+				let categoryId = this.dataset.catId;
+				$("#input-parent").val(categoryId);
+
+				$("#add-edit-modal").modal("toggle");
+				$("#add-edit-title").html("Add Category");
+
+				$("#form-add-delete").attr("action", "@Url.Action("AddCategory", "Dashboard")");
+			});
+		}
+
+		let edit_buttons = document.getElementsByClassName("btn-edit");
+		for (let i = 0; i < edit_buttons.length; i++) {
+			edit_buttons[i].addEventListener("click", function () {
+				let categoryId = this.dataset.catId;
+				let parentId = this.dataset.parentId;
+				$("#input-category").val(categoryId);
+				$("#input-parent").val(parentId);
+
+				$("#add-edit-modal").modal("toggle");
+				$("#add-edit-title").html("Edit Category");
+
+				$("#form-add-delete").attr("action", "@Url.Action("EditCategory", "Dashboard")");
+			});
+		}
+
+		let delete_buttons = document.getElementsByClassName("btn-delete");
+		for (let i = 0; i < delete_buttons.length; i++) {
+			delete_buttons[i].addEventListener("click", function () {
+				let categoryId = this.dataset.catId;
+				$("#input-delete").val(categoryId);
+				$("#delete-modal").modal("toggle");
+			});
+		}
+	</script>
+}
