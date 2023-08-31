@@ -14,6 +14,6 @@ namespace Universal.DTO.IDTO
         public string? CategoryName { get; set; }
         public bool IsAttribute { get; set; }
         public bool? IsActive { get; set; }
-        public SeoIDTO? SeoIDTO { get; set; }
+        public SeoIDTO? SeoIDTO { get; set; } = new SeoIDTO();
     }
 }
