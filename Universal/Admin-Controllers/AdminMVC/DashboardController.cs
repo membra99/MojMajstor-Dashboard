@@ -242,68 +242,58 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-		#endregion Data/Products
+        #endregion Data/Products
 
-				return RedirectToAction("AllData", "Dashboard");
+        #region Categories
+
+        public async Task<IActionResult> AllCategories()
+        {
+            var categories = await _mainDataServices.GetCategories(); //Dont pull non active categories
+            var devidedList = new List<List<ChildODTO2>>();
+
+            var rootList = categories.Where(x => x.ParentCategoryId == null).ToList();
+            devidedList.Add(rootList);
+            while (categories.Any(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)))
+            {
+                rootList = categories.Where(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)).ToList();
+                devidedList.Add(rootList);
+            }
+            devidedList.Reverse();
+            return View("Category/Categories", new CategoryAttributeIDTO { AllCategories = devidedList });
+        }
+
+        public async Task<IActionResult> AddCategory(CategoryAttributeIDTO categoryAttributeIDTO)
+        {
+            await _mainDataServices.AddCategory(categoryAttributeIDTO.CategoryIDTO);
+            return RedirectToAction("AllCategories");
+        }
+
+        public async Task<IActionResult> EditCategory(CategoryAttributeIDTO categoryAttributeIDTO)
+        {
+            await _mainDataServices.EditCategory(categoryAttributeIDTO.CategoryIDTO);
+            return RedirectToAction("AllCategories");
+        }
+
+        public async Task<IActionResult> DeleteCategory(int categoryId)
+        {
+            await _mainDataServices.DeleteCategory(categoryId);
+            return RedirectToAction("AllCategories");
+        }
+
+        public async Task<IActionResult> AllAttributes(int categoryid)
+        {
+            try
+            {
+                var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
+                return View("../Data/Attributes", categories);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        #endregion Categories
     }
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-}
-		}
-
-		#region Categories
-
-		public async Task<IActionResult> AllCategories()
-{
-    var categories = await _mainDataServices.GetCategories(); //Dont pull non active categories
-    var devidedList = new List<List<ChildODTO2>>();
-
-    var rootList = categories.Where(x => x.ParentCategoryId == null).ToList();
-    devidedList.Add(rootList);
-    while (categories.Any(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)))
-    {
-        rootList = categories.Where(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)).ToList();
-        devidedList.Add(rootList);
-    }
-    devidedList.Reverse();
-    return View("Category/Categories", new CategoryAttributeIDTO { AllCategories = devidedList });
-}
-
-public async Task<IActionResult> AddCategory(CategoryAttributeIDTO categoryAttributeIDTO)
-{
-    await _mainDataServices.AddCategory(categoryAttributeIDTO.CategoryIDTO);
-    return RedirectToAction("AllCategories");
-}
-
-public async Task<IActionResult> EditCategory(CategoryAttributeIDTO categoryAttributeIDTO)
-{
-    await _mainDataServices.EditCategory(categoryAttributeIDTO.CategoryIDTO);
-    return RedirectToAction("AllCategories");
-}
-
-public async Task<IActionResult> DeleteCategory(int categoryId)
-{
-    await _mainDataServices.DeleteCategory(categoryId);
-    return RedirectToAction("AllCategories");
-}
-
-		#endregion Categories
-	}
-
-		public async Task<IActionResult> AllAttributes(int categoryid)
-{
-    try
-    {
-        var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
-        return View("../Data/Attributes", categories);
-    }
-    catch (Exception ex)
-    {
-        ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-        return View("Home");
-    }
-}
-	}
 }
