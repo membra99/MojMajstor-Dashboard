@@ -13,7 +13,7 @@ namespace Universal.DTO.IDTO
         public int? MediaId { get; set; }
         public string? CategoryName { get; set; }
         public bool IsAttribute { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? IsActive { get; set; } = true;
         public SeoIDTO? SeoIDTO { get; set; } = new SeoIDTO();
     }
 }
