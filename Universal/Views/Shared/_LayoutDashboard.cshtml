@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<script>
 		tinymce.init({
@@ -33,6 +34,7 @@
 				<li class="nav-item">@Html.ActionLink("New Users", "NewUser", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Data", "AllData", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "nav-link" })</li>
+				<li class="nav-item">@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Categories", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
 				<li class="nav-item">@Html.ActionLink("Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "nav-link" })</li>

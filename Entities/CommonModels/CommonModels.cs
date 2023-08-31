@@ -6,11 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Entities.Universal.MainData;
 using Microsoft.AspNetCore.Http;
+using Universal.DTO.ODTO;
 
 namespace Universal.DTO.CommonModels
 {
     public class CommonModels
-    {   
+    {
         //authenticate models
         public class AuthenticateResponse
         {
@@ -19,7 +20,6 @@ namespace Universal.DTO.CommonModels
             public string? LastName { get; set; }
             public string? Username { get; set; }
             public string Token { get; set; }
-
 
             public AuthenticateResponse(Users user, string token)
             {
@@ -49,21 +49,27 @@ namespace Universal.DTO.CommonModels
             public string? token { get; set; }
         }
 
-
         //AWS models
         public class AWSFileUpload
         {
             public List<IFormFile> Attachments { get; set; }
         }
+
         public class ServiceConfiguration
         {
             public AWSS3Configuration AWSS3 { get; set; }
         }
+
         public class AWSS3Configuration
         {
             public string BucketName { get; set; }
             public string BucketURL { get; set; }
         }
 
+        public class CategoriesWithAttributes
+        {
+            public List<CategoriesODTO> CategoriesODTOs { get; set; } = new List<CategoriesODTO>();
+            public List<AttributeODTO> AttributeODTOs { get; set; } = new List<AttributeODTO>();
+        }
     }
 }

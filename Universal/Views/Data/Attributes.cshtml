@@ -1,0 +1,496 @@
+﻿
+@model List<Universal.DTO.ODTO.CategoriesODTO>
+@{
+    ViewData["Title"] = "Data";
+}
+
+<div class="row">
+    <div class="col-3">
+    <select id="attrSelect" class="form-select mb-3" >
+        <option>Select Category</option>
+        @foreach (var cat in Model)
+        {
+            <option value="@cat.CategoryId">@cat.CategoryName</option>
+        }
+    </select>
+    </div>
+    <div class="col-4">
+    <button type="button" class="btn btn-primary" id="addNewAttributeButton">Add New Attribute</button>
+    </div>
+
+    <div class="col-12">
+    <table id="userTable" class="table table-striped display text-center w-100">
+        <thead>
+            <tr>
+                <th></th>
+                <th>CategoryName</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addAttributeModal" tabindex="-1" aria-labelledby="addAttributeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAttributeModalLabel">Add New Attribute</h5>
+                
+            </div>
+            <div class="modal-body">
+                <form id="addAttributeForm">
+                    <div class="form-group">
+                        <label for="attributeName">Attribute Name</label>
+                        <input type="text" class="form-control" id="attributeName" name="attributeName">
+                        <small id="attributeNameError" class="form-text text-danger"></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeAttributeButton" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveAttributeButton">Save Attribute</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addValueModal" tabindex="-1" aria-labelledby="addValueModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addValueModalLabel">Add New Value</h5>
+            </div>
+            <div class="modal-body">
+                <form id="addValueForm">
+                    <div class="form-group">
+                        <label for="valueName">Value</label>
+                        <input type="text" class="form-control" id="valueName" name="valueName">
+                        <small id="valueNameError" class="form-text text-danger"></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeValueButton" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveValueButton">Save Value</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this attribute?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+                <button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteValueModal" tabindex="-1" aria-labelledby="confirmDeleteValueLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteValueLabel">Confirm Deletion</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this value?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDeleteValueButton">No</button>
+                <button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAttributeModal" tabindex="-1" aria-labelledby="editAttributeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAttributeModalLabel">Edit Selected Attribute</h5>
+
+            </div>
+            <div class="modal-body">
+                <form id="editAttributeForm">
+                    <div class="form-group">
+                        <label for="editAttributeName">Attribute Name</label>
+                        <input type="text" class="form-control" id="editAttributeName" name="editAttributeName">
+                        <small id="editAttributeNameError" class="form-text text-danger"></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeEditButton" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveEditButton">Save Attribute</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+    {
+           <script>
+
+               
+            $(document).ready(function () {
+
+            $("#closeAttributeButton").click(function(){
+                $('#addAttributeModal').modal('hide');
+            });
+
+            $("#closeEditButton").click(function(){
+                $('#editAttributeModal').modal('hide');
+                $("#attributeNameError").text("");
+                $('#editAttributeName').val("");
+            });
+
+            $("#closeValueButton").click(function(){
+                $('#addValueModal').modal('hide');
+            });
+
+            $("#closeConfirmDeleteButton").click(function(){
+                $('#confirmDeleteModal').modal('hide');
+            });
+
+            $('#addNewAttributeButton').on('click', function () {
+                   if ($("#attrSelect")[0].selectedIndex !== 0) {
+                       $('#addAttributeModal').modal('show');
+                       $("#attributeNameError").text("");
+                       $('#attributeName').val("");
+                   }
+            });
+
+            let userTable = $('#userTable').DataTable({
+                    scrollX: true,
+                    columns: [
+                        {
+                            className: 'details-control',
+                            orderable: false,
+                            data: null,
+                            defaultContent: '<i class="fas fa-plus"></i>'
+                        },
+                        { data: "categoryName" },
+                        { className: 'actions-control',
+                        orderable: false,
+                        data: null,
+                            defaultContent:
+                                     '<i class="fas fa-plus icon-spacing" id="addAttrIcon"></i>'+
+                                     '<i class="fa-solid fa-pen icon-spacing"></i> ' +
+                                     '<i class="fa-solid fa-trash-can icon-spacing"></i>' }
+                    ],
+                    columnDefs: [
+                        { targets: '_all', className: 'dt-left' }
+                    ],
+                });
+
+            $('#userTable tbody').on('click', 'td.details-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = userTable.row(tr);
+
+                    if (row.child.isShown()) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    } else {
+                        // Open this row
+                        var data = row.data();
+                        $.get("https://localhost:7213/api/Attributes/GetAllAttributesValueByAttributeName?categoryId=" + data.categoryId, function (attributesData) {
+                            var childTable = '<table class="table table-bordered">' +
+                                '<thead>' +
+                                '<tr>' +
+                                '<th>Value</th>' +
+                                '<th>Actions</th>' + 
+                                '</tr>' +
+                                '</thead>' +
+                                '<tbody>';
+
+                            for (var i = 0; i < attributesData.length; i++) {
+                                var attributesId = attributesData[i].attributesId;
+                                      
+                                childTable += '<tr>' +
+                                    '<td>' + attributesData[i].value + '</td>' +
+                                    '<td>' +
+                                        '<i class="fa-solid fa-trash-can icon-spacing delete-child-row" data-attribute-id="' + attributesId + '"></i>' +
+                                    '</td>' +
+                                    '</tr>';
+                            }
+
+                            childTable += '</tbody></table>';
+
+                            row.child(childTable).show();
+                            tr.addClass('shown');
+
+                            $('.delete-child-row').on('click', function(event) {
+                                    event.stopPropagation();
+                            var attributeId = $(this).data('attributeId');
+                            deleteAttribute(attributeId);
+                });
+
+                        }).fail(function (xhr, status, error) {
+                            // Handle error
+                        });
+                    }
+                });
+
+            $('#userTable tbody').on('click', 'td.actions-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = userTable.row(tr);
+                    var rowData = row.data();
+                    let selectedAttributeId = rowData.categoryId;
+
+                    var targetElement = $(event.target);
+                    if (targetElement.hasClass('fa-plus')){
+                        $('#addValueModal').modal('show');
+                            $('#saveValueButton').val(selectedAttributeId);
+                        $("#valueNameError").text("");
+                        $('#valueName').val("");
+                    }
+                    
+                });
+
+            $('#userTable tbody').on('click', 'td.actions-control', function () {
+                        var tr = $(this).closest('tr');
+                        var row = userTable.row(tr);
+                        var rowData = row.data();
+                        let selectedAttributeId = rowData.categoryId;
+                        
+                        var targetElement = $(event.target);
+                        if (targetElement.hasClass('fa-pen')){
+                            $('#editAttributeModal').modal('show');
+                                $('#saveEditButton').val(selectedAttributeId);
+                            $("#attributeNameError").text("");
+                                $('#attributeName').val("");
+                        }
+                    });
+
+            $('#userTable tbody').on('click', 'td.actions-control', function () {
+                      var tr = $(this).closest('tr');
+                      var row = userTable.row(tr);
+
+                      var targetElement = $(event.target);
+
+                      if (targetElement.hasClass('fa-trash-can')) {
+                          var rowData = row.data();
+
+                          let selectedAttributeId = rowData.categoryId;
+
+                          // Show a confirmation modal
+                          $('#confirmDeleteModal').modal('show');
+
+                          $('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+
+                              // Close the confirmation modal
+                              $('#confirmDeleteModal').modal('hide');
+
+                              $.ajax({
+                                  type: 'DELETE',
+                                  url: 'https://localhost:7213/api/Categories/' + selectedAttributeId,
+                                  contentType: 'application/json',
+                                  success: function (response) {
+                                      updateTableData(response.parentCategoryId);
+                                  },
+                                  error: function (xhr, status, error) {
+                                      // Handle error
+                                  }
+                              });
+                          });
+
+                          $('#confirmDeleteModal').on('hidden.bs.modal', function () {
+                              
+                          });
+                          }
+                        });
+
+            $('#saveAttributeButton').on('click', function () {
+                    let selectedCategoryId = $("#attrSelect").val();
+                    let attributeName = $("#attributeName").val();
+                            console.log(selectedCategoryId);
+                    $("#attributeNameError").text("");
+                    
+                    // Validate the attribute name input
+                        if (attributeName=="") {
+                        $("#attributeNameError").text("Attribute Name cannot be empty.");
+                        return; // Stop further processing
+                    } else {
+                    // Create the JSON object
+                    let newAttribute = {
+                        categoryId: 0,
+                        parentCategoryId: selectedCategoryId,
+                        mediaId: null,
+                        categoryName: attributeName,
+                        isAttribute: true,
+                        isActive: true
+                    };
+
+                    // Send the JSON object to the API using AJAX
+                    $.ajax({
+                        type: 'POST',
+                        url: 'https://localhost:7213/api/Categories',
+                        contentType: 'application/json',
+                        data: JSON.stringify(newAttribute),
+                        success: function (response) {
+                            $('#addAttributeModal').modal('hide');
+                            updateTableData(selectedCategoryId);
+                        },
+                        error: function (xhr, status, error) {
+                                 $('#errorText').text('An error occurred while adding the attribute.');
+                        }
+                        });}
+                });
+
+            $('#saveEditButton').on('click', function () {
+
+                        var tr = $(this).closest('tr');
+                        var row = userTable.row(tr);
+
+                        console.log(row);
+
+                        let selectedParentCategoryId = $("#attrSelect").val();
+                        let attributeName = $("#editAttributeName").val();
+                        $("#editAttributeNameError").text("");
+                        
+                        var rowData = row.data();
+
+                            let selectedCategoryId =  $('#saveEditButton').val();
+
+                        // Validate the attribute name input
+                        if (attributeName=="") {
+                                $("#editAttributeNameError").text("Value Name cannot be empty.");
+                                
+                            return; // Stop further processing
+                        } else {
+                        // Create the JSON object
+                        let newAttribute = {
+                            categoryId: selectedCategoryId,
+                            parentCategoryId: selectedParentCategoryId,
+                            mediaId: null,
+                            categoryName: attributeName,
+                            isAttribute: true,
+                            isActive: true
+                        };
+                        console.log(newAttribute);
+                        // Send the JSON object to the API using AJAX
+                        $.ajax({
+                            type: 'PUT',
+                            url: 'https://localhost:7213/api/Categories',
+                            contentType: 'application/json',
+                            data: JSON.stringify(newAttribute),
+                            success: function (response) {
+                                $('#editAttributeModal').modal('hide');
+                                    updateTableData(selectedParentCategoryId);
+                            },
+                            error: function (xhr, status, error) {
+                                     $('#errorText').text('An error occurred while adding the attribute.');
+                            }
+                            });}
+                    });
+
+            $("#attrSelect").on("change", function () {
+                console.log("cao");
+                    let id = $("#attrSelect").val();
+                       updateTableData(id);
+                });
+
+            $('#saveValueButton').on('click', function () {
+
+                        let selectedCategoryId = $("#saveValueButton").val();
+                        let attributeName = $("#valueName").val();
+                        $("#valueNameError").text("");
+                             let selectedParentCategoryId = $("#attrSelect").val();
+                           
+                        // Validate the attribute name input
+                            if (attributeName=="") {
+                                $("#valueNameError").text("Value Name cannot be empty.");
+                            return; // Stop further processing
+                        } else {
+                        // Create the JSON object
+                        let newAttribute = {
+                            attributeId: 0,
+                            value: attributeName,
+                            categoriesId: selectedCategoryId
+                        };
+                                 console.log(newAttribute);
+                        // Send the JSON object to the API using AJAX
+                        $.ajax({
+                            type: 'POST',
+                            url: 'https://localhost:7213/api/Attributes',
+                            contentType: 'application/json',
+                            data: JSON.stringify(newAttribute),
+                            success: function (response) {
+                                $('#addValueModal').modal('hide');
+                                    updateTableData(selectedParentCategoryId);
+                            },
+                            error: function (xhr, status, error) {
+                                     $('#errorText').text('An error occurred while adding the attribute.');
+                            }
+                            });}
+                    });
+
+            function updateTableData(categoryId) {
+                    console.log(categoryId);
+                    $.get("https://localhost:7213/api/Attributes/GetAllAttributesByCategoryName?categoryId=" + categoryId, function (data) {
+                        userTable.clear().rows.add(data).draw();
+                    }).fail(function (xhr, status, error) {
+                        userTable.clear().draw();
+                    });
+                    }
+            
+            function deleteAttribute(attributeId) {
+                    console.log(attributeId);
+                         var tr = $(this).closest('tr');
+                          var row = userTable.row(tr);
+                          let selectedParentCategoryId = $("#attrSelect").val();
+                          var targetElement = $(event.target);
+
+                          if (targetElement.hasClass('fa-trash-can')) {
+
+                              // Show a confirmation modal
+                                  $('#confirmDeleteValueModal').modal('show');
+
+                                  $('#confirmDeleteValueModal').on('click', '.btn-confirm-delete', function () {
+
+                                  // Close the confirmation modal
+                                      $('#confirmDeleteValueModal').modal('hide');
+
+                                      $.ajax({
+                        type: 'DELETE',
+                        url: 'https://localhost:7213/api/Attributes/' + attributeId,
+                        success: function (response) {
+                                    updateTableData(selectedParentCategoryId);
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            }
+                        });
+                              });
+
+                                  $('#confirmDeleteValueModal').on('hidden.bs.modal', function () {
+
+                              });
+                              }
+
+
+
+                }
+
+
+            });
+        </script>
+}
+

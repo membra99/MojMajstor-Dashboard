@@ -1,18 +1,18 @@
-﻿.side-navigation{
+﻿.side-navigation {
     width: 200px;
-    height:100vh;   
+    height: 100vh;
     position: fixed;
     z-index: 5;
 }
 
-.header-navigation{
-    width:100vw;
+.header-navigation {
+    width: 100vw;
     height: 50px;
-    position:fixed
+    position: fixed
 }
 
-.content-offset{
-    margin-top:60px;
+.content-offset {
+    margin-top: 60px;
     margin-left: 210px;
     width: 100%;
 }
@@ -20,4 +20,8 @@
 .content-wrapper {
     display: flex;
     width: 99vw;
+}
+
+.icon-spacing {
+    margin-right: 10px;
 }

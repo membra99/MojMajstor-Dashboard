@@ -78,9 +78,12 @@ namespace Services
         public async Task<CategoriesODTO> AddCategory(CategoriesIDTO categoriesIDTO)
         {
             int seo = 0;
-            if (categoriesIDTO.SeoIDTO.GoogleKeywords != null || categoriesIDTO.SeoIDTO.GoogleKeywords != null)
+            if (categoriesIDTO.IsAttribute == false)
             {
-                seo = await AddSeo(categoriesIDTO.SeoIDTO.GoogleDesc, categoriesIDTO.SeoIDTO.GoogleKeywords);
+                if (categoriesIDTO.SeoIDTO.GoogleKeywords != null || categoriesIDTO.SeoIDTO.GoogleKeywords != null)
+                {
+                    seo = await AddSeo(categoriesIDTO.SeoIDTO.GoogleDesc, categoriesIDTO.SeoIDTO.GoogleKeywords);
+                }
             }
 
             var categories = _mapper.Map<Categories>(categoriesIDTO);
@@ -306,31 +309,31 @@ namespace Services
             return children;
         }
 
-        //public async Task<List<AttributeODTO>> GetAttribute(int CategoryId)
-        //{
-        //    List<AttributeODTO> category = await (from x in _context.Categories
-        //                                          where x.ParentCategoryId == CategoryId
-        //                                          select new AttributeODTO
-        //                                          {
-        //                                              CategoryId = x.CategoryId,
-        //                                              CategoryName = x.CategoryName
-        //                                          }).ToListAsync();
+        public async Task<List<AttributeODTO>> GetAttribute(int CategoryId)
+        {
+            List<AttributeODTO> category = await (from x in _context.Categories
+                                                  where x.ParentCategoryId == CategoryId
+                                                  select new AttributeODTO
+                                                  {
+                                                      CategoryId = x.CategoryId,
+                                                      CategoryName = x.CategoryName
+                                                  }).ToListAsync();
 
-        //    List<AttributeODTO> retval = new List<AttributeODTO>();
-        //    TODO proveriti da li ovo treba
-        //    foreach (var item in category)
-        //    {
-        //        AttributeODTO attributeValue = new AttributeODTO();
-        //        attributeValue.CategoryId = item.CategoryId;
-        //        attributeValue.CategoryName = item.CategoryName;
-        //        attributeValue.Value = await (from x in _context.ProductAttributes
-        //                                      where x.CategoriesId == item.CategoryId
-        //                                      select x.Value).Distinct().ToListAsync();
-        //        retval.Add(attributeValue);
-        //    }
+            List<AttributeODTO> retval = new List<AttributeODTO>();
+            //    TODO proveriti da li ovo treba
+            //    foreach (var item in category)
+            //    {
+            //        AttributeODTO attributeValue = new AttributeODTO();
+            //        attributeValue.CategoryId = item.CategoryId;
+            //        attributeValue.CategoryName = item.CategoryName;
+            //        attributeValue.Value = await (from x in _context.ProductAttributes
+            //                                      where x.CategoriesId == item.CategoryId
+            //                                      select x.Value).Distinct().ToListAsync();
+            //        retval.Add(attributeValue);
+            //    }
 
-        //    return retval;
-        //}
+            return retval;
+        }
 
         #endregion Product
 
@@ -662,7 +665,7 @@ namespace Services
 
         public async Task<List<CategoriesODTO>> GetAllAttributesByCategoryName(int categoryId)
         {
-            var attributes = await _context.Categories.Where(x => x.ParentCategoryId == categoryId && x.IsAttribute == true).Select(x => _mapper.Map<CategoriesODTO>(x)).ToListAsync();
+            var attributes = await _context.Categories.Where(x => x.ParentCategoryId == categoryId && x.IsAttribute == true && x.IsActive == true).Select(x => _mapper.Map<CategoriesODTO>(x)).ToListAsync();
             return attributes;
         }
 
@@ -716,6 +719,14 @@ namespace Services
             if (attributes == null) return null;
 
             var attributesODTO = await GetAttributesById(id);
+
+            var prodAttr = await _context.ProductAttributes.Where(x => x.AttributesId == attributes.AttributesId).ToListAsync();
+
+            foreach (var item in prodAttr)
+            {
+                _context.ProductAttributes.Remove(item);
+                await SaveContextChangesAsync();
+            }
 
             _context.Attributes.Remove(attributes);
             await SaveContextChangesAsync();
