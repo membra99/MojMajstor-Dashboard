@@ -285,7 +285,7 @@ namespace Universal.Admin_Controllers.AdminMVC
             try
             {
                 var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
-                return View("../Data/Attributes", categories);
+                return View("Data/Attributes", categories);
             }
             catch (Exception ex)
             {
