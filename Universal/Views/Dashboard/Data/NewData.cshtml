@@ -28,13 +28,13 @@
 						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextAreaFor(model => model.ProductIDTO.Description, 10, 1, new { @class="form-control", placeholder = "Description" })
+						@Html.TextAreaFor(model => model.ProductIDTO.Description, 10, 1, new { @Id="tiny", @class="form-control", placeholder = "Description" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class="text-danger" })
 					</div>
-					@*<div class="mb-3">
-				@Html.TextBoxFor(model => model.ProductIDTO.Specification, null, new { @class="form-control", placeholder = "Specification" })
-				@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class="text-danger" })
-				</div>*@
+					<div class="mb-3">
+						@Html.TextAreaFor(model => model.ProductIDTO.Specification, 10, 1, new { @Id="tiny", @class="form-control", placeholder = "Specification" })
+						@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class="text-danger" })
+					</div>
 					<div class="mb-3">
 						@Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type="number", @class="form-control", placeholder="Price" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.Price, null, new { @class="text-danger" })
