@@ -3,12 +3,15 @@
     height: 100vh;
     position: fixed;
     z-index: 5;
+    background-color: indigo;
+    margin-top:50px;
 }
 
 .header-navigation {
     width: 100vw;
     height: 50px;
-    position: fixed
+    position: fixed;
+    z-index: 10;
 }
 
 .content-offset {
@@ -24,4 +27,24 @@
 
 .icon-spacing {
     margin-right: 10px;
+    cursor: pointer;
+}
+
+.side-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.side-anchor {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.side-anchor:hover {
+    background-color: #f8f9fa;
 }

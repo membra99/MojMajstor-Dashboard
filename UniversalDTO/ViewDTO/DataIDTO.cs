@@ -12,8 +12,7 @@ namespace Universal.DTO.ViewDTO
 	public class DataIDTO
 	{
 		public ProductIDTO ProductIDTO { get; set; }
-		public List<int>? ProductAttributeTypes { get; set; } = new List<int>();
-		public List<string>? ProductAttributeValues { get; set; } = new List<string>();
+		public List<int>? ProductAttributeValues { get; set; } = new List<int>();
 		public IFormFile FeaturedImage { get; set; }
 		public List<IFormFile>? GalleryImages { get; set; } = new List<IFormFile>();
 

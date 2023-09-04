@@ -25,10 +25,17 @@
 					@Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
 				</div>
 				<div class="mx-auto mb-3 w-50">
-					<input type="submit" value="Login" class="form-control p-2 bg-primary text-light" />
+					<input type="submit" value="Log in" class="form-control p-2 bg-primary text-light" />
 				</div>
 			}
 		</div>
 	</div>
 </div>
 
+@section Scripts{
+	<script>
+		//$('form').keypress(function (event) {
+			//return event.keyCode != 13;
+		//});
+	</script>
+}

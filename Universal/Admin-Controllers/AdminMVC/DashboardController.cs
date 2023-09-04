@@ -180,8 +180,15 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         public async Task<IActionResult> AllAttributesByCategory(int categoryId)
         {
-            var attributes = await _mainDataServices.GetAttribute(categoryId);
-            return Json(new { data = attributes });
+            var attributes = await _mainDataServices.GetAllAttributesByCategoryName(categoryId);
+            Dictionary<int, List<AttributesODTO>> attributeValues = new Dictionary<int, List<AttributesODTO>>();
+            foreach (var attribute in attributes)
+            {
+                var attrValues = await _mainDataServices.GetAllAttributesValueByAttributeName(attribute.CategoryId);
+				attributeValues.Add(attribute.CategoryId, attrValues);
+            }
+
+            return Json(new { data = new { attrs = attributes, attrValues = attributeValues } });
         }
 
         public async Task<IActionResult> AddData(DataIDTO dataIDTO)
@@ -219,16 +226,13 @@ namespace Universal.Admin_Controllers.AdminMVC
                     await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
                 }
 
-                var attributes = dataIDTO.ProductAttributeTypes.Zip(dataIDTO.ProductAttributeValues, (type, value) => new Tuple<int, string>(type, value)).ToList();
-                foreach (var attribute in attributes)
+                foreach (var attributeID in dataIDTO.ProductAttributeValues)
                 {
                     ProductAttributesIDTO productAttributesIDTO = new ProductAttributesIDTO()
                     {
-                        //TODO izmeniti atribute ovde
-                        //CategoriesId = attribute.Item1,
-                        //Value = attribute.Item2,
                         ProductId = product.ProductId,
-                        IsDev = false //TODO check how IsDev is set
+                        IsDev = false, //TODO check how IsDev is set
+                        AttributesId = attributeID
                     };
                     _mainDataServices.AddProductAttributes(productAttributesIDTO);
                 }

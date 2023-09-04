@@ -7,13 +7,14 @@
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link href=" https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/css/bootstrap-multiselect.min.css" rel="stylesheet">
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<script>
 		tinymce.init({
 			selector: 'textarea#tiny',
-					plugins: [
+			plugins: [
 				'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
 				'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
 				'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
@@ -26,22 +27,25 @@
 <body>
 	<div class="container m-0 p-0">
 		<header class="bg-dark header-navigation">
+			<div class="d-flex flex-row justify-content-between">
+				@Html.ActionLink("DOT", "Index", "Dashboard", null, new { @class = "text-light p-1 m-1" })
+				@Html.ActionLink("Log Out", "Logout", "Authentication", null, new { @class = "text-light p-1 m-1" })
+			</div>
 		</header>
-		<aside class="bg-info side-navigation">
-			@Html.ActionLink("DOT", "Index", "Dashboard", null, new { @class = "text-light" })
-			<ul class="navbar-nav">
-				<li class="nav-item">@Html.ActionLink("Users", "AllUsers", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("New Users", "NewUser", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Data", "AllData", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Categories", "AllCategories", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Pages", "AllSiteContent", "Dashboard", new {type = "Page"}, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Blog", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "nav-link" })</li>
-				<li class="nav-item">@Html.ActionLink("Orders", "AllOrders", "Dashboard", null, new{ @class = "nav-link" })</li>
+		<aside class="side-navigation">
+			<ul class="navbar-nav side-list">
+				<li class="nav-item">@Html.ActionLink("Users", "AllUsers", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("New Users", "NewUser", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Data", "AllData", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Categories", "AllCategories", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Pages", "AllSiteContent", "Dashboard", new {type = "Page"}, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Blog", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLink("Orders", "AllOrders", "Dashboard", null, new{ @class = "side-anchor" })</li>
 			</ul>
 		</aside>
 		<div class="content-wrapper bg-light">
@@ -55,6 +59,7 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/js/bootstrap-multiselect.min.js"></script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
