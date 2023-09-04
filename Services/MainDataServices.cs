@@ -105,37 +105,47 @@ namespace Services
             return await GetCategoriesById(categories.CategoryId);
         }
 
-        public async Task<CategoriesODTO> DeleteCategory(int id)
-        {
-            var categories = await _context.Categories.FindAsync(id);
-            if (categories == null) return null;
+		public async Task<CategoriesODTO> DeleteCategory(int id)
+		{
+			var childCat = ReturnChildren(id).OrderByDescending(x => x.CategoryId);
+			
+            var catwithAtr = childCat.Where(x => x.IsAttribute == true).ToList();
 
-            var Attr = await _context.Attributes.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-            foreach (var item in Attr)
+            var catwithoutAtr = childCat.Where(x => x.IsAttribute == false).Select(x => x.CategoryId).ToList();
+            catwithoutAtr.Add(id);
+
+            foreach (var item in catwithAtr)
             {
-                _context.Attributes.Remove(item);
+                var atributes = await _context.Attributes.Where(x => x.CategoriesId == item.CategoryId).ToListAsync();
+                _context.Attributes.RemoveRange(atributes);
                 await SaveContextChangesAsync();
             }
 
-            var prod = await _context.Products.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-            foreach (var item in prod)
+            foreach (var catID in catwithoutAtr)
             {
-                _context.Products.Remove(item);
-                await SaveContextChangesAsync();
-            }
-            var categoriesODTO = await GetCategoriesById(id);
+				var products = await _context.Products.Where(x => x.CategoriesId == catID).ToListAsync();
+				_context.Products.RemoveRange(products);
+				await SaveContextChangesAsync();
+			}
 
-            categories.IsActive = false;
-            _context.Entry(categories).State = EntityState.Modified;
-            await SaveContextChangesAsync();
-            return categoriesODTO;
-        }
+            var categoryids = childCat.Select(x => x.CategoryId).ToList();
+            var categories = await _context.Categories.Where(x => categoryids.Contains(x.CategoryId)).ToListAsync();
+			_context.Categories.RemoveRange(categories);
 
-        #endregion Categories
+            var MainCategory = await _context.Categories.Where(x => x.CategoryId == id).SingleOrDefaultAsync();
+            MainCategory.IsActive = false;
+			_context.Entry(MainCategory).State = EntityState.Modified;
 
-        #region Product
+			await SaveContextChangesAsync();
 
-        private IQueryable<ProductODTO> GetProducts(int id)
+			return null;
+		}
+
+		#endregion Categories
+
+		#region Product
+
+		private IQueryable<ProductODTO> GetProducts(int id)
         {
             return from x in _context.Products
                    where (id == 0 || x.ProductId == id)
@@ -235,6 +245,7 @@ namespace Services
                 ChildODTO child = new ChildODTO();
                 child.CategoryId = item.CategoryId;
                 child.IsAttribute = item.IsAttribute;
+                child.IsActive = (bool)item.IsActive;
                 child.ParentCategoryId = item.ParentCategoryId;
                 //TODO proveriti da li ovo treba da ostane
                 //if (child.IsAttribute == true)
@@ -290,11 +301,13 @@ namespace Services
             ChildODTO child = new ChildODTO();
             child.CategoryId = categoriesRoot.CategoryId;
             child.IsAttribute = false;
+            child.IsActive = true;
             child.ParentCategoryId = categoriesRoot.ParentCategoryId;
             child.Values = null;
             cat.Insert(0, child);
             var CategoryWithoutAttr = (from y in cat
-                                       where y.IsAttribute == false
+                                       where (y.IsAttribute == false)
+                                       && (y.IsActive == true)
                                        select y).ToList();
             List<ChildODTO2> children = new List<ChildODTO2>();
             foreach (var item in CategoryWithoutAttr)

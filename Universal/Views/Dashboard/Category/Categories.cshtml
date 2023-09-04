@@ -50,6 +50,10 @@
 	.category-name {
 		margin-right: 20px;
 	}
+
+	.modclass{
+		margin-bottom:20px;
+	}
 </style>
 
 <div class="col-10">
@@ -71,13 +75,14 @@
 				<div id="add-edit-body" class="modal-body">
 					@Html.HiddenFor(model => model.CategoryIDTO.CategoryId, new { @id="input-category" })
 					@Html.HiddenFor(model => model.CategoryIDTO.ParentCategoryId, new { @id="input-parent" })
-					@Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control", placeholder = "Category Name" })
-					<label>Is Attribute:</label>
-					@Html.CheckBoxFor(model => model.CategoryIDTO.IsAttribute, new { @id="is-attribute" })
+					@Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control modclass", placeholder = "Category Name" })
+					@Html.TextBoxFor(model => model.CategoryImage, null, new { type="file", @class="form-control modclass", runat="server" })
+					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleDesc, new { @id="input-seoDesc", @class = "form-control modclass", placeholder = "Seo Description" })
+					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleKeywords, new { @id="input-seoKeyword", @class = "form-control modclass", placeholder = "Seo Keywords" })
 				</div>
 				<div class="modal-footer">
 					<input type="submit" class="btn btn-primary" value="Save" />
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" id="closeAddModalButton" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -101,7 +106,7 @@
 				</div>
 				<div class="modal-footer">
 					<input type="submit" class="btn btn-primary" value="Delete" />
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" id="closeDeleteModalButton" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -157,6 +162,14 @@
 				$("#form-add-delete").attr("action", "@Url.Action("AddCategory", "Dashboard")");
 			});
 		}
+
+		$("#closeAddModalButton").click(function () {
+			$('#add-edit-modal').modal('hide');
+		});
+
+		$("#closeDeleteModalButton").click(function () {
+			$('#delete-modal').modal('hide');
+		});
 
 		let edit_buttons = document.getElementsByClassName("btn-edit");
 		for (let i = 0; i < edit_buttons.length; i++) {

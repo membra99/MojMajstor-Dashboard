@@ -23,6 +23,7 @@ namespace Universal.DTO.ODTO
         public int CategoryId { get; set; }
         public bool IsAttribute { get; set; }
         public int? ParentCategoryId { get; set; }
+        public bool IsActive { get; set; }
         public List<string>? Values { get; set; }
     }
 
