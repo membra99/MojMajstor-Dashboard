@@ -116,30 +116,13 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+        public async Task<IActionResult> SetPassword(string key)
         {
-            if (!ModelState.IsValid)
-            {
-                return View("User/NewUser", new UsersIDTO());
-            }
-
-            //						FILE UPLOAD SYSTEM
-            AWSFileUpload awsFile = new AWSFileUpload();
-            awsFile.Attachments = new List<IFormFile>();
-            if (userIDTO.Avatar != null)
-                awsFile.Attachments.Add(userIDTO.Avatar);
             try
             {
-                var media = await _userDataServices.UploadUserPicture(awsFile);
-                if (media != null) userIDTO.MediaId = media.MediaId;
-                var users = await _userDataServices.AddUser(userIDTO);
-                if (users == null)
-                {
-                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-                    return View("User/NewUser");
-                }
-                return RedirectToAction("AllUsers", "Dashboard");
-            }
+				ViewBag.UserKey = key;
+				return View("../Authentication/SetPassword");
+			}
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
@@ -147,9 +130,40 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        #region Data/Products
+		public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View("User/NewUser", new UsersIDTO());
+			}
 
-        public async Task<IActionResult> AllData()
+			//						FILE UPLOAD SYSTEM
+			AWSFileUpload awsFile = new AWSFileUpload();
+			awsFile.Attachments = new List<IFormFile>();
+			if (userIDTO.Avatar != null)
+				awsFile.Attachments.Add(userIDTO.Avatar);
+			try
+			{
+				var media = await _userDataServices.UploadUserPicture(awsFile);
+				if (media != null) userIDTO.MediaId = media.MediaId;
+				var users = await _userDataServices.AddUser(userIDTO);
+				if (users == null)
+				{
+					ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+					return View("User/NewUser");
+				}
+				return RedirectToAction("AllUsers", "Dashboard");
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		#region Data/Products
+
+		public async Task<IActionResult> AllData()
         {
             try
             {
