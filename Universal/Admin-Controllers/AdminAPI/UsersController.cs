@@ -77,7 +77,24 @@ namespace Universal.Admin_Controllers.AdminAPI
             }
         }
 
-        [HttpDelete("{id}")]
+        [AllowAnonymous]
+		[HttpPost("ChangePassword")]
+		public async Task<ActionResult<UsersODTO>> ChangePassword(ChangePasswordIDTO passwordData)
+		{
+			try
+			{
+                    UsersIDTO userIDTO = await _userDataServices.GetUserByPassword(passwordData.Key);
+                    if(userIDTO == null) return NotFound();
+                    userIDTO.Password = BCrypt.Net.BCrypt.HashPassword(passwordData.Password);
+                    return await _userDataServices.EditUser(userIDTO);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
+
+		[HttpDelete("{id}")]
         public async Task<ActionResult<UsersODTO>> DeleteUsers(int id)
         {
             try

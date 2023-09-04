@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 // Add services to the container.
 builder.Services.AddControllers();
