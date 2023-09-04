@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
 using Entities.Context;
 using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.Index.HPRtree;
+using Microsoft.Extensions.Options;
 using Services.Authorization;
 using Services.AWS;
+using Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
-using Universal.DTO.ViewDTO;
 using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Services
@@ -21,12 +21,18 @@ namespace Services
     {
         private readonly IJwtUtils _jwtUtils;
         private readonly IAWSS3FileService _AWSS3FileService;
+        private readonly IOptions<EmailSettings> _emailSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public static string AppBaseUrl = "";
 
-        public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IAWSS3FileService AWSS3FileService) : base(context, mapper)
+        public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings) : base(context, mapper)
         {
             _jwtUtils = jwtUtils;
             _AWSS3FileService = AWSS3FileService;
-        }
+            _emailSettings = emailSettings;
+            _httpContextAccessor = httpContext;
+             AppBaseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}";
+    }
 
         #region Users
 
@@ -57,7 +63,15 @@ namespace Services
                    select _mapper.Map<UsersODTO>(x);
         }
 
-        public async Task<List<UsersODTO>> GetAllUsers()
+		private IQueryable<UsersIDTO> GetUsers(string password)
+		{
+			return from x in _context.Users
+				   .Include(x => x.Media)
+				   where (password == "" || x.Password == password)
+				   select _mapper.Map<UsersIDTO>(x);
+		}
+
+		public async Task<List<UsersODTO>> GetAllUsers()
         {
             return await GetUsers(0).AsNoTracking().ToListAsync();
         }
@@ -67,7 +81,12 @@ namespace Services
             return await GetUsers(id).AsNoTracking().SingleOrDefaultAsync();
         }
 
-        public async Task<UsersODTO> AddUser(UsersIDTO userIDTO)
+		public async Task<UsersIDTO> GetUserByPassword(string password)
+		{
+			return await GetUsers(password).AsNoTracking().SingleOrDefaultAsync();
+		}
+
+		public async Task<UsersODTO> AddUser(UsersIDTO userIDTO)
         {
             var CheckUser = await _context.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
             if (CheckUser != null)
@@ -75,8 +94,16 @@ namespace Services
                 return null;
             }
             var user = _mapper.Map<Users>(userIDTO);
+
+            //initial user set, password is temp and user is instructed to change their password by mail
             user.UsersId = 0;
-            user.Password = (user.Password != null) ? BCrypt.Net.BCrypt.HashPassword(user.Password) : null;
+            user.Password = BCrypt.Net.BCrypt.HashPassword("tempPasswordDOTUniversalABC123456789012301231");
+
+            MailService ms = new MailService(_emailSettings);
+            string userKey = user.Password; // CHANGE IF NEEDED TO SOMETHING ELSE
+            ms.SendEmail(new EmailIDTO { To = user.Email, Subject = user.FirstName + ", please set your password in order to access your new account!", 
+                Body = "Press the activation link to set your password and gain access to your account. <br> <a href='"+ AppBaseUrl + "/Dashboard/SetPassword?key=" + userKey + "'>Set your password</a>"
+            });
             _context.Users.Add(user);
 
             await SaveContextChangesAsync();

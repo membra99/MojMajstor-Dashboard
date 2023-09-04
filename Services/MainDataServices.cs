@@ -112,28 +112,38 @@ namespace Services
 
 		public async Task<CategoriesODTO> DeleteCategory(int id)
 		{
-			var categories = await _context.Categories.FindAsync(id);
-			if (categories == null) return null;
+			var childCat = ReturnChildren(id).OrderByDescending(x => x.CategoryId);
+			
+            var catwithAtr = childCat.Where(x => x.IsAttribute == true).ToList();
 
-			var Attr = await _context.Attributes.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-			foreach (var item in Attr)
-			{
-				_context.Attributes.Remove(item);
+            var catwithoutAtr = childCat.Where(x => x.IsAttribute == false).Select(x => x.CategoryId).ToList();
+            catwithoutAtr.Add(id);
+
+            foreach (var item in catwithAtr)
+            {
+                var atributes = await _context.Attributes.Where(x => x.CategoriesId == item.CategoryId).ToListAsync();
+                _context.Attributes.RemoveRange(atributes);
+                await SaveContextChangesAsync();
+            }
+
+            foreach (var catID in catwithoutAtr)
+            {
+				var products = await _context.Products.Where(x => x.CategoriesId == catID).ToListAsync();
+				_context.Products.RemoveRange(products);
 				await SaveContextChangesAsync();
 			}
 
-			var prod = await _context.Products.Where(x => x.CategoriesId == categories.CategoryId).ToListAsync();
-			foreach (var item in prod)
-			{
-				_context.Products.Remove(item);
-				await SaveContextChangesAsync();
-			}
-			var categoriesODTO = await GetCategoriesById(id);
+            var categoryids = childCat.Select(x => x.CategoryId).ToList();
+            var categories = await _context.Categories.Where(x => categoryids.Contains(x.CategoryId)).ToListAsync();
+			_context.Categories.RemoveRange(categories);
 
-			categories.IsActive = false;
-			_context.Entry(categories).State = EntityState.Modified;
+            var MainCategory = await _context.Categories.Where(x => x.CategoryId == id).SingleOrDefaultAsync();
+            MainCategory.IsActive = false;
+			_context.Entry(MainCategory).State = EntityState.Modified;
+
 			await SaveContextChangesAsync();
-			return categoriesODTO;
+
+			return null;
 		}
 
 		#endregion Categories
@@ -141,11 +151,11 @@ namespace Services
 		#region Product
 
 		private IQueryable<ProductODTO> GetProducts(int id)
-		{
-			return from x in _context.Products
-				   where (id == 0 || x.ProductId == id)
-				   select _mapper.Map<ProductODTO>(x);
-		}
+        {
+            return from x in _context.Products
+                   where (id == 0 || x.ProductId == id)
+                   select _mapper.Map<ProductODTO>(x);
+        }
 
 		public async Task<ProductODTO> GetProductsById(int id)
 		{
@@ -232,28 +242,29 @@ namespace Services
 			return retval;
 		}
 
-		public List<ChildODTO> ReturnChildren(int Id)
-		{
-			var categoryList = _context.Categories.Where(x => x.ParentCategoryId == Id).ToList();
-			foreach (var item in categoryList)
-			{
-				ChildODTO child = new ChildODTO();
-				child.CategoryId = item.CategoryId;
-				child.IsAttribute = item.IsAttribute;
-				child.ParentCategoryId = item.ParentCategoryId;
-				//TODO proveriti da li ovo treba da ostane
-				//if (child.IsAttribute == true)
-				//{
-				//    var val = _context.ProductAttributes.Where(x => x.CategoriesId == child.CategoryId).Select(x => x.Value).ToList();
-				//    child.Values = val;
-				//    child.ParentCategoryId = Id;
-				//}
-				children.Add(child);
-			}
-			if (children.Count() > i)
-			{
-				ReturnChildren(children[i++].CategoryId);
-			}
+        public List<ChildODTO> ReturnChildren(int Id)
+        {
+            var categoryList = _context.Categories.Where(x => x.ParentCategoryId == Id).ToList();
+            foreach (var item in categoryList)
+            {
+                ChildODTO child = new ChildODTO();
+                child.CategoryId = item.CategoryId;
+                child.IsAttribute = item.IsAttribute;
+                child.IsActive = (bool)item.IsActive;
+                child.ParentCategoryId = item.ParentCategoryId;
+                //TODO proveriti da li ovo treba da ostane
+                //if (child.IsAttribute == true)
+                //{
+                //    var val = _context.ProductAttributes.Where(x => x.CategoriesId == child.CategoryId).Select(x => x.Value).ToList();
+                //    child.Values = val;
+                //    child.ParentCategoryId = Id;
+                //}
+                children.Add(child);
+            }
+            if (children.Count() > i)
+            {
+                ReturnChildren(children[i++].CategoryId);
+            }
 
 			return children;
 		}
@@ -292,24 +303,26 @@ namespace Services
 
 			var cat = ReturnChildren(categoriesRoot.CategoryId);
 
-			ChildODTO child = new ChildODTO();
-			child.CategoryId = categoriesRoot.CategoryId;
-			child.IsAttribute = false;
-			child.ParentCategoryId = categoriesRoot.ParentCategoryId;
-			child.Values = null;
-			cat.Insert(0, child);
-			var CategoryWithoutAttr = (from y in cat
-									   where y.IsAttribute == false
-									   select y).ToList();
-			List<ChildODTO2> children = new List<ChildODTO2>();
-			foreach (var item in CategoryWithoutAttr)
-			{
-				ChildODTO2 ch = new ChildODTO2();
-				ch.CategoryId = item.CategoryId;
-				ch.ParentCategoryId = item.ParentCategoryId;
-				ch.CategoryName = _context.Categories.Where(x => x.CategoryId == item.CategoryId).Select(x => x.CategoryName).SingleOrDefault();
-				children.Add(ch);
-			}
+            ChildODTO child = new ChildODTO();
+            child.CategoryId = categoriesRoot.CategoryId;
+            child.IsAttribute = false;
+            child.IsActive = true;
+            child.ParentCategoryId = categoriesRoot.ParentCategoryId;
+            child.Values = null;
+            cat.Insert(0, child);
+            var CategoryWithoutAttr = (from y in cat
+                                       where (y.IsAttribute == false)
+                                       && (y.IsActive == true)
+                                       select y).ToList();
+            List<ChildODTO2> children = new List<ChildODTO2>();
+            foreach (var item in CategoryWithoutAttr)
+            {
+                ChildODTO2 ch = new ChildODTO2();
+                ch.CategoryId = item.CategoryId;
+                ch.ParentCategoryId = item.ParentCategoryId;
+                ch.CategoryName = _context.Categories.Where(x => x.CategoryId == item.CategoryId).Select(x => x.CategoryName).SingleOrDefault();
+                children.Add(ch);
+            }
 
 			return children;
 		}

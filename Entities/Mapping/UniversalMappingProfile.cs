@@ -27,8 +27,9 @@ namespace Entities.Mapping
             CreateMap<Users, UsersODTO>()
                 .ForMember(dest => dest.ImageSrc, source => source.MapFrom(m => m.Media.Src));
             CreateMap<UsersIDTO, Users>();
+			CreateMap<Users, UsersIDTO>();
 
-            CreateMap<Sale, SaleODTO>();
+			CreateMap<Sale, SaleODTO>();
             CreateMap<SaleIDTO, Sale>();
 
             CreateMap<Seo, SaleODTO>();

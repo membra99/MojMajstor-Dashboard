@@ -32,7 +32,7 @@
     </table>
     </div>
 </div>
-
+<form>
 <div class="modal fade" id="addAttributeModal" tabindex="-1" aria-labelledby="addAttributeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -56,7 +56,7 @@
         </div>
     </div>
 </div>
-
+</form>
 
 <div class="modal fade" id="addValueModal" tabindex="-1" aria-labelledby="addValueModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -117,31 +117,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="editAttributeModal" tabindex="-1" aria-labelledby="editAttributeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editAttributeModalLabel">Edit Selected Attribute</h5>
-
-            </div>
-            <div class="modal-body">
-                <form id="editAttributeForm">
-                    <div class="form-group">
-                        <label for="editAttributeName">Attribute Name</label>
-                        <input type="text" class="form-control" id="editAttributeName" name="editAttributeName">
-                        <small id="editAttributeNameError" class="form-text text-danger"></small>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="closeEditButton" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveEditButton">Save Attribute</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 
 @section Scripts
     {
@@ -191,7 +166,6 @@
                         data: null,
                             defaultContent:
                                      '<i class="fas fa-plus icon-spacing" id="addAttrIcon"></i>'+
-                                     '<i class="fa-solid fa-pen icon-spacing"></i> ' +
                                      '<i class="fa-solid fa-trash-can icon-spacing"></i>' }
                     ],
                     columnDefs: [
@@ -317,17 +291,16 @@
                           }
                         });
 
-            $('#saveAttributeButton').on('click', function () {
-                    let selectedCategoryId = $("#attrSelect").val();
-                    let attributeName = $("#attributeName").val();
-                            console.log(selectedCategoryId);
-                    $("#attributeNameError").text("");
-                    
-                    // Validate the attribute name input
-                        if (attributeName=="") {
-                        $("#attributeNameError").text("Attribute Name cannot be empty.");
-                        return; // Stop further processing
-                    } else {
+                function saveAttribute() {
+                let selectedCategoryId = $("#attrSelect").val();
+                let attributeName = $("#attributeName").val();
+                $("#attributeNameError").text("");
+
+                // Validate the attribute name input
+                if (attributeName == "") {
+                    $("#attributeNameError").text("Attribute Name cannot be empty.");
+                    return; // Stop further processing
+                } else {
                     // Create the JSON object
                     let newAttribute = {
                         categoryId: 0,
@@ -349,10 +322,19 @@
                             updateTableData(selectedCategoryId);
                         },
                         error: function (xhr, status, error) {
-                                 $('#errorText').text('An error occurred while adding the attribute.');
+                            $('#errorText').text('An error occurred while adding the attribute.');
                         }
-                        });}
-                });
+                    });
+                }
+            }
+
+                $('#saveAttributeButton').on('click', saveAttribute);
+                
+                $('form').keypress(function(event) { 
+                    return event.keyCode != 13;
+                }); 
+
+               
 
             $('#saveEditButton').on('click', function () {
 
