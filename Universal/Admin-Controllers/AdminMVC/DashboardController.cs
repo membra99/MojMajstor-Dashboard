@@ -6,7 +6,7 @@ using Universal.DTO.ODTO;
 using Universal.DTO.ViewDTO;
 
 using Universal.DTO.ViewDTO;
-
+using Universal.Util;
 using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Universal.Admin_Controllers.AdminMVC
@@ -34,6 +34,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         public IActionResult NewUser()
         {
+            CheckForToast();
             return View("User/NewUser");
         }
 
@@ -46,6 +47,7 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             try
             {
+                CheckForToast();
                 var users = await _userDataServices.GetAllUsers();
                 return View("User/Users", users);
             }
@@ -88,6 +90,7 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             try
             {
+                CheckForToast();
                 var declaration = await _mainDataServices.GetAllDeclarations();
                 return View("Declaration/Declaration", declaration);
             }
@@ -107,6 +110,10 @@ namespace Universal.Admin_Controllers.AdminMVC
             try
             {
                 var declaration = await _mainDataServices.AddDeclaration(declarationIDTO);
+
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Declaration added successfully!");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
                 return RedirectToAction("AllDeclaration", "Dashboard");
             }
             catch (Exception ex)
@@ -116,21 +123,21 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-		public async Task<IActionResult> EditDeclaration(int id)
-		{
-			try
-			{
-				var declaration = await _mainDataServices.GetDeclarationForEditById(id);
+        public async Task<IActionResult> EditDeclaration(int id)
+        {
+            try
+            {
+                var declaration = await _mainDataServices.GetDeclarationForEditById(id);
                 return View("Declaration/EditDeclaration", declaration);
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
 
-		public async Task<IActionResult> SetPassword(string key)
+        public async Task<IActionResult> SetPassword(string key)
         {
             try
             {
@@ -163,8 +170,9 @@ namespace Universal.Admin_Controllers.AdminMVC
                 var users = await _userDataServices.AddUser(userIDTO);
                 if (users == null)
                 {
-                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-                    return View("User/NewUser");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User with that mail already exists");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+					return RedirectToAction("NewUser");
                 }
                 return RedirectToAction("AllUsers", "Dashboard");
             }
@@ -306,17 +314,21 @@ namespace Universal.Admin_Controllers.AdminMVC
             return RedirectToAction("AllCategories");
         }
 
-		public async Task<IActionResult> EditDeclarationModel(DeclarationIDTO declarationIDTO)
-		{
+        public async Task<IActionResult> EditDeclarationModel(DeclarationIDTO declarationIDTO)
+        {
             if (!ModelState.IsValid)
             {
                 return View("Declaration/EditDeclaration", declarationIDTO);
             }
-			await _mainDataServices.EditDeclaration(declarationIDTO);
-			return RedirectToAction("AllDeclaration");
-		}
+            await _mainDataServices.EditDeclaration(declarationIDTO);
 
-		public async Task<IActionResult> DeleteCategory(int categoryId)
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Declaration " + declarationIDTO.DeclarationName + " edited successfully!");
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+			return RedirectToAction("AllDeclaration");
+        }
+
+        public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             await _mainDataServices.DeleteCategory(categoryId);
             return RedirectToAction("AllCategories");
@@ -336,6 +348,13 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        #endregion Categories
-    }
+        private void CheckForToast() {
+            ViewBag.ToastMessage = _httpContextAccessor.HttpContext.Session.Get<string>("ToastMessage");
+			ViewBag.ToastType = _httpContextAccessor.HttpContext.Session.Get<string>("ToastType");
+			_httpContextAccessor.HttpContext.Session.Remove("ToastMessage");
+			_httpContextAccessor.HttpContext.Session.Remove("ToastType");
+		}
+
+		#endregion Categories
+	}
 }

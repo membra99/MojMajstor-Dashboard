@@ -10,7 +10,14 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link href=" https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/css/bootstrap-multiselect.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+	<style>
+		.toast-close{
+			color:black!important;
+		}
+	</style>
 	<script>
 		tinymce.init({
 			selector: 'textarea#tiny',
@@ -60,6 +67,42 @@
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/js/bootstrap-multiselect.min.js"></script>
+	<script>
+			function showToast(text, type) { 
+				let styleBg = '#2e844a';
+				let styleColor = 'white';
+				switch(type){
+					case "success": styleBg = '#2e844a'; break;
+					case "error": styleBg = '#ea001e'; break;
+					case "info": styleBg = '#747474'; break;
+					case "warning": styleBg = '#dd7a01'; styleColor = 'black'; break;
+				}
+
+				Toastify({
+					text: text,
+					duration: 3000,
+					close: true,
+					gravity: "top", // `top` or `bottom`
+					position: "center", // `left`, `center` or `right`
+					stopOnFocus: true, // Prevents dismissing of toast on hover
+					style: {
+						background: styleBg,
+						color: styleColor
+					},
+					onClick: function () { } // Callback after click
+				}).showToast();
+			}
+
+			$(document).ready(function () {
+			let toastMessage = '@ViewBag.ToastMessage';
+			let toastType = '@ViewBag.ToastType';
+			if (toastMessage !== '') {
+				showToast(toastMessage, toastType == '' ? 'success' : toastType);
+			}
+			})
+
+
+	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

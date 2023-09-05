@@ -74,10 +74,11 @@
 								url: 'https://localhost:7213/api/Declaration/' + selectedAttributeId,
 								contentType: 'application/json',
 								success: function (response) {
-									updateTableData(response.parentCategoryId);
+									showToast("Declaration " + response.declarationName + " deleted succesfully.", "success");
+									updateTableData();
 								},
 								error: function (xhr, status, error) {
-									// Handle error
+									showToast("Error: " + error + ":" + status, "error");
 								}
 							});
 						});
