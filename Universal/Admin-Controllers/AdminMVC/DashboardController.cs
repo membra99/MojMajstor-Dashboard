@@ -118,6 +118,33 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<IActionResult> EditDeclaration(int id)
+		{
+			try
+			{
+				var declaration = await _mainDataServices.GetDeclarationForEditById(id);
+                return View("Declaration/EditDeclaration", declaration);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		public async Task<IActionResult> SetPassword(string key)
+        {
+            try
+            {
+                ViewBag.UserKey = key;
+                return View("../Authentication/SetPassword");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
 		public async Task<IActionResult> SetPassword(string key)
 		{
 			try
@@ -132,36 +159,36 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-		public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
-		{
-			if (!ModelState.IsValid)
-			{
-				return View("User/NewUser", new UsersIDTO());
-			}
+        public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("User/NewUser", new UsersIDTO());
+            }
 
-			//						FILE UPLOAD SYSTEM
-			AWSFileUpload awsFile = new AWSFileUpload();
-			awsFile.Attachments = new List<IFormFile>();
-			if (userIDTO.Avatar != null)
-				awsFile.Attachments.Add(userIDTO.Avatar);
-			try
-			{
-				var media = await _userDataServices.UploadUserPicture(awsFile);
-				if (media != null) userIDTO.MediaId = media.MediaId;
-				var users = await _userDataServices.AddUser(userIDTO);
-				if (users == null)
-				{
-					ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-					return View("User/NewUser");
-				}
-				return RedirectToAction("AllUsers", "Dashboard");
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
-		}
+            //						FILE UPLOAD SYSTEM
+            AWSFileUpload awsFile = new AWSFileUpload();
+            awsFile.Attachments = new List<IFormFile>();
+            if (userIDTO.Avatar != null)
+                awsFile.Attachments.Add(userIDTO.Avatar);
+            try
+            {
+                var media = await _userDataServices.UploadUserPicture(awsFile);
+                if (media != null) userIDTO.MediaId = media.MediaId;
+                var users = await _userDataServices.AddUser(userIDTO);
+                if (users == null)
+                {
+                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+                    return View("User/NewUser");
+                }
+                return RedirectToAction("AllUsers", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
 
 		public async Task<IActionResult> EditUser(int userId)
 		{
@@ -215,15 +242,15 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-		public async Task<IActionResult> NewData()
-		{
-			var categories = await _mainDataServices.GetCategories();
-			var declarations = await _mainDataServices.GetAllDeclarations();
-			return View("Data/NewData", new DataIDTO
-			{
-				CategoriesODTOs = categories,
-				DeclarationODTOs = declarations,
-				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
+        public async Task<IActionResult> NewData()
+        {
+            var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
+            var declarations = await _mainDataServices.GetAllDeclarations();
+            return View("Data/NewData", new DataIDTO
+            {
+                CategoriesODTOs = categories,
+                DeclarationODTOs = declarations,
+                SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
 				{
 					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
 				}
@@ -243,17 +270,17 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return Json(new { data = new { attrs = attributes, attrValues = attributeValues } });
 		}
 
-		public async Task<IActionResult> AddData(DataIDTO dataIDTO)
-		{
-			if (!ModelState.IsValid)
-			{
-				var categories = await _mainDataServices.GetCategories();
-				var declarations = await _mainDataServices.GetAllDeclarations();
-				return View("Data/NewData", new DataIDTO
-				{
-					CategoriesODTOs = categories,
-					DeclarationODTOs = declarations,
-					SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
+        public async Task<IActionResult> AddData(DataIDTO dataIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
+                var declarations = await _mainDataServices.GetAllDeclarations();
+                return View("Data/NewData", new DataIDTO
+                {
+                    CategoriesODTOs = categories,
+                    DeclarationODTOs = declarations,
+                    SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
 				{
 					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
 				}
@@ -407,6 +434,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return RedirectToAction("AllCategories");
 		}
 
+		public async Task<IActionResult> EditDeclarationModel(DeclarationIDTO declarationIDTO)
+		{
+            if (!ModelState.IsValid)
+            {
+                return View("Declaration/EditDeclaration", declarationIDTO);
+            }
+			await _mainDataServices.EditDeclaration(declarationIDTO);
+			return RedirectToAction("AllDeclaration");
+		}
+
+		public async Task<IActionResult> DeleteCategory(int categoryId)
+        {
+            await _mainDataServices.DeleteCategory(categoryId);
+            return RedirectToAction("AllCategories");
+        }
 		public async Task<IActionResult> DeleteCategory(int categoryId)
 		{
 			await _mainDataServices.DeleteCategory(categoryId);
