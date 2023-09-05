@@ -183,7 +183,10 @@ namespace Services
 		}
 		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
 		{
-			return _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
+			var product = _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
+            product.SaleIDTO = _mapper.Map <SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
+            product.SeoIDTO = _mapper.Map <SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
+            return product;
 		}
 
         public async Task<List<ProductODTO>> GetAllProducts()
