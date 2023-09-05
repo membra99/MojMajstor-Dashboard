@@ -145,19 +145,6 @@ namespace Universal.Admin_Controllers.AdminMVC
                 return View("Home");
             }
         }
-		public async Task<IActionResult> SetPassword(string key)
-		{
-			try
-			{
-				ViewBag.UserKey = key;
-				return View("../Authentication/SetPassword");
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
-		}
 
         public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
         {
@@ -328,7 +315,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> EditData(int dataId)
 		{
 			var product = await _mainDataServices.GetProductsByIdForEdit(dataId);
-			var categories = await _mainDataServices.GetCategories();
+			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 			var declarations = await _mainDataServices.GetAllDeclarations();
 			return View("Data/EditData", new DataIDTO
 			{
@@ -347,7 +334,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 			if (!ModelState.IsValid)
 			{
 				var product = await _mainDataServices.GetProductsByIdForEdit(dataIDTO.ProductIDTO.ProductId);
-				var categories = await _mainDataServices.GetCategories();
+				var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 				var declarations = await _mainDataServices.GetAllDeclarations();
 				return View("Data/EditData", new DataIDTO
 				{
@@ -449,11 +436,6 @@ namespace Universal.Admin_Controllers.AdminMVC
             await _mainDataServices.DeleteCategory(categoryId);
             return RedirectToAction("AllCategories");
         }
-		public async Task<IActionResult> DeleteCategory(int categoryId)
-		{
-			await _mainDataServices.DeleteCategory(categoryId);
-			return RedirectToAction("AllCategories");
-		}
 
 		public async Task<IActionResult> AllAttributes(int categoryid)
 		{
