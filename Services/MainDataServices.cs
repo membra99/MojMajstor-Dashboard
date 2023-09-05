@@ -527,22 +527,39 @@ namespace Services
             return UserID;
         }
 
-        public async Task<List<OrderODTO>> GetAllOrder()
+		public async Task<List<OrderODTO>> GetAllOrder()
         {
             var orders = await _context.Orders.Include(x => x.Users).Select(x => _mapper.Map<OrderODTO>(x)).ToListAsync();
             return orders;
         }
 
-        public async Task<FullOrderODTO> GetFullOrderById(int id)
+		public async Task<FullOrderODTO> EditStatus(int orderId, string status)
+		{
+			var order = await _context.Orders.Where(x => x.OrderId == orderId).SingleOrDefaultAsync();
+			order.OrderStatus = status;
+			order.UpdatedAt = DateTime.Now;
+			_context.Entry(order).State = EntityState.Modified;
+			await SaveContextChangesAsync();
+
+			return await GetFullOrderById(orderId);
+		}
+
+		public async Task<FullOrderODTO> GetFullOrderById(int id)
         {
             var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
             FullOrderODTO fullOrder = new FullOrderODTO();
+            fullOrder.UsersODTO = new UsersODTO();
             fullOrder.OrderId = id;
             var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
-            fullOrder.Address = user.Address;
-            fullOrder.City = user.City;
-            fullOrder.Zip = user.Zip;
-            fullOrder.Phone = user.Phone;
+            fullOrder.UsersODTO.Address = user.Address;
+            fullOrder.UsersODTO.Email = user.Email;
+            fullOrder.UsersODTO.FirstName = user.FirstName;
+            fullOrder.UsersODTO.LastName = user.LastName;
+            fullOrder.UsersODTO.Country = user.Country;
+            fullOrder.UsersODTO.Role = user.Role;
+            fullOrder.UsersODTO.City = user.City;
+            fullOrder.UsersODTO.Zip = user.Zip;
+            fullOrder.UsersODTO.Phone = user.Phone;
             fullOrder.Name = user.FirstName + " " + user.LastName;
             fullOrder.Status = order.OrderStatus;
 
@@ -554,6 +571,7 @@ namespace Services
                 ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
                 productODTO.ProductId = item;
                 productODTO.ProductName = product.ProductName;
+                productODTO.ProductCode = product.ProductCode;
                 productODTO.CategoriesId = product.CategoriesId;
                 productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
                 productODTO.Price = product.Price;
@@ -729,15 +747,24 @@ namespace Services
 
         public async Task<List<CategoriesODTO>> GetAllCategoriesWithAttributes()
         {
-            var categoryWithAttr = new List<Categories>();
-            var attributes = await _context.Categories.Where(x => x.IsAttribute == true).Select(x => x.ParentCategoryId).Distinct().ToListAsync();
-            foreach (var attr in attributes)
+            var category = await _context.Categories.Where(x => x.IsAttribute == false && x.IsActive == true && x.ParentCategoryId != null).Select(x => new {x.CategoryId,x.ParentCategoryId}).ToListAsync();
+            var CategoryIds = new List<int>();
+            var ParrentIds = new List<int>();
+            foreach (var item in category)
             {
-                var x = await _context.Categories.Where(x => x.CategoryId == attr).SingleOrDefaultAsync();
-                categoryWithAttr.Add(x);
-            }
-            return _mapper.Map<List<CategoriesODTO>>(categoryWithAttr);
-        }
+                ParrentIds.Add((int)item.ParentCategoryId);
+                CategoryIds.Add(item.CategoryId);
+			}
+
+            var ExceptIds = CategoryIds.Except(ParrentIds).ToList();
+            List<CategoriesODTO> retval = new List<CategoriesODTO>();
+            foreach (var item in ExceptIds)
+            {
+                var cat = await _context.Categories.Where(x => x.CategoryId == item).Select(x => _mapper.Map<CategoriesODTO>(x)).SingleOrDefaultAsync();
+                retval.Add(cat);
+			}
+			return retval;
+		}
 
         public async Task<List<AttributesODTO>> GetAllAttributesValueByAttributeName(int categoryId)
         {

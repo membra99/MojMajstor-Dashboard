@@ -58,19 +58,33 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-		public async Task<IActionResult> AllSiteContent(string type)
+		public async Task<IActionResult> EditOrders(int id)
 		{
-			try
-			{
-				var siteContent = await _mainDataServices.GetAllSiteContentByType(type);
-				return View("SiteContent/SiteContents", siteContent);
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
+			var Order = await _mainDataServices.GetFullOrderById(id);
+
+			return View("Order/ViewOrders", Order);
 		}
+
+		public async Task<IActionResult> EditStatus(int orderId, string status)
+		{
+			var order = await _mainDataServices.EditStatus(orderId, status);
+
+			return View("Order/ViewOrders", order);
+		}
+
+		public async Task<IActionResult> AllSiteContent(string type)
+        {
+            try
+            {
+                var siteContent = await _mainDataServices.GetAllSiteContentByType(type);
+                return View("SiteContent/SiteContents", siteContent);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
 
 		public async Task<IActionResult> AllOrders()
 		{

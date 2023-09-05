@@ -19,14 +19,15 @@ namespace Universal.DTO.ODTO
         public bool Recommended { get; set; }
         public bool BestProduct { get; set; }
         public string? ProductCode { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string CreatedAt { get; set; }
+        public string UpdatedAt { get; set; }
     }
 
     public class ProductDetailsForOrderODTO
     {
         public int ProductId { get; set; }
         public string? ProductName { get; set; }
+        public string? ProductCode { get; set; }
         public int CategoriesId { get; set; }
         public string? CategoryName { get; set; }
         public double Price { get; set; }

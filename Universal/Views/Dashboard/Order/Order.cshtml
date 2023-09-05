@@ -9,9 +9,10 @@
 		<thead>
 			<tr>
 				<th>OrderNumber</th>
-				<th>Email</th>
 				<th>CreatedAt</th>
 				<th>UpdatedAt</th>
+				<th>Status</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -24,13 +25,27 @@
 	<script>
 		console.log(@Json.Serialize(Model))
 		$(document).ready(function () {
+    // Edit button click handler
+		$(document).on('click', '.btn', function () {
+        var id = $(this).data('id');
+				window.location.href = '/Dashboard/EditOrders?id=' + id;
+		});
+
+
+		
 			$('#orderTable').DataTable({
 				data: @Json.Serialize(Model),
 				columns: [
 					{ data: "orderId" },
-					{ data: "email" },
 					{ data: "orderDate" },
 					{ data: "updatedAt" },
+					{ data: "orderStatus" },
+					{
+						render: function (data, type, row) {
+							var button1 = "<button class='btn' data-id='" + row.orderId + "'><i class='fa fa-eye' style='font-size:30px'></i></button>";
+							return button1
+						}
+					},
 				],
 				columnDefs: [
 					{ targets: '_all', className: 'dt-left' }

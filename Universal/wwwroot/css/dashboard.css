@@ -48,3 +48,10 @@
 .side-anchor:hover {
     background-color: #f8f9fa;
 }
+.user {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #553c9a;
+    border-right: 4px solid #553c9a;
+}
