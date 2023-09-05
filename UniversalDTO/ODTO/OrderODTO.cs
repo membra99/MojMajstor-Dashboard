@@ -15,17 +15,14 @@ namespace Universal.DTO.ODTO
         public string? Email { get; set; }
         public string UpdatedAt { get; set; }
 
-    }
+	}
 
     public class FullOrderODTO
     {
         public int OrderId { get; set;}
-        public string? Address { get; set; }
-        public string? City { get; set; }
-        public string? Zip { get; set; }
-        public string? Phone { get; set; }
-        public string? Name { get; set;}
+        public UsersODTO UsersODTO { get; set; }
         public string? Status { get; set; }
+        public string? Name { get; set; }
         public int TotalPrice { get; set;}
         public List<ProductDetailsForOrderODTO> ProductODTO { get; set; }
     }

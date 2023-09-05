@@ -1,0 +1,109 @@
+﻿@model Universal.DTO.ODTO.FullOrderODTO
+
+@{
+    ViewData["Title"] = "Order Info";
+}
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="user">USER DATA</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.Email, null, new { @class="form-control", placeholder = "Email", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.Email, null, new { @class="text-danger" })
+		</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.FirstName, new { @class="form-control", placeholder = "First Name", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.FirstName, null, new { @class="text-danger" })
+		</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.LastName, new { @class="form-control", placeholder = "Last Name", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.LastName, null, new { @class="text-danger" })
+		</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.Phone, new { @class="form-control", placeholder = "Phone", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.Phone, null, new { @class="text-danger" })
+		</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.Address, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.Address, null, new { @class="text-danger" })
+		</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.City, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.City, null, new { @class="text-danger" })
+		</div>
+		<div class="mb-3">
+			@Html.TextBoxFor(model => model.UsersODTO.Country, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
+			@Html.ValidationMessageFor(model => model.UsersODTO.Country, null, new { @class="text-danger" })
+		</div>
+
+
+
+		@using (Html.BeginForm("EditStatus", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		{
+			<div class="mb-3" style="margin-top:120px">
+				@Html.HiddenFor(model => model.OrderId, new { @class="form-control"})
+				@Html.ValidationMessageFor(model => model.OrderId, null, new { @class="text-danger" })
+			</div>
+
+
+			<div class="mb-3">
+				@Html.DropDownListFor(model => model.Status, new List<SelectListItem>
+			{
+			new SelectListItem() { Text = "On hold", Value = "On hold"},
+			new SelectListItem() { Text = "Delivered", Value = "Delivered"},
+			new SelectListItem() { Text = "Not Delivered", Value = "Not Delivered"}
+			},
+			new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.Status, null, new { @class="text-danger" })
+			</div>
+
+
+			<div class="mx-auto mb-3 w-50">
+				<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
+			</div>
+		}
+
+
+	</div>
+	<div class="col-md-8">
+		<div class="user">ORDER DATA</div>
+		<div class="col-12">
+			<table id="orderTable" class="table table-striped display text-center w-100">
+				<thead>
+					<tr>
+						<th>Product Name</th>
+						<th>Product Code</th>
+						<th>Quantity</th>
+						<th>Category</th>
+						<th>Price</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			<div style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+	{
+			<script>
+		console.log(@Json.Serialize(Model.ProductODTO))
+				$(document).ready(function () {
+				$('#orderTable').DataTable({
+						data: @Json.Serialize(Model.ProductODTO),
+						columns: [
+					{ data: "productName" },
+					{ data: "productCode" },
+					{ data: "quantity" },
+					{ data: "categoryName" },
+					{ data: "price" },
+						],
+						columnDefs: [
+							{ targets: '_all', className: 'dt-left' }
+						],
+					});
+				});
+			</script>
+}
