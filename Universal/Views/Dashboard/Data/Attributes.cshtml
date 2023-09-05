@@ -427,6 +427,7 @@
             function updateTableData(categoryId) {
                     console.log(categoryId);
                     $.get("https://localhost:7213/api/Attributes/GetAllAttributesByCategoryName?categoryId=" + categoryId, function (data) {
+                        console.log(data);
                         userTable.clear().rows.add(data).draw();
                     }).fail(function (xhr, status, error) {
                         userTable.clear().draw();

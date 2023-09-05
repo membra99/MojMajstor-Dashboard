@@ -1,13 +1,14 @@
 ﻿@model Universal.DTO.ViewDTO.DataIDTO
 
 @{
-	ViewData["Title"] = "New Data";
+	ViewData["Title"] = "Edit Data";
 }
 
 <div class="col-10 bg-light mx-auto rounded-3">
 	<div class="form-group">
-		@using (Html.BeginForm("AddData", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		@using (Html.BeginForm("EditDataAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 		{
+			@Html.HiddenFor(model => model.ProductIDTO.ProductId)
 			<div class="d-flex flex-row justify-content-around">
 				<div class="col-5">
 					<div class="mb-3">
@@ -181,11 +182,9 @@
 							$.each(attribute, function (i, attr) {
 								attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
 							});
-							console.log(data.data.attrs[counter].categoryName);
-							let htmlAttributes = "<label>" + data.data.attrs[counter].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
+							let htmlAttributes = "<label>" + data.data.attrs[counter++].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
 							$("#attributeArea").append(htmlAttributes);
 						}
-						counter++
 					});
 					generateMultiselect();
 				},

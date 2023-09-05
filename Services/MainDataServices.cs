@@ -128,16 +128,30 @@ namespace Services
             foreach (var item in catwithAtr)
             {
                 var atributes = await _context.Attributes.Where(x => x.CategoriesId == item.CategoryId).ToListAsync();
-                _context.Attributes.RemoveRange(atributes);
+				foreach (var atribute in atributes)
+				{
+					var productAttributes = await _context.ProductAttributes.Where(x => x.AttributesId == atribute.AttributesId).ToListAsync();
+					_context.ProductAttributes.RemoveRange(productAttributes);
+				}
+				_context.Attributes.RemoveRange(atributes);
                 await SaveContextChangesAsync();
             }
 
             foreach (var catID in catwithoutAtr)
             {
-                var products = await _context.Products.Where(x => x.CategoriesId == catID).ToListAsync();
-                _context.Products.RemoveRange(products);
-                await SaveContextChangesAsync();
-            }
+				var products = await _context.Products.Where(x => x.CategoriesId == catID).ToListAsync();
+				foreach (var product in products)
+				{
+					var sales = await _context.Sales.Where(x => x.ProductId == product.ProductId).ToListAsync();
+					var media = await _context.Medias.Where(x => x.ProductId == product.DeclarationId).ToListAsync();
+					var orders = await _context.OrderDetails.Where(x => x.ProductId == product.ProductId).ToListAsync();
+					_context.Sales.RemoveRange(sales);
+					_context.Medias.RemoveRange(media);
+					_context.OrderDetails.RemoveRange(orders);
+				}
+				_context.Products.RemoveRange(products);
+				await SaveContextChangesAsync();
+			}
 
             var categoryids = childCat.Select(x => x.CategoryId).ToList();
             var categories = await _context.Categories.Where(x => categoryids.Contains(x.CategoryId)).ToListAsync();
@@ -163,10 +177,17 @@ namespace Services
                    select _mapper.Map<ProductODTO>(x);
         }
 
-        public async Task<ProductODTO> GetProductsById(int id)
-        {
-            return await GetProducts(id).AsNoTracking().SingleOrDefaultAsync();
-        }
+		public async Task<ProductODTO> GetProductsById(int id)
+		{
+			return await GetProducts(id).AsNoTracking().SingleOrDefaultAsync();
+		}
+		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
+		{
+			var product = _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
+            product.SaleIDTO = _mapper.Map <SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
+            product.SeoIDTO = _mapper.Map <SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
+            return product;
+		}
 
         public async Task<List<ProductODTO>> GetAllProducts()
         {
@@ -303,9 +324,12 @@ namespace Services
             return productODTO;
         }
 
-        public async Task<List<ChildODTO2>> GetCategories()
-        {
-            var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId == null).SingleOrDefaultAsync();
+		public async Task<List<ChildODTO2>> GetCategories()
+		{
+			var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId == null && x.IsActive == true).SingleOrDefaultAsync();
+
+			if (categoriesRoot == null)
+				return null;
 
             var cat = ReturnChildren(categoriesRoot.CategoryId);
 
@@ -506,22 +530,39 @@ namespace Services
             return UserID;
         }
 
-        public async Task<List<OrderODTO>> GetAllOrder()
+		public async Task<List<OrderODTO>> GetAllOrder()
         {
             var orders = await _context.Orders.Include(x => x.Users).Select(x => _mapper.Map<OrderODTO>(x)).ToListAsync();
             return orders;
         }
 
-        public async Task<FullOrderODTO> GetFullOrderById(int id)
+		public async Task<FullOrderODTO> EditStatus(int orderId, string status)
+		{
+			var order = await _context.Orders.Where(x => x.OrderId == orderId).SingleOrDefaultAsync();
+			order.OrderStatus = status;
+			order.UpdatedAt = DateTime.Now;
+			_context.Entry(order).State = EntityState.Modified;
+			await SaveContextChangesAsync();
+
+			return await GetFullOrderById(orderId);
+		}
+
+		public async Task<FullOrderODTO> GetFullOrderById(int id)
         {
             var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
             FullOrderODTO fullOrder = new FullOrderODTO();
+            fullOrder.UsersODTO = new UsersODTO();
             fullOrder.OrderId = id;
             var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
-            fullOrder.Address = user.Address;
-            fullOrder.City = user.City;
-            fullOrder.Zip = user.Zip;
-            fullOrder.Phone = user.Phone;
+            fullOrder.UsersODTO.Address = user.Address;
+            fullOrder.UsersODTO.Email = user.Email;
+            fullOrder.UsersODTO.FirstName = user.FirstName;
+            fullOrder.UsersODTO.LastName = user.LastName;
+            fullOrder.UsersODTO.Country = user.Country;
+            fullOrder.UsersODTO.Role = user.Role;
+            fullOrder.UsersODTO.City = user.City;
+            fullOrder.UsersODTO.Zip = user.Zip;
+            fullOrder.UsersODTO.Phone = user.Phone;
             fullOrder.Name = user.FirstName + " " + user.LastName;
             fullOrder.Status = order.OrderStatus;
 
@@ -533,6 +574,7 @@ namespace Services
                 ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
                 productODTO.ProductId = item;
                 productODTO.ProductName = product.ProductName;
+                productODTO.ProductCode = product.ProductCode;
                 productODTO.CategoriesId = product.CategoriesId;
                 productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
                 productODTO.Price = product.Price;
@@ -708,15 +750,24 @@ namespace Services
 
         public async Task<List<CategoriesODTO>> GetAllCategoriesWithAttributes()
         {
-            var categoryWithAttr = new List<Categories>();
-            var attributes = await _context.Categories.Where(x => x.IsAttribute == true).Select(x => x.ParentCategoryId).Distinct().ToListAsync();
-            foreach (var attr in attributes)
+            var category = await _context.Categories.Where(x => x.IsAttribute == false && x.IsActive == true && x.ParentCategoryId != null).Select(x => new {x.CategoryId,x.ParentCategoryId}).ToListAsync();
+            var CategoryIds = new List<int>();
+            var ParrentIds = new List<int>();
+            foreach (var item in category)
             {
-                var x = await _context.Categories.Where(x => x.CategoryId == attr).SingleOrDefaultAsync();
-                categoryWithAttr.Add(x);
-            }
-            return _mapper.Map<List<CategoriesODTO>>(categoryWithAttr);
-        }
+                ParrentIds.Add((int)item.ParentCategoryId);
+                CategoryIds.Add(item.CategoryId);
+			}
+
+            var ExceptIds = CategoryIds.Except(ParrentIds).ToList();
+            List<CategoriesODTO> retval = new List<CategoriesODTO>();
+            foreach (var item in ExceptIds)
+            {
+                var cat = await _context.Categories.Where(x => x.CategoryId == item).Select(x => _mapper.Map<CategoriesODTO>(x)).SingleOrDefaultAsync();
+                retval.Add(cat);
+			}
+			return retval;
+		}
 
         public async Task<List<AttributesODTO>> GetAllAttributesValueByAttributeName(int categoryId)
         {

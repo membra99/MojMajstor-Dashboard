@@ -11,6 +11,7 @@ namespace Entities.Mapping
         {
             CreateMap<Product, ProductODTO>();
             CreateMap<ProductIDTO, Product>();
+            CreateMap<ProductODTO, ProductIDTO>();
 
             CreateMap<Categories, CategoriesODTO>();
             CreateMap<CategoriesIDTO, Categories>();
@@ -28,11 +29,14 @@ namespace Entities.Mapping
                 .ForMember(dest => dest.ImageSrc, source => source.MapFrom(m => m.Media.Src));
             CreateMap<UsersIDTO, Users>();
 			CreateMap<Users, UsersIDTO>();
+			CreateMap<UsersODTO, UsersIDTO>();
 
 			CreateMap<Sale, SaleODTO>();
             CreateMap<SaleIDTO, Sale>();
+            CreateMap<Sale, SaleIDTO>();
 
             CreateMap<Seo, SaleODTO>();
+            CreateMap<Seo, SaleIDTO>();
 
             CreateMap<Order, OrderODTO>()
                  .ForMember(dest => dest.Email, source => source.MapFrom(m => m.Users.Email));

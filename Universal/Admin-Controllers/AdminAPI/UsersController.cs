@@ -20,7 +20,18 @@ namespace Universal.Admin_Controllers.AdminAPI
             _userDataServices = userServices;
         }
 
-        [HttpGet("{id}")]
+		[HttpGet]
+		public async Task<ActionResult<List<UsersODTO>>> AllUsers()
+		{
+			var Users = await _userDataServices.GetAllUsers();
+			if (Users == null)
+			{
+				return NotFound();
+			}
+			return Users;
+		}
+
+		[HttpGet("{id}")]
         public async Task<ActionResult<UsersODTO>> GetById(int id)
         {
             var User = await _userDataServices.GetUserById(id);
