@@ -186,10 +186,13 @@ namespace Services
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
             product.SaleIDTO = _mapper.Map <SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
              product.SeoIDTO = _mapper.Map <SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
-            DateTime startdate = DateTime.ParseExact(product.SaleIDTO.StartDate, "dd/MM/yyyy HH:mm:ss", null);
-            DateTime enddate = DateTime.ParseExact(product.SaleIDTO.EndDate, "dd/MM/yyyy HH:mm:ss", null);
-            product.SaleIDTO.StartDate = startdate.ToString("yyyy-MM-dd");
-            product.SaleIDTO.EndDate = enddate.ToString("yyyy-MM-dd");
+            if(product.SaleIDTO != null)
+            {
+                DateTime startdate = DateTime.ParseExact(product.SaleIDTO.StartDate, "dd/MM/yyyy HH:mm:ss", null);
+                DateTime enddate = DateTime.ParseExact(product.SaleIDTO.EndDate, "dd/MM/yyyy HH:mm:ss", null);
+                product.SaleIDTO.StartDate = startdate.ToString("yyyy-MM-dd");
+                product.SaleIDTO.EndDate = enddate.ToString("yyyy-MM-dd");
+            }
             return product;
 		}
 
@@ -728,6 +731,14 @@ namespace Services
 
         public async Task<DeclarationODTO> DeleteDeclaration(int id)
         {
+            var product = await _context.Products.Where(x => x.DeclarationId == id).ToListAsync();
+            foreach (var item in product)
+            {
+                item.DeclarationId = null;
+                _context.Entry(item).State = EntityState.Modified;
+            }
+
+            await SaveContextChangesAsync();
             var declaration = await _context.Declarations.FindAsync(id);
             if (declaration == null) return null;
 

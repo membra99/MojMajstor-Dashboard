@@ -242,6 +242,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		{
 			try
 			{
+				CheckForToast();
 				var users = await _mainDataServices.GetAllProducts();
 				return View("Data/Data", users);
 			}
@@ -298,6 +299,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 			try
 			{
+
 				var product = await _mainDataServices.AddProduct(dataIDTO.ProductIDTO);
 
 				AWSFileUpload awsFile = new AWSFileUpload();
@@ -325,8 +327,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 					};
 					_mainDataServices.AddProductAttributes(productAttributesIDTO);
 				}
-
-				return RedirectToAction("AllData", "Dashboard");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added Product");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("AllData", "Dashboard");
 			}
 			catch (Exception ex)
 			{
@@ -411,8 +414,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 					};
 					await _mainDataServices.AddProductAttributes(productAttributesIDTO);
 				}
-
-				return RedirectToAction("AllData", "Dashboard");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully updated");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("AllData", "Dashboard");
 			}
 			catch (Exception ex)
 			{

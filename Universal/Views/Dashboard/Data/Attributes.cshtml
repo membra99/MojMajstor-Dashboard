@@ -149,6 +149,9 @@
                        $("#attributeNameError").text("");
                        $('#attributeName').val("");
                    }
+                   else{
+                    showToast("You need to select Category", "warning");
+                   }
             });
 
             let userTable = $('#userTable').DataTable({
@@ -278,9 +281,10 @@
                                   contentType: 'application/json',
                                   success: function (response) {
                                       updateTableData(response.parentCategoryId);
+                                      showToast("Attribute " + response.categoryName + " deleted succesfully.", "success");
                                   },
                                   error: function (xhr, status, error) {
-                                      // Handle error
+                                showToast("Something went wrong", "error");
                                   }
                               });
                           });
@@ -320,6 +324,7 @@
                         success: function (response) {
                             $('#addAttributeModal').modal('hide');
                             updateTableData(selectedCategoryId);
+                            showToast("Attribute " + attributeName + " is added succesfully.", "success");
                         },
                         error: function (xhr, status, error) {
                             $('#errorText').text('An error occurred while adding the attribute.');
@@ -417,6 +422,7 @@
                             success: function (response) {
                                 $('#addValueModal').modal('hide');
                                     updateTableData(selectedParentCategoryId);
+                            showToast("Value " + attributeName + " is succesfully added to " + response.categoryName + ".", "success");
                             },
                             error: function (xhr, status, error) {
                                      $('#errorText').text('An error occurred while adding the attribute.');
@@ -456,6 +462,7 @@
                         url: 'https://localhost:7213/api/Attributes/' + attributeId,
                         success: function (response) {
                                     updateTableData(selectedParentCategoryId);
+                                showToast("Value " + response.value + " is deleted succesfully from " +response.categoryName+ "." , "success");
                         },
                         error: function (xhr, status, error) {
                             // Handle error
