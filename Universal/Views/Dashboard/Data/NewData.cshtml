@@ -181,9 +181,11 @@
 							$.each(attribute, function (i, attr) {
 								attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
 							});
-							let htmlAttributes = "<label>" + data.data.attrs[counter++].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
+							console.log(data.data.attrs[counter].categoryName);
+							let htmlAttributes = "<label>" + data.data.attrs[counter].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
 							$("#attributeArea").append(htmlAttributes);
 						}
+						counter++
 					});
 					generateMultiselect();
 				},
