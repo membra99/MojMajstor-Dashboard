@@ -4,6 +4,24 @@
     ViewData["Title"] = "Declaration";
 }
 
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+
+			</div>
+			<div class="modal-body">
+				Are you sure you want to delete this declaration?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+				<button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div>
 	<table id="declarationTable" class="table table-striped display text-center">
 		<thead>
@@ -14,6 +32,7 @@
 				<th>Distributor</th>
 				<th>Country of origin</th>
 				<th>Consumer Rights</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -24,9 +43,49 @@
 @section Scripts
 	{
 		<script>
-			console.log(@Json.Serialize(Model))
+			console.log(@Json.Serialize(Model));
 			$(document).ready(function () {
-				$('#declarationTable').DataTable({
+
+			$("#closeConfirmDeleteButton").click(function () {
+				$('#confirmDeleteModal').modal('hide');
+			});
+
+			$('#declarationTable tbody').on('click', 'td.actions-control', function () {
+					var tr = $(this).closest('tr');
+				var row = declarationTable.row(tr);
+
+					var targetElement = $(event.target);
+
+					if (targetElement.hasClass('fa-trash-can')) {
+						var rowData = row.data();
+
+						let selectedAttributeId = rowData.declarationId;
+
+						// Show a confirmation modal
+						$('#confirmDeleteModal').modal('show');
+
+						$('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+
+							// Close the confirmation modal
+							$('#confirmDeleteModal').modal('hide');
+
+							$.ajax({
+								type: 'DELETE',
+								url: 'https://localhost:7213/api/Declaration/' + selectedAttributeId,
+								contentType: 'application/json',
+								success: function (response) {
+									updateTableData(response.parentCategoryId);
+								},
+								error: function (xhr, status, error) {
+									// Handle error
+								}
+							});
+						});
+					}
+				});
+
+
+			let declarationTable = $('#declarationTable').DataTable({
 					data: @Json.Serialize(Model),
 					columns: [
 						{ data: "declarationName" },
@@ -35,11 +94,29 @@
 						{ data: "distributor" },
 						{ data: "countryOfOrigin" },
 						{ data: "consumerRights" },
+						{
+						data: "declarationId",
+						className: 'actions-control',
+							render: function (data, type, row) {
+								return '<a href="/Dashboard/EditDeclaration?id=' + data + '"><i class="fas fa-pen icon-spacing"></i></a>' +
+									'<i class="fa-solid fa-trash-can icon-spacing"></i>';
+							}
+						},
 					],
 					columnDefs: [
 						{ targets: '_all', className: 'dt-left' }
-					],
+					]
 				});
+
+
+			function updateTableData() {
+				$.get("https://localhost:7213/api/Declaration/GetAll", function (data) {
+					declarationTable.clear().rows.add(data).draw();
+				}).fail(function (xhr, status, error) {
+					declarationTable.clear().draw();
+				});
+			}
+
 			});
 		</script>
 }

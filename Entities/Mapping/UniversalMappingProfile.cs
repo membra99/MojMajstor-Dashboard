@@ -40,8 +40,9 @@ namespace Entities.Mapping
 
             CreateMap<Declaration, DeclarationODTO>();
             CreateMap<DeclarationIDTO, Declaration>();
+			CreateMap<Declaration, DeclarationIDTO>();
 
-            CreateMap<SiteContent, SiteContentODTO>();
+			CreateMap<SiteContent, SiteContentODTO>();
             CreateMap<SiteContentIDTO, SiteContent>();
 
             CreateMap<Attributes, AttributesODTO>()

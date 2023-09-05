@@ -116,7 +116,21 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        public async Task<IActionResult> SetPassword(string key)
+		public async Task<IActionResult> EditDeclaration(int id)
+		{
+			try
+			{
+				var declaration = await _mainDataServices.GetDeclarationForEditById(id);
+                return View("Declaration/EditDeclaration", declaration);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		public async Task<IActionResult> SetPassword(string key)
         {
             try
             {
@@ -277,7 +291,7 @@ namespace Universal.Admin_Controllers.AdminMVC
                 devidedList.Add(rootList);
             }
             devidedList.Reverse();
-            return View("Category/Categories", new CategoryAttributeIDTO { AllCategories = devidedList });
+            return View("Category/Categories", new CategoryAttributeIDTO { AllCategories = devidedList ?? null });
         }
 
         public async Task<IActionResult> AddCategory(CategoryAttributeIDTO categoryAttributeIDTO)
@@ -292,7 +306,17 @@ namespace Universal.Admin_Controllers.AdminMVC
             return RedirectToAction("AllCategories");
         }
 
-        public async Task<IActionResult> DeleteCategory(int categoryId)
+		public async Task<IActionResult> EditDeclarationModel(DeclarationIDTO declarationIDTO)
+		{
+            if (!ModelState.IsValid)
+            {
+                return View("Declaration/EditDeclaration", declarationIDTO);
+            }
+			await _mainDataServices.EditDeclaration(declarationIDTO);
+			return RedirectToAction("AllDeclaration");
+		}
+
+		public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             await _mainDataServices.DeleteCategory(categoryId);
             return RedirectToAction("AllCategories");

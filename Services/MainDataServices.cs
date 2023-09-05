@@ -301,6 +301,7 @@ namespace Services
 		{
 			var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId == null).SingleOrDefaultAsync();
 
+
 			var cat = ReturnChildren(categoriesRoot.CategoryId);
 
             ChildODTO child = new ChildODTO();
@@ -604,9 +605,21 @@ namespace Services
 				   select _mapper.Map<DeclarationODTO>(x);
 		}
 
+		private IQueryable<DeclarationIDTO> GetDeclarationsIDTO(int id)
+		{
+			return from x in _context.Declarations
+				   where (id == 0 || x.DeclarationId == id)
+				   select _mapper.Map<DeclarationIDTO>(x);
+		}
+
 		public async Task<DeclarationODTO> GetDeclarationById(int id)
 		{
 			return await GetDeclarations(id).AsNoTracking().SingleOrDefaultAsync();
+		}
+
+		public async Task<DeclarationIDTO> GetDeclarationForEditById(int id)
+		{
+			return await GetDeclarationsIDTO(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
 		public async Task<List<DeclarationODTO>> GetAllDeclarations()
