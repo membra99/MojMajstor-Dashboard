@@ -477,13 +477,18 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        private void CheckForToast() {
-            ViewBag.ToastMessage = _httpContextAccessor.HttpContext.Session.Get<string>("ToastMessage");
+		#endregion Categories
+
+		#region Helpers
+
+		private void CheckForToast()
+		{
+			ViewBag.ToastMessage = _httpContextAccessor.HttpContext.Session.Get<string>("ToastMessage");
 			ViewBag.ToastType = _httpContextAccessor.HttpContext.Session.Get<string>("ToastType");
 			_httpContextAccessor.HttpContext.Session.Remove("ToastMessage");
 			_httpContextAccessor.HttpContext.Session.Remove("ToastType");
 		}
 
-		#endregion Categories
+		#endregion
 	}
 }
