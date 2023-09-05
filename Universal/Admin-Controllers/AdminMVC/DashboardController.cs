@@ -134,9 +134,9 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             try
             {
-				ViewBag.UserKey = key;
-				return View("../Authentication/SetPassword");
-			}
+                ViewBag.UserKey = key;
+                return View("../Authentication/SetPassword");
+            }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
@@ -144,40 +144,40 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-		public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
-		{
-			if (!ModelState.IsValid)
-			{
-				return View("User/NewUser", new UsersIDTO());
-			}
+        public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("User/NewUser", new UsersIDTO());
+            }
 
-			//						FILE UPLOAD SYSTEM
-			AWSFileUpload awsFile = new AWSFileUpload();
-			awsFile.Attachments = new List<IFormFile>();
-			if (userIDTO.Avatar != null)
-				awsFile.Attachments.Add(userIDTO.Avatar);
-			try
-			{
-				var media = await _userDataServices.UploadUserPicture(awsFile);
-				if (media != null) userIDTO.MediaId = media.MediaId;
-				var users = await _userDataServices.AddUser(userIDTO);
-				if (users == null)
-				{
-					ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-					return View("User/NewUser");
-				}
-				return RedirectToAction("AllUsers", "Dashboard");
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
-		}
+            //						FILE UPLOAD SYSTEM
+            AWSFileUpload awsFile = new AWSFileUpload();
+            awsFile.Attachments = new List<IFormFile>();
+            if (userIDTO.Avatar != null)
+                awsFile.Attachments.Add(userIDTO.Avatar);
+            try
+            {
+                var media = await _userDataServices.UploadUserPicture(awsFile);
+                if (media != null) userIDTO.MediaId = media.MediaId;
+                var users = await _userDataServices.AddUser(userIDTO);
+                if (users == null)
+                {
+                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+                    return View("User/NewUser");
+                }
+                return RedirectToAction("AllUsers", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
 
-		#region Data/Products
+        #region Data/Products
 
-		public async Task<IActionResult> AllData()
+        public async Task<IActionResult> AllData()
         {
             try
             {
@@ -193,7 +193,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         public async Task<IActionResult> NewData()
         {
-            var categories = await _mainDataServices.GetCategories();
+            var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
             var declarations = await _mainDataServices.GetAllDeclarations();
             return View("Data/NewData", new DataIDTO
             {
@@ -213,7 +213,7 @@ namespace Universal.Admin_Controllers.AdminMVC
             foreach (var attribute in attributes)
             {
                 var attrValues = await _mainDataServices.GetAllAttributesValueByAttributeName(attribute.CategoryId);
-				attributeValues.Add(attribute.CategoryId, attrValues);
+                attributeValues.Add(attribute.CategoryId, attrValues);
             }
 
             return Json(new { data = new { attrs = attributes, attrValues = attributeValues } });
@@ -223,7 +223,7 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             if (!ModelState.IsValid)
             {
-                var categories = await _mainDataServices.GetCategories();
+                var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
                 var declarations = await _mainDataServices.GetAllDeclarations();
                 return View("Data/NewData", new DataIDTO
                 {
