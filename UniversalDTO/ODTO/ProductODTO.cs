@@ -13,6 +13,7 @@ namespace Universal.DTO.ODTO
         public string? ProductName { get; set; }
         public int? DeclarationId { get; set; }
         public double Price { get; set; }
+        public int SeoId { get; set; }
         public bool IsOnSale { get; set; }
         public string? Description { get; set; }
         public string? Specification { get; set; }

@@ -1,4 +1,5 @@
-﻿using Entities.Universal.MainData;
+﻿using AutoMapper;
+using Entities.Universal.MainData;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.AWS;
@@ -339,11 +340,13 @@ namespace Universal.Admin_Controllers.AdminMVC
 			var product = await _mainDataServices.GetProductsByIdForEdit(dataId);
 			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 			var declarations = await _mainDataServices.GetAllDeclarations();
+			var productAtributes = await _mainDataServices.GetAllProductAttributes(dataId);
 			return View("Data/EditData", new DataIDTO
 			{
 				ProductIDTO = product,
 				CategoriesODTOs = categories,
 				DeclarationODTOs = declarations,
+				ProductAttributeValues = productAtributes,
 				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
 				{
 					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
@@ -358,12 +361,14 @@ namespace Universal.Admin_Controllers.AdminMVC
 				var product = await _mainDataServices.GetProductsByIdForEdit(dataIDTO.ProductIDTO.ProductId);
 				var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 				var declarations = await _mainDataServices.GetAllDeclarations();
-				return View("Data/EditData", new DataIDTO
+                var productAtributes = await _mainDataServices.GetAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
+                return View("Data/EditData", new DataIDTO
 				{
 					ProductIDTO = product,
 					CategoriesODTOs = categories,
 					DeclarationODTOs = declarations,
-					SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
+                    ProductAttributeValues = productAtributes,
+                    SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
 				{
 					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
 				}
@@ -372,6 +377,12 @@ namespace Universal.Admin_Controllers.AdminMVC
 			try
 			{
 				var product = await _mainDataServices.EditProduct(dataIDTO.ProductIDTO);
+
+				if(dataIDTO.ProductIDTO.SaleIDTO != null)
+				{
+					var sale = await _mainDataServices.AddSale(dataIDTO.ProductIDTO.SaleIDTO, dataIDTO.ProductIDTO.ProductId);
+					
+				}
 
 				AWSFileUpload awsFile = new AWSFileUpload();
 				awsFile.Attachments = new List<IFormFile>();
@@ -388,6 +399,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 					await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
 				}
 
+				await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
+
 				foreach (var attributeID in dataIDTO.ProductAttributeValues)
 				{
 					ProductAttributesIDTO productAttributesIDTO = new ProductAttributesIDTO()
@@ -396,7 +409,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						IsDev = false, //TODO check how IsDev is set
 						AttributesId = attributeID
 					};
-					_mainDataServices.AddProductAttributes(productAttributesIDTO);
+					await _mainDataServices.AddProductAttributes(productAttributesIDTO);
 				}
 
 				return RedirectToAction("AllData", "Dashboard");

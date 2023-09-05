@@ -25,4 +25,7 @@ namespace Universal.DTO.IDTO
 		public SaleIDTO? SaleIDTO { get; set; }
         public SeoIDTO? SeoIDTO { get; set; }
     }
+
+
+
 }

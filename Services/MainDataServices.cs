@@ -185,11 +185,28 @@ namespace Services
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
             product.SaleIDTO = _mapper.Map <SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
-            product.SeoIDTO = _mapper.Map <SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
+             product.SeoIDTO = _mapper.Map <SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
+            DateTime startdate = DateTime.ParseExact(product.SaleIDTO.StartDate, "dd/MM/yyyy HH:mm:ss", null);
+            DateTime enddate = DateTime.ParseExact(product.SaleIDTO.EndDate, "dd/MM/yyyy HH:mm:ss", null);
+            product.SaleIDTO.StartDate = startdate.ToString("yyyy-MM-dd");
+            product.SaleIDTO.EndDate = enddate.ToString("yyyy-MM-dd");
             return product;
 		}
 
-        public async Task<List<ProductODTO>> GetAllProducts()
+        public async Task<SaleODTO> AddSale(SaleIDTO saleIDTO, int productId)
+        {
+            var sale = _mapper.Map<Sale>(saleIDTO);
+            sale.SaleId = 0;
+            sale.IsActive = true;
+            sale.ProductId = productId;
+            _context.Sales.Add(sale);
+            await SaveContextChangesAsync();
+
+            return await _context.Sales.Where(x => x.SaleId == sale.SaleId).Select(x => _mapper.Map<SaleODTO>(x)).SingleOrDefaultAsync();
+        }
+
+
+		public async Task<List<ProductODTO>> GetAllProducts()
         {
             return await GetProducts(0).AsNoTracking().ToListAsync();
         }
@@ -300,9 +317,15 @@ namespace Services
         {
             var product = _mapper.Map<Product>(productIDTO);
             _context.Entry(product).State = EntityState.Modified;
-            await SaveContextChangesAsync();
 
-            return await GetProductsById(product.ProductId);
+            var seo = await _context.Seos.Where(x => x.SeoId == productIDTO.SeoId).SingleOrDefaultAsync();
+			seo.GoogleDesc = productIDTO.SeoIDTO.GoogleDesc;
+            seo.GoogleKeywords = productIDTO.SeoIDTO.GoogleKeywords;
+            _context.Entry(seo).State = EntityState.Modified;
+
+			await SaveContextChangesAsync();
+
+			return await GetProductsById(product.ProductId);
         }
 
         public async Task<ProductODTO> DeleteProduct(int id)
@@ -419,6 +442,15 @@ namespace Services
             await SaveContextChangesAsync();
 
             return await GetProductAttributesById(productAttributes.ProductAttributeId);
+        }
+
+        public async Task DeleteAllProductAttributes(int id)
+        {
+            var productAttr = _context.ProductAttributes.Where(x => x.ProductId == id).ToList();
+
+            _context.RemoveRange(productAttr);
+
+            await SaveContextChangesAsync();
         }
 
         public async Task<ProductAttributesODTO> DeleteProductAttributes(int id)
@@ -774,6 +806,13 @@ namespace Services
             var attributes = await _context.Attributes.Include(x => x.Categories).Where(x => x.CategoriesId == categoryId).Select(x => _mapper.Map<AttributesODTO>(x)).ToListAsync();
             return attributes;
         }
+
+        public async Task<List<int?>> GetAllProductAttributes(int productId)
+        {
+            var productAttr = await _context.ProductAttributes.Where(x => x.ProductId == productId).Select(x => x.AttributesId).ToListAsync();
+            return  productAttr;
+
+		}
 
         public async Task<AttributesODTO> AddAttributes(AttributesIDTO attributesIDTO)
         {

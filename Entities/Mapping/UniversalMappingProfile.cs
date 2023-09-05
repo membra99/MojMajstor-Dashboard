@@ -35,8 +35,8 @@ namespace Entities.Mapping
             CreateMap<SaleIDTO, Sale>();
             CreateMap<Sale, SaleIDTO>();
 
-            CreateMap<Seo, SaleODTO>();
-            CreateMap<Seo, SaleIDTO>();
+            CreateMap<Seo, SeoODTO>();
+            CreateMap<Seo, SeoIDTO>();
 
             CreateMap<Order, OrderODTO>()
                  .ForMember(dest => dest.Email, source => source.MapFrom(m => m.Users.Email));
