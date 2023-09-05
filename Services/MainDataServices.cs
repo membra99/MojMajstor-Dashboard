@@ -122,13 +122,27 @@ namespace Services
             foreach (var item in catwithAtr)
             {
                 var atributes = await _context.Attributes.Where(x => x.CategoriesId == item.CategoryId).ToListAsync();
-                _context.Attributes.RemoveRange(atributes);
+				foreach (var atribute in atributes)
+				{
+					var productAttributes = await _context.ProductAttributes.Where(x => x.AttributesId == atribute.AttributesId).ToListAsync();
+					_context.ProductAttributes.RemoveRange(productAttributes);
+				}
+				_context.Attributes.RemoveRange(atributes);
                 await SaveContextChangesAsync();
             }
 
             foreach (var catID in catwithoutAtr)
             {
 				var products = await _context.Products.Where(x => x.CategoriesId == catID).ToListAsync();
+				foreach (var product in products)
+				{
+					var sales = await _context.Sales.Where(x => x.ProductId == product.ProductId).ToListAsync();
+					var media = await _context.Medias.Where(x => x.ProductId == product.DeclarationId).ToListAsync();
+					var orders = await _context.OrderDetails.Where(x => x.ProductId == product.ProductId).ToListAsync();
+					_context.Sales.RemoveRange(sales);
+					_context.Medias.RemoveRange(media);
+					_context.OrderDetails.RemoveRange(orders);
+				}
 				_context.Products.RemoveRange(products);
 				await SaveContextChangesAsync();
 			}
@@ -160,6 +174,10 @@ namespace Services
 		public async Task<ProductODTO> GetProductsById(int id)
 		{
 			return await GetProducts(id).AsNoTracking().SingleOrDefaultAsync();
+		}
+		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
+		{
+			return _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
 		}
 
 		public async Task<List<ProductODTO>> GetAllProducts()
@@ -299,7 +317,10 @@ namespace Services
 
 		public async Task<List<ChildODTO2>> GetCategories()
 		{
-			var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId == null).SingleOrDefaultAsync();
+			var categoriesRoot = await _context.Categories.Where(x => x.ParentCategoryId == null && x.IsActive == true).SingleOrDefaultAsync();
+
+			if (categoriesRoot == null)
+				return null;
 
 			var cat = ReturnChildren(categoriesRoot.CategoryId);
 

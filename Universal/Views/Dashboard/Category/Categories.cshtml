@@ -57,8 +57,15 @@
 </style>
 
 <div class="col-10">
-	<ul id="main-list">
-	</ul>
+	@if (Model.AllCategories.Count > 0)
+	{
+		<ul id="main-list">
+		</ul>
+	}
+	else
+	{
+		<i class="fas fa-plus icon-spacing">Add Root Category</i>
+	}
 </div>
 
 <div id="add-edit-modal" class="modal" tabindex="-1" role="dialog">
@@ -127,16 +134,16 @@
 
 					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row'><span class='multi-cat'>"
 						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span>"
-						+ "<button class='btn-add btn btn-success btn-format' data-cat-id='" + categories[i][j].categoryId + "'>+</button>"
-						+ "<button class='btn-edit btn btn-warning btn-format' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'>/</button>"
-						+ "<button class='btn-delete btn btn-danger btn-format' data-cat-id='" + categories[i][j].categoryId + "'>*</button></div>");
+						+ "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
+						+ "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
+						+ "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
 				}
 				else {
 					$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
 						+ "<div class='mb-2 d-flex flex-row'><span class='category-name'>" + categories[i][j].categoryName + "</span>"
-						+ "<button class='btn-add btn btn-success btn-format' data-cat-id='" + categories[i][j].categoryId + "'>+</button>"
-						+ "<button class='btn-edit btn btn-warning btn-format' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'>/</button>"
-						+ "<button class='btn-delete btn btn-danger btn-format' data-cat-id='" + categories[i][j].categoryId + "'>*</button></div></li>");
+						+ "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
+						+ "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
+						+ "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
 				}
 			}
 		}
@@ -150,7 +157,7 @@
 		}
 
 		//v v v BUTTONS v v v
-		let add_buttons = document.getElementsByClassName("btn-add");
+		let add_buttons = document.getElementsByClassName("fa-plus");
 		for (let i = 0; i < add_buttons.length; i++) {
 			add_buttons[i].addEventListener("click", function () {
 				let categoryId = this.dataset.catId;
@@ -171,7 +178,7 @@
 			$('#delete-modal').modal('hide');
 		});
 
-		let edit_buttons = document.getElementsByClassName("btn-edit");
+		let edit_buttons = document.getElementsByClassName("fa-pen");
 		for (let i = 0; i < edit_buttons.length; i++) {
 			edit_buttons[i].addEventListener("click", function () {
 				let categoryId = this.dataset.catId;
@@ -186,7 +193,7 @@
 			});
 		}
 
-		let delete_buttons = document.getElementsByClassName("btn-delete");
+		let delete_buttons = document.getElementsByClassName("fa-trash-can");
 		for (let i = 0; i < delete_buttons.length; i++) {
 			delete_buttons[i].addEventListener("click", function () {
 				let categoryId = this.dataset.catId;

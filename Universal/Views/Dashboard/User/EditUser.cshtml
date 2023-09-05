@@ -1,21 +1,22 @@
 ﻿@model Universal.DTO.IDTO.UsersIDTO
 
 @{
-	ViewData["Title"] = "New User";
+	ViewData["Title"] = "Edit User";
 }
 
 <div class="col-5 bg-light mx-auto rounded-3">
 	<div class="form-group">
 		@Html.ValidationMessage("UserExist")
-		@using (Html.BeginForm("AddUser", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		@using (Html.BeginForm("EditUserAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 		{
+			@Html.HiddenFor(model => model.UsersId)
 			<div class="mb-3">
 				@Html.DropDownListFor(model => model.Role, new List<SelectListItem>
-					{
-						new SelectListItem() { Text = "User", Value = "User"},
-						new SelectListItem() { Text = "Admin", Value = "Admin"}
-					},
-				"Select Role", new { @class="form-control" })
+			{
+			new SelectListItem() { Text = "User", Value = "User"},
+			new SelectListItem() { Text = "Admin", Value = "Admin"}
+			},
+			"Select Role", new { @class="form-control" })
 				@Html.ValidationMessageFor(model => model.Role, null, new { @class="text-danger" })
 			</div>
 			<div class="mb-3">
@@ -51,9 +52,9 @@
 				@Html.ValidationMessageFor(model => model.Country, null, new { @class="text-danger" })
 			</div>
 			@*<div class="mb-3">
-				@Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
-				@Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
-			</div>*@
+		@Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
+		@Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
+		</div>*@
 			<div class="mb-3">
 				<input type="file" name="Avatar" runat="server" class="form-control" />
 				@*@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })*@

@@ -81,6 +81,11 @@ namespace Services
             return await GetUsers(id).AsNoTracking().SingleOrDefaultAsync();
         }
 
+		public async Task<UsersIDTO> GetUserByIdForEdit(int id)
+		{
+			return _mapper.Map<UsersIDTO>(await GetUsers(id).AsNoTracking().SingleOrDefaultAsync());
+		}
+
 		public async Task<UsersIDTO> GetUserByPassword(string password)
 		{
 			return await GetUsers(password).AsNoTracking().SingleOrDefaultAsync();
@@ -148,12 +153,18 @@ namespace Services
 
         public async Task<UsersODTO> DeleteUser(int id)
         {
-            var user = await _context.Products.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
 
             var userODTO = await GetUserById(id);
 
-            _context.Products.Remove(user);
+            var orders = await _context.Orders.Where(x => x.UsersId == id).ToListAsync();
+            foreach (var order in orders)
+            {
+                _context.Orders.Remove(order);
+            }
+
+            _context.Users.Remove(user);
             await SaveContextChangesAsync();
 
             return userODTO;
