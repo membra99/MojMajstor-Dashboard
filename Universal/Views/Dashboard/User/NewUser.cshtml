@@ -17,6 +17,17 @@
 				"Select Role", new { @class="form-control" })
 				@Html.ValidationMessageFor(model => model.Role, null, new { @class="text-danger" })
 			</div>
+
+			<div class="mb-3">
+			@Html.DropDownListFor(model => model.UserTypes, new List<SelectListItem>
+				{
+					new SelectListItem() { Text = "Private", Value = "Private"},
+					new SelectListItem() { Text = "Company", Value = "Company"}
+				},
+			"Select User Type", new { @class="form-control" })
+			@Html.ValidationMessageFor(model => model.UserTypes, null, new { @class="text-danger" })
+			</div>
+
 			<div class="mb-3">
 				@Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
 				@Html.ValidationMessageFor(model => model.Email, null, new { @class="text-danger" })

@@ -20,6 +20,17 @@
                     "Select Category", new { @class="form-control"})
                         @Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
                     </div>
+                        <div class="mb-3">
+
+                    @Html.DropDownListFor(model => model.ProductIDTO.IsActive, new List<SelectListItem>
+			        {
+			        	new SelectListItem() { Text = "Active", Value = "true"},
+			        	new SelectListItem() { Text = "Not Active", Value = "false"}
+			        	},
+			            "Select Product Status", new { @class="form-control" })
+                    @Html.ValidationMessageFor(model => model.ProductIDTO.IsActive, null, new { @class="text-danger" })
+                    </div>
+
                     <div class="mb-3">
                         @Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code" })
                         @Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class="text-danger" })
@@ -39,6 +50,10 @@
                     <div class="mb-3">
                         @Html.TextAreaFor(model => model.ProductIDTO.Specification, 10, 1, new { @Id="tiny", @class="form-control", placeholder = "Specification" })
                         @Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class="text-danger" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type="number", @class="form-control", placeholder="Quantity" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.Quantity, null, new { @class="text-danger" })
                     </div>
                     <div class="mb-3">
                         @Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type="number", @class="form-control", placeholder="Price" })
