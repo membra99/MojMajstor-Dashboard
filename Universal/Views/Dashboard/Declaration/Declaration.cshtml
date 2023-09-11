@@ -99,7 +99,10 @@
 						data: "declarationId",
 						className: 'actions-control',
 							render: function (data, type, row) {
-								return '<a href="/Dashboard/EditDeclaration?id=' + data + '"><i class="fas fa-pen icon-spacing"></i></a>' +
+								return '<a href="/Dashboard/EditDeclaration?id=' + data + '">'+
+									'<i class="fas fa-pen icon-spacing"></i></a>' +
+									'<a href="/Dashboard/EditUser?userId=' + data + '">' +
+									'<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
 									'<i class="fa-solid fa-trash-can icon-spacing"></i>';
 							}
 						},

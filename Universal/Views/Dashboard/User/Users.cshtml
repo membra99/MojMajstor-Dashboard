@@ -4,7 +4,7 @@
 	ViewData["Title"] = "All Users";
 }
 
-<div class="col-10">
+<div class="col-12">
 	<table id="userTable" class="table table-striped display text-center w-100">
 		<thead>
 			<tr>
@@ -48,7 +48,9 @@
 	{
 	<script>
 		$(document).ready(function () {
-			console.log(@Json.Serialize(Model));
+			let data = @Json.Serialize(Model);
+			let isPaginate = data.length > 10 ? true: false;
+
 			let userTable = $('#userTable').DataTable({
 				data: @Json.Serialize(Model),
 				scrollX: true,
@@ -66,7 +68,10 @@
 						data: 'usersId',
 						className: 'actions-control',
 						render: function (data, type, row) {
-							return '<a href="/Dashboard/EditUser?userId=' + data + '"><i class="fa-solid fa-pen icon-spacing"></i></a> ' +
+							return '<a href="/Dashboard/EditUser?userId=' + data + '">'+
+								'<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
+								'<a href="/Dashboard/EditUser?userId=' + data + '">' +
+								'<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
 								'<i class="fa-solid fa-trash-can icon-spacing"></i>'
 						}
 					},
@@ -74,6 +79,8 @@
 				columnDefs: [
 					{ targets: '_all', className: 'dt-left' }
 				],
+				bPaginate: isPaginate,
+				order: [[3, 'desc']],
 			});
 
 			$.ajaxSetup({

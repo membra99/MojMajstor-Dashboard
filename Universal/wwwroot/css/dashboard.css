@@ -1,6 +1,5 @@
 ﻿.side-navigation {
     width: 200px;
-    height: 100vh;
     position: fixed;
     z-index: 5;
     background-color: indigo;
@@ -35,18 +34,26 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    overflow-y: scroll;
+    height: calc(100vh - 50px);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.side-list::-webkit-scrollbar{
+    display: none;
 }
 
 .side-anchor {
     display: block;
     color: white;
-    text-align: center;
-    padding: 14px 16px;
     text-decoration: none;
+    padding: 14px 16px;
 }
 
 .side-anchor:hover {
     background-color: #f8f9fa;
+    color: blueviolet;
 }
 .user {
     margin-bottom: 10px;
@@ -54,4 +61,8 @@
     font-weight: 500;
     color: #553c9a;
     border-right: 4px solid #553c9a;
+}
+
+ul ul {
+    text-indent: 25%;
 }

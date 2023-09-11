@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Universal.Util.HtmlHelperExtensions;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -14,8 +16,23 @@
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<style>
-		.toast-close{
-			color:black!important;
+		.toast-close {
+			color: black !important;
+		}
+
+		.active {
+			color: white;
+		}
+
+		.dropdown-container {
+			display: none;
+			background-color: rebeccapurple;
+			font-size: 14px;
+		}
+
+		.fa-caret-down {
+			float: right;
+			padding-right: 8px;
 		}
 	</style>
 	<script>
@@ -40,19 +57,59 @@
 			</div>
 		</header>
 		<aside class="side-navigation">
-			<ul class="navbar-nav side-list">
-				<li class="nav-item">@Html.ActionLink("Users", "AllUsers", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("New Users", "NewUser", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Data", "AllData", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Categories", "AllCategories", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Pages", "AllSiteContent", "Dashboard", new {type = "Page"}, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Blog", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLink("Orders", "AllOrders", "Dashboard", null, new{ @class = "side-anchor" })</li>
+			<ul class="navbar-nav side-list sidenav">
+				<li class="nav-item dropdown-btn">
+					<span class="side-anchor">
+						<i class="fa fa-user icon-spacing"></i>
+						Users
+						<i class="fa fa-caret-down"></i></span>
+					<ul class="navbar-nav dropdown-container">
+						<li>
+							@Html.ActionLink("All Users", "AllUsers", "Dashboard", null, new{ @class = "side-anchor" })
+							@Html.ActionLink("New Users", "NewUser", "Dashboard", null, new{ @class = "side-anchor" })
+						</li>
+					</ul>
+				</li>
+				<li class="nav-item dropdown-btn">
+					<span class="side-anchor">
+						<i class="fa fa-file-lines icon-spacing"></i>
+						Data
+						<i class="fa fa-caret-down"></i></span>
+					<ul class="navbar-nav dropdown-container">
+						<li>
+							@Html.ActionLink("All Data", "AllData", "Dashboard", null, new{ @class = "side-anchor" })
+							@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })
+						</li>
+					</ul>
+				</li>	
+				<li class="nav-item dropdown-btn">
+					<span class="side-anchor">
+						<i class="fa fa-table-list icon-spacing"></i>
+						Categories
+						<i class="fa fa-caret-down"></i></span>
+					<ul class="navbar-nav dropdown-container">
+						<li>
+							@Html.ActionLink("Category Tree", "AllCategories", "Dashboard", null, new{ @class = "side-anchor" })
+							@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })
+						</li>
+					</ul>
+				</li>
+				<li class="nav-item dropdown-btn">
+					<span class="side-anchor ">
+						<i class="fa-solid fa-certificate icon-spacing"></i>
+						Declarations
+						<i class="fa fa-caret-down"></i></span>
+					<ul class="navbar-nav dropdown-container">
+						<li>
+							@Html.ActionLink("All Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
+							@Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
+						</li>
+					</ul>
+				</li>
+				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "side-anchor" }, "fa-folder-open")</li>
+				<li class="nav-item">@Html.ActionLink("Pages", "AllSiteContent", "Dashboard", new {type = "Page"}, new{ @class = "side-anchor" }, "fa-newspaper")</li>
+				<li class="nav-item">@Html.ActionLink("Blogs", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "side-anchor" }, "fa-copy")</li>
+				<li class="nav-item">@Html.ActionLink("Orders", "AllOrders", "Dashboard", null, new{ @class = "side-anchor" }, "fa-box-open")</li>
 			</ul>
 		</aside>
 		<div class="content-wrapper bg-light">
@@ -68,38 +125,53 @@
 	<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/js/bootstrap-multiselect.min.js"></script>
 	<script>
-			function showToast(text, type) { 
-				let styleBg = '#2e844a';
-				let styleColor = 'white';
-				switch(type){
-					case "success": styleBg = '#2e844a'; break;
-					case "error": styleBg = '#ea001e'; break;
-					case "info": styleBg = '#747474'; break;
-					case "warning": styleBg = '#dd7a01'; styleColor = 'black'; break;
-				}
-
-				Toastify({
-					text: text,
-					duration: 3000,
-					close: true,
-					gravity: "top", // `top` or `bottom`
-					position: "center", // `left`, `center` or `right`
-					stopOnFocus: true, // Prevents dismissing of toast on hover
-					style: {
-						background: styleBg,
-						color: styleColor
-					},
-					onClick: function () { } // Callback after click
-				}).showToast();
+		function showToast(text, type) {
+			let styleBg = '#2e844a';
+			let styleColor = 'white';
+			switch (type) {
+				case "success": styleBg = '#2e844a'; break;
+				case "error": styleBg = '#ea001e'; break;
+				case "info": styleBg = '#747474'; break;
+				case "warning": styleBg = '#dd7a01'; styleColor = 'black'; break;
 			}
 
-			$(document).ready(function () {
+			Toastify({
+				text: text,
+				duration: 3000,
+				close: true,
+				gravity: "top", // `top` or `bottom`
+				position: "center", // `left`, `center` or `right`
+				stopOnFocus: true, // Prevents dismissing of toast on hover
+				style: {
+					background: styleBg,
+					color: styleColor
+				},
+				onClick: function () { } // Callback after click
+			}).showToast();
+		}
+
+		$(document).ready(function () {
 			let toastMessage = '@ViewBag.ToastMessage';
 			let toastType = '@ViewBag.ToastType';
 			if (toastMessage !== '') {
 				showToast(toastMessage, toastType == '' ? 'success' : toastType);
 			}
-			})
+
+			var dropdown = document.getElementsByClassName("dropdown-btn");
+			var i;
+
+			for (i = 0; i < dropdown.length; i++) {
+				dropdown[i].addEventListener("click", function () {
+					this.classList.toggle("active");
+					var dropdownContent = this.querySelector(".dropdown-container");
+					if (dropdownContent.style.display === "block") {
+						dropdownContent.style.display = "none";
+					} else {
+						dropdownContent.style.display = "block";
+					}
+				});
+			}
+		})
 
 
 	</script>
