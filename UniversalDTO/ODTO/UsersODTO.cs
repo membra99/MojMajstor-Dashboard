@@ -21,5 +21,7 @@ namespace Universal.DTO.ODTO
         public string? Country { get; set; }
         public string? Password { get; set; }
         public string? Role { get; set; }
+
+        public string? UserTypes { get; set; }
     }
 }

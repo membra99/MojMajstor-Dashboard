@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Universal.DTO.IDTO
 {
-    public class ProductIDTO
-    {
+	public class ProductIDTO
+	{
 		public int ProductId { get; set; }
 		public int CategoriesId { get; set; }
 		public int? DeclarationId { get; set; }
@@ -22,10 +22,9 @@ namespace Universal.DTO.IDTO
 		public string? ProductCode { get; set; }
 		public DateTime CreatedAt { get; set; } = DateTime.Now;
 		public DateTime UpdatedAt { get; set; } = DateTime.Now;
+		public bool? IsActive { get; set; } = true;
+		public int? Quantity { get; set; } = 0;
 		public SaleIDTO? SaleIDTO { get; set; }
-        public SeoIDTO? SeoIDTO { get; set; }
-    }
-
-
-
+		public SeoIDTO? SeoIDTO { get; set; }
+	}
 }
