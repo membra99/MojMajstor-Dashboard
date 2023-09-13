@@ -13,5 +13,7 @@ namespace Universal.DTO.ODTO
         public string? CategoryName { get; set; }
         public bool IsAttribute { get; set; }
         public bool? IsActive { get; set; }
-    }
+		public string? GoogleDesc { get; set; }
+		public string? GoogleKeywords { get; set; }
+	}
 }

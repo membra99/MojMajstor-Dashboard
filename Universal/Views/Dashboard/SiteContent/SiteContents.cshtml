@@ -4,12 +4,19 @@
 	ViewData["Title"] = "All SiteContents";
 }
 
+@if (ViewBag.siteType == "Page")
+{
+	<button type="button" class="btn btn-primary" id="addPageButton" style="margin-bottom:15px;">Add New Page</button>
+}
+else
+{
+	<button type="button" class="btn btn-primary" id="addBlogButton" style="margin-bottom:15px;">Add New Blog</button>
+}
 <div>
 	<table id="siteContentTable" class="table table-striped display text-center">
 		<thead>
 			<tr>
 				<th>Title</th>
-				<th>SiteContentTypeId</th>
 				<th>MediaId</th>
 				<th>SeoId</th>
 				<th>TagId</th>
@@ -27,11 +34,20 @@
 	<script>
 		console.log(@Json.Serialize(Model))
 		$(document).ready(function () {
+
+
+			$(document).on('click', '#addPageButton', function () {
+				window.location.href = '/Dashboard/PostSiteContent?siteContentType=' + 3;
+			});
+
+			$(document).on('click', '#addBlogButton', function () {
+				window.location.href = '/Dashboard/PostSiteContent?siteContentType=' + 4;
+			});
+
 			$('#siteContentTable').DataTable({
 				data: @Json.Serialize(Model),
 				columns: [
 					{ data: "title" },
-					{ data: "siteContentTypeId" },
 					{ data: "mediaId" },
 					{ data: "seoId" },
 					{ data: "tagId" },

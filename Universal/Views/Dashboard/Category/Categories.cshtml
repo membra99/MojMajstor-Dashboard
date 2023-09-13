@@ -183,6 +183,23 @@
 			edit_buttons[i].addEventListener("click", function () {
 				let categoryId = this.dataset.catId;
 				let parentId = this.dataset.parentId;
+				$.ajax({
+					url: 'https://localhost:7213/api/Categories/' + categoryId,
+					type:'GET',
+					data: categoryId,
+					success:function(response){
+						console.log(response);
+						$('#input-name').val(response.categoryName);
+						$('#input-seoDesc').val(response.googleDesc);
+						$('#input-seoKeyword').val(response.googleKeywords);
+					},
+					error:function(){
+
+					}
+				})
+
+
+				;
 				$("#input-category").val(categoryId);
 				$("#input-parent").val(parentId);
 
@@ -192,6 +209,9 @@
 				$("#form-add-delete").attr("action", "@Url.Action("EditCategory", "Dashboard")");
 			});
 		}
+
+
+
 
 		let delete_buttons = document.getElementsByClassName("fa-trash-can");
 		for (let i = 0; i < delete_buttons.length; i++) {

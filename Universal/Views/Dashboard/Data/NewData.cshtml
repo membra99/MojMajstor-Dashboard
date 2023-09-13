@@ -14,25 +14,34 @@
 						<h2>Product</h2>
 					</div>
 					<div class="mb-3">
+						<span id="req"></span>
 						@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
 					new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
-					"Select Category", new { @class="form-control"})
+					 "Select Category",new { @class="form-control"})
 						@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code" })
+						<span id="req"></span>
+						@Html.Label("Product Code")
+						<span id="req">*</span>
+						@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control"})
 						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class="form-control", placeholder = "Product Name" })
+						<span id="req"></span>
+						@Html.Label("Product Name")
+						<span id="req">*</span>
+						@Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class="form-control" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextAreaFor(model => model.ProductIDTO.Description, 10, 1, new { @Id="tiny", @class="form-control", placeholder = "Description" })
+						@Html.Label("Description")
+						@Html.TextAreaFor(model => model.ProductIDTO.Description, 10, 1, new { @Id="tiny", @class="form-control" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextAreaFor(model => model.ProductIDTO.Specification, 10, 1, new { @Id="tiny", @class="form-control", placeholder = "Specification" })
+						@Html.Label("Specification")
+						@Html.TextAreaFor(model => model.ProductIDTO.Specification, 10, 1, new { @Id="tiny", @class="form-control" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
@@ -65,37 +74,42 @@
 					<div class="mb-3">
 						@Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
 					new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
-					"Select Sale Type", new { @class="form-control", disabled="disabled" })
+					 "Select Sale Type",new { @class="form-control", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled="disabled" })
+						@Html.Label("Value")
+						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
+						@Html.Label("Start Date")
+						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date",@class="form-control", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
+						@Html.Label("End Date")
 						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
 					</div>
 				</div>
-				<div class="col-5">
+				<div id="section2" class="col-5">
 					<div class="mb-3">
 						<h2>SEO</h2>
 					</div>
 					<div class="mb-3">
-						@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="form-control", placeholder = "Google Description" })
+						@Html.Label("Google Description")
+						@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="form-control" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
 					</div>
 					<div class="mb-3">
-						@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="form-control", placeholder = "Google Keywords" })
+						@Html.Label("Google Keywords")
+						@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="form-control" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="text-danger" })
 					</div>
 
 					<div class="mb-3">
-						<h2>Feature Image</h2>
+						<h2>Feature Image<span id="req" style="font-size:25px">*</span></h2>
 					</div>
 					<div class="mb-3">
 						@Html.TextBoxFor(model => model.FeaturedImage, null, new { type="file", @class="form-control", runat="server" })
@@ -110,19 +124,13 @@
 					</div>
 
 					<div class="mb-3">
-						<h2>Decleration</h2>
+						<h2>Declaration</h2>
 					</div>
 					<div class="mb-3">
 						@Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
 					new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
 					"Select Declaration", new { @class="form-control" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class="text-danger" })
-					</div>
-
-					<div class="mb-3">
-						<h2>Attributes</h2>
-					</div>
-					<div id="attributeArea" class="mb-3">
 					</div>
 				</div>
 			</div>
@@ -161,7 +169,6 @@
 			});
 		}
 
-
 		$("#ProductIDTO_IsOnSale").change(function () {
 			if (this.checked) {
 				$("input[name*='SaleIDTO'], select[name*='SaleIDTO']").removeAttr("disabled");
@@ -172,13 +179,17 @@
 		});
 
 		$("#ProductIDTO_CategoriesId").change(function () {
+			$('.attr').html("");
 			$.ajax({
 				type: "GET",
 				url: "/Dashboard/AllAttributesByCategory",
 				data: { CategoryId: $(this).val() },
 				success: function (data) {
+					console.log(data);
 					let counter = 0;
-					$("#attributeArea").html("");
+					if(data.data.attrs.length > 0){
+						$('#section2').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
+					}
 					$.each(data.data.attrValues, function (index, attribute) {
 						if (attribute.length > 0) {
 							let attributesOptions = ""

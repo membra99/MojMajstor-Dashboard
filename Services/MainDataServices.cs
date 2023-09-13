@@ -73,7 +73,7 @@ namespace Services
 
         public async Task<CategoriesODTO> GetCategoriesById(int id)
         {
-            return await GetCategories(id).AsNoTracking().SingleOrDefaultAsync();
+            return await _context.Categories.Include(x => x.Seo).Where(x => x.CategoryId == id).Select(x => _mapper.Map<CategoriesODTO>(x)).SingleOrDefaultAsync();
         }
 
         public async Task<CategoriesODTO> AddCategory(CategoriesIDTO categoriesIDTO)
@@ -143,7 +143,7 @@ namespace Services
 				foreach (var product in products)
 				{
 					var sales = await _context.Sales.Where(x => x.ProductId == product.ProductId).ToListAsync();
-					var media = await _context.Medias.Where(x => x.ProductId == product.DeclarationId).ToListAsync();
+					var media = await _context.Medias.Where(x => x.ProductId == product.ProductId).ToListAsync();
 					var orders = await _context.OrderDetails.Where(x => x.ProductId == product.ProductId).ToListAsync();
 					_context.Sales.RemoveRange(sales);
 					_context.Medias.RemoveRange(media);
@@ -318,13 +318,41 @@ namespace Services
 
         public async Task<ProductODTO> EditProduct(ProductIDTO productIDTO)
         {
-            var product = _mapper.Map<Product>(productIDTO);
+			if (productIDTO.SeoIDTO.GoogleDesc != null || productIDTO.SeoIDTO.GoogleKeywords != null || productIDTO.SeoId != 0)
+			{
+				var seo = await _context.Seos.Where(x => x.SeoId == productIDTO.SeoId).SingleOrDefaultAsync();
+                if(seo == null)
+                {
+                    SeoIDTO seoIDTO= new SeoIDTO();
+                    seoIDTO.GoogleDesc = productIDTO.SeoIDTO.GoogleDesc;
+                    seoIDTO.GoogleKeywords = productIDTO.SeoIDTO.GoogleKeywords;
+
+                    var s = _mapper.Map<Entities.Universal.MainData.Seo>(seoIDTO);
+                    _context.Seos.Add(s);
+                    await SaveContextChangesAsync();
+
+					productIDTO.SeoId = s.SeoId;
+
+				}
+                else
+                {
+					seo.GoogleDesc = productIDTO.SeoIDTO.GoogleDesc;
+					seo.GoogleKeywords = productIDTO.SeoIDTO.GoogleKeywords;
+					_context.Entry(seo).State = EntityState.Modified;
+				}
+				
+			}
+
+			var product = _mapper.Map<Product>(productIDTO);
+            if(product.SeoId == 0)
+            {
+                product.SeoId = null;
+            }
             _context.Entry(product).State = EntityState.Modified;
 
-            var seo = await _context.Seos.Where(x => x.SeoId == productIDTO.SeoId).SingleOrDefaultAsync();
-			seo.GoogleDesc = productIDTO.SeoIDTO.GoogleDesc;
-            seo.GoogleKeywords = productIDTO.SeoIDTO.GoogleKeywords;
-            _context.Entry(seo).State = EntityState.Modified;
+            
+            
+            
 
 			await SaveContextChangesAsync();
 
@@ -489,7 +517,13 @@ namespace Services
             return await _context.SiteContents.Where(x => x.SiteContentTypeId == siteContentType && x.IsActive == true).Select(x => _mapper.Map<SiteContentODTO>(x)).ToListAsync();
         }
 
-        public async Task<SiteContentODTO> AddSiteContent(SiteContentIDTO siteContentIDTO)
+        public async Task<List<TagODTO>> GetTags()
+        {
+            return await _context.Tags.Select(x => _mapper.Map<TagODTO>(x)).ToListAsync();
+        }
+
+
+		public async Task<SiteContentODTO> AddSiteContent(SiteContentIDTO siteContentIDTO)
         {
             int seo = 0;
             if (siteContentIDTO.SeoIDTO.GoogleKeywords != null || siteContentIDTO.SeoIDTO.GoogleKeywords != null)
@@ -498,7 +532,7 @@ namespace Services
             }
 
             var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);
-            siteContent.SiteContentTypeId = 0;
+            siteContent.SiteContentId = 0;
             siteContent.SeoId = (seo != 0) ? seo : null;
             _context.SiteContents.Add(siteContent);
 

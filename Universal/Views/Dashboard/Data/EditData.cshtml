@@ -97,7 +97,7 @@
                         @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
                     </div>
                 </div>
-                <div class="col-5">
+                <div id ="section2" class="col-5">
                     <div class="mb-3">
                         <h2>SEO</h2>
                     </div>
@@ -134,12 +134,6 @@
                     "Select Declaration", new { @class="form-control" })
                         @Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class="text-danger" })
                     </div>
-
-                    <div class="mb-3">
-                        <h2>Attributes</h2>
-                    </div>
-                    <div id="attributeArea" class="mb-3">
-                    </div>
                 </div>
             </div>
 
@@ -167,7 +161,7 @@
                 data: { CategoryId: $("#ProductIDTO_CategoriesId").val() },
                 success: function (data) {
                     let counter = 0;
-                    $("#attributeArea").html("");
+                    $('#section2').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
                     $.each(data.data.attrValues, function (index, attribute) {
                         if (attribute.length > 0) {
                             let attributesOptions = ""
@@ -230,13 +224,17 @@
         });
 
         $("#ProductIDTO_CategoriesId").change(function () {
+            $('.attr').html("");
             $.ajax({
                 type: "GET",
                 url: "/Dashboard/AllAttributesByCategory",
                 data: { CategoryId: $(this).val() },
                 success: function (data) {
+                    console.log(data)
                     let counter = 0;
-                    $("#attributeArea").html("");
+                    if (data.data.attrs.length > 0) {
+                        $('#section2').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
+                    }
                     $.each(data.data.attrValues, function (index, attribute) {
                         if (attribute.length > 0) {
                             let attributesOptions = ""

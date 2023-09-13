@@ -68,6 +68,41 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Order/ViewOrders", Order);
 		}
 
+		public async Task<IActionResult> PostSiteContent(int siteContentType)
+		{
+			SiteContentIDTO contentIDTO = new SiteContentIDTO();
+			contentIDTO.SiteContentTypeId = siteContentType;
+			contentIDTO.TagODTOs = await _mainDataServices.GetTags();
+			return View("SiteContent/AddSiteContent", contentIDTO);
+		}
+
+		public async Task<IActionResult> AddSiteContent(SiteContentIDTO siteContentIDTO)
+		{
+
+			if (!ModelState.IsValid)
+			{
+				SiteContentIDTO contentIDTO = new SiteContentIDTO();
+				contentIDTO.SiteContentTypeId = siteContentIDTO.SiteContentTypeId;
+				contentIDTO.TagODTOs = await _mainDataServices.GetTags();
+				return View("SiteContent/AddSiteContent", contentIDTO);
+			}
+			try
+			{
+				siteContentIDTO.IsActive = true;
+				var siteContent = await _mainDataServices.AddSiteContent(siteContentIDTO);
+				var site = (siteContentIDTO.SiteContentTypeId == 3) ? "Page" : "Blog";
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", ""+ site +" added successfully!");
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+				return RedirectToAction("AllSiteContent", "Dashboard", new {type = site});
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
 		public async Task<IActionResult> EditStatus(int orderId, string status)
 		{
 			var order = await _mainDataServices.EditStatus(orderId, status);
@@ -79,7 +114,9 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             try
             {
+				CheckForToast();
                 var siteContent = await _mainDataServices.GetAllSiteContentByType(type);
+				ViewBag.siteType = type;
                 return View("SiteContent/SiteContents", siteContent);
             }
             catch (Exception ex)
@@ -243,8 +280,26 @@ namespace Universal.Admin_Controllers.AdminMVC
 			try
 			{
 				CheckForToast();
-				var users = await _mainDataServices.GetAllProducts();
-				return View("Data/Data", users);
+				var products = await _mainDataServices.GetAllProducts();
+				return View("Data/Data", products);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+		 
+		public async Task<IActionResult> DeleteData(int dataId)
+		{
+			try
+			{
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully Deleted Product");
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+				CheckForToast();
+				var data = await _mainDataServices.DeleteProduct(dataId);
+				var products = await _mainDataServices.GetAllProducts();
+				return View("Data/Data", products);
 			}
 			catch (Exception ex)
 			{
@@ -253,7 +308,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-        public async Task<IActionResult> NewData()
+		public async Task<IActionResult> NewData()
         {
             var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
             var declarations = await _mainDataServices.GetAllDeclarations();
@@ -317,7 +372,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 					await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
 				}
 
-				foreach (var attributeID in dataIDTO.ProductAttributeValues)
+                await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
+
+                foreach (var attributeID in dataIDTO.ProductAttributeValues)
 				{
 					ProductAttributesIDTO productAttributesIDTO = new ProductAttributesIDTO()
 					{
@@ -325,7 +382,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						IsDev = false, //TODO check how IsDev is set
 						AttributesId = attributeID
 					};
-					_mainDataServices.AddProductAttributes(productAttributesIDTO);
+					await _mainDataServices.AddProductAttributes(productAttributesIDTO);
 				}
                 _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added Product");
                 _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");

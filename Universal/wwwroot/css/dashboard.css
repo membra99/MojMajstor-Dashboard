@@ -13,6 +13,14 @@
     z-index: 1500;
 }
 
+.tox-notifications-container{
+    display:none;
+}
+
+#req{
+ color:red;
+}
+
 .content-offset {
     margin-top: 60px;
     margin-left: 210px;
@@ -61,6 +69,11 @@
     font-weight: 500;
     color: #553c9a;
     border-right: 4px solid #553c9a;
+}
+
+.trsh{
+    color:black;
+}
 }
 
 ul ul {

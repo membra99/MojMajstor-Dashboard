@@ -13,8 +13,10 @@ namespace Entities.Mapping
             CreateMap<ProductIDTO, Product>();
             CreateMap<ProductODTO, ProductIDTO>();
 
-            CreateMap<Categories, CategoriesODTO>();
-            CreateMap<CategoriesIDTO, Categories>();
+            CreateMap<Categories, CategoriesODTO>()
+				.ForMember(dest => dest.GoogleDesc, source => source.MapFrom(m => m.Seo.GoogleDesc))
+				.ForMember(dest => dest.GoogleKeywords, source => source.MapFrom(m => m.Seo.GoogleKeywords));
+			CreateMap<CategoriesIDTO, Categories>();
 
             CreateMap<ProductAttributes, ProductAttributesODTO>();
             CreateMap<ProductAttributesIDTO, ProductAttributes>();
@@ -22,7 +24,9 @@ namespace Entities.Mapping
             CreateMap<Media, MediaODTO>();
             CreateMap<MediaIDTO, Media>();
 
-            CreateMap<MediaType, MediaTypeODTO>();
+			CreateMap<Tag, TagODTO> ();
+
+			CreateMap<MediaType, MediaTypeODTO>();
             CreateMap<MediaTypeIDTO, MediaType>();
 
             CreateMap<Users, UsersODTO>()
@@ -37,6 +41,7 @@ namespace Entities.Mapping
 
             CreateMap<Seo, SeoODTO>();
             CreateMap<Seo, SeoIDTO>();
+            CreateMap<SeoIDTO, Seo>();
 
             CreateMap<Order, OrderODTO>()
                  .ForMember(dest => dest.Email, source => source.MapFrom(m => m.Users.Email));
