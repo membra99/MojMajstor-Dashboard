@@ -591,7 +591,11 @@ namespace Services
         {
             string htmlForRender = html.htmltable;
 			var pdf = new ChromePdfRenderer();
-			PdfDocument doc = pdf.RenderHtmlAsPdf(htmlForRender);
+            pdf.RenderingOptions.CustomCssUrl = @"C:\Users\Uros\source\repos\Universal\Universal\wwwroot\css\RenderHtml.css";
+			PdfDocument doc = pdf.RenderHtmlAsPdf("<table class='table1'>" + htmlForRender +
+				"<tr><td class='no-border' colspan=4></td><td>Sum</td><td>" + html.TotalPrice+"</td></tr>" +
+				"<tr><td class='no-border' colspan=4></td><td>Shipping</td><td>0.00</td></tr>" +
+				"<tr><td class='no-border' colspan=4></td><td>Total</td><td>" + html.TotalPrice+"</td></tr>" + "</table>");
 
 			byte[] pdfbytes = doc.Stream.ToArray();
 			var stream = new MemoryStream(pdfbytes);
@@ -665,8 +669,9 @@ namespace Services
                 productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
                 productODTO.Price = product.Price;
                 productODTO.Quantity = await _context.OrderDetails.Where(x => x.ProductId == item && x.OrderId == id).Select(x => x.Quantity).SingleOrDefaultAsync();
+                productODTO.Sum = productODTO.Quantity * (int)productODTO.Price;
 
-                productList.Add(productODTO);
+				productList.Add(productODTO);
             }
 
             fullOrder.TotalPrice = (from x in productList

@@ -9,5 +9,6 @@ namespace Universal.DTO.IDTO
 	public class InvoiceIDTO
 	{
 		public string htmltable { get; set; }
+		public int TotalPrice { get; set; }
 	}
 }

@@ -76,12 +76,13 @@
 						<th>Quantity</th>
 						<th>Category</th>
 						<th>Price</th>
+						<th>Sum</th>
 					</tr>
 				</thead>
 				<tbody>
 				</tbody>
 			</table>
-			<div style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
+			<div id="totalPrice" style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
 			<button type="button" class="btn btn-primary" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
 		</div>
 	</div>
@@ -100,14 +101,19 @@
 					{ data: "quantity" },
 					{ data: "categoryName" },
 					{ data: "price" },
+					{ data: "sum" },
 						],
 						columnDefs: [
 							{ targets: '_all', className: 'dt-left' }
 						],
 					});
-			let htmltable = $('#orderTable').html();
+			let htmltableForRender = $('#orderTable').html();
+			var totalPriceElement = document.getElementById("totalPrice");
+			var totalPrice = totalPriceElement.textContent;
+			var priceValue = totalPrice.match(/\d+/)[0];
 			data = {
-			htmltable : "cao"
+				htmltable: htmltableForRender,
+				TotalPrice: priceValue
 			};
 			$("#invoice").click(function(){
 				$.ajax({
