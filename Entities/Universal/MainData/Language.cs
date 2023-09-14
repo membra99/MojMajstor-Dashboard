@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Entities.Universal.MainData
 {
-	public class Seo
+	public class Language
 	{
-		public int SeoId { get; set; }
-		public int? LanguageID { get; set; }
-		public string? GoogleDesc { get; set; }
-		public string? GoogleKeywords { get; set; }
+		public int LanguageID { get; set; }
+		public string LanguageName { get; set; }
 
-		public Language? Language { get; set; }
+		public ICollection<Declaration> Declarations { get; set; }
 		public ICollection<Product> Products { get; set; }
+		public ICollection<Seo> Seos { get; set; }
 		public ICollection<Categories> Categories { get; set; }
+		public ICollection<Tag> Tags { get; set; }
 		public ICollection<SiteContent> SiteContents { get; set; }
 	}
 }

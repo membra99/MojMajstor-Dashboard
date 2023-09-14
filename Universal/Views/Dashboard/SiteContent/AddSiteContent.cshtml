@@ -10,12 +10,19 @@
 		@using (Html.BeginForm("AddSiteContent", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 		{
 				<div class="mb-3">
+				@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
+				</div>
+				<div class="mb-3">
 				@Html.TextBoxFor(model => model.Title, null, new { @class="form-control", placeholder = "Title"})
 				@Html.ValidationMessageFor(model => model.Title, null, new { @class="text-danger" })
 				</div>
 				<div class="mb-3">
 				@Html.TextAreaFor(model => model.Content, 10,1, new { @Id="tiny", @class="form-control", placeholder = "Content"})
 				@Html.ValidationMessageFor(model => model.Content, null, new { @class="text-danger" })
+				</div>
+
+				<div class="mb-3">
+				@Html.HiddenFor(model => model.SeoIDTO.LanguageID,new { @class = "lang" })
 				</div>
 				<div class="mb-3">
 				@Html.TextBoxFor(model => model.SeoIDTO.GoogleKeywords, new { @class="form-control", placeholder = "Google Keywords"})
@@ -32,6 +39,9 @@
 				@if(Model.SiteContentTypeId == 4)
 				{
 				<div class="mb-3">
+					<div class="mb-3">
+					@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
+					</div>
 					@Html.DropDownListFor(model => model.TagId, Model.TagODTOs.Select(dec =>
 					new SelectListItem() { Value = dec.TagId.ToString(), Text = dec.Title }),
 					"Select Tag", new { @class="form-control" })
@@ -47,3 +57,16 @@
 		}
 	</div>
 </div>
+
+
+@section Scripts{
+
+			<script>
+				$('.lang').val($('#language').val());
+
+				$('#language').change(function() {
+					$('.lang').val($(this).val());
+				});
+
+			</script>
+}

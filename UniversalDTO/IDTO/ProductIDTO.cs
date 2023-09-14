@@ -13,20 +13,26 @@ namespace Universal.DTO.IDTO
 		public int CategoriesId { get; set; }
 		public int? DeclarationId { get; set; }
 		public int? SeoId { get; set; }
+
 		[Required]
 		public string ProductName { get; set; }
+
 		public double Price { get; set; }
 		public bool IsOnSale { get; set; }
 		public string? Description { get; set; }
 		public string? Specification { get; set; }
 		public bool Recommended { get; set; }
 		public bool BestProduct { get; set; }
+
 		[Required]
 		public string ProductCode { get; set; }
+
 		public DateTime CreatedAt { get; set; } = DateTime.Now;
 		public DateTime UpdatedAt { get; set; } = DateTime.Now;
 		public bool? IsActive { get; set; } = true;
 		public int? Quantity { get; set; } = 0;
+
+		public int? LanguageID { get; set; }
 		public SaleIDTO? SaleIDTO { get; set; }
 		public SeoIDTO? SeoIDTO { get; set; }
 	}

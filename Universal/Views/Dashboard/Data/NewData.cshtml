@@ -13,6 +13,9 @@
 					<h2>Product</h2>
 				</div>
 				<div class="mb-3">
+					@Html.HiddenFor(model => model.ProductIDTO.LanguageID,new { @class = "lang" })
+				</div>
+				<div class="mb-3">
 					@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Category:", true)
 					@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
 				new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
@@ -94,6 +97,9 @@
 			<div id="section2" class="col-5">
 				<div class="mb-3">
 					<h2>SEO</h2>
+				</div>
+				<div class="mb-3">
+					@Html.HiddenFor(model => model.ProductIDTO.LanguageID,new { @class = "lang" })
 				</div>
 				<div class="mb-3">
 					@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
@@ -209,5 +215,12 @@
 				}
 			})
 		});
+
+		$('.lang').val($('#language').val());
+
+		$('#language').change(function() {
+			$('.lang').val($(this).val());
+		});
+
 	</script>
 }
