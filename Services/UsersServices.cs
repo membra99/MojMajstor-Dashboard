@@ -144,6 +144,7 @@ namespace Services
 
         public async Task<UsersODTO> EditUser(UsersIDTO userIDTO)
         {
+            //TODO Change user data, NOT user password
             var user = _mapper.Map<Users>(userIDTO);
             _context.Entry(user).State = EntityState.Modified;
             await SaveContextChangesAsync();

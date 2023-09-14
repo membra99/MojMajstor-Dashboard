@@ -1,6 +1,4 @@
-﻿@using Universal.Util.HtmlHelperExtensions;
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -13,6 +11,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link href=" https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/css/bootstrap-multiselect.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+	<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<style>
@@ -51,9 +50,9 @@
 <body>
 	<div class="container m-0 p-0">
 		<header class="bg-dark header-navigation">
-			<div class="d-flex flex-row justify-content-between">
-				@Html.ActionLink("DOT", "Index", "Dashboard", null, new { @class = "text-light p-1 m-1" })
-				@Html.ActionLink("Log Out", "Logout", "Authentication", null, new { @class = "text-light p-1 m-1" })
+			<div class="d-flex flex-row justify-content-between align-items-center" style="height:inherit">
+				<img src="~/images/logo_1_2.svg" width="35" height="35" style="margin-left:15px"/>
+				@Html.ActionLink("Log Out", "Logout", "Authentication", null, new { @class = "btn btn-secondary", style = "margin-right:15px" })
 			</div>
 		</header>
 		<aside class="side-navigation">
@@ -106,10 +105,10 @@
 						</li>
 					</ul>
 				</li>
-				<li class="nav-item">@Html.ActionLink("Media", "Index", "Dashboard", null, new{ @class = "side-anchor" }, "fa-folder-open")</li>
-				<li class="nav-item">@Html.ActionLink("Pages", "AllSiteContent", "Dashboard", new {type = "Page"}, new{ @class = "side-anchor" }, "fa-newspaper")</li>
-				<li class="nav-item">@Html.ActionLink("Blogs", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "side-anchor" }, "fa-copy")</li>
-				<li class="nav-item">@Html.ActionLink("Orders", "AllOrders", "Dashboard", null, new{ @class = "side-anchor" }, "fa-box-open")</li>
+				<li class="nav-item">@Html.ActionLinkIcon("Media", "Index", "Dashboard", "fa-folder-open", null, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page"}, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLinkIcon("Blogs", "AllSiteContent", "Dashboard", "fa-copy", new {type = "Blog"}, new{ @class = "side-anchor" })</li>
+				<li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open", null, new{ @class = "side-anchor" })</li>
 			</ul>
 		</aside>
 		<div class="content-wrapper bg-light">
@@ -120,6 +119,7 @@
 	</div>
 
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>

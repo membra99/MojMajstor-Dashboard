@@ -10,7 +10,7 @@
     width: 100vw;
     height: 50px;
     position: fixed;
-    z-index: 1500;
+    z-index: 10;
 }
 
 .tox-notifications-container{
@@ -78,4 +78,10 @@
 
 ul ul {
     text-indent: 25%;
+}
+
+.dot {
+    font-family: 'Lucida Console';
+    color: #f0f0f0;
+    padding: 5px;
 }

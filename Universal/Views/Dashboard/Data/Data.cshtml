@@ -51,7 +51,8 @@
 						data: 'productId',
 						render: function (data, type, row) {
 							return '<a href="/Dashboard/EditData?dataId=' + data + '"><i class="fa-solid fa-pen icon-spacing"></i></a>' +
-								   '<a href="/Dashboard/DeleteData?dataId=' + data + '"><i class="fa-solid fa-trash-can icon-spacing trsh"></i></a>'
+								'<a href="/Dashboard/PreviewData?userId=' + data + '"><i class="fa-solid fa-eye icon-spacing"></i></a>' +
+								'<a href="/Dashboard/DeleteData?dataId=' + data + '"><i class="fa-solid fa-trash-can icon-spacing trsh"></i></a>'
 						}
 					},
 				],

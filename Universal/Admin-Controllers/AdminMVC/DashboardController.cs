@@ -34,32 +34,108 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Home");
 		}
 
-        public IActionResult NewUser()
+		#region Users
+
+		public IActionResult NewUser()
         {
             CheckForToast();
             return View("User/NewUser");
         }
 
+		public async Task<IActionResult> AllUsers()
+		{
+			try
+			{
+				CheckForToast();
+				var users = await _userDataServices.GetAllUsers();
+				return View("User/Users", users);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View("User/NewUser", new UsersIDTO());
+			}
+
+			//						FILE UPLOAD SYSTEM
+			AWSFileUpload awsFile = new AWSFileUpload();
+			awsFile.Attachments = new List<IFormFile>();
+			if (userIDTO.Avatar != null)
+				awsFile.Attachments.Add(userIDTO.Avatar);
+			try
+			{
+				var media = await _userDataServices.UploadUserPicture(awsFile);
+				if (media != null) userIDTO.MediaId = media.MediaId;
+				var users = await _userDataServices.AddUser(userIDTO);
+				if (users == null)
+				{
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User with that mail already exists");
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+					return RedirectToAction("NewUser");
+				}
+				return RedirectToAction("AllUsers", "Dashboard");
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		public async Task<IActionResult> EditUser(int userId)
+		{
+			return View("User/EditUser", await _userDataServices.GetUserByIdForEdit(userId));
+		}
+
+		public async Task<IActionResult> EditUserAction(UsersIDTO userIDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View("User/EditUser", await _userDataServices.GetUserByIdForEdit((int)userIDTO.UsersId));
+			}
+
+			//						FILE UPLOAD SYSTEM
+			AWSFileUpload awsFile = new AWSFileUpload();
+			awsFile.Attachments = new List<IFormFile>();
+			if (userIDTO.Avatar != null)
+				awsFile.Attachments.Add(userIDTO.Avatar);
+			try
+			{
+				var media = await _userDataServices.UploadUserPicture(awsFile);
+				if (media != null) userIDTO.MediaId = media.MediaId;
+				var users = await _userDataServices.EditUser(userIDTO);
+				if (users == null)
+				{
+					ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+					return View("User/NewUser");
+				}
+				return RedirectToAction("AllUsers", "Dashboard");
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		public async Task<IActionResult> PreviewUser(int userId)
+		{
+			return View("User/PreviewUser", await _userDataServices.GetUserById(userId));
+		}
+
+		#endregion
+
 		public IActionResult NewDeclaration()
 		{
 			return View("Declaration/NewDeclaration");
 		}
-
-        public async Task<IActionResult> AllUsers()
-        {
-            try
-            {
-                CheckForToast();
-                var users = await _userDataServices.GetAllUsers();
-                return View("User/Users", users);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("Home");
-            }
-        }
-
 
 		public async Task<IActionResult> EditOrders(int id)
 		{
@@ -205,73 +281,7 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("User/NewUser", new UsersIDTO());
-            }
-
-            //						FILE UPLOAD SYSTEM
-            AWSFileUpload awsFile = new AWSFileUpload();
-            awsFile.Attachments = new List<IFormFile>();
-            if (userIDTO.Avatar != null)
-                awsFile.Attachments.Add(userIDTO.Avatar);
-            try
-            {
-                var media = await _userDataServices.UploadUserPicture(awsFile);
-                if (media != null) userIDTO.MediaId = media.MediaId;
-                var users = await _userDataServices.AddUser(userIDTO);
-                if (users == null)
-                {
-                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User with that mail already exists");
-                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-					return RedirectToAction("NewUser");
-                }
-                return RedirectToAction("AllUsers", "Dashboard");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("Home");
-            }
-        }
-
-		public async Task<IActionResult> EditUser(int userId)
-		{
-			return View("User/EditUser", await _userDataServices.GetUserByIdForEdit(userId));
-		}
-
-		public async Task<IActionResult> EditUserAction(UsersIDTO userIDTO)
-		{
-			if (!ModelState.IsValid)
-			{
-				return View("User/EditUser", await _userDataServices.GetUserByIdForEdit((int)userIDTO.UsersId));
-			}
-
-			//						FILE UPLOAD SYSTEM
-			AWSFileUpload awsFile = new AWSFileUpload();
-			awsFile.Attachments = new List<IFormFile>();
-			if (userIDTO.Avatar != null)
-				awsFile.Attachments.Add(userIDTO.Avatar);
-			try
-			{
-				var media = await _userDataServices.UploadUserPicture(awsFile);
-				if (media != null) userIDTO.MediaId = media.MediaId;
-				var users = await _userDataServices.EditUser(userIDTO);
-				if (users == null)
-				{
-					ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-					return View("User/NewUser");
-				}
-				return RedirectToAction("AllUsers", "Dashboard");
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-				return View("Home");
-			}
-		}
+        
 
 		#region Data/Products
 

@@ -1,3 +1,4 @@
+global using Universal.Util.HtmlHelperExtensions;
 using Amazon.S3;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;

@@ -29,6 +29,7 @@ namespace Universal.DTO.IDTO
         public string? Country { get; set; }
         public string? Password { get; set; }
         public string? Role { get; set; }
+        public string? UserType { get; set; }
         public string? UserTypes { get; set; }
         public IFormFile? Avatar { get; set; }
     }
