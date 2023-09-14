@@ -39,5 +39,6 @@ namespace Universal.DTO.ODTO
 		public string? CategoryName { get; set; }
 		public double Price { get; set; }
 		public int Quantity { get; set; }
+		public int Sum { get; set; }
 	}
 }

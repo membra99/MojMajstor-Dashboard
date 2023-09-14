@@ -2,6 +2,7 @@
 using Entities.Context;
 using Entities.Migrations;
 using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
@@ -581,15 +582,35 @@ namespace Services
 			return await GetOrders(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
-		public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
-		{
-			var isUserExist = await _context.Users.Where(x => x.Email == usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
-			int UserID = isUserExist;
-			if (isUserExist == 0)
-			{
-				var user = await _userServices.AddUser(usersIDTO);
-				UserID = user.UsersId;
-			}
+        public async Task<bool> CreateInvoice(InvoiceIDTO html)
+        {
+            string htmlForRender = html.htmltable;
+			var pdf = new ChromePdfRenderer();
+            pdf.RenderingOptions.CustomCssUrl = @"C:\Users\Uros\source\repos\Universal\Universal\wwwroot\css\RenderHtml.css";
+			PdfDocument doc = pdf.RenderHtmlAsPdf("<table class='table1'>" + htmlForRender +
+				"<tr><td class='no-border' colspan=4></td><td>Sum</td><td>" + html.TotalPrice+"</td></tr>" +
+				"<tr><td class='no-border' colspan=4></td><td>Shipping</td><td>0.00</td></tr>" +
+				"<tr><td class='no-border' colspan=4></td><td>Total</td><td>" + html.TotalPrice+"</td></tr>" + "</table>");
+
+			byte[] pdfbytes = doc.Stream.ToArray();
+			var stream = new MemoryStream(pdfbytes);
+			IFormFile file = new FormFile(stream, 0, pdfbytes.Length, "test", "test.pdf");
+			AWSFileUpload aws = new AWSFileUpload();
+			aws.Attachments = new List<IFormFile>();
+			aws.Attachments.Add(file);
+			bool what = await _AWSS3FileService.UploadFile(aws);
+            return what;
+		}
+
+        public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
+        {
+            var isUserExist = await _context.Users.Where(x => x.Email == usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
+            int UserID = isUserExist;
+            if (isUserExist == 0)
+            {
+                var user = await _userServices.AddUser(usersIDTO);
+                UserID = user.UsersId;
+            }
 
 			return UserID;
 		}
@@ -630,22 +651,23 @@ namespace Services
 			fullOrder.Name = user.FirstName + " " + user.LastName;
 			fullOrder.Status = order.OrderStatus;
 
-			var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
-			List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
-			foreach (var item in products)
-			{
-				var product = await _context.Products.Where(x => x.ProductId == item).SingleOrDefaultAsync();
-				ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
-				productODTO.ProductId = item;
-				productODTO.ProductName = product.ProductName;
-				productODTO.ProductCode = product.ProductCode;
-				productODTO.CategoriesId = product.CategoriesId;
-				productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
-				productODTO.Price = product.Price;
-				productODTO.Quantity = await _context.OrderDetails.Where(x => x.ProductId == item && x.OrderId == id).Select(x => x.Quantity).SingleOrDefaultAsync();
+            var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
+            List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
+            foreach (var item in products)
+            {
+                var product = await _context.Products.Where(x => x.ProductId == item).SingleOrDefaultAsync();
+                ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
+                productODTO.ProductId = item;
+                productODTO.ProductName = product.ProductName;
+                productODTO.ProductCode = product.ProductCode;
+                productODTO.CategoriesId = product.CategoriesId;
+                productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
+                productODTO.Price = product.Price;
+                productODTO.Quantity = await _context.OrderDetails.Where(x => x.ProductId == item && x.OrderId == id).Select(x => x.Quantity).SingleOrDefaultAsync();
+                productODTO.Sum = productODTO.Quantity * (int)productODTO.Price;
 
 				productList.Add(productODTO);
-			}
+            }
 
 			fullOrder.TotalPrice = (from x in productList
 									select x.Quantity * Convert.ToInt32(x.Price)).Sum();

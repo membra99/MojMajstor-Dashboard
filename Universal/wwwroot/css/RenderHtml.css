@@ -1,0 +1,18 @@
+﻿.table1 {
+    border: 1px solid black;
+    border-bottom:0px;
+    border-left:0px;
+    border-collapse: collapse;
+}
+
+.table1 td, .table1 th {
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+        border-left:1px solid black;
+}
+
+.no-border  {
+    border: none !important;
+}
+
+
