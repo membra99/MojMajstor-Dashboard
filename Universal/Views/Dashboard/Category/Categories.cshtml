@@ -20,7 +20,7 @@
 	}
 
 		.multi-cat::before {
-			content: "\25B6";
+			content: "\27A4";
 			color: black;
 			display: inline-block;
 			margin-right: 6px;
@@ -34,7 +34,7 @@
 		display: none;
 	}
 
-	.active {
+	.active-cat {
 		display: block;
 	}
 
@@ -68,10 +68,10 @@
 	}
 </div>
 
-<div id="add-edit-modal" class="modal" tabindex="-1" role="dialog">
+<div id="add-edit-modal" class="modal fade" tabindex="-1" role="dialog">
 	@using (Html.BeginForm("ACTION", "CONTROLLER", FormMethod.Post, new { @id = "form-add-delete" }))
 	{
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 id="add-edit-title" class="modal-title"></h5>
@@ -96,10 +96,10 @@
 	}
 </div>
 
-<div id="delete-modal" class="modal" tabindex="-1" role="dialog">
+<div id="delete-modal" class="modal fade" tabindex="-1" role="dialog">
 	@using (Html.BeginForm("DeleteCategory", "Dashboard", FormMethod.Post))
 	{
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Delete Category</h5>
@@ -132,7 +132,7 @@
 
 					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
 
-					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row'><span class='multi-cat'>"
+					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat'>"
 						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span>"
 						+ "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
 						+ "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
@@ -140,7 +140,7 @@
 				}
 				else {
 					$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
-						+ "<div class='mb-2 d-flex flex-row'><span class='category-name'>" + categories[i][j].categoryName + "</span>"
+						+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name'>" + categories[i][j].categoryName + "</span>"
 						+ "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
 						+ "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
 						+ "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
@@ -151,7 +151,7 @@
 		let catrgory_elements = document.getElementsByClassName("multi-cat");
 		for (let i = 0; i < catrgory_elements.length; i++) {
 			catrgory_elements[i].addEventListener("click", function () {
-				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active");
+				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
 				this.classList.toggle("multi-cat-down");
 			});
 		}

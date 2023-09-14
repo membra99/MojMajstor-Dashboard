@@ -26,7 +26,14 @@ namespace Universal.Util.HtmlHelperExtensions
 		/// attributes.
 		/// </param>
 		/// <returns>A new <see cref="IHtmlContent"/> containing the anchor element (&lt;a&gt;&lt;span&gt;&lt;i&gt;).</returns>
-		public static IHtmlContent ActionLink(this IHtmlHelper helper, string linkText, string actionName, string controllerName, object routeValues, object htmlAttributes, string icon)
+		public static IHtmlContent ActionLinkIcon(
+			this IHtmlHelper helper, 
+			string linkText, 
+			string actionName,
+			string controllerName, 
+			string icon, 
+			object routeValues = null,
+			object htmlAttributes = null)
 		{
 			TagBuilder iconBuilder = new TagBuilder("i");
 			iconBuilder.AddCssClass("fa");
@@ -37,13 +44,34 @@ namespace Universal.Util.HtmlHelperExtensions
 			spanBuilder.InnerHtml.AppendHtml(iconBuilder);
 
 			TagBuilder anchorBuilder = new TagBuilder("a");
-			anchorBuilder.Attributes.Add("href", $"/{controllerName}/{actionName}");
-			var attributes = JsonConvert.SerializeObject(htmlAttributes);
-			anchorBuilder.MergeAttributes(JsonConvert.DeserializeObject<Dictionary<string, string>>(attributes));
+			string path = $"/{controllerName}/{actionName}";
+			
 			anchorBuilder.InnerHtml.AppendHtml(spanBuilder);
 			anchorBuilder.InnerHtml.AppendHtml(linkText);
 
-			return anchorBuilder;		
+			if (routeValues != null)
+			{
+				var routes = JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(routeValues));
+				bool isFirst = true;
+				foreach (var route in routes)
+				{
+					if (isFirst)
+					{
+						path += $"?{route.Key}={route.Value}";
+						isFirst = false;
+					}
+					else
+					{
+						path += $"&{route.Key}={route.Value}";
+					}
+				}
+			}
+			anchorBuilder.Attributes.Add("href", path);
+
+			if (htmlAttributes != null) {
+				anchorBuilder.MergeAttributes(JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(htmlAttributes)));
+			}
+			return anchorBuilder;
 		}
 	}
 }
