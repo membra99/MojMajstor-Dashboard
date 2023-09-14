@@ -45,7 +45,7 @@ namespace Universal.Admin_Controllers.AdminAPI
             }
         }
 
-        [HttpGet("GetFullOrderById")]
+		[HttpGet("GetFullOrderById")]
         public async Task<ActionResult<FullOrderODTO>> GetFullOrderByIds(int id)
         {
             try
@@ -58,7 +58,20 @@ namespace Universal.Admin_Controllers.AdminAPI
             }
         }
 
-        [HttpPut]
+		[HttpPost("CreateInvoice")]
+		public async Task<ActionResult<bool>> Invoice(InvoiceIDTO htmltable)
+		{
+			try
+			{
+                return await _mainDataServices.CreateInvoice(htmltable);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
+
+		[HttpPut]
         public async Task<ActionResult<OrderODTO>> PutOrder(int id, string status)
         {
             try

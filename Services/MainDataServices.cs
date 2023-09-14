@@ -2,6 +2,7 @@
 using Entities.Context;
 using Entities.Migrations;
 using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
@@ -583,8 +584,24 @@ namespace Services
 
         public async Task<OrderODTO> GetOrderById(int id)
         {
-            return await GetOrders(id).AsNoTracking().SingleOrDefaultAsync();
+			return await GetOrders(id).AsNoTracking().SingleOrDefaultAsync();
         }
+
+        public async Task<bool> CreateInvoice(InvoiceIDTO html)
+        {
+            string htmlForRender = html.htmltable;
+			var pdf = new ChromePdfRenderer();
+			PdfDocument doc = pdf.RenderHtmlAsPdf(htmlForRender);
+
+			byte[] pdfbytes = doc.Stream.ToArray();
+			var stream = new MemoryStream(pdfbytes);
+			IFormFile file = new FormFile(stream, 0, pdfbytes.Length, "test", "test.pdf");
+			AWSFileUpload aws = new AWSFileUpload();
+			aws.Attachments = new List<IFormFile>();
+			aws.Attachments.Add(file);
+			bool what = await _AWSS3FileService.UploadFile(aws);
+            return what;
+		}
 
         public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
         {
