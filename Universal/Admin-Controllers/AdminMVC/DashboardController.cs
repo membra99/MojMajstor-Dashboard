@@ -231,6 +231,19 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<IActionResult> PDFViewer(string path)
+		{
+			var stream = await _mainDataServices.GetStreamForInvoice(path);
+			byte[] bytes = null;
+			using (MemoryStream ms = new MemoryStream())
+			{
+				stream.CopyTo(ms);
+				bytes = ms.ToArray();
+			}
+
+			return File(bytes, "application/pdf");
+		}
+
 		public async Task<IActionResult> AllDeclaration()
         {
             try

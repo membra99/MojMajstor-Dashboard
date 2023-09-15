@@ -38,7 +38,7 @@ namespace Services
 
 		#region FileUploads
 
-		public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int productId)
+		public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int? productId)
 		{
 			bool successUpload = false;
 
@@ -51,7 +51,7 @@ namespace Services
 				var media = new Media();
 				media.ProductId = productId;
 				media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
-				media.Src = "DOT/" + key.First();
+				media.Src = key.First();
 				media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
 				_context.Medias.Add(media);
 				await _context.SaveChangesAsync();
@@ -602,10 +602,11 @@ namespace Services
 			AWSFileUpload aws = new AWSFileUpload();
 			aws.Attachments = new List<IFormFile>();
 			aws.Attachments.Add(file);
-			bool what = await _AWSS3FileService.UploadFile(aws);
+			var mediaOdto = await UploadProductImage(aws, "Invoice", null);
 
             InvoiceEntitiesIDTO entitiesIDTO = new InvoiceEntitiesIDTO();
             entitiesIDTO.InvoiceId = 0;
+			entitiesIDTO.MediaId = mediaOdto.MediaId;
             entitiesIDTO.PdfName = "test.pdf";
             entitiesIDTO.DateOfPayment = Convert.ToDateTime(html.Dateofpayment);
             entitiesIDTO.CreatedAt = DateTime.Now;
@@ -615,7 +616,7 @@ namespace Services
             await SaveContextChangesAsync();
 
 
-			return what;
+			return true;
 		}
 
 		public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
@@ -995,7 +996,12 @@ namespace Services
 
 		public async Task<List<InvoiceEntitiesODTO>> GetAllInvoices()
 		{
-			return await _context.Invoices.Select(x => _mapper.Map<InvoiceEntitiesODTO>(x)).ToListAsync();
+			return await _context.Invoices.Include(x => x.Media).Select(x => _mapper.Map<InvoiceEntitiesODTO>(x)).ToListAsync();
+		}
+
+		public async Task<Stream> GetStreamForInvoice(string path)
+		{
+			return await _AWSS3FileService.GetFile(path);
 		}
 
 		#endregion

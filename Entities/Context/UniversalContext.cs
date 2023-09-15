@@ -224,6 +224,10 @@ namespace Entities.Context
 			modelBuilder.Entity<Invoice>(entity =>
 			{
 				entity.HasKey(x => x.InvoiceId);
+
+				entity.HasOne(x => x.Media)
+				.WithMany(x => x.Invoices)
+				.OnDelete(DeleteBehavior.Restrict);
 			});
 		}
     }

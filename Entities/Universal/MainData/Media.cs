@@ -23,5 +23,6 @@ namespace Entities.Universal.MainData
         public ICollection<Categories> Categories { get; set; }
         public ICollection<Tag> Tags { get; set; }
         public ICollection<SiteContent> SiteContents { get; set; }
+        public ICollection<Invoice> Invoices { get; set; }
     }
 }
