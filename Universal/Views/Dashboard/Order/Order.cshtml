@@ -31,8 +31,7 @@
 				window.location.href = '/Dashboard/EditOrders?id=' + id;
 		});
 
-
-		
+			let isPaginate = data.length > 10 ? true : false;
 			$('#orderTable').DataTable({
 				data: @Json.Serialize(Model),
 				columns: [
@@ -50,6 +49,7 @@
 				columnDefs: [
 					{ targets: '_all', className: 'dt-left' }
 				],
+				bPaginate: isPaginate,
 			});
 		});
 	</script>

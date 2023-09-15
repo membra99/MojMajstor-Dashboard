@@ -27,8 +27,10 @@
 	{
 	<script>
 		$(document).ready(function () {
+			let data = @Json.Serialize(Model);
+			let isPaginate = data.length > 10 ? true: false;
 			$('#userTable').DataTable({
-				data: @Json.Serialize(Model),
+				data: data,
 				scrollX: true,
 				columns: [
 					{ data: "productName" },

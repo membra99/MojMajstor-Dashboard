@@ -1,7 +1,7 @@
 ﻿@model Universal.DTO.ODTO.FullOrderODTO
 
 @{
-    ViewData["Title"] = "Order Info";
+	ViewData["Title"] = "Order Info";
 }
 
 <div class="row">
@@ -88,22 +88,24 @@
 
 @section Scripts
 	{
-			<script>
+	<script>
 		console.log(@Json.Serialize(Model.ProductODTO))
-				$(document).ready(function () {
-				$('#orderTable').DataTable({
-						data: @Json.Serialize(Model.ProductODTO),
-						columns: [
+		$(document).ready(function () {
+			let isPaginate = data.length > 10 ? true : false;
+			$('#orderTable').DataTable({
+				data: @Json.Serialize(Model.ProductODTO),
+				columns: [
 					{ data: "productName" },
 					{ data: "productCode" },
 					{ data: "quantity" },
 					{ data: "categoryName" },
 					{ data: "price" },
-						],
-						columnDefs: [
-							{ targets: '_all', className: 'dt-left' }
-						],
-					});
-				});
-			</script>
+				],
+				columnDefs: [
+					{ targets: '_all', className: 'dt-left' }
+				],
+				bPaginate: isPaginate,
+			});
+		});
+	</script>
 }

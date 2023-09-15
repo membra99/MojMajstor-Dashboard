@@ -1,7 +1,7 @@
 ﻿@model List<Universal.DTO.ODTO.DeclarationODTO>
-    
+
 @{
-    ViewData["Title"] = "Declaration";
+	ViewData["Title"] = "Declaration";
 }
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -42,75 +42,78 @@
 
 @section Scripts
 	{
-		<script>
-			console.log(@Json.Serialize(Model));
-			$(document).ready(function () {
+	<script>
+		console.log(@Json.Serialize(Model));
+		$(document).ready(function () {
 
 			$("#closeConfirmDeleteButton").click(function () {
 				$('#confirmDeleteModal').modal('hide');
 			});
 
 			$('#declarationTable tbody').on('click', 'td.actions-control', function () {
-					var tr = $(this).closest('tr');
+				var tr = $(this).closest('tr');
 				var row = declarationTable.row(tr);
 
-					var targetElement = $(event.target);
+				var targetElement = $(event.target);
 
-					if (targetElement.hasClass('fa-trash-can')) {
-						var rowData = row.data();
+				if (targetElement.hasClass('fa-trash-can')) {
+					var rowData = row.data();
 
-						let selectedAttributeId = rowData.declarationId;
+					let selectedAttributeId = rowData.declarationId;
 
-						// Show a confirmation modal
-						$('#confirmDeleteModal').modal('show');
+					// Show a confirmation modal
+					$('#confirmDeleteModal').modal('show');
 
-						$('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+					$('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
 
-							// Close the confirmation modal
-							$('#confirmDeleteModal').modal('hide');
+						// Close the confirmation modal
+						$('#confirmDeleteModal').modal('hide');
 
-							$.ajax({
-								type: 'DELETE',
-								url: 'https://localhost:7213/api/Declaration/' + selectedAttributeId,
-								contentType: 'application/json',
-								success: function (response) {
-									showToast("Declaration " + response.declarationName + " deleted succesfully.", "success");
-									updateTableData();
-								},
-								error: function (xhr, status, error) {
-									showToast("Error: " + error + ":" + status, "error");
-								}
-							});
+						$.ajax({
+							type: 'DELETE',
+							url: 'https://localhost:7213/api/Declaration/' + selectedAttributeId,
+							contentType: 'application/json',
+							success: function (response) {
+								showToast("Declaration " + response.declarationName + " deleted succesfully.", "success");
+								updateTableData();
+							},
+							error: function (xhr, status, error) {
+								showToast("Error: " + error + ":" + status, "error");
+							}
 						});
-					}
-				});
+					});
+				}
+			});
 
 
+			let isPaginate = data.length > 10 ? true : false;
 			let declarationTable = $('#declarationTable').DataTable({
-					data: @Json.Serialize(Model),
-					columns: [
-						{ data: "declarationName" },
-						{ data: "model" },
-						{ data: "nameAndTypeOfProduct" },
-						{ data: "distributor" },
-						{ data: "countryOfOrigin" },
-						{ data: "consumerRights" },
-						{
+				data: @Json.Serialize(Model),
+				columns: [
+					{ data: "declarationName" },
+					{ data: "model" },
+					{ data: "nameAndTypeOfProduct" },
+					{ data: "distributor" },
+					{ data: "countryOfOrigin" },
+					{ data: "consumerRights" },
+					{
 						data: "declarationId",
 						className: 'actions-control',
-							render: function (data, type, row) {
-								return '<a href="/Dashboard/EditDeclaration?id=' + data + '">'+
-									'<i class="fas fa-pen icon-spacing"></i></a>' +
-									'<a href="/Dashboard/EditUser?userId=' + data + '">' +
-									'<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
-									'<i class="fa-solid fa-trash-can icon-spacing"></i>';
-							}
-						},
-					],
-					columnDefs: [
-						{ targets: '_all', className: 'dt-left' }
-					]
-				});
+						render: function (data, type, row) {
+							return '<a href="/Dashboard/EditDeclaration?id=' + data + '">' +
+								'<i class="fas fa-pen icon-spacing"></i></a>' +
+								'<a href="/Dashboard/EditUser?userId=' + data + '">' +
+								'<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
+								'<i class="fa-solid fa-trash-can icon-spacing"></i>';
+						}
+					},
+				],
+				columnDefs: [
+					{ targets: '_all', className: 'dt-left' }
+				],
+				bPaginate: isPaginate,
+
+			});
 
 
 			function updateTableData() {
@@ -121,6 +124,6 @@
 				});
 			}
 
-			});
-		</script>
+		});
+	</script>
 }

@@ -492,6 +492,25 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<IActionResult> PreviewData(int dataId)
+		{
+			var product = await _mainDataServices.GetProductsByIdForEdit(dataId);
+			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
+			var declarations = await _mainDataServices.GetAllDeclarations();
+			var productAtributes = await _mainDataServices.GetAllProductAttributes(dataId);
+			return View("Data/PreviewData", new DataIDTO
+			{
+				ProductIDTO = product,
+				CategoriesODTOs = categories,
+				DeclarationODTOs = declarations,
+				ProductAttributeValues = productAtributes,
+				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
+				{
+					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
+				}
+			});
+		}
+
 		#endregion Data/Products
 
 		#region Categories

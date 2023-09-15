@@ -85,3 +85,7 @@ ul ul {
     color: #f0f0f0;
     padding: 5px;
 }
+
+.tox-tinymce {
+    z-index: 5 !important;
+}
