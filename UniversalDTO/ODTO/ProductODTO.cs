@@ -10,8 +10,8 @@ namespace Universal.DTO.ODTO
 	{
 		public int ProductId { get; set; }
 		public int CategoriesId { get; set; }
-        public string? CategoryName { get; set; }
-        public string? ProductName { get; set; }
+		public string? CategoryName { get; set; }
+		public string? ProductName { get; set; }
 		public int? DeclarationId { get; set; }
 		public double Price { get; set; }
 		public int SeoId { get; set; }
@@ -25,6 +25,9 @@ namespace Universal.DTO.ODTO
 		public string UpdatedAt { get; set; }
 		public bool? IsActive { get; set; }
 		public int? Quantity { get; set; }
+
+		public int? LanguageID { get; set; }
+		public string? LanguageName { get; set; }
 	}
 
 	public class ProductDetailsForOrderODTO
@@ -36,5 +39,6 @@ namespace Universal.DTO.ODTO
 		public string? CategoryName { get; set; }
 		public double Price { get; set; }
 		public int Quantity { get; set; }
+		public int Sum { get; set; }
 	}
 }

@@ -30,10 +30,10 @@
         var id = $(this).data('id');
 				window.location.href = '/Dashboard/EditOrders?id=' + id;
 		});
-
+			let data = @Json.Serialize(Model);
 			let isPaginate = data.length > 10 ? true : false;
 			$('#orderTable').DataTable({
-				data: @Json.Serialize(Model),
+				data: data ,
 				columns: [
 					{ data: "orderId" },
 					{ data: "orderDate" },

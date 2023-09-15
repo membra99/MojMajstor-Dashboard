@@ -82,8 +82,10 @@
 				<div id="add-edit-body" class="modal-body">
 					@Html.HiddenFor(model => model.CategoryIDTO.CategoryId, new { @id="input-category" })
 					@Html.HiddenFor(model => model.CategoryIDTO.ParentCategoryId, new { @id="input-parent" })
+					@Html.HiddenFor(model => model.CategoryIDTO.LanguageID, new { @class="lang" })
 					@Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control modclass", placeholder = "Category Name" })
 					@Html.TextBoxFor(model => model.CategoryImage, null, new { type="file", @class="form-control modclass", runat="server" })
+					@Html.HiddenFor(model => model.CategoryIDTO.SeoIDTO.LanguageID, new { @class="lang" })
 					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleDesc, new { @id="input-seoDesc", @class = "form-control modclass", placeholder = "Seo Description" })
 					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleKeywords, new { @id="input-seoKeyword", @class = "form-control modclass", placeholder = "Seo Keywords" })
 				</div>
@@ -168,6 +170,10 @@
 
 				$("#form-add-delete").attr("action", "@Url.Action("AddCategory", "Dashboard")");
 			});
+
+			let lang = $("#language").val();
+			$(".lang").val(lang);
+			console.log(lang);
 		}
 
 		$("#closeAddModalButton").click(function () {
@@ -176,6 +182,10 @@
 
 		$("#closeDeleteModalButton").click(function () {
 			$('#delete-modal').modal('hide');
+		});
+
+		$('#language').change(function() {
+			$('.lang').val($(this).val());
 		});
 
 		let edit_buttons = document.getElementsByClassName("fa-pen");
@@ -192,6 +202,7 @@
 						$('#input-name').val(response.categoryName);
 						$('#input-seoDesc').val(response.googleDesc);
 						$('#input-seoKeyword').val(response.googleKeywords);
+						$('#lang').val($('#language').val());
 					},
 					error:function(){
 

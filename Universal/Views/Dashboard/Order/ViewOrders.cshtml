@@ -76,36 +76,61 @@
 						<th>Quantity</th>
 						<th>Category</th>
 						<th>Price</th>
+						<th>Sum</th>
 					</tr>
 				</thead>
 				<tbody>
 				</tbody>
 			</table>
-			<div style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
+			<div id="totalPrice" style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
+			<button type="button" class="btn btn-primary" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
 		</div>
 	</div>
 </div>
 
 @section Scripts
 	{
-	<script>
-		console.log(@Json.Serialize(Model.ProductODTO))
-		$(document).ready(function () {
-			let isPaginate = data.length > 10 ? true : false;
-			$('#orderTable').DataTable({
-				data: @Json.Serialize(Model.ProductODTO),
-				columns: [
+			<script>
+				$(document).ready(function () {
+				let data = @Json.Serialize(Model.ProductODTO);
+				let isPaginate = data.length > 10 ? true : false;
+				$('#orderTable').DataTable({
+						data: data,
+						columns: [
 					{ data: "productName" },
 					{ data: "productCode" },
 					{ data: "quantity" },
 					{ data: "categoryName" },
 					{ data: "price" },
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-				bPaginate: isPaginate,
+					{ data: "sum" },
+						],
+						columnDefs: [
+							{ targets: '_all', className: 'dt-left' }
+						],
+				bPaginate: isPaginate
+					});
+			let htmltableForRender = $('#orderTable').html();
+			var totalPriceElement = document.getElementById("totalPrice");
+			var totalPrice = totalPriceElement.textContent;
+			var priceValue = totalPrice.match(/\d+/)[0];
+			data = {
+				htmltable: htmltableForRender,
+				TotalPrice: priceValue
+			};
+			$("#invoice").click(function(){
+				$.ajax({
+					url: 'https://localhost:7213/api/Order/CreateInvoice',
+					type: 'POST',
+					contentType: 'application/json',
+					dataType: 'JSON',
+					data: JSON.stringify(data),
+					success: function (response){
+						showToast("Invoice is created succesfully", "success");
+					}
+
+				});
 			});
-		});
-	</script>
+				});
+		
+			</script>
 }

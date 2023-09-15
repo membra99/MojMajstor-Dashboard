@@ -15,6 +15,9 @@
 				</div>
 				<div class="row">
 					<div class="form-group col-6 mb-3">
+						<div class="mb-3">
+							@Html.HiddenFor(model => model.ProductIDTO.LanguageID,new { @class = "lang" })
+						</div>
 						@Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
 						@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class="text-danger" })
@@ -123,6 +126,9 @@
 					<h4>SEO</h4>
 				</div>
 				<div class="form-group mb-3">
+					<div class="mb-3">
+						@Html.HiddenFor(model => model.ProductIDTO.SeoIDTO.LanguageID,new { @class = "lang" })
+					</div>
 					@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
 					@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="form-control", placeholder = "Google Description" })
 					@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
@@ -287,6 +293,13 @@
                     alert("Error on getting attributes!");
                 }
             })
+        });
+
+
+        $('.lang').val($('#language').val());
+
+        $('#language').change(function() {
+            $('.lang').val($(this).val());
         });
     </script>
 }

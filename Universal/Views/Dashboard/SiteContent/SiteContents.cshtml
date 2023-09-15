@@ -44,8 +44,10 @@ else
 				window.location.href = '/Dashboard/PostSiteContent?siteContentType=' + 4;
 			});
 
+			let data = @Json.Serialize(Model);
+			let isPaginate = data.length > 10 ? true : false;
 			$('#siteContentTable').DataTable({
-				data: @Json.Serialize(Model),
+				data: data,
 				columns: [
 					{ data: "title" },
 					{ data: "mediaId" },
@@ -57,6 +59,7 @@ else
 				columnDefs: [
 					{ targets: '_all', className: 'dt-left' }
 				],
+				bPaginate: isPaginate,
 			});
 		});
 	</script>
