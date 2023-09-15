@@ -16,6 +16,9 @@
 					<h4>Product</h4>
 				</div>
 				<div class="row">
+					<div class="mb-3">
+						@Html.HiddenFor(model => model.ProductIDTO.LanguageID,new { @class = "lang" })
+					</div>
 					<div class="form-group col-6 mb-3">
 						@Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
 						@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code" })

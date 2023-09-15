@@ -65,10 +65,11 @@ namespace Services
 
 		#region Categories
 
-		private IQueryable<CategoriesODTO> GetCategories(int id)
+		private IQueryable<CategoriesODTO> GetCategories(int id, int langId)
 		{
 			return from x in _context.Categories
 				   where (id == 0 || x.CategoryId == id)
+				   && (langId == 0 || x.LanguageID == langId)
 				   select _mapper.Map<CategoriesODTO>(x);
 		}
 
@@ -172,21 +173,22 @@ namespace Services
 
 		#region Product
 
-		private IQueryable<ProductODTO> GetProducts(int id)
+		private IQueryable<ProductODTO> GetProducts(int id, int langId)
 		{
 			return from x in _context.Products
-				   where (id == 0 || x.ProductId == id)
+				   where (id == 0 || x.ProductId == id) &&
+				   (langId == 0 || x.LanguageID == langId)
 				   select _mapper.Map<ProductODTO>(x);
 		}
 
 		public async Task<ProductODTO> GetProductsById(int id)
 		{
-			return await GetProducts(id).AsNoTracking().SingleOrDefaultAsync();
+			return await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync();
 		}
 
 		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
 		{
-			var product = _mapper.Map<ProductIDTO>(await GetProducts(id).AsNoTracking().SingleOrDefaultAsync());
+			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)
@@ -211,9 +213,9 @@ namespace Services
 			return await _context.Sales.Where(x => x.SaleId == sale.SaleId).Select(x => _mapper.Map<SaleODTO>(x)).SingleOrDefaultAsync();
 		}
 
-		public async Task<List<ProductODTO>> GetAllProducts()
+		public async Task<List<ProductODTO>> GetAllProducts(int langId)
 		{
-			return await GetProducts(0).AsNoTracking().ToListAsync();
+			return await GetProducts(0, langId).AsNoTracking().ToListAsync();
 		}
 
 		public async Task<ProductODTO> AddProduct(ProductIDTO productIDTO)
@@ -266,7 +268,7 @@ namespace Services
 						  select x.SeoId).SingleOrDefaultAsync();
 		}
 
-		public async Task<ParentChildODTO> GetTree(int Id)
+		public async Task<ParentChildODTO> GetTree(int Id, int langId)
 		{
 			ParentChildODTO retval = new ParentChildODTO();
 			var parentCategoryID = await _context.Categories.Where(x => x.CategoryId == Id).Select(x => x.ParentCategoryId).SingleOrDefaultAsync();
@@ -508,10 +510,10 @@ namespace Services
 			return await GetSiteContent(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
-		public async Task<List<SiteContentODTO>> GetAllSiteContentByType(string Type)
+		public async Task<List<SiteContentODTO>> GetAllSiteContentByType(string Type, int langId)
 		{
 			var siteContentType = await _context.SiteContentTypes.Where(x => x.SiteContentTypeName == Type).Select(x => x.SiteContentTypeId).SingleOrDefaultAsync();
-			return await _context.SiteContents.Where(x => x.SiteContentTypeId == siteContentType && x.IsActive == true).Select(x => _mapper.Map<SiteContentODTO>(x)).ToListAsync();
+			return await _context.SiteContents.Where(x => x.SiteContentTypeId == siteContentType && x.IsActive == true && x.LanguageID == langId).Select(x => _mapper.Map<SiteContentODTO>(x)).ToListAsync();
 		}
 
 		public async Task<List<TagODTO>> GetTags()
@@ -582,15 +584,15 @@ namespace Services
 			return await GetOrders(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
-        public async Task<bool> CreateInvoice(InvoiceIDTO html)
-        {
-            string htmlForRender = html.htmltable;
+		public async Task<bool> CreateInvoice(InvoiceIDTO html)
+		{
+			string htmlForRender = html.htmltable;
 			var pdf = new ChromePdfRenderer();
-            pdf.RenderingOptions.CustomCssUrl = @"C:\Users\Uros\source\repos\Universal\Universal\wwwroot\css\RenderHtml.css";
+			pdf.RenderingOptions.CustomCssUrl = @"C:\Users\Uros\source\repos\Universal\Universal\wwwroot\css\RenderHtml.css";
 			PdfDocument doc = pdf.RenderHtmlAsPdf("<table class='table1'>" + htmlForRender +
-				"<tr><td class='no-border' colspan=4></td><td>Sum</td><td>" + html.TotalPrice+"</td></tr>" +
+				"<tr><td class='no-border' colspan=4></td><td>Sum</td><td>" + html.TotalPrice + "</td></tr>" +
 				"<tr><td class='no-border' colspan=4></td><td>Shipping</td><td>0.00</td></tr>" +
-				"<tr><td class='no-border' colspan=4></td><td>Total</td><td>" + html.TotalPrice+"</td></tr>" + "</table>");
+				"<tr><td class='no-border' colspan=4></td><td>Total</td><td>" + html.TotalPrice + "</td></tr>" + "</table>");
 
 			byte[] pdfbytes = doc.Stream.ToArray();
 			var stream = new MemoryStream(pdfbytes);
@@ -599,18 +601,18 @@ namespace Services
 			aws.Attachments = new List<IFormFile>();
 			aws.Attachments.Add(file);
 			bool what = await _AWSS3FileService.UploadFile(aws);
-            return what;
+			return what;
 		}
 
-        public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
-        {
-            var isUserExist = await _context.Users.Where(x => x.Email == usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
-            int UserID = isUserExist;
-            if (isUserExist == 0)
-            {
-                var user = await _userServices.AddUser(usersIDTO);
-                UserID = user.UsersId;
-            }
+		public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
+		{
+			var isUserExist = await _context.Users.Where(x => x.Email == usersIDTO.Email).Select(x => x.UsersId).SingleOrDefaultAsync();
+			int UserID = isUserExist;
+			if (isUserExist == 0)
+			{
+				var user = await _userServices.AddUser(usersIDTO);
+				UserID = user.UsersId;
+			}
 
 			return UserID;
 		}
@@ -651,23 +653,23 @@ namespace Services
 			fullOrder.Name = user.FirstName + " " + user.LastName;
 			fullOrder.Status = order.OrderStatus;
 
-            var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
-            List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
-            foreach (var item in products)
-            {
-                var product = await _context.Products.Where(x => x.ProductId == item).SingleOrDefaultAsync();
-                ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
-                productODTO.ProductId = item;
-                productODTO.ProductName = product.ProductName;
-                productODTO.ProductCode = product.ProductCode;
-                productODTO.CategoriesId = product.CategoriesId;
-                productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
-                productODTO.Price = product.Price;
-                productODTO.Quantity = await _context.OrderDetails.Where(x => x.ProductId == item && x.OrderId == id).Select(x => x.Quantity).SingleOrDefaultAsync();
-                productODTO.Sum = productODTO.Quantity * (int)productODTO.Price;
+			var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
+			List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
+			foreach (var item in products)
+			{
+				var product = await _context.Products.Where(x => x.ProductId == item).SingleOrDefaultAsync();
+				ProductDetailsForOrderODTO productODTO = new ProductDetailsForOrderODTO();
+				productODTO.ProductId = item;
+				productODTO.ProductName = product.ProductName;
+				productODTO.ProductCode = product.ProductCode;
+				productODTO.CategoriesId = product.CategoriesId;
+				productODTO.CategoryName = await _context.Categories.Where(x => x.CategoryId == product.CategoriesId).Select(x => x.CategoryName).SingleOrDefaultAsync();
+				productODTO.Price = product.Price;
+				productODTO.Quantity = await _context.OrderDetails.Where(x => x.ProductId == item && x.OrderId == id).Select(x => x.Quantity).SingleOrDefaultAsync();
+				productODTO.Sum = productODTO.Quantity * (int)productODTO.Price;
 
 				productList.Add(productODTO);
-            }
+			}
 
 			fullOrder.TotalPrice = (from x in productList
 									select x.Quantity * Convert.ToInt32(x.Price)).Sum();

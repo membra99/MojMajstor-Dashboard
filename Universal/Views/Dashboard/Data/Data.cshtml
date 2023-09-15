@@ -1,67 +1,99 @@
 ﻿@model List<Universal.DTO.ODTO.ProductODTO>
 @{
-	ViewData["Title"] = "Data";
+    ViewData["Title"] = "Data";
 }
 
 <div class="col-12">
-	<table id="userTable" class="table table-striped display text-center w-100">
-		<thead>
-			<tr>
-				<th>Product Name</th>
-				<th>Category</th>
-				<th>Created At</th>
-				<th>Updated At</th>
-				<th>On Sale</th>
-				<th>Price</th>
-				<th>Product Code</th>
-				<th>Product status</th>
-				<th>Quantity</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
+    <table id="userTable" class="table table-striped display text-center w-100">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>On Sale</th>
+                <th>Price</th>
+                <th>Product Code</th>
+                <th>Product status</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 @section Scripts
-	{
-	<script>
-		$(document).ready(function () {
-			let data = @Json.Serialize(Model);
-			let isPaginate = data.length > 10 ? true: false;
-			$('#userTable').DataTable({
-				data: data,
-				scrollX: true,
-				columns: [
-					{ data: "productName" },
-					{ data: "categoryName" },
-					{ data: "createdAt" },
-					{ data: "updatedAt" },
-					{ data: "isOnSale" },
-					{ data: "price" },
-					{ data: "productCode" },
-					{
-						data: "isActive",
-						render: function (data, type, row) {
-							console.log(data);
-						// Format "Active" or "Not Active" based on the boolean value
-						return data!=false && data!=null ? "Active" : "Not Active";
-						}
-					},
-					{ data: "quantity" },
-					{
-						data: 'productId',
-						render: function (data, type, row) {
-							return '<a href="/Dashboard/EditData?dataId=' + data + '"><i class="fa-solid fa-pen icon-spacing"></i></a>' +
-								'<a href="/Dashboard/PreviewData?userId=' + data + '"><i class="fa-solid fa-eye icon-spacing"></i></a>' +
-								'<a href="/Dashboard/DeleteData?dataId=' + data + '"><i class="fa-solid fa-trash-can icon-spacing trsh"></i></a>'
-						}
-					},
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-			});
-		});
-	</script>
+    {
+            <script>
+                $(document).ready(function () {
+
+                    let isPaginate = false;
+                    let dataTable = null; 
+
+
+                   function loadData(langID) {
+        $.ajax({
+            url: '/api/Product/GetAllProducts',
+            method: 'GET',
+            data: { langID: langID },
+            dataType: 'json',
+            success: function (data) {
+                isPaginate = data.length > 10 ? true : false;
+
+                if (dataTable) {
+                    dataTable.destroy();
+                }
+                dataTable = $('#userTable').DataTable({
+                    data: data,
+                    scrollX: true,
+                    columns: [
+                        { data: "productName" },
+                        { data: "categoryName" },
+                        { data: "createdAt" },
+                        { data: "updatedAt" },
+                        { data: "isOnSale" },
+                        { data: "price" },
+                        { data: "productCode" },
+                        {
+                            data: "isActive",
+                            render: function (data, type, row) {
+                                console.log(data);
+                                // Format "Active" or "Not Active" based on the boolean value
+                                return data != false && data != null ? "Active" : "Not Active";
+                            }
+                        },
+                        { data: "quantity" },
+                        {
+                            data: 'productId',
+                            render: function (data, type, row) {
+                                return '<a href="/Dashboard/EditData?dataId=' + data + '"><i class="fa-solid fa-pen icon-spacing"></i></a>' +
+                                    '<a href="/Dashboard/PreviewData?userId=' + data + '"><i class="fa-solid fa-eye icon-spacing"></i></a>' +
+                                    '<a href="/Dashboard/DeleteData?dataId=' + data + '"><i class="fa-solid fa-trash-can icon-spacing trsh"></i></a>'
+                            }
+                        },
+                    ],
+                    columnDefs: [
+                        { targets: '_all', className: 'dt-left' }
+                    ],
+                    bPaginate: isPaginate,
+                });
+            },
+            error: function (error) {
+                console.error('Error loading data: ' + JSON.stringify(error));
+            }
+        });
+    }
+   
+
+            $('#language').on('change', function () {
+                const selectedLangID = $(this).val();
+                loadData(selectedLangID);
+            });
+            const defaultLangID = 1; 
+            loadData(defaultLangID);
+            });
+
+
+            </script>
 }

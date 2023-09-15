@@ -98,7 +98,8 @@
 						<i class="fa fa-caret-down"></i></span>
 					<ul class="navbar-nav dropdown-container">
 						<li>
-							@Html.ActionLink("Category Tree", "AllCategories", "Dashboard", null, new{ @class = "side-anchor" })
+							@*TODO Promeniti lang da ide iz sesije*@
+							@Html.ActionLink("Category Tree", "AllCategories", "Dashboard",null, new{ @class = "side-anchor" })
 							@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })
 						</li>
 					</ul>
@@ -116,7 +117,8 @@
 					</ul>
 				</li>
 				<li class="nav-item">@Html.ActionLinkIcon("Media", "Index", "Dashboard", "fa-folder-open", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page"}, new{ @class = "side-anchor" })</li>
+				
+				<li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
 				<li class="nav-item">@Html.ActionLinkIcon("Blogs", "AllSiteContent", "Dashboard", "fa-copy", new {type = "Blog"}, new{ @class = "side-anchor" })</li>
 				<li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open", null, new{ @class = "side-anchor" })</li>
 			</ul>

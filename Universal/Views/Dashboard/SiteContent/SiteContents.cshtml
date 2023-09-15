@@ -32,9 +32,17 @@ else
 @section Scripts
 	{
 	<script>
-		console.log(@Json.Serialize(Model))
 		$(document).ready(function () {
 
+			let isPaginate = false;
+			let dataTable = null; 
+
+			const urlParams = new URLSearchParams(window.location.search);
+			const type = urlParams.get('type');
+
+			const defaultLangID = 1; 
+
+			console.log(type);
 
 			$(document).on('click', '#addPageButton', function () {
 				window.location.href = '/Dashboard/PostSiteContent?siteContentType=' + 3;
@@ -44,23 +52,52 @@ else
 				window.location.href = '/Dashboard/PostSiteContent?siteContentType=' + 4;
 			});
 
-			let data = @Json.Serialize(Model);
-			let isPaginate = data.length > 10 ? true : false;
-			$('#siteContentTable').DataTable({
-				data: data,
-				columns: [
-					{ data: "title" },
-					{ data: "mediaId" },
-					{ data: "seoId" },
-					{ data: "tagId" },
-					{ data: "content" },
-					{ data: "isActive" },
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-				bPaginate: isPaginate,
+
+			function loadData(type, langID) {
+				console.log(type, langID);
+				$.ajax({
+					url: '/api/SiteContent/AllByType',
+					method: 'GET',
+					data: { type: type, langID: langID  },
+					dataType: 'json',
+					success: function (data) {
+						isPaginate = data.length > 10 ? true : false;
+					
+						if (dataTable) {
+							dataTable.destroy();
+						}
+
+						dataTable = $('#siteContentTable').DataTable({
+						data: data,
+						scrollX: true,
+						columns: [
+							{ data: "title" },
+							{ data: "mediaId" },
+							{ data: "seoId" },
+							{ data: "tagId" },
+							{ data: "content" },
+							{ data: "isActive" },
+						],
+						columnDefs: [
+							{ targets: '_all', className: 'dt-left' }
+						],
+						bPaginate: isPaginate
 			});
+			},
+			error: function (error) {
+				console.error('Error loading data: ' + JSON.stringify(error));
+			}
 		});
+	}
+
+		$('#language').on('change', function () {
+					const selectedLangID = $(this).val();
+					loadData(type,selectedLangID);
+				});
+
+
+		loadData(type,defaultLangID);
+		
+	});
 	</script>
 }
