@@ -4,16 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Universal.DTO.IDTO
+namespace Universal.DTO.ODTO
 {
-	public class InvoiceIDTO
-	{
-		public string htmltable { get; set; }
-		public string Dateofpayment { get; set; }
-		public int TotalPrice { get; set; }
-	}
-
-	public class InvoiceEntitiesIDTO
+	public class InvoiceEntitiesODTO
 	{
 		public int InvoiceId { get; set; }
 		public string PdfName { get; set; }

@@ -1,0 +1,51 @@
+﻿@model List<Universal.DTO.ODTO.InvoiceEntitiesODTO>
+
+@{
+	ViewData["Title"] = "All Invoices";
+}
+<div class="col-12">
+	<table id="invoiceTable" class="table table-striped display text-center w-100">
+		<thead>
+			<tr>
+				<th>Pdf Name</th>
+				<th>Date of Payment</th>
+				<th>Created Date</th>
+				<th>Updated Date</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+
+@section Scripts
+	{
+	<script>
+		$(document).ready(function () {
+			console.log(@Json.Serialize(Model))
+			$('#invoiceTable').DataTable({
+				data: @Json.Serialize(Model),
+				scrollX: true,
+				columns: [
+					{ data: "pdfName" },
+					{ data: "dateOfPayment" },
+					{ data: "createdAt" },
+					{ data: "updatedAt" },
+					{
+						render: function (data, type, row) {
+							var button1 = "<button class='btn btn-warning edit-btn' data-id='" + row.usersId + "'>Edit</button>";
+							var button2 = "<button class='btn btn-danger delete-btn' data-id='" + row.usersId + "'>Delete</button>";
+
+							return button1 + " " + button2;
+						}
+					},
+				],
+				columnDefs: [
+					{ targets: '_all', className: 'dt-left' }
+				],
+			});
+		});
+	</script>
+}

@@ -217,13 +217,12 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-		public async Task<IActionResult> AllDeclaration()
+		public async Task<IActionResult> AllInvoices()
 		{
 			try
 			{
-				CheckForToast();
-				var declaration = await _mainDataServices.GetAllDeclarations();
-				return View("Declaration/Declaration", declaration);
+				var invoices = await _mainDataServices.GetAllInvoices();
+				return View("Invoice/Invoice", invoices);
 			}
 			catch (Exception ex)
 			{
@@ -231,6 +230,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 				return View("Home");
 			}
 		}
+
+		public async Task<IActionResult> AllDeclaration()
+        {
+            try
+            {
+                CheckForToast();
+                var declaration = await _mainDataServices.GetAllDeclarations();
+                return View("Declaration/Declaration", declaration);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
 
 		public async Task<IActionResult> AddDeclarations(DeclarationIDTO declarationIDTO)
 		{

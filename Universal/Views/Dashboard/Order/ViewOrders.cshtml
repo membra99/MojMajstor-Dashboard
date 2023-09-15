@@ -84,6 +84,7 @@
 			</table>
 			<div id="totalPrice" style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
 			<button type="button" class="btn btn-primary" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
+			<input id="dateofpayment" type="hidden" value="@Model.CreatedAt" />
 		</div>
 	</div>
 </div>
@@ -113,9 +114,13 @@
 			var totalPriceElement = document.getElementById("totalPrice");
 			var totalPrice = totalPriceElement.textContent;
 			var priceValue = totalPrice.match(/\d+/)[0];
+
+			var dateOfPay = document.getElementById("dateofpayment");
+			let dateVal = dateOfPay.value;
 			data = {
 				htmltable: htmltableForRender,
-				TotalPrice: priceValue
+				TotalPrice: priceValue,
+				Dateofpayment: dateVal
 			};
 			$("#invoice").click(function(){
 				$.ajax({

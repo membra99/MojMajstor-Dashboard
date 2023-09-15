@@ -12,22 +12,23 @@ namespace Entities.Context
 	{
 		#region MainDataDataSET
 
-		public DbSet<Product> Products { get; set; }
-		public DbSet<ProductAttributes> ProductAttributes { get; set; }
-		public DbSet<Categories> Categories { get; set; }
-		public DbSet<MediaType> MediaTypes { get; set; }
-		public DbSet<Media> Medias { get; set; }
-		public DbSet<Users> Users { get; set; }
-		public DbSet<Sale> Sales { get; set; }
-		public DbSet<SaleType> SaleTypes { get; set; }
-		public DbSet<Seo> Seos { get; set; }
-		public DbSet<Declaration> Declarations { get; set; }
-		public DbSet<SiteContent> SiteContents { get; set; }
-		public DbSet<SiteContentType> SiteContentTypes { get; set; }
-		public DbSet<Tag> Tags { get; set; }
-		public DbSet<Order> Orders { get; set; }
-		public DbSet<OrderDetails> OrderDetails { get; set; }
-		public DbSet<Attributes> Attributes { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductAttributes> ProductAttributes { get; set; }
+        public DbSet<Categories> Categories { get; set; }
+        public DbSet<MediaType> MediaTypes { get; set; }
+        public DbSet<Media> Medias { get; set; }
+        public DbSet<Users> Users { get; set; }
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleType> SaleTypes { get; set; }
+        public DbSet<Seo> Seos { get; set; }
+        public DbSet<Declaration> Declarations { get; set; }
+        public DbSet<SiteContent> SiteContents { get; set; }
+        public DbSet<SiteContentType> SiteContentTypes { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<Attributes> Attributes { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
 		public DbSet<Language> Languages { get; set; }
 
 		#endregion MainDataDataSET
@@ -216,10 +217,14 @@ namespace Entities.Context
 			{
 				entity.HasKey(x => x.AttributesId);
 
-				entity.HasOne(x => x.Categories)
-				.WithMany(x => x.Attributes)
-				.OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(x => x.Categories)
+                .WithMany(x => x.Attributes)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+			modelBuilder.Entity<Invoice>(entity =>
+			{
+				entity.HasKey(x => x.InvoiceId);
 			});
 		}
-	}
+    }
 }

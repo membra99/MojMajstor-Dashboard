@@ -4,6 +4,7 @@ using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20230915073424_InvoiceMigration")]
+    partial class InvoiceMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,9 +64,6 @@ namespace Entities.Migrations
                     b.Property<bool>("IsAttribute")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("LanguageID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MediaId")
                         .HasColumnType("int");
 
@@ -74,8 +74,6 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CategoryId");
-
-                    b.HasIndex("LanguageID");
 
                     b.HasIndex("MediaId");
 
@@ -108,9 +106,6 @@ namespace Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LanguageID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -120,8 +115,6 @@ namespace Entities.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DeclarationId");
-
-                    b.HasIndex("LanguageID");
 
                     b.ToTable("Declarations");
                 });
@@ -150,23 +143,6 @@ namespace Entities.Migrations
                     b.HasKey("InvoiceId");
 
                     b.ToTable("Invoices");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Language", b =>
-                {
-                    b.Property<int>("LanguageID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LanguageID"));
-
-                    b.Property<string>("LanguageName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("LanguageID");
-
-                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Media", b =>
@@ -305,9 +281,6 @@ namespace Entities.Migrations
                     b.Property<bool>("IsOnSale")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("LanguageID")
-                        .HasColumnType("int");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -337,8 +310,6 @@ namespace Entities.Migrations
                     b.HasIndex("CategoriesId");
 
                     b.HasIndex("DeclarationId");
-
-                    b.HasIndex("LanguageID");
 
                     b.HasIndex("SeoId");
 
@@ -440,12 +411,7 @@ namespace Entities.Migrations
                     b.Property<string>("GoogleKeywords")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LanguageID")
-                        .HasColumnType("int");
-
                     b.HasKey("SeoId");
-
-                    b.HasIndex("LanguageID");
 
                     b.ToTable("Seos");
                 });
@@ -464,9 +430,6 @@ namespace Entities.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("LanguageID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MediaId")
                         .HasColumnType("int");
 
@@ -483,8 +446,6 @@ namespace Entities.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SiteContentId");
-
-                    b.HasIndex("LanguageID");
 
                     b.HasIndex("MediaId");
 
@@ -525,9 +486,6 @@ namespace Entities.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LanguageID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MediaId")
                         .HasColumnType("int");
 
@@ -535,8 +493,6 @@ namespace Entities.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TagId");
-
-                    b.HasIndex("LanguageID");
 
                     b.HasIndex("MediaId");
 
@@ -612,11 +568,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Universal.MainData.Categories", b =>
                 {
-                    b.HasOne("Entities.Universal.MainData.Language", "Languages")
-                        .WithMany("Categories")
-                        .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Entities.Universal.MainData.Media", "Media")
                         .WithMany("Categories")
                         .HasForeignKey("MediaId")
@@ -627,21 +578,9 @@ namespace Entities.Migrations
                         .HasForeignKey("SeoId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Languages");
-
                     b.Navigation("Media");
 
                     b.Navigation("Seo");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Declaration", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Language", "Language")
-                        .WithMany("Declarations")
-                        .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Media", b =>
@@ -705,11 +644,6 @@ namespace Entities.Migrations
                         .HasForeignKey("DeclarationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Entities.Universal.MainData.Language", "Language")
-                        .WithMany("Products")
-                        .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Entities.Universal.MainData.Seo", "Seo")
                         .WithMany("Products")
                         .HasForeignKey("SeoId")
@@ -718,8 +652,6 @@ namespace Entities.Migrations
                     b.Navigation("Categories");
 
                     b.Navigation("Declaration");
-
-                    b.Navigation("Language");
 
                     b.Navigation("Seo");
                 });
@@ -762,23 +694,8 @@ namespace Entities.Migrations
                     b.Navigation("SaleType");
                 });
 
-            modelBuilder.Entity("Entities.Universal.MainData.Seo", b =>
-                {
-                    b.HasOne("Entities.Universal.MainData.Language", "Language")
-                        .WithMany("Seos")
-                        .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Language");
-                });
-
             modelBuilder.Entity("Entities.Universal.MainData.SiteContent", b =>
                 {
-                    b.HasOne("Entities.Universal.MainData.Language", "Language")
-                        .WithMany("SiteContents")
-                        .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Entities.Universal.MainData.Media", "Media")
                         .WithMany("SiteContents")
                         .HasForeignKey("MediaId")
@@ -799,8 +716,6 @@ namespace Entities.Migrations
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Language");
-
                     b.Navigation("Media");
 
                     b.Navigation("Seo");
@@ -812,17 +727,10 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Universal.MainData.Tag", b =>
                 {
-                    b.HasOne("Entities.Universal.MainData.Language", "Language")
-                        .WithMany("Tags")
-                        .HasForeignKey("LanguageID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Entities.Universal.MainData.Media", "Media")
                         .WithMany("Tags")
                         .HasForeignKey("MediaId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Language");
 
                     b.Navigation("Media");
                 });
@@ -852,21 +760,6 @@ namespace Entities.Migrations
             modelBuilder.Entity("Entities.Universal.MainData.Declaration", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Entities.Universal.MainData.Language", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Declarations");
-
-                    b.Navigation("Products");
-
-                    b.Navigation("Seos");
-
-                    b.Navigation("SiteContents");
-
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Media", b =>
