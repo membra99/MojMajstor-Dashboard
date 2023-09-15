@@ -10,10 +10,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NetTopologySuite.Index.HPRtree;
 using Services.AWS;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using static Universal.DTO.CommonModels.CommonModels;
@@ -599,7 +601,19 @@ namespace Services
 			aws.Attachments = new List<IFormFile>();
 			aws.Attachments.Add(file);
 			bool what = await _AWSS3FileService.UploadFile(aws);
-            return what;
+
+            InvoiceEntitiesIDTO entitiesIDTO = new InvoiceEntitiesIDTO();
+            entitiesIDTO.InvoiceId = 0;
+            entitiesIDTO.PdfName = "test.pdf";
+            entitiesIDTO.DateOfPayment = Convert.ToDateTime(html.Dateofpayment);
+            entitiesIDTO.CreatedAt = DateTime.Now;
+            entitiesIDTO.UpdatedAt = DateTime.Now;
+            var invoice = _mapper.Map<Invoice>(entitiesIDTO);
+            _context.Invoices.Add(invoice);
+            await SaveContextChangesAsync();
+
+
+			return what;
 		}
 
         public async Task<int> AnonimusOrRegistredUser(UsersIDTO usersIDTO)
@@ -633,23 +647,24 @@ namespace Services
 		}
 
 		public async Task<FullOrderODTO> GetFullOrderById(int id)
-		{
-			var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
-			FullOrderODTO fullOrder = new FullOrderODTO();
-			fullOrder.UsersODTO = new UsersODTO();
-			fullOrder.OrderId = id;
-			var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
-			fullOrder.UsersODTO.Address = user.Address;
-			fullOrder.UsersODTO.Email = user.Email;
-			fullOrder.UsersODTO.FirstName = user.FirstName;
-			fullOrder.UsersODTO.LastName = user.LastName;
-			fullOrder.UsersODTO.Country = user.Country;
-			fullOrder.UsersODTO.Role = user.Role;
-			fullOrder.UsersODTO.City = user.City;
-			fullOrder.UsersODTO.Zip = user.Zip;
-			fullOrder.UsersODTO.Phone = user.Phone;
-			fullOrder.Name = user.FirstName + " " + user.LastName;
-			fullOrder.Status = order.OrderStatus;
+        {
+            var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
+            FullOrderODTO fullOrder = new FullOrderODTO();
+            fullOrder.UsersODTO = new UsersODTO();
+            fullOrder.OrderId = id;
+            fullOrder.CreatedAt = order.OrderDate.ToString();
+            var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
+            fullOrder.UsersODTO.Address = user.Address;
+            fullOrder.UsersODTO.Email = user.Email;
+            fullOrder.UsersODTO.FirstName = user.FirstName;
+            fullOrder.UsersODTO.LastName = user.LastName;
+            fullOrder.UsersODTO.Country = user.Country;
+            fullOrder.UsersODTO.Role = user.Role;
+            fullOrder.UsersODTO.City = user.City;
+            fullOrder.UsersODTO.Zip = user.Zip;
+            fullOrder.UsersODTO.Phone = user.Phone;
+            fullOrder.Name = user.FirstName + " " + user.LastName;
+            fullOrder.Status = order.OrderStatus;
 
             var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
             List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
@@ -973,5 +988,14 @@ namespace Services
 		}
 
 		#endregion Language
+
+		#region Invoices
+
+		public async Task<List<InvoiceEntitiesODTO>> GetAllInvoices()
+		{
+			return await _context.Invoices.Select(x => _mapper.Map<InvoiceEntitiesODTO>(x)).ToListAsync();
+		}
+
+		#endregion
 	}
 }

@@ -217,7 +217,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-        public async Task<IActionResult> AllDeclaration()
+		public async Task<IActionResult> AllInvoices()
+		{
+			try
+			{
+				var invoices = await _mainDataServices.GetAllInvoices();
+				return View("Invoice/Invoice", invoices);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+		public async Task<IActionResult> AllDeclaration()
         {
             try
             {

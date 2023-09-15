@@ -22,6 +22,7 @@ namespace Universal.DTO.ODTO
         public int OrderId { get; set;}
         public UsersODTO UsersODTO { get; set; }
         public string? Status { get; set; }
+        public string CreatedAt { get; set; }
         public string? Name { get; set; }
         public int TotalPrice { get; set;}
         public List<ProductDetailsForOrderODTO> ProductODTO { get; set; }
