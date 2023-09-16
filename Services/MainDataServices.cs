@@ -588,10 +588,27 @@ namespace Services
 
 		public async Task<bool> CreateInvoice(InvoiceIDTO html)
 		{
+			List<string> companyData = new List<string> { "ConcordSoft", "Prozivka 18", "24000 Subotica", "TaxId: 23242424", "Bank Account:<br>160-000000111000-12" }; //hardcoded seller company data that we can change depending on customer
+			List<string> buyerData = new List<string> { "Invoice No: <b>R-" + html.OrderNumber.ToString().PadLeft(4, '0') + "/" + html.Dateofpayment.Split('.')[2] +"</b>",
+				"Date: "+html.Dateofpayment.Split(' ')[0], "Buyer: "+html.BuyerName, "Address: "+html.Address, "City: "+html.City }; //dynamic buyer data
+
 			string htmlForRender = html.htmltable;
 			var pdf = new ChromePdfRenderer();
-			pdf.RenderingOptions.CustomCssUrl = @"C:\Users\Uros\source\repos\Universal\Universal\wwwroot\css\RenderHtml.css";
-			PdfDocument doc = pdf.RenderHtmlAsPdf("<table class='table1'>" + htmlForRender +
+			pdf.RenderingOptions.CustomCssUrl = Directory.GetCurrentDirectory() + @"\wwwroot\css\RenderHtml.css";
+			string headerHtml = "<div class='headerFlex'>" +
+				"<div><ul class='noSymbol'>";
+			foreach (var data in companyData) {
+				headerHtml += "<li>" + data + "</li>";
+			}
+			headerHtml += "</ul></div>";
+			headerHtml += "<div><ul class='noSymbol'>";
+			foreach (var data in buyerData)
+			{
+				headerHtml += "<li>" + data + "</li>";
+			}
+			headerHtml += "</ul></div></div>";
+
+			PdfDocument doc = pdf.RenderHtmlAsPdf(headerHtml + "<table class='table1'>" + htmlForRender +
 				"<tr><td class='no-border' colspan=4></td><td>Sum</td><td>" + html.TotalPrice + "</td></tr>" +
 				"<tr><td class='no-border' colspan=4></td><td>Shipping</td><td>0.00</td></tr>" +
 				"<tr><td class='no-border' colspan=4></td><td>Total</td><td>" + html.TotalPrice + "</td></tr>" + "</table>");

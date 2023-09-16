@@ -15,4 +15,12 @@
     border: none !important;
 }
 
+.headerFlex {
+display:flex;
+justify-content:space-between;
+}
+.noSymbol, .noSymbol li {
+    list-style-type:none!important;
+}
+
 

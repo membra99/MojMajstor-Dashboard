@@ -30,6 +30,7 @@ namespace Entities.Mapping
 				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName));
 
 			CreateMap<Invoice, InvoiceEntitiesODTO>();
+			CreateMap<InvoiceEntitiesIDTO, Invoice>();
 
 			CreateMap<MediaType, MediaTypeODTO>();
 			CreateMap<MediaTypeIDTO, MediaType>();

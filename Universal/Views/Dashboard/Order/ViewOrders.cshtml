@@ -35,6 +35,9 @@
 			@Html.TextBoxFor(model => model.UsersODTO.Country, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.Country, null, new { @class="text-danger" })
 		</div>
+		<div class="mb-3">
+			@Html.HiddenFor(model => model.OrderId)
+		</div>
 
 
 
@@ -115,12 +118,22 @@
 			var totalPrice = totalPriceElement.textContent;
 			var priceValue = totalPrice.match(/\d+/)[0];
 
+			let orderNumber = $("#OrderId").val();
+			let customerName = $("#UsersODTO_FirstName").val() + " " + $("#UsersODTO_LastName").val();
+			let address = $("#UsersODTO_Address").val();
+			let city = $("#UsersODTO_City").val();
+
+
 			var dateOfPay = document.getElementById("dateofpayment");
 			let dateVal = dateOfPay.value;
 			data = {
 				htmltable: htmltableForRender,
 				TotalPrice: priceValue,
-				Dateofpayment: dateVal
+				Dateofpayment: dateVal,
+				OrderNumber: orderNumber,
+				BuyerName: customerName,
+				Address: address,
+				City:city
 			};
 			$("#invoice").click(function(){
 				$.ajax({
