@@ -24,6 +24,12 @@
 	{
 	<script>
 		$(document).ready(function () {
+
+			$(document).on('click', '.edit-btn', function () {
+				var filepath = $(this).data('id');
+				window.open('/Dashboard/PDFViewer?path=' + filepath, '_blank');
+				});
+
 			console.log(@Json.Serialize(Model))
 			$('#invoiceTable').DataTable({
 				data: @Json.Serialize(Model),
@@ -35,10 +41,10 @@
 					{ data: "updatedAt" },
 					{
 						render: function (data, type, row) {
-							var button1 = "<button class='btn btn-warning edit-btn' data-id='" + row.usersId + "'>Edit</button>";
-							var button2 = "<button class='btn btn-danger delete-btn' data-id='" + row.usersId + "'>Delete</button>";
+							var button1 = "<button class='btn btn-warning edit-btn' data-id='" + row.src + "'>Edit</button>";
+							//var button2 = "<button class='btn btn-danger delete-btn' data-id='" + row.usersId + "'>Delete</button>";
 
-							return button1 + " " + button2;
+							return button1;
 						}
 					},
 				],
