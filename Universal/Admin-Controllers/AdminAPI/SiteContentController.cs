@@ -69,5 +69,31 @@ namespace Universal.Admin_Controllers.AdminAPI
 				throw new Exception(e.Message);
 			}
 		}
-	}
+
+		[HttpDelete("Tag{id}")]
+		public async Task<ActionResult<TagODTO>> DeleteTag(int id)
+		{
+			try
+			{
+				return await _mainDataServices.DeleteTag(id);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
+
+        [HttpGet("GetAllTags")]
+        public async Task<ActionResult<IEnumerable<TagODTO>>> GetAllTags()
+        {
+            try
+            {
+                return await _mainDataServices.GetTags();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+    }
 }

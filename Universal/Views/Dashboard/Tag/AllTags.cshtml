@@ -1,0 +1,116 @@
+﻿@model List<Universal.DTO.ODTO.TagODTO>
+
+@{
+    ViewData["Title"] = "All Tags";
+}
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this Tag?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+                <button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-12">
+    <table id="tagTable" class="table table-striped display text-center w-100">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            console.log(@Json.Serialize(Model));
+            $("#closeConfirmDeleteButton").click(function () {
+                $('#confirmDeleteModal').modal('hide');
+            });
+
+            $('#tagTable tbody').on('click', 'td.actions-control', function () {
+                var tr = $(this).closest('tr');
+                var row = tagTable.row(tr);
+
+                var targetElement = $(event.target);
+
+                if (targetElement.hasClass('fa-trash-can')) {
+                    var rowData = row.data();
+
+                    let selectedAttributeId = rowData.tagId;
+
+                    // Show a confirmation modal
+                    $('#confirmDeleteModal').modal('show');
+
+                    $('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+
+                        // Close the confirmation modal
+                        $('#confirmDeleteModal').modal('hide');
+
+                        $.ajax({
+                            type: 'DELETE',
+                            url: 'https://localhost:7213/api/SiteContent/Tag' + selectedAttributeId,
+                            contentType: 'application/json',
+                            success: function (response) {
+                                showToast("Tag deleted succesfully.", "success");
+                                updateTableData();
+                            },
+                            error: function (xhr, status, error) {
+                                showToast("Error: " + error + ":" + status, "error");
+                            }
+                        });
+                    });
+                }
+            });
+
+
+
+            let tagTable = $('#tagTable').DataTable({
+                data: @Json.Serialize(Model),
+                scrollX: true,
+                columns: [
+                    { data: "title" },
+                    { data: "description" },
+                    {
+                        data: 'tagId',
+                        className: 'actions-control',
+                        render: function (data, type, row) {
+                            return '<a href="/Dashboard/EditTag?id=' + data + '">' +
+                                '<i class="fas fa-pen icon-spacing"></i></a>' +
+                                '<i class="fa-solid fa-trash-can icon-spacing"></i>';
+                        }
+                    },
+                ],
+                columnDefs: [
+                    { targets: '_all', className: 'dt-left' }
+                ],
+            });
+
+            function updateTableData() {
+                $.get("https://localhost:7213/api/SiteContent/GetAllTags", function (data) {
+                    tagTable.clear().rows.add(data).draw();
+                }).fail(function (xhr, status, error) {
+                    tagTable.clear().draw();
+                });
+            }
+
+        });
+    </script>
+}
