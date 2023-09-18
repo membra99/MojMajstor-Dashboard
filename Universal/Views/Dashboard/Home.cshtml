@@ -19,43 +19,7 @@
 	}
 </style>
 
-<div class="text-center m-3 bg-secondary">
-	<img src="~/images/logo_1_2.svg" class="p-3" />
-	<h2 class="dot">Dashboard Overview Terminal</h2>
-
-	@*<div class='wrapper'>
-			<label for="from">from:</label>
-			<input type="text" id="fromDate" name="from" class="form-control col-3">
-			<label for="to">to:</label>
-			<input type="text" id="thruDate" name="to" class="form-control col-3">
-	</div>*@
+<div class="text-center m-3">
+	<img src="~/images/logo_2_2.svg" class="p-3" />
+	<h2 class="dot" style="color:indigo">Dashboard Overview Terminal</h2>
 </div>
-
-@section Scripts{
-	<script>
-		$("#fromDate").datepicker({
-			defaultDate: "+1w",
-			changeMonth: true,
-			numberOfMonths: 1,
-			dateFormat: "mm/dd/yy",
-			onClose: function (selectedDate) {
-				$("#thruDate").datepicker("option", "minDate", selectedDate);
-				if ($("#thruDate").val() == null || $("#thruDate").val() == "") {
-					$("#thruDate").datepicker("show");
-				}
-			}
-		});
-		$("#thruDate").datepicker({
-			defaultDate: "+1w",
-			changeMonth: true,
-			numberOfMonths: 1,
-			dateFormat: "mm/dd/ yy",
-			onClose: function (selectedDate) {
-				$("#fromDate").datepicker("option", "maxDate", selectedDate);
-				if ($("#fromDate").val() == null || $("#fromDate").val() == ""){
-					$("#fromDate").datepicker("show");
-				}
-			}
-		});
-	</script>
-}

@@ -4,7 +4,7 @@
 	ViewData["Title"] = "All Orders";
 }
 
-<div>
+<div class="col-12">
 	<table id="orderTable" class="table table-striped display text-center">
 		<thead>
 			<tr>
@@ -23,6 +23,7 @@
 @section Scripts
 	{
 	<script>
+		toggleLoading();
 		console.log(@Json.Serialize(Model))
 		$(document).ready(function () {
     // Edit button click handler
@@ -41,7 +42,7 @@
 					{ data: "orderStatus" },
 					{
 						render: function (data, type, row) {
-							var button1 = "<button class='btn' data-id='" + row.orderId + "'><i class='fa fa-eye' style='font-size:30px'></i></button>";
+							var button1 = "<button class='btn' data-id='" + row.orderId + "'><i class='fa fa-eye'></i></button>";
 							return button1
 						}
 					},
@@ -50,6 +51,9 @@
 					{ targets: '_all', className: 'dt-left' }
 				],
 				bPaginate: isPaginate,
+				initComplete: function (settings, json) {
+					toggleLoading();
+				}
 			});
 		});
 	</script>

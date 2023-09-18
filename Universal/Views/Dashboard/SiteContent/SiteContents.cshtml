@@ -6,14 +6,14 @@
 
 @if (ViewBag.siteType == "Page")
 {
-	<button type="button" class="btn btn-primary" id="addPageButton" style="margin-bottom:15px;">Add New Page</button>
+	<button type="button" class="btn btn-dotnet" id="addPageButton" style="margin-bottom:15px;">Add New Page</button>
 }
 else
 {
-	<button type="button" class="btn btn-primary" id="addBlogButton" style="margin-bottom:15px;">Add New Blog</button>
+	<button type="button" class="btn btn-dotnet" id="addBlogButton" style="margin-bottom:15px;">Add New Blog</button>
 }
-<div>
-	<table id="siteContentTable" class="table table-striped display text-center">
+<div class="col-12">
+	<table id="siteContentTable" class="table table-striped display text-center w-100">
 		<thead>
 			<tr>
 				<th>Title</th>
@@ -32,15 +32,16 @@ else
 @section Scripts
 	{
 	<script>
+		toggleLoading();
 		$(document).ready(function () {
 
 			let isPaginate = false;
-			let dataTable = null; 
+			let dataTable = null;
 
 			const urlParams = new URLSearchParams(window.location.search);
 			const type = urlParams.get('type');
 
-			const defaultLangID = 1; 
+			const defaultLangID = 1;
 
 			console.log(type);
 
@@ -58,46 +59,49 @@ else
 				$.ajax({
 					url: '/api/SiteContent/AllByType',
 					method: 'GET',
-					data: { type: type, langID: langID  },
+					data: { type: type, langID: langID },
 					dataType: 'json',
 					success: function (data) {
 						isPaginate = data.length > 10 ? true : false;
-					
+
 						if (dataTable) {
 							dataTable.destroy();
 						}
 
 						dataTable = $('#siteContentTable').DataTable({
-						data: data,
-						scrollX: true,
-						columns: [
-							{ data: "title" },
-							{ data: "mediaId" },
-							{ data: "seoId" },
-							{ data: "tagId" },
-							{ data: "content" },
-							{ data: "isActive" },
-						],
-						columnDefs: [
-							{ targets: '_all', className: 'dt-left' }
-						],
-						bPaginate: isPaginate
-			});
-			},
-			error: function (error) {
-				console.error('Error loading data: ' + JSON.stringify(error));
-			}
-		});
-	}
-
-		$('#language').on('change', function () {
-					const selectedLangID = $(this).val();
-					loadData(type,selectedLangID);
+							data: data,
+							scrollX: true,
+							columns: [
+								{ data: "title" },
+								{ data: "mediaId" },
+								{ data: "seoId" },
+								{ data: "tagId" },
+								{ data: "content" },
+								{ data: "isActive" },
+							],
+							columnDefs: [
+								{ targets: '_all', className: 'dt-left' }
+							],
+							bPaginate: isPaginate,
+							initComplete: function (settings, json) {
+								toggleLoading();
+							}
+						});
+					},
+					error: function (error) {
+						console.error('Error loading data: ' + JSON.stringify(error));
+					}
 				});
+			}
+
+			$('#language').on('change', function () {
+				const selectedLangID = $(this).val();
+				loadData(type, selectedLangID);
+			});
 
 
-		loadData(type,defaultLangID);
-		
-	});
+			loadData(type, defaultLangID);
+
+		});
 	</script>
 }

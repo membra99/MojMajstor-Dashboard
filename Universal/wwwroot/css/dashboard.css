@@ -25,6 +25,7 @@
     margin-top: 60px;
     margin-left: 210px;
     width: 100%;
+    position: relative;
 }
 
 .content-wrapper {
@@ -88,4 +89,58 @@ ul ul {
 
 .tox-tinymce {
     z-index: 5 !important;
+}
+
+.btn-dotnet {
+    color: #f0f0f0;
+    background-color: rebeccapurple;
+    border-color: rebeccapurple;
+}
+
+    .btn-dotnet:hover {
+        color: #f0f0f0;
+        background-color: indigo;
+        border-color: blueviolet;
+    }
+
+.loading-container {
+    background-color:rebeccapurple; 
+    position:absolute;
+    border-radius: 10px;
+    z-index:15;
+    top: 45%;
+    left:45%;
+}
+
+.loading-backdrop {
+    background-color: #f0f0f0;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: calc(100vh - 50px);
+}
+
+
+.loading-inactive {
+    display: none;
+}
+
+.loading-active #o {
+    animation: spin 2s linear infinite;
+    transform-origin: 250px;
+}
+
+.loading-active #D {
+    animation: spin 1.25s linear infinite;
+    transform-origin: 250px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

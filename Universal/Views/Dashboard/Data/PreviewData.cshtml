@@ -136,6 +136,8 @@
 					<img id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
 					<img id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
 					<img id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
+					<img id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
+					<img id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
 				</div>
 			</div>
 			<hr>
@@ -178,7 +180,7 @@
 						if (attribute.length > 0) {
 							let attributesOptions = ""
 							$.each(attribute, function (i, attr) {
-								attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
+								attributesOptions += "<option value='" + attr.attributesId + "' disabled>" + attr.value + "</option>"
 							});
 							let htmlAttributes = "<label>" + data.data.attrs[counter++].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
 							$("#attributeArea").append(htmlAttributes);

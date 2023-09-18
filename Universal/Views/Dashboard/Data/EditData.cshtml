@@ -99,7 +99,16 @@
 						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class="text-danger" })
 					</div>
-					<div class="form-group col-6 mb-3">
+					<div class="form-group mb-3">
+						@Html.Label("Sale start & end date:")
+						@Html.TextBox("datefilter", null, null, new { @class="form-control", placeholder="Start & End Date", disabled="disabled" })
+						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
+						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
+
+						@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
+						@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
+					</div>
+					@*<div class="form-group col-6 mb-3">
 						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
 						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
@@ -108,7 +117,7 @@
 						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
 						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
-					</div>
+				</div>*@
 				</div>
 				<hr>
 				<div class="form-group mb-3">
@@ -162,6 +171,8 @@
 						<img id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
 						<img id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
 						<img id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
+						<img id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
+						<img id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
 					</div>
 				</div>
 				<hr>
@@ -169,7 +180,7 @@
 		</div>
 
 		<div class="mx-auto mb-3 w-25">
-			<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
+			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
 		</div>
 	}
 </div>
@@ -189,12 +200,29 @@
 		};
 
         $(document).ready(function () {
+			$('input[name="datefilter"]').daterangepicker({
+				autoUpdateInput: false,
+				locale: {
+					cancelLabel: 'Clear'
+				}
+			});
+
+			$('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
+				$(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+				$("[name^='ProductIDTO.SaleIDTO.StartDate']").val(picker.startDate.format('MM/DD/YYYY'));
+				$("[name^='ProductIDTO.SaleIDTO.EndDate']").val(picker.endDate.format('MM/DD/YYYY'));
+			});
+
+			$('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
+				$(this).val('');
+			});
+
             console.log(@Json.Serialize(Model))
             if ($("#ProductIDTO_IsOnSale").attr('checked')) {
-                $("input[name*='SaleIDTO'], select[name*='SaleIDTO']").removeAttr("disabled");
+				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter'] ").removeAttr("disabled");
             }
             else {
-                $("input[name*='SaleIDTO'], select[name*='SaleIDTO']").attr("disabled", true);
+				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
             }
 
             $.ajax({
@@ -258,10 +286,10 @@
 
         $("#ProductIDTO_IsOnSale").change(function () {
             if (this.checked) {
-                $("input[name*='SaleIDTO'], select[name*='SaleIDTO']").removeAttr("disabled");
+				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").removeAttr("disabled");
             }
             else {
-                $("input[name*='SaleIDTO'], select[name*='SaleIDTO']").attr("disabled", true);
+				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
             }
         });
 

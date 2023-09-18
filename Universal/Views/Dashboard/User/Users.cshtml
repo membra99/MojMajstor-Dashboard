@@ -5,7 +5,7 @@
 }
 
 <div class="col-12">
-	@Html.ActionLink("Add New User", "NewUser", "Dashboard", null, new { @class="btn btn-primary" })
+	@Html.ActionLink("Add New User", "NewUser", "Dashboard", null, new { @class="btn btn-dotnet" })
 	<table id="userTable" class="table table-striped display text-center w-100">
 		<thead>
 			<tr>
@@ -48,9 +48,11 @@
 @section Scripts
 	{
 	<script>
+		toggleLoading();
+
 		$(document).ready(function () {
 			let data = @Json.Serialize(Model);
-			let isPaginate = data.length > 10 ? true: false;
+			let isPaginate = data.length > 10 ? true : false;
 
 			let userTable = $('#userTable').DataTable({
 				//sDom: '<"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"lfr>t<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"<"#testbutton">ip>',
@@ -70,7 +72,7 @@
 						data: 'usersId',
 						className: 'actions-control',
 						render: function (data, type, row) {
-							return '<a href="/Dashboard/EditUser?userId=' + data + '">'+
+							return '<a href="/Dashboard/EditUser?userId=' + data + '">' +
 								'<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
 								'<a href="/Dashboard/PreviewUser?userId=' + data + '">' +
 								'<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
@@ -83,13 +85,16 @@
 				],
 				bPaginate: isPaginate,
 				order: [[3, 'desc']],
+				initComplete: function (settings, json) {
+					toggleLoading();
+				}
 			});
 
 			$.ajaxSetup({
 				headers: {
 					//headers: { "Authorization":  },
 					'Authorization': @Json.Serialize(ViewData["Token"])
-								}
+												}
 			});
 
 			$('#userTable tbody').on('click', 'td.actions-control', function () {

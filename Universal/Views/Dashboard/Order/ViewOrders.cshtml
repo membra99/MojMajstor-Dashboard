@@ -8,30 +8,37 @@
 	<div class="col-md-4">
 		<div class="user">USER DATA</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.Email, "Email:")
 			@Html.TextBoxFor(model => model.UsersODTO.Email, null, new { @class="form-control", placeholder = "Email", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.Email, null, new { @class="text-danger" })
 		</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.FirstName, "First name:")
 			@Html.TextBoxFor(model => model.UsersODTO.FirstName, new { @class="form-control", placeholder = "First Name", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.FirstName, null, new { @class="text-danger" })
 		</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.LastName, "Last name:")
 			@Html.TextBoxFor(model => model.UsersODTO.LastName, new { @class="form-control", placeholder = "Last Name", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.LastName, null, new { @class="text-danger" })
 		</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.Phone, "Phone:")
 			@Html.TextBoxFor(model => model.UsersODTO.Phone, new { @class="form-control", placeholder = "Phone", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.Phone, null, new { @class="text-danger" })
 		</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.Address, "Address:")
 			@Html.TextBoxFor(model => model.UsersODTO.Address, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.Address, null, new { @class="text-danger" })
 		</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.City, "City:")
 			@Html.TextBoxFor(model => model.UsersODTO.City, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.City, null, new { @class="text-danger" })
 		</div>
 		<div class="mb-3">
+			@Html.LabelFor(model => model.UsersODTO.Country, "Country:")
 			@Html.TextBoxFor(model => model.UsersODTO.Country, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
 			@Html.ValidationMessageFor(model => model.UsersODTO.Country, null, new { @class="text-danger" })
 		</div>
@@ -50,6 +57,7 @@
 
 
 			<div class="mb-3">
+				@Html.LabelFor(model => model.Status, "Status:")
 				@Html.DropDownListFor(model => model.Status, new List<SelectListItem>
 			{
 			new SelectListItem() { Text = "On hold", Value = "On hold"},
@@ -62,7 +70,7 @@
 
 
 			<div class="mx-auto mb-3 w-50">
-				<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
+				<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
 			</div>
 		}
 
@@ -86,7 +94,7 @@
 				</tbody>
 			</table>
 			<div id="totalPrice" style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
-			<button type="button" class="btn btn-primary" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
+			<button type="button" class="btn btn-dotnet" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
 			<input id="dateofpayment" type="hidden" value="@Model.CreatedAt" />
 		</div>
 	</div>

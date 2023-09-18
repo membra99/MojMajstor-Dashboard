@@ -23,16 +23,17 @@
 @section Scripts
 	{
 	<script>
+		toggleLoading();
 		$(document).ready(function () {
-
 			$(document).on('click', '.edit-btn', function () {
 				var filepath = $(this).data('id');
 				window.open('/Dashboard/PDFViewer?path=' + filepath, '_blank');
 				});
 
-			console.log(@Json.Serialize(Model))
+			let data = @Json.Serialize(Model);
+			let isPaginate = data.length > 10 ? true : false;
 			$('#invoiceTable').DataTable({
-				data: @Json.Serialize(Model),
+				data: data,
 				scrollX: true,
 				columns: [
 					{ data: "pdfName" },
@@ -51,6 +52,10 @@
 				columnDefs: [
 					{ targets: '_all', className: 'dt-left' }
 				],
+				bPaginate: isPaginate,
+				initComplete: function (settings, json) {
+					toggleLoading();
+				}
 			});
 		});
 	</script>

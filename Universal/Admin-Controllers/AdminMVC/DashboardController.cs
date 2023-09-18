@@ -295,6 +295,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<IActionResult> PreviewDeclaration(int id)
+		{
+			try
+			{
+				var declaration = await _mainDataServices.GetDeclarationForEditById(id);
+				return View("Declaration/PreviewDeclaration", declaration);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
+
+
 		public async Task<IActionResult> SetPassword(string key)
 		{
 			try

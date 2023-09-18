@@ -1,46 +1,54 @@
 ﻿@model Universal.DTO.IDTO.DeclarationIDTO
-    
+
 @{
-    ViewData["Title"] = "New Declaration";
+	ViewData["Title"] = "New Declaration";
 }
 
-
-<div class="col-5 bg-light mx-auto rounded-3">
-	<div class="form-group">
-		@using (Html.BeginForm("AddDeclarations", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-		{
-			<div class="mb-3">
-				@Html.HiddenFor(model => model.LanguageID,new { @id = "lang" })
-			</div>
-			<div class="mb-3">
-				@Html.TextBoxFor(model => model.DeclarationName, null, new { @class="form-control", placeholder = "Declaration Name"})
-				@Html.ValidationMessageFor(model => model.DeclarationName, null, new { @class="text-danger" })
-			</div>
-			<div class="mb-3">
+<div class="container bg-light w-50">
+	<div class="text-center">
+		<h2>Add New Declaration</h2>
+	</div>
+	@using (Html.BeginForm("AddDeclarations", "Dashboard", FormMethod.Post))
+	{
+		<div class="mb-3">
+			@Html.HiddenFor(model => model.LanguageID,new { @id = "lang" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.DeclarationName, "Declaration name:", true)
+			@Html.TextBoxFor(model => model.DeclarationName, null, new { @class="form-control", placeholder = "Declaration Name"})
+			@Html.ValidationMessageFor(model => model.DeclarationName, null, new { @class="text-danger" })
+		</div>
+		<div class="row">
+			<div class="form-group col-6 mb-3">
+				@Html.LabelRequiredFor(model => model.DeclarationName, "Declaration model:", true)
 				@Html.TextBoxFor(model => model.Model, new { @class="form-control", placeholder = "Model"})
 				@Html.ValidationMessageFor(model => model.Model, null, new { @class="text-danger" })
 			</div>
-			<div class="mb-3">
+			<div class="form-group col-6 mb-3">
+				@Html.LabelRequiredFor(model => model.DeclarationName, "Name and Type of product:", true)
 				@Html.TextBoxFor(model => model.NameAndTypeOfProduct, new { @class="form-control", placeholder = "Name and Type of Product"})
 				@Html.ValidationMessageFor(model => model.NameAndTypeOfProduct, null, new { @class="text-danger" })
 			</div>
-			<div class="mb-3">
-				@Html.TextBoxFor(model => model.Distributor, new { @class="form-control", placeholder = "Distributor"})
-				@Html.ValidationMessageFor(model => model.Distributor, null, new { @class="text-danger" })
-			</div>
-			<div class="mb-3">
-				@Html.TextBoxFor(model => model.CountryOfOrigin, new { @class="form-control", placeholder = "Country of Origin"})
-				@Html.ValidationMessageFor(model => model.CountryOfOrigin, null, new { @class="text-danger" })
-			</div>
-			<div class="mb-3">
-				@Html.TextBoxFor(model => model.ConsumerRights, new { @class="form-control", placeholder = "Consumer Rights"})
-				@Html.ValidationMessageFor(model => model.ConsumerRights, null, new { @class="text-danger" })
-			</div>
-			<div class="mx-auto mb-3 w-50">
-				<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
-			</div>
-		}
-	</div>
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.DeclarationName, "Distributor:", true)
+			@Html.TextBoxFor(model => model.Distributor, new { @class="form-control", placeholder = "Distributor"})
+			@Html.ValidationMessageFor(model => model.Distributor, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.DeclarationName, "Country of origin:", true)
+			@Html.TextBoxFor(model => model.CountryOfOrigin, new { @class="form-control", placeholder = "Country of Origin"})
+			@Html.ValidationMessageFor(model => model.CountryOfOrigin, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.DeclarationName, "Consumer rights:", true)
+			@Html.TextBoxFor(model => model.ConsumerRights, new { @class="form-control", placeholder = "Consumer Rights"})
+			@Html.ValidationMessageFor(model => model.ConsumerRights, null, new { @class="text-danger" })
+		</div>
+		<div class="mx-auto mb-3 w-50">
+			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+		</div>
+	}
 </div>
 
 @section Scripts{
@@ -48,7 +56,7 @@
 	<script>
 		$('#lang').val($('#language').val());
 
-		$('#language').change(function() {
+		$('#language').change(function () {
 			$('#lang').val($(this).val());
 		});
 
