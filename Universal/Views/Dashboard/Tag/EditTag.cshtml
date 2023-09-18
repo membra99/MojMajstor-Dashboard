@@ -1,0 +1,40 @@
+﻿@model Universal.DTO.IDTO.TagIDTO
+
+@{
+	ViewData["Title"] = "Edit Tag";
+}
+
+<div class="col-5 bg-light mx-auto rounded-3">
+	<div class="form-group">
+		@using (Html.BeginForm("EditTagModel", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+		{
+				<div class="mb-3">
+				@Html.HiddenFor(model => model.LanguageID,new { @id = "lang" })
+				</div>
+				<div class="mb-3">
+				@Html.TextBoxFor(model => model.Title, null, new { @class="form-control", placeholder = "Title"})
+				@Html.ValidationMessageFor(model => model.Title, null, new { @class="text-danger" })
+				</div>
+				<div class="mb-3">
+				@Html.TextBoxFor(model => model.Description, new { @class="form-control", placeholder = "Description"})
+				@Html.ValidationMessageFor(model => model.Description, null, new { @class="text-danger" })
+				</div>
+				@Html.HiddenFor(model => model.TagId)
+				<div class="mx-auto mb-3 w-50">
+					<input type="submit" value="Save" class="form-control p-2 bg-success text-light" />
+				</div>
+		}
+	</div>
+</div>
+
+@section Scripts{
+
+			<script>
+				$('#lang').val($('#language').val());
+
+				$('#language').change(function() {
+					$('#lang').val($(this).val());
+				});
+
+			</script>
+}

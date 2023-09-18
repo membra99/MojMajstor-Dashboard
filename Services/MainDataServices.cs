@@ -836,6 +836,19 @@ namespace Services
 			return declarationODTO;
 		}
 
+		public async Task<TagODTO> DeleteTag(int id)
+		{
+			var tag = await _context.Tags.FindAsync(id);
+			if (tag == null) return null;
+
+			var tagODTO = await GetTagById(id);
+
+			_context.Tags.Remove(tag);
+			await SaveContextChangesAsync();
+
+			return tagODTO;
+		}
+
 		#endregion Declaration
 
 		#region Media
@@ -1019,6 +1032,46 @@ namespace Services
 		public async Task<Stream> GetStreamForInvoice(string path)
 		{
 			return await _AWSS3FileService.GetFile(path);
+		}
+
+		#endregion
+
+		#region Tag
+
+		public async Task<TagODTO> AddTag(TagIDTO tagIDTO)
+		{
+			var tag = _mapper.Map<Tag>(tagIDTO);
+			tag.TagId = 0;
+			_context.Tags.Add(tag);
+			await SaveContextChangesAsync();
+
+			return await _context.Tags.Where(x => x.TagId == tag.TagId).Select(x => _mapper.Map<TagODTO>(x)).SingleOrDefaultAsync();
+		}
+
+		public async Task<TagODTO> GetTagById(int id)
+		{
+			return await _context.Tags.Where(x => x.TagId == id).Select(x => _mapper.Map<TagODTO>(x)).SingleOrDefaultAsync();
+		}
+
+		public async Task<TagODTO> EditTag(TagIDTO tagIDTO)
+		{
+			var tag = _mapper.Map<Tag>(tagIDTO);
+			_context.Entry(tag).State = EntityState.Modified;
+			await SaveContextChangesAsync();
+
+			return await GetTagById(tag.TagId);
+		}
+
+		private IQueryable<TagIDTO> GetTagsIDTO(int id)
+		{
+			return from x in _context.Tags
+				   where (id == 0 || x.TagId == id)
+				   select _mapper.Map<TagIDTO>(x);
+		}
+
+		public async Task<TagIDTO> GetTagForEditById(int id)
+		{
+			return await GetTagsIDTO(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
 		#endregion

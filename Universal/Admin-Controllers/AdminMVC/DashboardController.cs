@@ -217,6 +217,80 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<IActionResult> AddTags(TagIDTO tagIDTO)
+		{
+            if (!ModelState.IsValid)
+            {
+                return View("Tag/NewTag", new TagIDTO());
+            }
+
+            //						FILE UPLOAD SYSTEM
+            AWSFileUpload awsFile = new AWSFileUpload();
+            awsFile.Attachments = new List<IFormFile>();
+            if (tagIDTO.TagImage != null)
+                awsFile.Attachments.Add(tagIDTO.TagImage);
+            try
+            {
+                var media = await _userDataServices.UploadUserPicture(awsFile);
+                if (media != null) tagIDTO.MediaId = media.MediaId;
+                var tag = await _mainDataServices.AddTag(tagIDTO);
+                return RedirectToAction("AllTags", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> EditTag(int id)
+        {
+            try
+            {
+                var tag = await _mainDataServices.GetTagForEditById(id);
+                return View("Tag/EditTag", tag);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+		public async Task<IActionResult> EditTagModel(TagIDTO tagIDTO)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View("Tag/EditTag", tagIDTO);
+			}
+			await _mainDataServices.EditTag(tagIDTO);
+
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Tag edited successfully!");
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+			return RedirectToAction("AllTags");
+		}
+
+		public async Task<IActionResult> AllTags()
+        {
+			CheckForToast();
+            try
+            {
+                var tags = await _mainDataServices.GetTags();
+                return View("Tag/AllTags", tags);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> NewTag()
+		{
+			return View("Tag/NewTag");
+		}
+
 		public async Task<IActionResult> AllInvoices()
 		{
 			try

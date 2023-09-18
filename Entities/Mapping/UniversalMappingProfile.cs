@@ -28,6 +28,8 @@ namespace Entities.Mapping
 
 			CreateMap<Tag, TagODTO>()
 				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName));
+			CreateMap<TagIDTO, Tag>();
+			CreateMap<Tag, TagIDTO>();
 
 			CreateMap<Invoice, InvoiceEntitiesODTO>()
 				.ForMember(dest => dest.Src, source => source.MapFrom(m => m.Media.Src));
