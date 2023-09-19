@@ -1,72 +1,91 @@
 ﻿@model Universal.DTO.IDTO.SiteContentIDTO
 
 @{
-    ViewData["Title"] = "Add SiteContents";
+	ViewData["Title"] = "Add SiteContents";
 }
 
 
-<div class="col-5 bg-light mx-auto rounded-3">
-	<div class="form-group">
-		@using (Html.BeginForm("AddSiteContent", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-		{
-				<div class="mb-3">
-				@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
-				</div>
-				<div class="mb-3">
-				@Html.TextBoxFor(model => model.Title, null, new { @class="form-control", placeholder = "Title"})
-				@Html.ValidationMessageFor(model => model.Title, null, new { @class="text-danger" })
-				</div>
-				<div class="mb-3">
-				@Html.TextAreaFor(model => model.Content, 10,1, new { @Id="tiny", @class="form-control", placeholder = "Content"})
-				@Html.ValidationMessageFor(model => model.Content, null, new { @class="text-danger" })
-				</div>
-
-				<div class="mb-3">
-				@Html.HiddenFor(model => model.SeoIDTO.LanguageID,new { @class = "lang" })
-				</div>
-				<div class="mb-3">
-				@Html.TextBoxFor(model => model.SeoIDTO.GoogleKeywords, new { @class="form-control", placeholder = "Google Keywords"})
-				@Html.ValidationMessageFor(model => model.SeoIDTO.GoogleKeywords, null, new { @class="text-danger" })
-				</div>
-				<div class="mb-3">
-				@Html.TextBoxFor(model => model.SeoIDTO.GoogleDesc, new { @class="form-control", placeholder = "Google Description"})
-				@Html.ValidationMessageFor(model => model.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
-				</div>
-				<div class="mb-3">
-				@Html.HiddenFor(model => model.SiteContentTypeId, new { @class="form-control", placeholder = "Type"})
-				@Html.ValidationMessageFor(model => model.SiteContentTypeId, null, new { @class="text-danger" })
-				</div>
-				@if(Model.SiteContentTypeId == 4)
-				{
-				<div class="mb-3">
-					<div class="mb-3">
-					@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
-					</div>
-					@Html.DropDownListFor(model => model.TagId, Model.TagODTOs.Select(dec =>
-					new SelectListItem() { Value = dec.TagId.ToString(), Text = dec.Title }),
-					"Select Tag", new { @class="form-control" })
-					@Html.ValidationMessageFor(model => model.TagId, null, new { @class="text-danger" })
-				</div>
-				}
-				<div class="mb-3">
-					<input type="file" name="Avatar" runat="server" class="form-control" />
-				</div>
-				<div class="mx-auto mb-3 w-50">
-					<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
-				</div>
-		}
+<div class="container bg-light w-50">
+	<div class="text-center">
+		<h2>Add Site Content</h2>
 	</div>
+	@using (Html.BeginForm("AddSiteContent", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+	{
+		<div class="form-group mb-3">
+			@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelFor(model => model.Title, "Title:")
+			@Html.TextBoxFor(model => model.Title, null, new { @class="form-control", placeholder = "Title"})
+			@Html.ValidationMessageFor(model => model.Title, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelFor(model => model.Content, "Content:")
+			@Html.TextAreaFor(model => model.Content, 10,1, new { @Id="tiny", @class="form-control", placeholder = "Content"})
+			@Html.ValidationMessageFor(model => model.Content, null, new { @class="text-danger" })
+		</div>
+
+		<div class="form-group mb-3">
+			@Html.HiddenFor(model => model.SeoIDTO.LanguageID,new { @class = "lang" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelFor(model => model.SeoIDTO.GoogleDesc, "Meta description:")
+			@Html.TextBoxFor(model => model.SeoIDTO.GoogleDesc, new { @class="form-control", placeholder = "Google Description"})
+			@Html.ValidationMessageFor(model => model.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelFor(model => model.SeoIDTO.GoogleKeywords, "Meta keywords:")
+			@Html.TextBoxFor(model => model.SeoIDTO.GoogleKeywords, new { @class="form-control", placeholder = "Google Keywords"})
+			@Html.ValidationMessageFor(model => model.SeoIDTO.GoogleKeywords, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.HiddenFor(model => model.SiteContentTypeId, new { @class="form-control", placeholder = "Type"})
+			@Html.ValidationMessageFor(model => model.SiteContentTypeId, null, new { @class="text-danger" })
+		</div>
+		@if (Model.SiteContentTypeId == 4)
+		{
+			<div class="form-group mb-3">
+				@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
+				@Html.LabelFor(model => model.TagId, "Tag:")
+				@Html.DropDownListFor(model => model.TagId, Model.TagODTOs.Select(dec =>
+		new SelectListItem() { Value = dec.TagId.ToString(), Text = dec.Title }),
+		"Select Tag", new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.TagId, null, new { @class="text-danger" })
+			</div>
+		}
+		<div class="row">
+			<div class="form-group col-10 mb-3">
+				@*@Html.LabelRequiredFor(model => model.Avatar, "Avatar:", true)*@
+				@Html.Label("Image:")
+				<input type="file" name="Avatar" runat="server" class="form-control" onchange="loadFile(event)" />
+
+				@*@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })*@
+			</div>
+			<div class="form-group col-2 mb-3 text-center">
+				<img id="avatar-preview" width="75" height="75" style="border: 2px solid indigo">
+			</div>
+		</div>
+		<div class="mx-auto mb-3 w-50">
+			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+		</div>
+	}
+</div>
 </div>
 
 
 @section Scripts{
 
-			<script>
-				$('.lang').val($('#language').val());
+	<script>
+		let loadFile = function (event) {
+			let image = document.getElementById('avatar-preview');
+			image.src = URL.createObjectURL(event.target.files[0]);
+		};
 
-				$('#language').change(function() {
-					$('.lang').val($(this).val());
-				});
+		$('.lang').val($('#language').val());
 
-			</script>
+		$('#language').change(function () {
+			$('.lang').val($(this).val());
+		});
+
+	</script>
 }

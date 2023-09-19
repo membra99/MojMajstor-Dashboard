@@ -14,3 +14,15 @@
 .logo-login {
     width: 25%;
 }
+
+.btn-dotnet {
+    color: #f0f0f0;
+    background-color: rebeccapurple;
+    border-color: rebeccapurple;
+}
+
+    .btn-dotnet:hover {
+        color: #f0f0f0;
+        background-color: indigo;
+        border-color: blueviolet;
+    }
