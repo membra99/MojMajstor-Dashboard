@@ -144,3 +144,25 @@ ul ul {
         transform: rotate(360deg);
     }
 }
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.unset-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red; /* Style as desired */
+    color: white; /* Style as desired */
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    display: none; /* Initially hide the button */
+}
+
+.image-container:hover .hover-unset {
+    display: block; /* Show the button on hover */
+}

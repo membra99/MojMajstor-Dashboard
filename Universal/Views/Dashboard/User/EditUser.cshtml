@@ -90,7 +90,7 @@
 				@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })
 			</div>
 			<div class="form-group col-2 mb-3 text-center">
-				<img id="avatar-preview" width="75" height="75" style="border: 2px solid indigo">
+				<img src="@Url.Action("GetImage","Dashboard",new {path = Model.Photo})" alt="@Model.AltTag" id="avatar-preview" width="75" height="75" style="border: 2px solid indigo">
 			</div>
 		</div>
 		<div class="mx-auto mb-3 w-25">
@@ -98,3 +98,12 @@
 		</div>
 	}
 </div>
+
+@section Scripts{
+	<script>
+		let loadFile = function (event) {
+			let image = document.getElementById('avatar-preview');
+			image.src = URL.createObjectURL(event.target.files[0]);
+		};
+	</script>
+}

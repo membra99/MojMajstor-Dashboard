@@ -29,7 +29,8 @@ namespace Entities.Mapping
 			CreateMap<Tag, TagODTO>()
 				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName));
 			CreateMap<TagIDTO, Tag>();
-			CreateMap<Tag, TagIDTO>();
+			CreateMap<Tag, TagIDTO>()
+				.ForMember(dest => dest.Photo, source => source.MapFrom(m => m.Media.Src));
 
 			CreateMap<Invoice, InvoiceEntitiesODTO>()
 				.ForMember(dest => dest.Src, source => source.MapFrom(m => m.Media.Src));
@@ -41,7 +42,9 @@ namespace Entities.Mapping
 			CreateMap<Users, UsersODTO>()
 				.ForMember(dest => dest.ImageSrc, source => source.MapFrom(m => m.Media.Src));
 			CreateMap<UsersIDTO, Users>();
-			CreateMap<Users, UsersIDTO>();
+			CreateMap<Users, UsersIDTO>()
+				.ForMember(dest => dest.Photo, source => source.MapFrom(m => m.Media.Src))
+				.ForMember(dest => dest.AltTag, source => source.MapFrom(m => m.Media.MetaTitle));
 			CreateMap<UsersODTO, UsersIDTO>();
 
 			CreateMap<Sale, SaleODTO>();

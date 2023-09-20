@@ -1065,6 +1065,7 @@ namespace Services
 		private IQueryable<TagIDTO> GetTagsIDTO(int id)
 		{
 			return from x in _context.Tags
+				   .Include(x => x.Media)
 				   where (id == 0 || x.TagId == id)
 				   select _mapper.Map<TagIDTO>(x);
 		}

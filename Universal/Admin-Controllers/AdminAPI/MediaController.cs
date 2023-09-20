@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services;
+using Services.AWS;
 using Universal.DTO.ODTO;
 
 namespace Universal.Admin_Controllers.AdminAPI
@@ -9,11 +10,14 @@ namespace Universal.Admin_Controllers.AdminAPI
     public class MediaController
     {
         private readonly MainDataServices _mainDataServices;
+		private readonly IAWSS3FileService _AWSS3FileService;
 
-        public MediaController(MainDataServices mainServices)
+
+		public MediaController(MainDataServices mainServices, IAWSS3FileService AWSS3FileService)
         {
             _mainDataServices = mainServices;
-        }
+			_AWSS3FileService = AWSS3FileService;
+		}
 
         [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<MediaODTO>>> GetAllMedias()
@@ -27,5 +31,5 @@ namespace Universal.Admin_Controllers.AdminAPI
                 throw new Exception(e.Message);
             }
         }
-    }
+	}
 }

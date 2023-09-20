@@ -32,5 +32,7 @@ namespace Universal.DTO.IDTO
         public string? UserType { get; set; }
         public string? UserTypes { get; set; }
         public IFormFile? Avatar { get; set; }
+        public string? Photo { get; set; }
+        public string? AltTag { get; set; }
     }
 }

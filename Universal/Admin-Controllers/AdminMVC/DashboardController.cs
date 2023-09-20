@@ -4,6 +4,8 @@ using IronPdf;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.AWS;
+using System.IO;
+using System.Net.Mime;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using Universal.DTO.ViewDTO;
@@ -19,16 +21,18 @@ namespace Universal.Admin_Controllers.AdminMVC
 	{
 		private readonly HttpClient _httpClient;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly IAWSS3FileService _AWSS3FileService;
 		private readonly MainDataServices _mainDataServices;
 		private readonly UsersServices _userDataServices;
 
-		public DashboardController(IHttpClientFactory httpClientFactory, IHttpContextAccessor contextAccessor, MainDataServices mainDataServices, UsersServices usersServices)
+		public DashboardController(IHttpClientFactory httpClientFactory, IAWSS3FileService AWSS3FileService, IHttpContextAccessor contextAccessor, MainDataServices mainDataServices, UsersServices usersServices)
 		{
 			_httpClient = httpClientFactory.CreateClient();
 			_httpClient.BaseAddress = new Uri("https://localhost:7213"); ////TODO change later to be dynamic
 			_httpContextAccessor = contextAccessor;
 			_mainDataServices = mainDataServices;
 			_userDataServices = usersServices;
+			_AWSS3FileService = AWSS3FileService;
 		}
 
 		public IActionResult Index()
@@ -96,6 +100,24 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("User/EditUser", await _userDataServices.GetUserByIdForEdit(userId));
 		}
 
+		public async Task<IActionResult> GetImage(string path)
+		{
+			if (path == null)
+				path = "DOT/noimg.jpg";
+
+            var aa = await _AWSS3FileService.GetFile(path);
+			byte[] bytes = null;
+			using (MemoryStream ms = new MemoryStream())
+			{
+				aa.CopyTo(ms);
+				bytes = ms.ToArray();
+			}
+
+			return File(bytes, MediaTypeNames.Text.Plain);
+
+		}
+
+
 		public async Task<IActionResult> EditUserAction(UsersIDTO userIDTO)
 		{
 			if (!ModelState.IsValid)
@@ -139,7 +161,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Declaration/NewDeclaration");
 		}
 
-		public async Task<IActionResult> EditOrders(int id)
+		public IActionResult Media()
+		{
+			return View("Media/Media");
+		}
+
+        public async Task<IActionResult> uploadMedia(IFormFile file)
+        {
+            AWSFileUpload awsFile = new AWSFileUpload();
+            awsFile.Attachments = new List<IFormFile>();
+                awsFile.Attachments.Add(file);
+            var media = await _userDataServices.UploadUserPicture(awsFile);
+			return Ok();
+        }
+
+        public async Task<IActionResult> EditOrders(int id)
 		{
 			var Order = await _mainDataServices.GetFullOrderById(id);
 
@@ -263,7 +299,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 			{
 				return View("Tag/EditTag", tagIDTO);
 			}
-			await _mainDataServices.EditTag(tagIDTO);
+			AWSFileUpload awsFile = new AWSFileUpload();
+			awsFile.Attachments = new List<IFormFile>();
+			if (tagIDTO.TagImage != null)
+				awsFile.Attachments.Add(tagIDTO.TagImage);
+			try
+			{
+				var media = await _userDataServices.UploadUserPicture(awsFile);
+				if (media != null) tagIDTO.MediaId = media.MediaId;
+				await _mainDataServices.EditTag(tagIDTO);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
 
 			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Tag edited successfully!");
 			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");

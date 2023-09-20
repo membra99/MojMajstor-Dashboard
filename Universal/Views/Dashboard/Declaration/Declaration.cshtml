@@ -90,7 +90,7 @@
 			let data = @Json.Serialize(Model);
 			let isPaginate = data.length > 10 ? true : false;
 			let declarationTable = $('#declarationTable').DataTable({
-				data: @Json.Serialize(Model),
+				data: data,
 				columns: [
 					{ data: "declarationName" },
 					{ data: "model" },
