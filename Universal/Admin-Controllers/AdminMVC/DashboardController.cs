@@ -2,10 +2,13 @@
 using Entities.Universal.MainData;
 using IronPdf;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using Services;
 using Services.AWS;
+using SixLabors.ImageSharp.Drawing;
 using System.IO;
 using System.Net.Mime;
+using System.Security.Policy;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using Universal.DTO.ViewDTO;
@@ -105,17 +108,44 @@ namespace Universal.Admin_Controllers.AdminMVC
 			if (path == null)
 				path = "DOT/noimg.jpg";
 
-            var aa = await _AWSS3FileService.GetFile(path);
+            var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
 			using (MemoryStream ms = new MemoryStream())
 			{
-				aa.CopyTo(ms);
+                picture.CopyTo(ms);
 				bytes = ms.ToArray();
 			}
 
 			return File(bytes, MediaTypeNames.Text.Plain);
-
 		}
+
+		public IActionResult ImportExc()
+		{
+			CheckForToast();
+			return View("ImportData/Import");
+		}
+
+		public async Task<IActionResult> DownloadExcelTemplate()
+		{
+            var picture = await _AWSS3FileService.GetFile("DOT/ExcelTemplate.xlsx");
+            byte[] bytes = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                picture.CopyTo(ms);
+                bytes = ms.ToArray();
+            }
+
+            return File(bytes, MediaTypeNames.Text.Plain,"ExcelTemplate.xlsx");
+        }
+
+		public async Task<IActionResult> ImportExcel(IFormFile file)
+		{
+			var excelImport = await _mainDataServices.ImportFromExcel(file);
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage","Import data added successfully!");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+            return RedirectToAction("ImportExc", "Dashboard");
+        }
 
 
 		public async Task<IActionResult> EditUserAction(UsersIDTO userIDTO)
@@ -339,6 +369,12 @@ namespace Universal.Admin_Controllers.AdminMVC
         public async Task<IActionResult> NewTag()
 		{
 			return View("Tag/NewTag");
+		}
+
+		public async Task<IActionResult> GetAllImagesRoutes()
+		{
+			var medias = await _mainDataServices.GetAllImagesRoute();
+			return View("Media/Gallery",medias);
 		}
 
 		public async Task<IActionResult> AllInvoices()
