@@ -9,16 +9,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NetTopologySuite.Index.HPRtree;
+using OfficeOpenXml;
 using Services.AWS;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using static Universal.DTO.CommonModels.CommonModels;
+using Seo = Entities.Universal.MainData.Seo;
 
 namespace Services
 {
@@ -62,6 +65,58 @@ namespace Services
 				return null;
 			}
 		}
+
+		public async Task<List<ProductODTO>> ImportFromExcel(IFormFile file)
+		{
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.Commercial;
+            var list = new List<Product>();
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowcount = worksheet.Dimension.Rows;
+                    for (int i = 2; i <= rowcount; i++)
+                    {
+                        var catName = await _context.Categories.Where(x => x.CategoryName == worksheet.Cells[i, 3].Value.ToString().Trim()).SingleOrDefaultAsync();
+						if (catName == null) throw new Exception("This category name does not exists");
+
+                        Seo seo = new Seo();
+						seo.GoogleDesc = worksheet.Cells[i, 10].Value.ToString().Trim();
+						seo.GoogleKeywords = worksheet.Cells[i, 11].Value.ToString().Trim();
+						seo.LanguageID = Convert.ToInt32(worksheet.Cells[i, 13].Value.ToString().Trim());
+						_context.Seos.Add(seo);
+						await SaveContextChangesAsync();
+
+
+                        list.Add(new Product
+						{
+							ProductId = 0,
+							ProductName = worksheet.Cells[i, 1].Value.ToString().Trim(),
+							BestProduct = Convert.ToBoolean(worksheet.Cells[i, 2].Value.ToString().Trim()),
+							CategoriesId = catName.CategoryId,
+							CreatedAt = DateTime.Now,
+							Description = worksheet.Cells[i, 4].Value.ToString().Trim(),
+                            IsOnSale = Convert.ToBoolean(worksheet.Cells[i, 5].Value.ToString().Trim()),
+							Price = Convert.ToInt32(worksheet.Cells[i, 6].Value.ToString().Trim()),
+							ProductCode = worksheet.Cells[i, 7].Value.ToString().Trim(),
+							Recommended = Convert.ToBoolean(worksheet.Cells[i, 8].Value.ToString().Trim()),
+							Specification = worksheet.Cells[i, 9].Value.ToString().Trim(),
+							UpdatedAt = DateTime.Now,
+							SeoId = seo.SeoId,
+							Declaration = null,
+							IsActive = true,
+							Quantity = Convert.ToInt32(worksheet.Cells[i, 12].Value.ToString().Trim()),
+							LanguageID = Convert.ToInt32(worksheet.Cells[i, 13].Value.ToString().Trim())
+                        }) ;
+                    }
+                }
+            }
+			_context.Products.AddRange(list);
+			await SaveContextChangesAsync();
+            return list.Select(x => _mapper.Map<ProductODTO>(x)).ToList();
+        }
 
 		#endregion FileUploads
 
@@ -866,7 +921,11 @@ namespace Services
 			return media;
 		}
 
-		//public async Task<List<MediaODTO>> DeleteMultipleMedia()
+		public async Task<List<string>> GetAllImagesRoute()
+		{
+            string[] cars = { "png", "jpg", "webp", "jiff" };
+			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => x.Src).ToListAsync();
+		}
 
 		#endregion Media
 
