@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Universal.DTO.ViewDTO.MultiMediaIDTO
+
+@{
 	ViewData["Title"] = "Gallery";
 }
 
@@ -16,7 +18,7 @@
 		justify-content: center;
 		background-color: lightsteelblue;
 		border-radius: 10px;
-		height: 23vh;
+		height: 20vh;
 		padding: 1px
 	}
 
@@ -31,7 +33,14 @@
 	/* Style the image */
 	.image {
 		max-width: 100%;
-		max-height: 23vh;
+		max-height: 20vh
+	}
+
+	.image-title {
+		font-size: 12px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	/* Style the overlay (initially hidden) */
@@ -90,110 +99,130 @@
 		}
 
 		.image {
-			max-height: 11.5vh;
+			max-height: 15vh;
 		}
 
 		.gallery-item {
-			height: 11.5vh;
+			height: 15vh;
 		}
 	}
 
 </style>
 
-<div class="col-12">
+<div class="col-12 p-3">
 	<div class="row">
-		@for (int i = 0; i < 7; i++)
+		@foreach (var mediaImage in Model.MediaList)
 		{
 			<div class="gallery-container col-sm-3 col-md-2 col-xl-8r col-xxl-12r">
 				<div class="gallery-item">
 					<div class="image-container">
-						<img src="~/images/Microsoft_.NET_logo.png" alt="Image" class="image">
+						<img src="@Url.Action("GetImage", "Dashboard", new { path = mediaImage.Src })" alt="@mediaImage.AltTitle" class="image" />
 					</div>
 					<div class="image-overlay">
 						<div class="overlay-icons">
-							<i class="fas fa-edit edit-icon"></i>
-							<i class="fas fa-trash delete-icon"></i>
+							<i class="fas fa-edit edit-icon" data-media-id="@mediaImage.MediaId"></i>
+							<i class="fas fa-trash delete-icon" data-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle"></i>
 						</div>
 					</div>
 				</div>
-				<span class="text-center" style="font-size:10px;">Microsoft_.NET_logo.png</span>
-			</div>
-			<div class="gallery-container col-sm-3 col-md-2 col-xl-8r col-xxl-12r">
-				<div class="gallery-item ">
-					<div class="image-container">
-						<img src="~/images/MEDIA_TEST_1280x1753.jpg" alt="Image" class="image">
-					</div>
-					<div class="image-overlay">
-						<div class="overlay-icons">
-							<i class="fas fa-edit edit-icon"></i>
-							<i class="fas fa-trash delete-icon"></i>
-						</div>
-					</div>
-				</div>
-				<span class="text-center" style="font-size:10px;">MEDIA_TEST_1280x1753.jpg</span>
-			</div>
-			<div class="gallery-container col-sm-3 col-md-2 col-xl-8r col-xxl-12r">
-				<div class="gallery-item">
-					<div class="image-container">
-						<img src="~/images/MEDIA_TEST_1920x1080.jpg" alt="Image" class="image">
-					</div>
-					<div class="image-overlay">
-						<div class="overlay-icons">
-							<i class="fas fa-edit edit-icon"></i>
-							<i class="fas fa-trash delete-icon"></i>
-						</div>
-					</div>
-				</div>
-				<span class="text-center" style="font-size:10px;">MEDIA_TEST_1920x1080.jpg</span>
+				<span class="text-center image-title">@mediaImage.MetaTitle</span>
 			</div>
 		}
 	</div>
 </div>
 
 <div id="edit-image-modal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Edit Image Properties</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<p>Modal body text goes here.</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-dotnet">Save changes</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	@using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
+	{
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit Image Properties</h5>
+					<button type="button" class="close closeEditModalButton" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					@Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id="input-edit-mediaId" })
+					@Html.TextBoxFor(model => model.MediaIDTO.MetaTitle, new { @id="input-edit-title", @class = "form-control mb-3", placeholder = "Meta Title" })
+					@Html.TextBoxFor(model => model.MediaIDTO.MetaDescription, new { @id="input-edit-desc", @class = "form-control mb-3", placeholder = "Meta Description" })
+					@Html.TextBoxFor(model => model.MediaIDTO.AltTitle, new { @id="input-edit-alt", @class = "form-control mb-3", placeholder = "Alt Title" })
+				</div>
+				<div class="modal-footer">
+					<input type="submit" class="btn btn-dotnet" value="Save" />
+					<button type="button" class="btn btn-secondary closeEditModalButton" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
-	</div>
+	}
 </div>
 
 <div id="delete-image-modal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Delete Image?</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<p>Do you want to delete the image?</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-dotnet">Save changes</button>
-				<button type="button" class="btn btn-secondary" id="closeDeleteModalButton" data-dismiss="modal">Close</button>
+	@using (Html.BeginForm("DeleteMeidaImage", "Dashboard", FormMethod.Post))
+	{
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Delete Image?</h5>
+					<button type="button" class="close closeDeleteModalButton" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p id="delete-message"></p>
+					@Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id="input-delete-mediaId" })
+				</div>
+				<div class="modal-footer">
+					<input type="submit" class="btn btn-dotnet" value="Delete" />
+					<button type="button" class="btn btn-secondary closeDeleteModalButton" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
-	</div>
+	}
 </div>
 
 @section Scripts{
 	<script>
-		$("#closeDeleteModalButton").click(function () {
-			$('#delete-image-modal').modal('hide');
+		toggleLoading();
+
+		let data = @Json.Serialize(Model.MediaList);
+		console.log(data);
+		$(document).ready(function () {
+			let edit_buttons = document.getElementsByClassName("fa-edit");
+			for (let i = 0; i < edit_buttons.length; i++) {
+				edit_buttons[i].addEventListener("click", function () {
+					let mediaId = this.dataset.mediaId;
+					const media = data.find(obj => obj.mediaId == mediaId);
+					
+					$("#input-edit-mediaId").val(mediaId);
+					$("#input-edit-title").val(media.metaTitle);
+					$("#input-edit-desc").val(media.metaDescription);
+					$("#input-edit-alt").val(media.AltTitle);
+					$("#edit-image-modal").modal("toggle");
+				});
+			}
+
+			let delete_buttons = document.getElementsByClassName("fa-trash");
+			for (let i = 0; i < delete_buttons.length; i++) {
+				delete_buttons[i].addEventListener("click", function () {
+					let mediaId = this.dataset.mediaId;
+					let mediaTitle = this.dataset.mediaTitle;
+
+					$("#input-delete-mediaId").val(mediaId);
+					$("#delete-message").html(`Do you want to delete "${mediaTitle}" image?`)
+					$("#delete-image-modal").modal("toggle");
+				});
+			}
+
+			$(".closeEditModalButton").click(function () {
+				$('#edit-image-modal').modal('hide');
+			});
+
+			$(".closeDeleteModalButton").click(function () {
+				$('#delete-image-modal').modal('hide');
+			});
+
+			setTimeout(() => { toggleLoading() }, 700)
 		});
 	</script>
 }

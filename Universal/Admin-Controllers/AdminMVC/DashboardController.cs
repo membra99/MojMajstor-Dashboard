@@ -205,9 +205,24 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return Ok();
         }
 
-		public IActionResult AllGallery()
+		public async Task<IActionResult> AllGallery()
 		{
-			return View("Media/Gallery");
+			var media = await _mainDataServices.GetAllImagesRoute();
+			return View("Media/Gallery", new MultiMediaIDTO { MediaList = media });
+		}
+
+		public async Task<IActionResult> EditMeidaImage(MediaIDTO mediaIDTO)
+		{
+			await _mainDataServices.EditMediaImageMetaProperties(mediaIDTO);
+			//TODO Maybe change name on server?
+			return RedirectToAction("AllGallery");
+		}
+
+		public async Task<IActionResult> DeleteMeidaImage(MediaIDTO mediaIDTO)
+		{
+			await _mainDataServices.DeleteMediaImage(mediaIDTO.MediaId);
+			//TODO Delete from server
+			return RedirectToAction("AllGallery");
 		}
 
 		public async Task<IActionResult> EditOrders(int id)
@@ -374,12 +389,6 @@ namespace Universal.Admin_Controllers.AdminMVC
         public async Task<IActionResult> NewTag()
 		{
 			return View("Tag/NewTag");
-		}
-
-		public async Task<IActionResult> GetAllImagesRoutes()
-		{
-			var medias = await _mainDataServices.GetAllImagesRoute();
-			return View("Media/Gallery",medias);
 		}
 
 		public async Task<IActionResult> AllInvoices()

@@ -13,5 +13,8 @@ namespace Universal.DTO.IDTO
         public int MediaTypeId { get; set; }
         public string? Src { get; set; }
         public string? Extension { get; set; }
-    }
+		public string? MetaTitle { get; set; }
+		public string? MetaDescription { get; set; }
+		public string? AltTitle { get; set; }
+	}
 }

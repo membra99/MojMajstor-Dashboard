@@ -921,10 +921,27 @@ namespace Services
 			return media;
 		}
 
-		public async Task<List<string>> GetAllImagesRoute()
+		public async Task<List<MediaODTO>> GetAllImagesRoute()
 		{
             string[] cars = { "png", "jpg", "webp", "jiff" };
-			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => x.Src).ToListAsync();
+			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+		}
+
+		public async Task EditMediaImageMetaProperties(MediaIDTO mediaIDTO)
+		{
+			var mediaImage = await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaIDTO.MediaId);
+			mediaImage.MetaTitle = mediaIDTO.MetaTitle;
+			mediaImage.MetaDescription = mediaIDTO.MetaDescription;
+			mediaImage.AltTitle = mediaIDTO.AltTitle;
+
+			SaveContextChangesAsync();
+		}
+
+		public async Task DeleteMediaImage(int mediaId)
+		{
+			var mediaImage = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+
+			SaveContextChangesAsync();
 		}
 
 		#endregion Media
