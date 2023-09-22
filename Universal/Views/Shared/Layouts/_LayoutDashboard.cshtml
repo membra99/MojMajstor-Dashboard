@@ -121,10 +121,19 @@
 						</li>
 					</ul>
 				</li>
-				<li class="nav-item">@Html.ActionLinkIcon("Media", "Media", "Dashboard", "fa-folder-open", null, new{ @class = "side-anchor" })</li>
-
-				<li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
-
+				<li class="nav-item dropdown-btn">
+					<span class="side-anchor ">
+						<i class="fa-solid fa-folder-open icon-spacing"></i>
+						Media
+						<i class="fa fa-caret-down"></i>
+					</span>
+					<ul class="navbar-nav dropdown-container">
+						<li>
+							@Html.ActionLink("Gallery", "AllGallery", "Dashboard", null, new{ @class = "side-anchor" })
+							@Html.ActionLink("New Media", "AddMedia", "Dashboard", null, new{ @class = "side-anchor" })
+						</li>
+					</ul>
+				</li>
 				<li class="nav-item dropdown-btn">
 					<span class="side-anchor ">
 						<i class="fa fa-copy icon-spacing"></i>
@@ -139,7 +148,7 @@
 						</li>
 					</ul>
 				</li>
-
+				<li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
 				<li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open", null, new{ @class = "side-anchor" })</li>
 				<li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf", null, new{ @class = "side-anchor" })</li>
 			</ul>

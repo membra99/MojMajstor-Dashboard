@@ -1,0 +1,42 @@
+﻿@*//TODO format doc to be more like a view*@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Drag and Drop File Upload</title>
+	<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+	@*<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />*@
+</head>
+<body>
+	<form id="form" method="post" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
+		<div class="form-group">
+			<div class="col-md-6 mx-auto" id="dropzone">
+				<div style="background-color:indigo">
+					<label style="font-size:20px; color:white; text-align:center;">Add new content</label>
+				</div>
+				<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader" style="width:655px; height:280px">
+					Drop files here or click to upload <br />
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+	@*<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>*@
+</body>
+</html>
+
+@section Scripts{
+
+	<script>
+		Dropzone.options.imageUpload = {
+			maxFilesize: 10,
+			maxFiles: 1,
+			acceptedFiles: ".jpeg,.jpg,.png,.gif"
+		};
+
+	</script>
+}
+
+
+

@@ -161,9 +161,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Declaration/NewDeclaration");
 		}
 
-		public IActionResult Media()
+		public IActionResult AddMedia()
 		{
-			return View("Media/Media");
+			return View("Media/AddMedia");
 		}
 
         public async Task<IActionResult> uploadMedia(IFormFile file)
@@ -175,7 +175,12 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return Ok();
         }
 
-        public async Task<IActionResult> EditOrders(int id)
+		public IActionResult AllGallery()
+		{
+			return View("Media/Gallery");
+		}
+
+		public async Task<IActionResult> EditOrders(int id)
 		{
 			var Order = await _mainDataServices.GetFullOrderById(id);
 
