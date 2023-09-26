@@ -6,7 +6,7 @@
 
 <div class="container bg-light w-50">
 	<div class="text-center">
-		<h2>Add Tag</h2>
+		<h2>Edit Tag</h2>
 	</div>
 	@using (Html.BeginForm("EditTagModel", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 	{
@@ -30,7 +30,7 @@
 				<input type="file" name="TagImage" runat="server" class="form-control" onchange="loadFile(event)" />
 			</div>
 			<div class="form-group col-2 mb-3 text-center">
-				<img id="tag-preview" width="75" height="75" style="border: 2px solid indigo">
+				<img src="@Url.Action("GetImage","Dashboard",new {path = Model.Photo})" id="tag-preview" width="75" height="75" style="border: 2px solid indigo">
 			</div>
 		</div>
 

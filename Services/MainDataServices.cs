@@ -161,6 +161,7 @@ namespace Services
 				var categories = await _context.Categories.Where(x => x.CategoryName == categoriesIDTO.CategoryName && x.ParentCategoryId == categoriesIDTO.ParentCategoryId && x.IsActive == false).FirstOrDefaultAsync();
 				categories.LanguageID = categoriesIDTO.LanguageID;
 				categories.IsActive = true;
+				categories.MediaId = categoriesIDTO.MediaId;
 				_context.Entry(categories).State = EntityState.Modified;
 				await SaveContextChangesAsync();
 			}

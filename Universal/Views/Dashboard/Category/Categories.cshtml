@@ -69,22 +69,29 @@
 </div>
 
 <div id="add-edit-modal" class="modal fade" tabindex="-1" role="dialog">
-	@using (Html.BeginForm("ACTION", "CONTROLLER", FormMethod.Post, new { @id = "form-add-delete" }))
+	@using (Html.BeginForm("ACTION", "CONTROLLER", FormMethod.Post, new { @id = "form-add-delete", enctype = "multipart/form-data" }))
 	{
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 id="add-edit-title" class="modal-title"></h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
 				</div>
 				<div id="add-edit-body" class="modal-body">
 					@Html.HiddenFor(model => model.CategoryIDTO.CategoryId, new { @id="input-category" })
 					@Html.HiddenFor(model => model.CategoryIDTO.ParentCategoryId, new { @id="input-parent" })
 					@Html.HiddenFor(model => model.CategoryIDTO.LanguageID, new { @class="lang" })
 					@Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control modclass", placeholder = "Category Name" })
-					@Html.TextBoxFor(model => model.CategoryImage, null, new { type="file", @class="form-control modclass", runat="server" })
+					<div class="row d-flex align-items-center">
+						<div class="col-8">
+							<input type="file" name="CategoryImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+						</div>
+						<div class="col-4">
+							<div class="image-container mb-2">
+								<img src="@Url.Action("GetImage","Dashboard",new {path = Model.CategoryImage})" id="avatar-preview" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+							</div>
+						</div>
+					</div>
 					@Html.HiddenFor(model => model.CategoryIDTO.SeoIDTO.LanguageID, new { @class="lang" })
 					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleDesc, new { @id="input-seoDesc", @class = "form-control modclass", placeholder = "Seo Description" })
 					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleKeywords, new { @id="input-seoKeyword", @class = "form-control modclass", placeholder = "Seo Keywords" })
@@ -124,6 +131,25 @@
 
 @section Scripts{
 	<script>
+		let loadFile = function (event) {
+			let image = document.getElementById('avatar-preview');
+			image.src = URL.createObjectURL(event.target.files[0]);
+			let element = document.getElementById('unset');
+			element.classList.add("hover-unset");
+			
+		};
+
+		function unsetImage(event) {
+			let image = document.getElementById('avatar-preview');
+			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			$("#file").val(null);
+
+			let element = document.getElementById('unset');
+			element.classList.remove("hover-unset");
+			event.preventDefault();
+		}
+
+
 		let categories = @Json.Serialize(Model.AllCategories);
 
 		for (let i = 0; i < categories.length; i++) {

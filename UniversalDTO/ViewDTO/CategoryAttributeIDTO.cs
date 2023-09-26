@@ -13,6 +13,6 @@ namespace Universal.DTO.ViewDTO
 	{
 		public List<List<ChildODTO2>> AllCategories { get; set; }
 		public CategoriesIDTO? CategoryIDTO { get; set; }
-		public List<IFormFile>? CategoryImage { get; set; } = new List<IFormFile>();
+		public IFormFile? CategoryImage { get; set; }
 	}
 }
