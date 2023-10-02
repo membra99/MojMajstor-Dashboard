@@ -31,5 +31,18 @@ namespace Universal.Admin_Controllers.AdminAPI
                 throw new Exception(e.Message);
             }
         }
+
+		[HttpGet("CheckMediaId")]
+		public async Task<ActionResult<string>> GetMediaExists(int mediaId)
+		{
+			try
+			{
+				return await _mainDataServices.GetStringForModal(mediaId);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
 	}
 }

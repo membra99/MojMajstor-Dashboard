@@ -116,20 +116,20 @@ namespace Services
             return await GetUserById(user.UsersId);
         }
 
-        public async Task<MediaODTO> UploadUserPicture(AWSFileUpload awsFile)
+        public async Task<MediaODTO> UploadUserPicture(AWSFileUpload awsFile, int? mediatypeId)
         {
-            bool successUpload = false;
+            string successUpload = "";
 
             if (awsFile.Attachments.Count > 0)
                 successUpload = await _AWSS3FileService.UploadFile(awsFile);
 
-            if (successUpload)
+            if (successUpload != null)
             {
-                var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
+                var key = await _AWSS3FileService.FilesListSearch(successUpload);
                 var media = new Media();
-                media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
+                media.Extension = successUpload.Split('.')[1];
                 media.Src = key.First();
-                media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == "Avatar").MediaTypeId;
+                media.MediaTypeId = (mediatypeId == null) ? _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == "Avatar").MediaTypeId : (int)mediatypeId;
                 var index = media.Src.LastIndexOf('/');
                 media.MetaTitle = media.Src.Substring(index + 1);
                 _context.Medias.Add(media);
@@ -144,10 +144,16 @@ namespace Services
 
         public async Task<UsersODTO> EditUser(UsersIDTO userIDTO)
         {
-            //TODO Change user data, NOT user password
             var user = _mapper.Map<Users>(userIDTO);
+            if (userIDTO.IsImageChanged == "true")
+                user.MediaId = null;
             _context.Entry(user).State = EntityState.Modified;
-            await SaveContextChangesAsync();
+			if (userIDTO.Avatar == null && userIDTO.IsImageChanged != "true")
+			{
+				_context.Entry(user).Property(x => x.MediaId).IsModified = false;
+			}
+			_context.Entry(user).Property(x => x.Password).IsModified = false;
+			await SaveContextChangesAsync();
 
             return await GetUserById(user.UsersId);
         }

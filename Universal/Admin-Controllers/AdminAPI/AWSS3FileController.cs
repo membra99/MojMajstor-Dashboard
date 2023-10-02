@@ -62,9 +62,9 @@ namespace Universal.Admin_Controllers.AdminAPI
         //}
         [Route("DeleteFile/{fileName}")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteFile(string fileName)
+        public async Task<IActionResult> DeleteFile(string fileName, int mediaId, int mediaTypeId)
         {
-            var result = await _AWSS3FileService.DeleteFile(HttpUtility.UrlDecode(fileName));
+            var result = await _AWSS3FileService.DeleteFile(HttpUtility.UrlDecode(fileName), mediaId, mediaTypeId);
             return Ok(new { isSucess = result });
         }
 

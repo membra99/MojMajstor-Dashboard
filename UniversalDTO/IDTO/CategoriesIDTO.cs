@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace Universal.DTO.IDTO
 		public string? CategoryName { get; set; }
 		public bool IsAttribute { get; set; }
 		public bool? IsActive { get; set; } = true;
+		public string? IsImageChanged { get; set; }
+		public string? CategoryImage { get; set; }
 
 		public int? LanguageID { get; set; }
 		public SeoIDTO? SeoIDTO { get; set; } = new SeoIDTO();

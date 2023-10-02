@@ -4,6 +4,7 @@ using Amazon.S3.Model;
 using Amazon.Util;
 using Entities.Context;
 using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Universal.DTO.IDTO;
 using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Services.AWS
@@ -27,7 +29,7 @@ namespace Services.AWS
 
 		Task<Stream> GetFile(string key);
 
-		Task<bool> DeleteFile(string key);
+		Task<bool> DeleteFile(string key, int mediaId, int mediaTypeId);
 
 		Task<bool> DeleteMultipleFiles(string[] keys);
 	}
@@ -118,29 +120,73 @@ namespace Services.AWS
 				return null;
 		}
 
-		public async Task<bool> DeleteFile(string key)
+		public async Task<bool> DeleteFile(string key, int mediaId, int mediaTypeId)
 		{
 			try
 			{
-				var index = key.LastIndexOf('/');
-				var newKey = key.Substring(index + 1);
 				var deleteRequest = new DeleteObjectRequest
 				{
 					BucketName = _settings.AWSS3.BucketName,
-					Key = "DOT/" + newKey
+					Key = "DOT/" + key
 				};
 				DeleteObjectResponse response = await _amazonS3.DeleteObjectAsync(deleteRequest);
 				if (response.HttpStatusCode == System.Net.HttpStatusCode.NoContent)
 				{
-					var media = await _context.Medias.Where(x => x.Src == key).SingleOrDefaultAsync();
-					var user = await _context.Users.Where(x => x.MediaId == media.MediaId).SingleOrDefaultAsync();
-					user.MediaId = null;
-					_context.Entry(user).State = EntityState.Modified;
-					await _context.SaveChangesAsync();
-					if (media != null)
+					switch (mediaTypeId)
 					{
-						_context.Medias.Remove(media);
-						await _context.SaveChangesAsync();
+						case 1:
+							var user = await _context.Users.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+							if (user != null)
+							{
+								user.MediaId = null;
+								_context.Entry(user).State = EntityState.Modified;
+								await _context.SaveChangesAsync();
+							}
+							var mediaImageUser = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+							await _context.SaveChangesAsync();
+							break;
+
+						case 3:
+							var mediaImageGallery = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+							await _context.SaveChangesAsync();
+							break;
+
+						case 4:
+							var siteContent = await _context.SiteContents.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+							if (siteContent != null)
+							{
+								siteContent.MediaId = null;
+								_context.Entry(siteContent).State = EntityState.Modified;
+								await _context.SaveChangesAsync();
+							}
+							var mediaImageSiteContent = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+							await _context.SaveChangesAsync();
+							break;
+
+						case 5:
+							var tag = await _context.Tags.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+							if(tag != null)
+							{
+								tag.MediaId = null;
+								_context.Entry(tag).State = EntityState.Modified;
+								await _context.SaveChangesAsync();
+							}
+							var mediaImageTag = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+							await _context.SaveChangesAsync();
+							break;
+
+						case 6:
+							var category = await _context.Categories.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+							if (category != null)
+							{
+								category.MediaId = null;
+								_context.Entry(category).State = EntityState.Modified;
+								await _context.SaveChangesAsync();
+							}
+							var mediaImageCategory = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+							await _context.SaveChangesAsync();
+							break;
+
 					}
 					return true;
 				}
