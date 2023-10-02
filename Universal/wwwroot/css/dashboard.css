@@ -3,7 +3,7 @@
     position: fixed;
     z-index: 5;
     background-color: indigo;
-    margin-top:50px;
+    margin-top: 50px;
 }
 
 .header-navigation {
@@ -13,12 +13,12 @@
     z-index: 10;
 }
 
-.tox-notifications-container{
-    display:none;
+.tox-notifications-container {
+    display: none;
 }
 
-#req{
- color:red;
+#req {
+    color: red;
 }
 
 .content-offset {
@@ -49,9 +49,9 @@
     -ms-overflow-style: none;
 }
 
-.side-list::-webkit-scrollbar{
-    display: none;
-}
+    .side-list::-webkit-scrollbar {
+        display: none;
+    }
 
 .side-anchor {
     display: block;
@@ -60,10 +60,11 @@
     padding: 14px 16px;
 }
 
-.side-anchor:hover {
-    background-color: #f8f9fa;
-    color: blueviolet;
-}
+    .side-anchor:hover {
+        background-color: #f8f9fa;
+        color: blueviolet;
+    }
+
 .user {
     margin-bottom: 10px;
     font-size: 20px;
@@ -72,8 +73,8 @@
     border-right: 4px solid #553c9a;
 }
 
-.trsh{
-    color:black;
+.trsh {
+    color: black;
 }
 }
 
@@ -104,12 +105,12 @@ ul ul {
     }
 
 .loading-container {
-    background-color:rebeccapurple; 
-    position:absolute;
+    background-color: rebeccapurple;
+    position: absolute;
     border-radius: 10px;
-    z-index:15;
+    z-index: 15;
     top: 45%;
-    left:45%;
+    left: 45%;
 }
 
 .loading-backdrop {
@@ -119,7 +120,6 @@ ul ul {
     width: 100%;
     height: calc(100vh - 50px);
 }
-
 
 .loading-inactive {
     display: none;
@@ -165,4 +165,19 @@ ul ul {
 
 .image-container:hover .hover-unset {
     display: block; /* Show the button on hover */
+}
+
+.nav-link .active {
+    background-color: #007bff; /* Change the background color to indicate active tab */
+    color: #fff; /* Change the text color to white for active tab */
+    border-color: #007bff; /* Change the border color for active tab */
+}
+/* Custom CSS to set a maximum height for the modal */
+.modal-lg {
+    max-width: 90%;
+}
+
+/* Ensure modal can be scrolled if the content exceeds its height */
+.modal-dialog-scrollable {
+    overflow-y: auto;
 }
