@@ -12,16 +12,12 @@ namespace Universal.DTO.IDTO
     {
         public int? UsersId { get; set; }
         public int? MediaId { get; set; }
-
         [Required]
         public string Email { get; set; }
-
         [Required]
         public string FirstName { get; set; }
-
         [Required]
         public string LastName { get; set; }
-
         public string? Phone { get; set; }
         public string? Address { get; set; }
         public string? City { get; set; }
@@ -34,5 +30,6 @@ namespace Universal.DTO.IDTO
         public IFormFile? Avatar { get; set; }
         public string? Photo { get; set; }
         public string? AltTag { get; set; }
+        public string? IsImageChanged { get; set; }
     }
 }

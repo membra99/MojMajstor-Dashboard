@@ -17,7 +17,8 @@ namespace Entities.Mapping
 			CreateMap<Categories, CategoriesODTO>()
 				.ForMember(dest => dest.GoogleDesc, source => source.MapFrom(m => m.Seo.GoogleDesc))
 				.ForMember(dest => dest.GoogleKeywords, source => source.MapFrom(m => m.Seo.GoogleKeywords))
-				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Languages.LanguageName));
+				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Languages.LanguageName))
+				.ForMember(dest => dest.MediaSrc, source => source.MapFrom(m => m.Media.Src));
 			CreateMap<CategoriesIDTO, Categories>();
 
 			CreateMap<ProductAttributes, ProductAttributesODTO>();

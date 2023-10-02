@@ -97,7 +97,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					}
 					else
 					{
-						var media = await _userDataServices.UploadUserPicture(awsFile);
+						var media = await _userDataServices.UploadUserPicture(awsFile,null);
 						if (media != null) userIDTO.MediaId = media.MediaId;
 						var users = await _userDataServices.AddUser(userIDTO);
 						if (users == null)
@@ -195,34 +195,52 @@ namespace Universal.Admin_Controllers.AdminMVC
 				awsFile.Attachments.Add(userIDTO.Avatar);
 			try
 			{
-				string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-				if (!IsSupportedExtension(extension))
+				if(awsFile.Attachments.Count > 0)
 				{
-					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-					return RedirectToAction("NewUser");
-				}
-				else
-				{
-					if (awsFile.Attachments[0].Length > 1000000)
+					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+					if (!IsSupportedExtension(extension))
 					{
-						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
 						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
 						return RedirectToAction("NewUser");
 					}
 					else
 					{
-						var media = await _userDataServices.UploadUserPicture(awsFile);
-						if (media != null) userIDTO.MediaId = media.MediaId;
-						var users = await _userDataServices.EditUser(userIDTO);
-						if (users == null)
+						if (awsFile.Attachments[0].Length > 1000000)
 						{
-							ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-							return View("User/NewUser");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+							return RedirectToAction("NewUser");
 						}
-						return RedirectToAction("AllUsers", "Dashboard");
+						else
+						{
+							var media = await _userDataServices.UploadUserPicture(awsFile,null);
+							if (media != null) userIDTO.MediaId = media.MediaId;
+							var users = await _userDataServices.EditUser(userIDTO);
+							if (users == null)
+							{
+								ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+								return View("User/NewUser");
+							}
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User is updated");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+							return RedirectToAction("AllUsers", "Dashboard");
+						}
 					}
 				}
+				else
+				{
+					var users = await _userDataServices.EditUser(userIDTO);
+					if (users == null)
+					{
+						ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+						return View("User/NewUser");
+					}
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User is updated");
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+					return RedirectToAction("AllUsers", "Dashboard");
+				}
+				
 			}
 			catch (Exception ex)
 			{
@@ -250,10 +268,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         public async Task<IActionResult> uploadMedia(IFormFile file)
         {
+			var mediatypeId = 3;
             AWSFileUpload awsFile = new AWSFileUpload();
             awsFile.Attachments = new List<IFormFile>();
                 awsFile.Attachments.Add(file);
-            var media = await _userDataServices.UploadUserPicture(awsFile);
+            var media = await _userDataServices.UploadUserPicture(awsFile, mediatypeId);
 			return Ok();
         }
 
@@ -272,7 +291,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> DeleteMeidaImage(MediaIDTO mediaIDTO)
 		{
-			await _mainDataServices.DeleteMediaImage(mediaIDTO.MediaId);
+			//await _mainDataServices.DeleteMediaImage(mediaIDTO.MediaId, mediaIDTO.MediaTypeId);
+
+			await _AWSS3FileService.DeleteFile(mediaIDTO.MetaTitle, mediaIDTO.MediaId, mediaIDTO.MediaTypeId);
 			//TODO Delete from server
 			return RedirectToAction("AllGallery");
 		}
@@ -325,7 +346,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					}
 					else
 					{
-						var media = await _userDataServices.UploadUserPicture(awsFile);
+						var media = await _userDataServices.UploadUserPicture(awsFile,4);
 						if (media != null) siteContentIDTO.MediaId = media.MediaId;
 						siteContentIDTO.IsActive = true;
 						var siteContent = await _mainDataServices.AddSiteContent(siteContentIDTO);
@@ -413,7 +434,7 @@ namespace Universal.Admin_Controllers.AdminMVC
                     }
                     else
                     {
-                        var media = await _userDataServices.UploadUserPicture(awsFile);
+                        var media = await _userDataServices.UploadUserPicture(awsFile,5);
                         if (media != null) tagIDTO.MediaId = media.MediaId;
                         var tag = await _mainDataServices.AddTag(tagIDTO);
                         return RedirectToAction("AllTags", "Dashboard");
@@ -454,28 +475,36 @@ namespace Universal.Admin_Controllers.AdminMVC
 				awsFile.Attachments.Add(tagIDTO.TagImage);
 			try
 			{
-                string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-                if (!IsSupportedExtension(extension))
-                {
-                    _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-                    _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                    return RedirectToAction("EditTag");
-                }
-                else
-                {
-                    if (awsFile.Attachments[0].Length > 1000000)
-                    {
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                        return RedirectToAction("EditTag");
-                    }
-                    else
-                    {
-                        var media = await _userDataServices.UploadUserPicture(awsFile);
-                        if (media != null) tagIDTO.MediaId = media.MediaId;
-                        await _mainDataServices.EditTag(tagIDTO);
-                    }
-                }
+				if(awsFile.Attachments.Count != 0)
+				{
+					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+					if (!IsSupportedExtension(extension))
+					{
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+						return RedirectToAction("EditTag");
+					}
+					else
+					{
+						if (awsFile.Attachments[0].Length > 1000000)
+						{
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+							return RedirectToAction("EditTag");
+						}
+						else
+						{
+							var media = await _userDataServices.UploadUserPicture(awsFile,5);
+							if (media != null) tagIDTO.MediaId = media.MediaId;
+							await _mainDataServices.EditTag(tagIDTO);
+						}
+					}
+				}
+				else
+				{
+					await _mainDataServices.EditTag(tagIDTO);
+				}
+                
 			}
 			catch (Exception ex)
 			{
@@ -891,7 +920,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					}
 					else
 					{
-						var media = await _userDataServices.UploadUserPicture(awsFile);
+						var media = await _userDataServices.UploadUserPicture(awsFile,6);
 						if (media != null) categoryAttributeIDTO.CategoryIDTO.MediaId = media.MediaId;
 						await _mainDataServices.AddCategory(categoryAttributeIDTO.CategoryIDTO);
 						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "New Category added successfully");
@@ -914,32 +943,47 @@ namespace Universal.Admin_Controllers.AdminMVC
 			AWSFileUpload awsFile = new AWSFileUpload();
 			awsFile.Attachments = new List<IFormFile>();
 			if (categoryAttributeIDTO.CategoryImage != null)
+			{
 				awsFile.Attachments.Add(categoryAttributeIDTO.CategoryImage);
+				categoryAttributeIDTO.CategoryIDTO.CategoryImage = categoryAttributeIDTO.CategoryImage.FileName;
+			}
+				
 			try
 			{
-				string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-				if (!IsSupportedExtension(extension))
+				if(categoryAttributeIDTO.CategoryImage != null)
 				{
-					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-					return RedirectToAction("AllCategories");
-				}
-				else
-				{
-					if (awsFile.Attachments[0].Length > 1000000)
+					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+					if (!IsSupportedExtension(extension))
 					{
-						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
 						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
 						return RedirectToAction("AllCategories");
 					}
 					else
 					{
-						var media = await _userDataServices.UploadUserPicture(awsFile);
-						if (media != null) categoryAttributeIDTO.CategoryIDTO.MediaId = media.MediaId;
-						await _mainDataServices.EditCategory(categoryAttributeIDTO.CategoryIDTO);
-						return RedirectToAction("AllCategories");
+						if (awsFile.Attachments[0].Length > 1000000)
+						{
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+							return RedirectToAction("AllCategories");
+						}
+						else
+						{
+							var media = await _userDataServices.UploadUserPicture(awsFile, 6);
+							if (media != null) categoryAttributeIDTO.CategoryIDTO.MediaId = media.MediaId;
+							await _mainDataServices.EditCategory(categoryAttributeIDTO.CategoryIDTO);
+							return RedirectToAction("AllCategories");
+						}
 					}
 				}
+				else
+				{
+					await _mainDataServices.EditCategory(categoryAttributeIDTO.CategoryIDTO);
+					return RedirectToAction("AllCategories");
+				}
+
+
+				
 			}
 			catch (Exception ex)
 			{

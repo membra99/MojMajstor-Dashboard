@@ -17,5 +17,6 @@ namespace Universal.DTO.ODTO
 		public string? GoogleKeywords { get; set; }
 		public int? LanguageID { get; set; }
 		public string? LanguageName { get; set; }
+		public string? MediaSrc { get; set; }
 	}
 }

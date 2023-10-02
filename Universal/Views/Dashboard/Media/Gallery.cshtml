@@ -121,7 +121,7 @@
 					<div class="image-overlay">
 						<div class="overlay-icons">
 							<i class="fas fa-edit edit-icon" data-media-id="@mediaImage.MediaId"></i>
-							<i class="fas fa-trash delete-icon" data-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle"></i>
+							<i class="fas fa-trash delete-icon" data-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle" data-media-mediatype="@mediaImage.MediaTypeId"></i>
 						</div>
 					</div>
 				</div>
@@ -171,6 +171,8 @@
 				<div class="modal-body">
 					<p id="delete-message"></p>
 					@Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id="input-delete-mediaId" })
+					@Html.HiddenFor(model => model.MediaIDTO.MediaTypeId, new { @id="input-delete-mediaTypeId" })
+					@Html.HiddenFor(model => model.MediaIDTO.MetaTitle, new { @id="input-delete-mediaMeta" })
 				</div>
 				<div class="modal-footer">
 					<input type="submit" class="btn btn-dotnet" value="Delete" />
@@ -206,10 +208,26 @@
 			for (let i = 0; i < delete_buttons.length; i++) {
 				delete_buttons[i].addEventListener("click", function () {
 					let mediaId = this.dataset.mediaId;
+					let mediaTypeId = this.dataset.mediaMediatype;
 					let mediaTitle = this.dataset.mediaTitle;
 
+
+					$.ajax({
+						url: 'https://localhost:7213/api/Media/CheckMediaId?MediaId=' + mediaId,
+						type: 'GET',
+						data: mediaId,
+						success: function (response) {
+							$("#delete-message").html(`Do you want to delete "${mediaTitle}" image?<br><br> <span class="text-danger">${response}</span>`)
+						},
+						error: function () {
+
+						}
+					});
+
+
 					$("#input-delete-mediaId").val(mediaId);
-					$("#delete-message").html(`Do you want to delete "${mediaTitle}" image?`)
+					$("#input-delete-mediaMeta").val(mediaTitle);
+					$("#input-delete-mediaTypeId").val(mediaTypeId);
 					$("#delete-image-modal").modal("toggle");
 				});
 			}

@@ -79,10 +79,8 @@
 				@Html.ValidationMessageFor(model => model.Zip, null, new { @class="text-danger" })
 			</div>
 		</div>
-		@*<div class="form-group col-6 mb-3">
-	@Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
-	@Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
-	</div>*@
+
+		@Html.HiddenFor(model => model.IsImageChanged, new {id = "IsImageChanged"})
 		<div class="row">
 			<div class="form-group col-10 mb-3">
 				@Html.LabelRequiredFor(model => model.Avatar, "Avatar:", true)
@@ -114,10 +112,23 @@
 
 		};
 
+		$(document).ready(function(){
+
+			let image = document.getElementById('avatar-preview');
+			var parts = image.src.split('/');
+			var result = parts.slice(3).join('/');
+			if (result != "Dashboard/GetImage") {
+				let element = document.getElementById('unset');
+				element.classList.add("hover-unset");
+			}
+		});
+
 		function unsetImage(event) {
 			let image = document.getElementById('avatar-preview');
 			image.src = '@Url.Action("GetImage","Dashboard",null)';
 			$("#file").val(null);
+			var hiddenInput = document.getElementById("IsImageChanged");
+			hiddenInput.value = "true";
 
 			let element = document.getElementById('unset');
 			element.classList.remove("hover-unset");

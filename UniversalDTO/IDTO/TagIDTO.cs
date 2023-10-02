@@ -16,5 +16,6 @@ namespace Universal.DTO.IDTO
 		public string? Description { get; set; }
 		public IFormFile? TagImage { get; set; }
 		public string? Photo { get; set; }
+		public string? IsImageChanged { get; set; }
 	}
 }

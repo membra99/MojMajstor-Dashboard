@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,12 @@ namespace Services.AWS
 {
     public interface IAWSS3FileService
     {
-        Task<bool> UploadFile(AWSFileUpload files);
+        Task<string> UploadFile(AWSFileUpload files);
         Task<List<string>> FilesList(string folder);
         Task<List<string>> FilesListSearch(string fileName);
         Task<Stream> GetFile(string key);
         // Task<bool> UpdateFile(UploadFileName uploadFileName, string key);
-        Task<bool> DeleteFile(string key);
+        Task<bool> DeleteFile(string key,int mediaId, int mediaTypeId);
         Task<bool> DeleteMultipleFiles(string[] keys);
     }
     public class AWSS3FileService : IAWSS3FileService
@@ -25,17 +26,21 @@ namespace Services.AWS
         {
             this._AWSS3BucketHelper = AWSS3BucketHelper;
         }
-        public async Task<bool> UploadFile(AWSFileUpload files)
+        public async Task<string> UploadFile(AWSFileUpload files)
         {
-            byte[] fileBytes;
-            if (files.Attachments.Count == 0) return false;
+            string imageName = "";
+			byte[] fileBytes;
+            if (files.Attachments.Count == 0) return null;
             foreach (var file in files.Attachments)
             {
 
                 if (file.Length > 0)
                 {
-                    string imageName = "DOT/" + file.FileName;
-                    using (var ms = new MemoryStream())
+					string timeStamp = GetTimestamp(DateTime.Now);
+					string imageNametmp = file.FileName;
+                    imageName = "DOT/" + Path.GetFileNameWithoutExtension(imageNametmp) +"_"+ timeStamp + Path.GetExtension(imageNametmp);
+                    
+					using (var ms = new MemoryStream())
                     {
                         file.CopyTo(ms);
                         fileBytes = ms.ToArray();
@@ -56,7 +61,7 @@ namespace Services.AWS
 
                 //return true;
             }
-            return true;
+            return imageName;
         }
         public async Task<List<string>> FilesList(string folder)
         {
@@ -89,7 +94,13 @@ namespace Services.AWS
                 throw e;
             }
         }
-        public async Task<Stream> GetFile(string key)
+
+		public static String GetTimestamp(DateTime value)
+		{
+			return value.ToString("yyyyMMddHHmmssffff");
+		}
+
+		public async Task<Stream> GetFile(string key)
         {
             try
             {
@@ -124,11 +135,11 @@ namespace Services.AWS
         //        throw ex;
         //    }
         //}
-        public async Task<bool> DeleteFile(string key)
+        public async Task<bool> DeleteFile(string key, int mediaId, int mediaTypeId)
         {
             try
             {
-                return await _AWSS3BucketHelper.DeleteFile(key);
+                return await _AWSS3BucketHelper.DeleteFile(key, mediaId, mediaTypeId);
             }
             catch (Exception ex)
             {

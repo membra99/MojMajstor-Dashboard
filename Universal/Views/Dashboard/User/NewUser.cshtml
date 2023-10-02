@@ -84,7 +84,7 @@
 	</div>*@
 		<div class="row">
 			<div class="form-group col-10 mb-3">
-				@Html.LabelRequiredFor(model => model.Avatar, "Avatar:", true)
+				@Html.LabelRequiredFor(model => model.Avatar, "Tag Image:", true)
 				<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
 
 				@*@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })*@

@@ -20,6 +20,7 @@ using System.Security.Policy;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using Universal.DTO.ViewDTO;
 using static Universal.DTO.CommonModels.CommonModels;
 using Seo = Entities.Universal.MainData.Seo;
 
@@ -43,14 +44,14 @@ namespace Services
 
 		public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int? productId)
 		{
-			bool successUpload = false;
+			string successUpload = "";
 
 			if (awsFile.Attachments.Count > 0)
 				successUpload = await _AWSS3FileService.UploadFile(awsFile);
 
-			if (successUpload)
+			if (successUpload != null)
 			{
-				var key = await _AWSS3FileService.FilesListSearch("DOT/" + awsFile.Attachments.First().FileName);
+				var key = await _AWSS3FileService.FilesListSearch(successUpload);
 				var media = new Media();
 				media.ProductId = productId;
 				media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
@@ -132,7 +133,7 @@ namespace Services
 
 		public async Task<CategoriesODTO> GetCategoriesById(int id)
 		{
-			return await _context.Categories.Include(x => x.Seo).Where(x => x.CategoryId == id).Select(x => _mapper.Map<CategoriesODTO>(x)).SingleOrDefaultAsync();
+			return await _context.Categories.Include(x => x.Media).Include(x => x.Seo).Where(x => x.CategoryId == id).Select(x => _mapper.Map<CategoriesODTO>(x)).SingleOrDefaultAsync();
 		}
 
 		public async Task<CategoriesODTO> AddCategory(CategoriesIDTO categoriesIDTO)
@@ -170,11 +171,17 @@ namespace Services
 
 		public async Task<CategoriesODTO> EditCategory(CategoriesIDTO categoriesIDTO)
 		{
-			var categories = _mapper.Map<Categories>(categoriesIDTO);
-			_context.Entry(categories).State = EntityState.Modified;
+			var cat = _mapper.Map<Categories>(categoriesIDTO);
+			if (categoriesIDTO.IsImageChanged == "true")
+				cat.MediaId = null;
+			_context.Entry(cat).State = EntityState.Modified;
+			if (categoriesIDTO.CategoryImage == null && categoriesIDTO.IsImageChanged != "true")
+			{
+				_context.Entry(cat).Property(x => x.MediaId).IsModified = false;
+			}
 			await SaveContextChangesAsync();
 
-			return await GetCategoriesById(categories.CategoryId);
+			return await GetCategoriesById(cat.CategoryId);
 		}
 
 		public async Task<CategoriesODTO> DeleteCategory(int id)
@@ -922,6 +929,35 @@ namespace Services
 			return media;
 		}
 
+		public async Task<string> GetStringForModal(int mediaId)
+		{
+			var retVal = "";
+			var user = await _context.Users.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
+			if (user != null) retVal += "This picture is connected with User<br>";
+
+			var tag = await _context.Tags.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
+			if (tag != null) retVal+= "This picture is connected with Tag<br>";
+
+			var siteContent = await _context.SiteContents.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
+			if(siteContent != null)
+			{
+				if(siteContent.SiteContentTypeId == 1)
+				{
+					retVal+= "This picture is connected with Page<br>";
+				}
+				else
+				{
+					retVal+= "This picture is connected with Blog<br>";
+				}
+
+			}
+
+			var category = await _context.Categories.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
+			if (category != null) retVal+= "This picture is connected with Category<br>";
+
+			return retVal;
+		}
+
 		public async Task<List<MediaODTO>> GetAllImagesRoute()
 		{
             string[] cars = { "png", "jpg", "webp", "jiff" };
@@ -935,14 +971,7 @@ namespace Services
 			mediaImage.MetaDescription = mediaIDTO.MetaDescription;
 			mediaImage.AltTitle = mediaIDTO.AltTitle;
 
-			SaveContextChangesAsync();
-		}
-
-		public async Task DeleteMediaImage(int mediaId)
-		{
-			var mediaImage = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-
-			SaveContextChangesAsync();
+			await SaveContextChangesAsync();
 		}
 
 		#endregion Media
@@ -1133,7 +1162,13 @@ namespace Services
 		public async Task<TagODTO> EditTag(TagIDTO tagIDTO)
 		{
 			var tag = _mapper.Map<Tag>(tagIDTO);
+			if (tagIDTO.IsImageChanged == "true")
+				tag.MediaId = null;
 			_context.Entry(tag).State = EntityState.Modified;
+			if(tagIDTO.TagImage == null && tagIDTO.IsImageChanged != "true")
+			{
+				_context.Entry(tag).Property(x => x.MediaId).IsModified = false;
+			}
 			await SaveContextChangesAsync();
 
 			return await GetTagById(tag.TagId);
