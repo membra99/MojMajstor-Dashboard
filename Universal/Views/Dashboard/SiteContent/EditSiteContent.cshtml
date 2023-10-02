@@ -1,0 +1,124 @@
+﻿@model Universal.DTO.IDTO.SiteContentIDTO
+
+@{
+	ViewData["Title"] = "Edit SiteContents";
+}
+
+
+<div class="container bg-light w-50">
+	<div class="text-center">
+		<h2>Edit Site Content</h2>
+	</div>
+	@using (Html.BeginForm("EditSiteContentAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+	{
+		<div class="form-group mb-3">
+			@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.Title, "Title:", true)
+			@Html.TextBoxFor(model => model.Title, null, new { @class="form-control", placeholder = "Title"})
+			@Html.ValidationMessageFor(model => model.Title, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.Content, "Content:", true)
+			@Html.TextAreaFor(model => model.Content, 10,1, new { @Id="tiny", @class="form-control", placeholder = "Content"})
+			@Html.ValidationMessageFor(model => model.Content, null, new { @class="text-danger" })
+		</div>
+
+		<div class="form-group mb-3">
+			@Html.HiddenFor(model => model.SeoIDTO.LanguageID,new { @class = "lang" })
+			@Html.HiddenFor(model => model.SeoIDTO.SeoId)
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelFor(model => model.SeoIDTO.GoogleDesc, "Google description:")
+			@Html.TextBoxFor(model => model.SeoIDTO.GoogleDesc, new { @class="form-control", placeholder = "Google Description"})
+			@Html.ValidationMessageFor(model => model.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.LabelFor(model => model.SeoIDTO.GoogleKeywords, "Google keywords:")
+			@Html.TextBoxFor(model => model.SeoIDTO.GoogleKeywords, new { @class="form-control", placeholder = "Google Keywords"})
+			@Html.ValidationMessageFor(model => model.SeoIDTO.GoogleKeywords, null, new { @class="text-danger" })
+		</div>
+		<div class="form-group mb-3">
+			@Html.HiddenFor(model => model.SiteContentTypeId, new { @class="form-control", placeholder = "Type"})
+			@Html.ValidationMessageFor(model => model.SiteContentTypeId, null, new { @class="text-danger" })
+		</div>
+		@Html.HiddenFor(model => model.IsImageChanged, new {id = "IsImageChanged"})
+		@Html.HiddenFor(model => model.SiteContentId)
+		@if (Model.SiteContentTypeId == 2)
+		{
+			<div class="form-group mb-3">
+				@Html.HiddenFor(model => model.LanguageID,new { @class = "lang" })
+				@Html.LabelFor(model => model.TagId, "Tag:")
+				@Html.DropDownListFor(model => model.TagId, Model.TagODTOs.Select(dec =>
+		new SelectListItem() { Value = dec.TagId.ToString(), Text = dec.Title }),
+		"Select Tag", new { @class="form-control" })
+				@Html.ValidationMessageFor(model => model.TagId, null, new { @class="text-danger" })
+			</div>
+		}
+		<div class="row">
+			<div class="form-group col-10 mb-3">
+				@Html.LabelRequiredFor(model => model.Image, "Image:", false)
+				<input type="file" name="Image" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+
+				@*@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })*@
+			</div>
+			<div class="form-group col-2 mb-3 text-center">
+				<div class="image-container">
+					<img src="@Url.Action("GetImage","Dashboard",new {path = Model.Photo})" id="content-preview" width="75" height="75" style="border: 2px solid indigo">
+					<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+				</div>
+			</div>
+		</div>
+		<div class="mx-auto mb-3 w-50">
+			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+		</div>
+	}
+</div>
+</div>
+
+
+@section Scripts{
+
+	<script>
+		let loadFile = function (event) {
+			let image = document.getElementById('content-preview');
+			image.src = URL.createObjectURL(event.target.files[0]);
+			let element = document.getElementById('unset');
+			element.classList.add("hover-unset");
+			var hiddenInput = document.getElementById("IsImageChanged");
+			hiddenInput.value = null;
+
+		};
+
+		$(document).ready(function () {
+
+			let image = document.getElementById('content-preview');
+			var parts = image.src.split('/');
+			var result = parts.slice(3).join('/');
+			if (result != "Dashboard/GetImage") {
+				let element = document.getElementById('unset');
+				element.classList.add("hover-unset");
+			}
+		});
+
+		function unsetImage(event) {
+			let image = document.getElementById('content-preview');
+			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			$("#file").val(null);
+			var hiddenInput = document.getElementById("IsImageChanged");
+			hiddenInput.value = "true";
+
+			let element = document.getElementById('unset');
+			element.classList.remove("hover-unset");
+			event.preventDefault();
+		}
+
+		$('.lang').val($('#language').val());
+
+		$('#language').change(function () {
+			$('.lang').val($(this).val());
+		});
+
+	</script>
+}

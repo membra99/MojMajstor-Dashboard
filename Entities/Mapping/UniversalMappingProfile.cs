@@ -67,8 +67,11 @@ namespace Entities.Mapping
 			CreateMap<Declaration, DeclarationIDTO>();
 
 			CreateMap<SiteContent, SiteContentODTO>()
-				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName));
+				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName))
+				.ForMember(dest => dest.SiteContentTypeName, source => source.MapFrom(m => m.SiteContentType.SiteContentTypeName));
 			CreateMap<SiteContentIDTO, SiteContent>();
+			CreateMap<SiteContent, SiteContentIDTO>()
+				.ForMember(dest => dest.Photo, source => source.MapFrom(m => m.Media.Src));
 
 			CreateMap<Attributes, AttributesODTO>()
 				.ForMember(dest => dest.CategoryName, source => source.MapFrom(m => m.Categories.CategoryName));

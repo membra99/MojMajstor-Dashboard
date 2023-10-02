@@ -11,6 +11,7 @@ namespace Universal.DTO.ODTO
 		public int SiteContentId { get; set; }
 		public string? Title { get; set; }
 		public int? SiteContentTypeId { get; set; }
+		public string? SiteContentTypeName { get; set; }
 		public string? GoogleDesc { get; set; }
 		public string? GoogleKeywords { get; set; }
 		public int? MediaId { get; set; }

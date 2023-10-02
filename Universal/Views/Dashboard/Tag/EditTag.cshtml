@@ -55,6 +55,8 @@
 			image.src = URL.createObjectURL(event.target.files[0]);
 			let element = document.getElementById('unset');
 			element.classList.add("hover-unset");
+			var hiddenInput = document.getElementById("IsImageChanged");
+			hiddenInput.value = null;
 
 		};
 

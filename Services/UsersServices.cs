@@ -84,6 +84,7 @@ namespace Services
 		public async Task<UsersIDTO> GetUserByIdForEdit(int id)
 		{
 			return _mapper.Map<UsersIDTO>(await _context.Users.Include(x => x.Media).Where(x => x.UsersId == id).AsNoTracking().SingleOrDefaultAsync());
+            
 		}
 
 		public async Task<UsersIDTO> GetUserByPassword(string password)

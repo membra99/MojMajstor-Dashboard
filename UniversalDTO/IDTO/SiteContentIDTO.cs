@@ -11,7 +11,6 @@ namespace Universal.DTO.IDTO
 	public class SiteContentIDTO
 	{
 		public int SiteContentId { get; set; }
-
 		public int? LanguageID { get; set; }
 		public string Title { get; set; }
 		public int? SiteContentTypeId { get; set; }
@@ -21,6 +20,8 @@ namespace Universal.DTO.IDTO
 		public string Content { get; set; }
 		public bool IsActive { get; set; }
 		public IFormFile? Image { get; set; }
+		public string? IsImageChanged { get; set; }
+		public string? Photo { get; set; }
 		public SeoIDTO? SeoIDTO { get; set; }
 		public List<TagODTO>? TagODTOs { get; set; }
 	}

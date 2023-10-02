@@ -83,7 +83,7 @@ namespace Universal.Admin_Controllers.AdminAPI
 			}
 		}
 
-        [HttpGet("GetAllTags")]
+		[HttpGet("GetAllTags")]
         public async Task<ActionResult<IEnumerable<TagODTO>>> GetAllTags()
         {
             try

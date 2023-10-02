@@ -566,6 +566,7 @@ namespace Services
 		private IQueryable<SiteContentODTO> GetSiteContent(int id)
 		{
 			return from x in _context.SiteContents
+				   .Include(x => x.SiteContentType)
 				   where (id == 0 || x.SiteContentId == id)
 				   select _mapper.Map<SiteContentODTO>(x);
 		}
@@ -579,6 +580,22 @@ namespace Services
 		{
 			var siteContentType = await _context.SiteContentTypes.Where(x => x.SiteContentTypeName == Type).Select(x => x.SiteContentTypeId).SingleOrDefaultAsync();
 			return await _context.SiteContents.Where(x => x.SiteContentTypeId == siteContentType && x.IsActive == true && x.LanguageID == langId).Select(x => _mapper.Map<SiteContentODTO>(x)).ToListAsync();
+		}
+
+		public async Task<SiteContentIDTO> GetSiteContentByIdForEdit(int id)
+		{
+			var siteContent = _mapper.Map<SiteContentIDTO>(await _context.SiteContents.Include(x => x.Media).Where(x => x.SiteContentId == id).AsNoTracking().SingleOrDefaultAsync());
+			siteContent.TagODTOs = await _context.Tags.Select(x => new TagODTO { TagId = x.TagId, Title = x.Title, Description = x.Description, LanguageID = x.LanguageID} ).ToListAsync();
+			if(siteContent.SeoId != null)
+			{
+				siteContent.SeoIDTO = new SeoIDTO();
+				var seo = await _context.Seos.Where(x => x.SeoId == siteContent.SeoId).SingleOrDefaultAsync();
+				siteContent.SeoIDTO.GoogleDesc = seo.GoogleDesc;
+				siteContent.SeoIDTO.GoogleKeywords = seo.GoogleKeywords;
+				siteContent.SeoIDTO.LanguageID = seo.LanguageID;
+				siteContent.SeoIDTO.SeoId = seo.SeoId;
+			}
+			return siteContent;
 		}
 
 		public async Task<List<TagODTO>> GetTags()
@@ -607,13 +624,35 @@ namespace Services
 		public async Task<SiteContentODTO> EditSiteContent(SiteContentIDTO siteContentIDTO)
 		{
 			var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);
+			siteContent.IsActive = true;
+			if (siteContentIDTO.IsImageChanged == "true")
+				siteContent.MediaId = null;
+			
+			if(siteContentIDTO.SeoIDTO.SeoId != null)
+			{
+				var seo = await _context.Seos.Where(x => x.SeoId == siteContentIDTO.SeoIDTO.SeoId).SingleOrDefaultAsync();
+				seo.GoogleDesc = siteContentIDTO.SeoIDTO.GoogleDesc;
+				seo.GoogleKeywords = siteContentIDTO.SeoIDTO.GoogleKeywords;
+				_context.Entry(seo).State = EntityState.Modified;
+				await SaveContextChangesAsync();
+				siteContent.SeoId = siteContentIDTO.SeoIDTO.SeoId;
+			}
+			else if(siteContentIDTO.SeoIDTO.GoogleKeywords != null || siteContentIDTO.SeoIDTO.GoogleDesc != null)
+			{
+				var newSeo = _mapper.Map<Seo>(siteContentIDTO.SeoIDTO);
+				newSeo.SeoId = 0;
+				_context.Seos.Add(newSeo);
+				await SaveContextChangesAsync();
+				siteContent.SeoId = newSeo.SeoId;
+			}
+			
 			_context.Entry(siteContent).State = EntityState.Modified;
+			if (siteContentIDTO.Image == null && siteContentIDTO.IsImageChanged != "true")
+			{
+				_context.Entry(siteContent).Property(x => x.MediaId).IsModified = false;
+			}
 
-			var seo = await _context.Seos.Where(x => x.SeoId == siteContentIDTO.SeoId).SingleOrDefaultAsync();
-			seo.GoogleDesc = siteContent.Seo.GoogleDesc;
-			seo.GoogleKeywords = siteContent.Seo.GoogleKeywords;
-
-			_context.Entry(seo).State = EntityState.Modified;
+			
 
 			await SaveContextChangesAsync();
 

@@ -12,6 +12,33 @@ else
 {
 	<button type="button" class="btn btn-dotnet" id="addBlogButton" style="margin-bottom:15px;">Add New Blog</button>
 }
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+
+            </div>
+            <div class="modal-body">
+				@if (ViewBag.siteType == "Page")
+				{
+					<p>Are you sure you want to delete this Page ?</p>
+				}
+				else
+				{
+					<p>Are you sure you want to delete this Blog ?</p>
+				}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+                <button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="col-12">
 	<table id="siteContentTable" class="table table-striped display text-center w-100">
 		<thead>
@@ -19,9 +46,13 @@ else
 				<th>Title</th>
 				<th>MediaId</th>
 				<th>SeoId</th>
-				<th>TagId</th>
+				@if (ViewBag.siteType != "Page")
+				{
+					<th>TagId</th>
+				}
 				<th>Content</th>
 				<th>IsActive</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -55,6 +86,55 @@ else
 			});
 
 
+			$("#closeConfirmDeleteButton").click(function () {
+				$('#confirmDeleteModal').modal('hide');
+			});
+
+			$('#siteContentTable tbody').on('click', 'td.actions-control', function () {
+				var tr = $(this).closest('tr');
+				var row = dataTable.row(tr);
+
+				var targetElement = $(event.target);
+
+				if (targetElement.hasClass('fa-trash-can')) {
+					var rowData = row.data();
+
+					let selectedAttributeId = rowData.siteContentId;
+
+					// Show a confirmation modal
+					$('#confirmDeleteModal').modal('show');
+
+					$('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+
+						// Close the confirmation modal
+						$('#confirmDeleteModal').modal('hide');
+
+						$.ajax({
+							type: 'DELETE',
+							url: 'https://localhost:7213/api/SiteContent/' + selectedAttributeId,
+							contentType: 'application/json',
+							success: function (response) {
+								showToast("SiteContet deleted succesfully.", "success");
+								updateTableData();
+							},
+							error: function (xhr, status, error) {
+								showToast("Error: " + error + ":" + status, "error");
+							}
+						});
+					});
+				}
+			});
+
+			function updateTableData() {
+				let lang = $('#language').val();
+				$.get("https://localhost:7213/api/SiteContent/AllByType?type=" + '@ViewBag.siteType' + "&langId=" + lang, function (data) {
+					dataTable.clear().rows.add(data).draw();
+                }).fail(function (xhr, status, error) {
+                    dataTable.clear().draw();
+                });
+            }
+
+
 			function loadData(type, langID) {
 				console.log(type, langID);
 				$.ajax({
@@ -76,9 +156,21 @@ else
 								{ data: "title" },
 								{ data: "mediaId" },
 								{ data: "seoId" },
-								{ data: "tagId" },
+								@if(ViewBag.siteType != "Page")
+								{
+									@Html.Raw("{ data: 'tagId' },")
+								}
 								{ data: "content" },
 								{ data: "isActive" },
+								{
+									data: 'siteContentId',
+									className: 'actions-control',
+									render: function (data, type, row) {
+										return '<a href="/Dashboard/EditSiteContent?siteContentId=' + data + '">' +
+											'<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
+											'<i class="fa-solid fa-trash-can icon-spacing"></i>'
+									}
+								},
 							],
 							columnDefs: [
 								{ targets: '_all', className: 'dt-left' }

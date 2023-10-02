@@ -8,7 +8,7 @@ namespace Universal.DTO.IDTO
 {
 	public class SeoIDTO
 	{
-		public int SeoId { get; set; }
+		public int? SeoId { get; set; }
 		public string? GoogleDesc { get; set; }
 		public string? GoogleKeywords { get; set; }
 
