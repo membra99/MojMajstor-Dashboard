@@ -1,0 +1,151 @@
+﻿@model Universal.DTO.ViewDTO.MultiMediaIDTO
+
+<style>
+	.gallery-container {
+		display: flex;
+		flex-direction: column;
+		padding: 3px;
+	}
+
+	.gallery-item {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: lightsteelblue;
+		border-radius: 10px;
+		height: 20vh;
+		padding: 1px
+	}
+
+	.image-container {
+		position: relative;
+		display: inline-block;
+		color: lightslategray;
+		padding: 0;
+	}
+
+	.image {
+		max-width: 100%;
+		max-height: 20vh
+	}
+
+	.image-title {
+		font-size: 12px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		color: black;
+	}
+
+	.image-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.7); 
+		opacity: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 10px;
+		transition: opacity 0.3s ease;
+	}
+/
+	.overlay-icons {
+		color: white;
+		font-size: 24px;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		width: 80px;
+	}
+
+	.edit-icon, .delete-icon, .select-icon {
+		cursor: pointer;
+		transition: transform 0.2s ease; 
+	}
+
+		.edit-icon:hover, .delete-icon:hover, .select-icon:hover {
+			transform: scale(1.1);
+		}
+
+	.gallery-item:hover .image-overlay {
+		opacity: 1;
+	}
+
+	@@media (min-width: 1400px) {
+		.col-xl-8r {
+			width: 12.5%;
+			float: left;
+		}
+	}
+
+	@@media (min-width: 1700px) {
+		.col-xxl-12r {
+			width: 8.33333333%;
+			float: left;
+		}
+
+		.image {
+			max-height: 15vh;
+		}
+
+		.gallery-item {
+			height: 15vh;
+		}
+	}
+
+	.disable-icon {
+		display: none;
+	}
+
+	.overlay-checked {
+		opacity: 1 !important;
+		transition: background-color 0.5s ease;
+	}
+
+	.checked-icon {
+		font-size: 30px;
+		cursor: pointer;
+		transition: transform 0.2s ease;
+	}
+
+		.checked-icon:hover {
+			transform: scale(1.1);
+		}
+
+
+
+</style>
+
+<div class="col-12 p-3">
+	<div class="row">
+		@foreach (var mediaImage in Model.MediaList)
+		{
+			<div class="gallery-container col-sm-3 col-md-2 col-xl-8r col-xxl-12r">
+				<div class="gallery-item">
+					<div class="image-container">
+						<img src="@Url.Action("GetImage", "Dashboard", new { path = mediaImage.Src })" alt="@mediaImage.AltTitle" class="image" />
+					</div>
+					<div class="image-overlay">
+						<div class="overlay-icons">
+							@if (ViewData["Title"] == "Gallery")
+							{
+								<i class="fas fa-edit edit-icon" data-media-id="@mediaImage.MediaId"></i>
+								<i class="fas fa-trash delete-icon" data-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle" data-media-mediatype="@mediaImage.MediaTypeId"></i>
+							}
+							else
+							{
+								<i class="fas fa-hand-pointer select-icon" data-media-id="@mediaImage.MediaId"></i>
+								<i class="fas fa-circle-check text-success checked-icon disable-icon"></i>
+							}
+						</div>
+					</div>
+				</div>
+				<span class="text-center image-title">@mediaImage.MetaTitle</span>
+			</div>
+		}
+	</div>
+</div>
