@@ -2,6 +2,8 @@
 using Entities.Context;
 using Entities.Universal.MainData;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Services.Authorization;
@@ -10,6 +12,7 @@ using Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
@@ -76,6 +79,14 @@ namespace Services
             return await GetUsers(0).AsNoTracking().ToListAsync();
         }
 
+        public async Task<string> RedirectLink(string key)
+        {
+            var user = await _context.Users.Where(x => x.Password == key).SingleOrDefaultAsync();
+            if (user != null) return "https://www.google.com";
+            return null;
+
+		}
+
         public async Task<UsersODTO> GetUserById(int id)
         {
             return await GetUsers(id).AsNoTracking().SingleOrDefaultAsync();
@@ -117,7 +128,40 @@ namespace Services
             return await GetUserById(user.UsersId);
         }
 
-        public async Task<MediaODTO> UploadUserPicture(AWSFileUpload awsFile, int? mediatypeId)
+		public async Task<string> RegisterUser(UsersRegisterIDTO userIDTO)
+		{
+            string pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+			var CheckUser = await _context.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
+			if (CheckUser != null)
+			{
+				return "EmailExists";
+			}
+            if (!Regex.IsMatch(userIDTO.Password, pattern))
+            {
+                return "RegexException";
+            }
+			var user = _mapper.Map<Users>(userIDTO);
+
+			//initial user set, password is temp and user is instructed to change their password by mail
+			user.UsersId = 0;
+			user.Password = BCrypt.Net.BCrypt.HashPassword("tempPasswordDOTUniversalABC123456789012301231");
+
+			MailService ms = new MailService(_emailSettings);
+			string userKey = user.Password; // CHANGE IF NEEDED TO SOMETHING ELSE
+			ms.SendEmail(new EmailIDTO
+			{
+				To = user.Email,
+				Subject = user.FirstName + ", please activate your account!",
+				Body = "Thank you for registering on our site.<br> To verify your registration, click on this link: <br> <a href='https://localhost:7213/api/Users/Redirect?key=" + userKey + "'>Activate Your Mail</a>"
+			});
+			_context.Users.Add(user);
+
+			await SaveContextChangesAsync();
+
+			return "Done";
+		}
+
+		public async Task<MediaODTO> UploadUserPicture(AWSFileUpload awsFile, int? mediatypeId)
         {
             string successUpload = "";
 

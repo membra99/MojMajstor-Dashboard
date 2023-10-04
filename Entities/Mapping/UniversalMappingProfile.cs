@@ -10,7 +10,8 @@ namespace Entities.Mapping
 		public UniversalMappingProfile()
 		{
 			CreateMap<Product, ProductODTO>()
-				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName));
+				.ForMember(dest => dest.LanguageName, source => source.MapFrom(m => m.Language.LanguageName))
+				.ForMember(dest => dest.CategoryName, source => source.MapFrom(m => m.Categories.CategoryName));
 			CreateMap<ProductIDTO, Product>();
 			CreateMap<ProductODTO, ProductIDTO>();
 
@@ -39,6 +40,8 @@ namespace Entities.Mapping
 
 			CreateMap<MediaType, MediaTypeODTO>();
 			CreateMap<MediaTypeIDTO, MediaType>();
+
+			CreateMap<SaleType, SaleTypeODTO>();
 
 			CreateMap<Users, UsersODTO>()
 				.ForMember(dest => dest.ImageSrc, source => source.MapFrom(m => m.Media.Src));

@@ -32,4 +32,13 @@ namespace Universal.DTO.IDTO
         public string? AltTag { get; set; }
         public string? IsImageChanged { get; set; }
     }
+
+	public class UsersRegisterIDTO
+	{
+		public int? UsersId { get; set; }
+		[Required]
+		public string Email { get; set; }
+		[Required]
+		public string? Password { get; set; }
+	}
 }

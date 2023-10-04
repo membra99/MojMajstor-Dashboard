@@ -241,6 +241,7 @@ namespace Services
 		private IQueryable<ProductODTO> GetProducts(int id, int langId)
 		{
 			return from x in _context.Products
+				   .Include(x => x.Categories)
 				   where (id == 0 || x.ProductId == id) &&
 				   (langId == 0 || x.LanguageID == langId)
 				   select _mapper.Map<ProductODTO>(x);
@@ -251,9 +252,16 @@ namespace Services
 			return await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync();
 		}
 
+		public async Task<List<SaleTypeODTO>> GetAllSaleType()
+		{
+			return await _context.SaleTypes.Select(x => _mapper.Map<SaleTypeODTO>(x)).ToListAsync();
+		}
+
 		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
+			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 7).Select(x => x.Src).SingleOrDefaultAsync();
+			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 3).Select(x => x.Src).ToListAsync();
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)
@@ -281,6 +289,7 @@ namespace Services
 		public async Task<List<ProductODTO>> GetAllProducts(int langId)
 		{
 			return await GetProducts(0, langId).AsNoTracking().ToListAsync();
+			
 		}
 
 		public async Task<ProductODTO> AddProduct(ProductIDTO productIDTO)

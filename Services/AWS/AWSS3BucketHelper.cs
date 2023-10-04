@@ -187,6 +187,11 @@ namespace Services.AWS
 							await _context.SaveChangesAsync();
 							break;
 
+						case 7:
+							var mediaImageFeature = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
+							await _context.SaveChangesAsync();
+							break;
+
 					}
 					return true;
 				}
