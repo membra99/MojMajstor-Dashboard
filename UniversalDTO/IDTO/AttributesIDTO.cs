@@ -11,6 +11,5 @@ namespace Universal.DTO.IDTO
         public int AttributesId { get; set; }
         public string? Value { get; set; }
         public int? CategoriesId { get; set; }
-        public string? test { get; set; }
     }
 }
