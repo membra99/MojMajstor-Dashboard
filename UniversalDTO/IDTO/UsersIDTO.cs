@@ -31,7 +31,7 @@ namespace Universal.DTO.IDTO
         public string? Photo { get; set; }
         public string? AltTag { get; set; }
         public string? IsImageChanged { get; set; }
-    }
+	}
 
 	public class UsersRegisterIDTO
 	{

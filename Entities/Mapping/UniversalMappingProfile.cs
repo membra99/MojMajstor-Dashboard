@@ -50,6 +50,7 @@ namespace Entities.Mapping
 				.ForMember(dest => dest.Photo, source => source.MapFrom(m => m.Media.Src))
 				.ForMember(dest => dest.AltTag, source => source.MapFrom(m => m.Media.MetaTitle));
 			CreateMap<UsersODTO, UsersIDTO>();
+			CreateMap<UsersRegisterIDTO, Users>();
 
 			CreateMap<Sale, SaleODTO>();
 			CreateMap<SaleIDTO, Sale>();

@@ -82,7 +82,14 @@ namespace Services
         public async Task<string> RedirectLink(string key)
         {
             var user = await _context.Users.Where(x => x.Password == key).SingleOrDefaultAsync();
-            if (user != null) return "https://www.google.com";
+            if (user != null)
+            {
+                user.IsActive = true;
+				_context.Entry(user).State = EntityState.Modified;
+                await SaveContextChangesAsync();
+
+				return "https://www.google.com";
+			} 
             return null;
 
 		}
@@ -111,6 +118,7 @@ namespace Services
                 return null;
             }
             var user = _mapper.Map<Users>(userIDTO);
+            user.IsActive = true;
 
             //initial user set, password is temp and user is instructed to change their password by mail
             user.UsersId = 0;
@@ -130,7 +138,7 @@ namespace Services
 
 		public async Task<string> RegisterUser(UsersRegisterIDTO userIDTO)
 		{
-            string pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+            string pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.])[A-Za-z\\d@$!%*?&.]{8,}$";
 			var CheckUser = await _context.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
 			if (CheckUser != null)
 			{

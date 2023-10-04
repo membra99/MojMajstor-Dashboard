@@ -22,8 +22,9 @@ namespace Entities.Universal.MainData
         public string? Password { get; set; }
         public string? Role { get; set; }
         public string? UserTypes { get; set; }
-        public Media? Media { get; set; }
+        public bool IsActive { get; set; }
 
+        public Media? Media { get; set; }
         public ICollection<Order> Orders { get; set; }
     }
 }
