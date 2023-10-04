@@ -60,7 +60,7 @@
 								{
 									data: "isActive",
 									render: function (data, type, row) {
-										console.log(data);
+										console.log("aaaaaaaaaaaaa",data);
 										// Format "Active" or "Not Active" based on the boolean value
 										return data != false && data != null ? "Active" : "Not Active";
 									}
@@ -81,7 +81,8 @@
 							bPaginate: isPaginate,
 							initComplete: function (settings, json) {
 								toggleLoading();
-							}
+							},
+							order:[[2,'asc']]
 						});
 					},
 					error: function (error) {

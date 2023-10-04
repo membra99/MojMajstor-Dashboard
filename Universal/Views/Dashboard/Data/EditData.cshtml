@@ -101,7 +101,7 @@
 					</div>
 					<div class="form-group mb-3">
 						@Html.Label("Sale start & end date:")
-						@Html.TextBox("datefilter", null, null, new { @class="form-control", placeholder="Start & End Date", disabled="disabled" })
+						@Html.TextBox("datefilter", null, null, new { @class="form-control", placeholder="Start & End Date", id="datefromto", disabled="disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
 
@@ -153,10 +153,11 @@
 				</div>
 				<div class="form-group mb-3">
 					@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
-					@Html.TextBoxFor(model => model.FeaturedImage, null, new { type="file", @class="form-control mb-3", runat="server", onchange="loadFile(event)"})
+					@Html.TextBoxFor(model => model.FeaturedImage, null, new { type="file", @class="form-control mb-3", id="file", runat="server", onchange="loadFile(event)"})
 					@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class="text-danger" })
-					<div class="text-center">
-						<img id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+						<div class="text-center image-container">
+						<img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+						<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
 					</div>
 				</div>
 				<hr>
@@ -168,11 +169,11 @@
 					@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
 					@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" })
 					<div class="d-flex flex-row justify-content-between  text-center">
-						<img id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
+						<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 0) ? Model.ProductIDTO.GalleyImg[0] : null})" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
+						<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 1) ? Model.ProductIDTO.GalleyImg[1] : null})" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
+						<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 2) ? Model.ProductIDTO.GalleyImg[2] : null})" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
+						<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 3) ? Model.ProductIDTO.GalleyImg[3] : null})" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
+						<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 4) ? Model.ProductIDTO.GalleyImg[4] : null})" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
 					</div>
 				</div>
 				<hr>
@@ -190,7 +191,25 @@
 		let loadFile = function (event) {
 			let image = document.getElementById('featured-preview');
 			image.src = URL.createObjectURL(event.target.files[0]);
+			let element = document.getElementById('unset');
+			element.classList.add("hover-unset");
+
 		};
+
+		function unsetImage(event) {
+			console.log("BLEJBLEJ ", event)
+			let image = document.getElementById('featured-preview');
+			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			$("#file").val(null);
+
+			let element = document.getElementById('unset');
+			element.classList.remove("hover-unset");
+			event.preventDefault();
+		}
+
+
+
+
 
 		let loadMultipleFile = function (event) {
 			for (let i = 0; i < event.target.files.length; i++) {
@@ -198,14 +217,29 @@
 				image.src = URL.createObjectURL(event.target.files[i]);
 			}
 		};
-
         $(document).ready(function () {
+
+			let image = document.getElementById('featured-preview');
+			var parts = image.src.split('/');
+			var result = parts.slice(3).join('/');
+			console.log("Aba",result);
+			if (result != "Dashboard/GetImage") {
+				let element = document.getElementById('unset');
+				element.classList.add("hover-unset");
+			}
+
+		let saleIdto = @Json.Serialize(Model.ProductIDTO.SaleIDTO);
+			var startDate = saleIdto.startDate.split('-').reverse().join('/');
+			var endDate = saleIdto.endDate.split('-').reverse().join('/');
 			$('input[name="datefilter"]').daterangepicker({
+				endDate: Date.parse(saleIdto.endDate),
+				startDate: Date.parse(saleIdto.startDate),
 				autoUpdateInput: false,
 				locale: {
-					cancelLabel: 'Clear'
+					cancelLabel: 'Clear',
+					format: 'DD/MM/YYYY',
 				}
-			});
+			}).val(startDate + " - " + endDate);
 
 			$('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
 				$(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
@@ -224,6 +258,7 @@
             else {
 				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
             }
+
 
             $.ajax({
                 type: "GET",

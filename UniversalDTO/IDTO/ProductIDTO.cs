@@ -31,6 +31,8 @@ namespace Universal.DTO.IDTO
 		public DateTime UpdatedAt { get; set; } = DateTime.Now;
 		public bool? IsActive { get; set; } = true;
 		public int? Quantity { get; set; } = 0;
+		public string? FeatureImg { get; set; }
+		public List<string>? GalleyImg { get; set; }
 
 		public int? LanguageID { get; set; }
 		public SaleIDTO? SaleIDTO { get; set; }

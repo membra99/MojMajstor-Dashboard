@@ -74,8 +74,42 @@ namespace Universal.Admin_Controllers.AdminAPI
             }
         }
 
+		[AllowAnonymous]
+		[HttpPost("Register")]
+		public async Task<ActionResult<string>> Register(UsersRegisterIDTO userModel)
+		{
+			if (string.IsNullOrEmpty(userModel.Email) && string.IsNullOrEmpty(userModel.Password))
+				return BadRequest("User must have all data assigned");
 
-        [HttpPost]
+			var user = await _userDataServices.RegisterUser(userModel);
+            switch (user)
+            {
+                case "EmailExists":
+                    return "User with this email already exists";
+
+                case "RegexException":
+                    return "Password doesn't match requirements";
+
+                case "Done":
+                    return Ok();
+			}
+            return null;
+		}
+
+		[AllowAnonymous]
+		[HttpGet("Redirect")]
+		public async Task<IActionResult> ActivateAccount(string key)
+		{
+			var Users = await _userDataServices.RedirectLink(key);
+			if (Users == null)
+			{
+				return NotFound();
+			}
+			return Redirect(Users);
+		}
+
+
+		[HttpPost]
         public async Task<ActionResult<UsersODTO>> AddUsers(UsersIDTO userIDTO)
         {
             try
