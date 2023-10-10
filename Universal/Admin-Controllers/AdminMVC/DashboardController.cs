@@ -151,7 +151,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "DOT/noimg.jpg";
+				path = "DOT/noimg_202310041133074736.jpg";
 
             var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;

@@ -157,8 +157,9 @@
 					@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
 					@Html.TextBoxFor(model => model.FeaturedImage, null, new { type="file", @class="form-control mb-3", runat="server", onchange="loadFile(event)"})
 					@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class="text-danger" })
-					<div class="text-center">
-						<img id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+					<div class="text-center image-container">
+						<img src="@Url.Action("GetImage","Dashboard")" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+						<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
 					</div>
 				</div>
 				<hr>
@@ -167,14 +168,29 @@
 				</div>
 				<div class="form-group mb-3">
 					@Html.LabelFor(model => model.GalleryImages, "Product gallery images:")
-					@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
+					@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file", id="file-gallery", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
 					@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" })
-					<div class="d-flex flex-row justify-content-between  text-center">
-						<img id="gallery-preview-0" width="65" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-1" width="65" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-2" width="65" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-3" width="65" height="75" style="border: 2px solid indigo">
-						<img id="gallery-preview-4" width="65" height="75" style="border: 2px solid indigo">
+					<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
+						<div class="text-center image-container">
+							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
+							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
+						</div>
+						<div class="text-center image-container">
+							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
+							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
+						</div>
+						<div class="text-center image-container">
+							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
+							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
+						</div>
+						<div class="text-center image-container">
+							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
+							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
+						</div>
+						<div class="text-center image-container">
+							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
+							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
+						</div>
 					</div>
 				</div>
 				<hr>
@@ -192,14 +208,61 @@
 		let loadFile = function (event) {
 			let image = document.getElementById('featured-preview');
 			image.src = URL.createObjectURL(event.target.files[0]);
+			let element = image.nextElementSibling
+			element.classList.add("hover-unset");
 		};
 
 		let loadMultipleFile = function (event) {
-			for (let i = 0; i < event.target.files.length; i++){
-				let image = document.getElementById('gallery-preview-'+i);
+			for (let i = 0; i < event.target.files.length; i++) {
+				let image = document.getElementById('gallery-preview-' + i);
 				image.src = URL.createObjectURL(event.target.files[i]);
+				let element = image.nextElementSibling;
+				element.classList.add("hover-unset");
 			}
 		};
+
+		let loadMultipleFileArray = function (files) {
+			for (let i = 0; i < files.length; i++) {
+				let image = document.getElementById('gallery-preview-' + i);
+				image.src = URL.createObjectURL(files[i]);
+				let element = image.nextElementSibling;
+				element.classList.add("hover-unset");
+			}
+		};
+
+		function unsetImage(event) {
+			console.log("BLEJBLEJ ", event)
+			let image = document.getElementById('featured-preview');
+			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			$("#file-featured").val(null);
+
+			let element = image.nextElementSibling;
+			element.classList.remove("hover-unset");
+			event.preventDefault();
+		}
+
+		function unsetImageMultiple(event, position) {
+			$('[id^=gallery-preview-]').each(function () {
+				let image = this;
+				image.src = '@Url.Action("GetImage","Dashboard",null)';
+				let element = image.nextElementSibling;
+				element.classList.remove("hover-unset");
+			});
+
+			let fileInput = document.getElementById("file-gallery");
+			let selectedFiles = Array.from(fileInput.files);
+			selectedFiles.splice(position, 1);
+
+			let newList = new DataTransfer();
+
+			for (let file of selectedFiles) {
+				newList.items.add(file);
+			}
+			fileInput.files = newList.files
+
+			loadMultipleFileArray(selectedFiles)
+			event.preventDefault();
+		}
 
 
 		let generateMultiselect = function () {
