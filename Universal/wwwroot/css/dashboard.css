@@ -154,30 +154,92 @@ ul ul {
     position: absolute;
     top: 5px;
     right: 5px;
-    background-color: red; /* Style as desired */
-    color: white; /* Style as desired */
+    background-color: red;
+    color: white;
     border: none;
     border-radius: 50%;
     padding: 5px;
     cursor: pointer;
-    display: none; /* Initially hide the button */
+    display: none;
 }
 
 .image-container:hover .hover-unset {
-    display: block; /* Show the button on hover */
+    display: block;
 }
 
 .nav-link .active {
-    background-color: #007bff; /* Change the background color to indicate active tab */
-    color: #fff; /* Change the text color to white for active tab */
-    border-color: #007bff; /* Change the border color for active tab */
+    background-color: #007bff;
+    color: #fff; 
+    border-color: #007bff;
 }
-/* Custom CSS to set a maximum height for the modal */
+
 .modal-lg {
     max-width: 90%;
 }
 
-/* Ensure modal can be scrolled if the content exceeds its height */
 .modal-dialog-scrollable {
     overflow-y: auto;
+}
+
+ul, #main-list {
+    list-style-type: none;
+}
+
+#main-list {
+    margin: 0;
+    padding: 0;
+}
+
+.multi-cat {
+    cursor: pointer;
+    user-select: none;
+}
+
+    .multi-cat::before {
+        content: "\27A4";
+        color: black;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+.multi-cat-down::before {
+    transform: rotate(90deg);
+}
+
+.nested {
+    display: none;
+}
+
+.active-cat {
+    display: block;
+}
+
+.btn-format {
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    margin: 0;
+    margin-right: 3px;
+    line-height: 0;
+}
+
+.category-name {
+    margin-right: 20px;
+}
+
+.category-select {
+    cursor: pointer;
+}
+
+    .category-select:hover {
+        color: #f0f0f0;
+        background-color: rebeccapurple;
+    }
+
+.category-selected {
+    color: #f0f0f0;
+    background-color: rebeccapurple;
+}
+.modclass {
+    margin-bottom: 20px;
 }

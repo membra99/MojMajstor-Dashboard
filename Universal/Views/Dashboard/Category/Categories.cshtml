@@ -5,55 +5,7 @@
 }
 
 <style>
-	ul, #main-list {
-		list-style-type: none;
-	}
-
-	#main-list {
-		margin: 0;
-		padding: 0;
-	}
-
-	.multi-cat {
-		cursor: pointer;
-		user-select: none;
-	}
-
-		.multi-cat::before {
-			content: "\27A4";
-			color: black;
-			display: inline-block;
-			margin-right: 6px;
-		}
-
-	.multi-cat-down::before {
-		transform: rotate(90deg);
-	}
-
-	.nested {
-		display: none;
-	}
-
-	.active-cat {
-		display: block;
-	}
-
-	.btn-format {
-		width: 25px;
-		height: 25px;
-		padding: 0;
-		margin: 0;
-		margin-right: 3px;
-		line-height: 0;
-	}
-
-	.category-name {
-		margin-right: 20px;
-	}
-
-	.modclass{
-		margin-bottom:20px;
-	}
+	
 </style>
 
 <div class="col-10">
@@ -158,6 +110,7 @@
 		let categories = @Json.Serialize(Model.AllCategories);
 
 		for (let i = 0; i < categories.length; i++) {
+			debugger;
 			for (let j = 0; j < categories[i].length; j++) {
 				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
 					let children = $(".child_of_" + categories[i][j].categoryId)
