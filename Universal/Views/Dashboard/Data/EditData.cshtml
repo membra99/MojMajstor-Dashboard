@@ -73,13 +73,19 @@
 				<div class="mb-3">
 					<h4>Category</h4>
 				</div>
-				<div class="form-group mb-3">
-					@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-					@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
-				new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
-				"Select Category",new { @class="form-control"})
-					@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
+				@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
+				<div class="form-control mb-3 rounded-3 p-2">
+					@Html.HiddenFor(model => model.ProductIDTO.CategoriesId, new { @id = "categoryID"})
+					<ul id="main-list">
+					</ul>
 				</div>
+				@*<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
+			@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
+			new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
+			"Select Category",new { @class="form-control"})
+			@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
+			</div>*@
 				<div id="attributeSection" class="form-group mb-3">
 				</div>
 				<hr>
@@ -203,6 +209,40 @@
 
 @section Scripts{
 	<script>
+		let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
+		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
+		for (let i = 0; i < categories.length; i++) {
+			for (let j = 0; j < categories[i].length; j++) {
+				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
+					let children = $(".child_of_" + categories[i][j].categoryId)
+					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + "'></ul>");
+
+					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
+
+					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat'>"
+						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span></div>");
+				}
+				else {
+					if (productCategoryID == categories[i][j].categoryId) { 
+						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select category-selected px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+					}
+					else {
+						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+					}
+				}
+			}
+		}
+
+		let catrgory_elements = document.getElementsByClassName("multi-cat");
+		for (let i = 0; i < catrgory_elements.length; i++) {
+			catrgory_elements[i].addEventListener("click", function () {
+				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
+				this.classList.toggle("multi-cat-down");
+			});
+		}
+
 		let loadFile = function (event) {
 			let image = document.getElementById('featured-preview');
 			image.src = URL.createObjectURL(event.target.files[0]);
@@ -212,7 +252,6 @@
 		};
 
 		function unsetImage(event) {
-			console.log("BLEJBLEJ ", event)
 			let image = document.getElementById('featured-preview');
 			image.src = '@Url.Action("GetImage","Dashboard",null)';
 			$("#file-featured").val(null);
@@ -221,7 +260,7 @@
 			element.classList.remove("hover-unset");
 			event.preventDefault();
 		}
-		
+
 		function unsetImageMultiple(event, position) {
 			$('[id^=gallery-preview-]').each(function () {
 				let image = this;
@@ -236,8 +275,7 @@
 
 			let newList = new DataTransfer();
 
-			for (let file of selectedFiles)
-			{
+			for (let file of selectedFiles) {
 				newList.items.add(file);
 			}
 			fileInput.files = newList.files
@@ -311,7 +349,7 @@
 			$.ajax({
 				type: "GET",
 				url: "/Dashboard/AllAttributesByCategory",
-				data: { CategoryId: $("#ProductIDTO_CategoriesId").val() },
+				data: { CategoryId: productCategoryID },
 				success: function (data) {
 					let counter = 0;
 					$('#attributeSection').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
@@ -376,17 +414,26 @@
 			}
 		});
 
-		$("#ProductIDTO_CategoriesId").change(function () {
+		$(".category-select").click(function () {
+			if (this.classList.contains("category-selected")) {
+				return;
+			}
+
 			$('.attr').html("");
+			$(".category-selected").addClass("category-select")
+			$(".category-selected").removeClass("category-selected");
+			$(this).addClass("category-selected");
+			$(this).removeClass("category-select");
+
+			$("#categoryID").val(this.dataset.categoryId);
 			$.ajax({
 				type: "GET",
 				url: "/Dashboard/AllAttributesByCategory",
-				data: { CategoryId: $(this).val() },
+				data: { CategoryId: this.dataset.categoryId },
 				success: function (data) {
-					console.log(data)
 					let counter = 0;
 					if (data.data.attrs.length > 0) {
-						$('#attributeSection').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
+						$('#attributeSection').append('<div class="form-group col-6 mb-3 attr"><h4>Attributes</h4><div id="attributeArea" class="form-group col-6 mb-3"></div></div>')
 					}
 					$.each(data.data.attrValues, function (index, attribute) {
 						if (attribute.length > 0) {
@@ -394,7 +441,7 @@
 							$.each(attribute, function (i, attr) {
 								attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
 							});
-							let htmlAttributes = "<label>" + data.data.attrs[counter++].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
+							let htmlAttributes = "<label>" + data.data.attrs[counter].categoryName + "</label><div class='form-group col-6 mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
 							$("#attributeArea").append(htmlAttributes);
 						}
 					});

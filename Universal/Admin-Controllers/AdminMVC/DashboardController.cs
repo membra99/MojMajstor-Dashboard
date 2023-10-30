@@ -960,12 +960,29 @@ namespace Universal.Admin_Controllers.AdminMVC
 			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 			var declarations = await _mainDataServices.GetAllDeclarations();
 			var productAtributes = await _mainDataServices.GetAllProductAttributes(dataId);
+
+			var allCategories = await _mainDataServices.GetCategories();
+			var devidedList = new List<List<ChildODTO2>>();
+
+			if (allCategories != null)
+			{
+				var rootList = allCategories.Where(x => x.ParentCategoryId == null).ToList();
+				devidedList.Add(rootList);
+				while (allCategories.Any(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)))
+				{
+					rootList = allCategories.Where(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)).ToList();
+					devidedList.Add(rootList);
+				}
+				devidedList.Reverse();
+			}
+
 			return View("Data/EditData", new DataIDTO
 			{
 				ProductIDTO = product,
 				CategoriesODTOs = categories,
 				DeclarationODTOs = declarations,
 				ProductAttributeValues = productAtributes,
+				CategoriesTree = new CategoryAttributeIDTO { AllCategories = devidedList },
 				SaleTypeODTOs = await _mainDataServices.GetAllSaleType()
 			});
 		}
@@ -978,16 +995,30 @@ namespace Universal.Admin_Controllers.AdminMVC
 				var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 				var declarations = await _mainDataServices.GetAllDeclarations();
 				var productAtributes = await _mainDataServices.GetAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
+
+				var allCategories = await _mainDataServices.GetCategories();
+				var devidedList = new List<List<ChildODTO2>>();
+
+				if (allCategories != null)
+				{
+					var rootList = allCategories.Where(x => x.ParentCategoryId == null).ToList();
+					devidedList.Add(rootList);
+					while (allCategories.Any(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)))
+					{
+						rootList = allCategories.Where(x => rootList.Exists(y => y.CategoryId == x.ParentCategoryId)).ToList();
+						devidedList.Add(rootList);
+					}
+					devidedList.Reverse();
+				}
+
 				return View("Data/EditData", new DataIDTO
 				{
 					ProductIDTO = product,
 					CategoriesODTOs = categories,
 					DeclarationODTOs = declarations,
 					ProductAttributeValues = productAtributes,
-					SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
-				{
-					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
-				}
+					SaleTypeODTOs = await _mainDataServices.GetAllSaleType(),
+					CategoriesTree = new CategoryAttributeIDTO { AllCategories = devidedList }
 				});
 			}
 			try
