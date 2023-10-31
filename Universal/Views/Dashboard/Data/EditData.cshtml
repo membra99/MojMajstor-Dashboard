@@ -215,15 +215,21 @@
 			for (let j = 0; j < categories[i].length; j++) {
 				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
 					let children = $(".child_of_" + categories[i][j].categoryId)
-					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + "'></ul>");
+
+					let isExpanded = "", isDown = "";
+					if (children.find(".category-selected").length > 0) {
+						isExpanded = "active-cat";
+						isDown = "multi-cat-down";
+					}
+					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + " " + isExpanded + "'></ul>");
 
 					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
 
-					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat'>"
+					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat " + isDown + "'>"
 						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span></div>");
 				}
 				else {
-					if (productCategoryID == categories[i][j].categoryId) { 
+					if (productCategoryID == categories[i][j].categoryId) {
 						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
 							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select category-selected px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
 					}
