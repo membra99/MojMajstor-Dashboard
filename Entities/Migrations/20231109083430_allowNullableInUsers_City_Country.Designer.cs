@@ -4,6 +4,7 @@ using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20231109083430_allowNullableInUsers_City_Country")]
+    partial class allowNullableInUsers_City_Country
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("CategoriesId");
 
-                    b.ToTable("Attributes", (string)null);
+                    b.ToTable("Attributes");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Categories", b =>
@@ -81,7 +84,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("SeoId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Declaration", b =>
@@ -123,7 +126,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("LanguageID");
 
-                    b.ToTable("Declarations", (string)null);
+                    b.ToTable("Declarations");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Invoice", b =>
@@ -154,7 +157,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("MediaId");
 
-                    b.ToTable("Invoices", (string)null);
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Language", b =>
@@ -171,7 +174,7 @@ namespace Entities.Migrations
 
                     b.HasKey("LanguageID");
 
-                    b.ToTable("Languages", (string)null);
+                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Media", b =>
@@ -209,7 +212,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Medias", (string)null);
+                    b.ToTable("Medias");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.MediaType", b =>
@@ -225,7 +228,7 @@ namespace Entities.Migrations
 
                     b.HasKey("MediaTypeId");
 
-                    b.ToTable("MediaTypes", (string)null);
+                    b.ToTable("MediaTypes");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Order", b =>
@@ -252,7 +255,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.OrderDetails", b =>
@@ -278,7 +281,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Product", b =>
@@ -347,7 +350,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("SeoId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.ProductAttributes", b =>
@@ -375,7 +378,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductAttributes", (string)null);
+                    b.ToTable("ProductAttributes");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Sale", b =>
@@ -411,7 +414,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("SaleTypeId");
 
-                    b.ToTable("Sales", (string)null);
+                    b.ToTable("Sales");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.SaleType", b =>
@@ -428,7 +431,7 @@ namespace Entities.Migrations
 
                     b.HasKey("SaleTypeId");
 
-                    b.ToTable("SaleTypes", (string)null);
+                    b.ToTable("SaleTypes");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Seo", b =>
@@ -452,7 +455,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("LanguageID");
 
-                    b.ToTable("Seos", (string)null);
+                    b.ToTable("Seos");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.SiteContent", b =>
@@ -499,7 +502,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("SiteContents", (string)null);
+                    b.ToTable("SiteContents");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.SiteContentType", b =>
@@ -516,7 +519,7 @@ namespace Entities.Migrations
 
                     b.HasKey("SiteContentTypeId");
 
-                    b.ToTable("SiteContentTypes", (string)null);
+                    b.ToTable("SiteContentTypes");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Tag", b =>
@@ -545,7 +548,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("MediaId");
 
-                    b.ToTable("Tags", (string)null);
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Users", b =>
@@ -602,7 +605,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("MediaId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Entities.Universal.MainData.Attributes", b =>

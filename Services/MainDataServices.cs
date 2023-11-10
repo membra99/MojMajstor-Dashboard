@@ -1,26 +1,12 @@
 ﻿using AutoMapper;
 using Entities.Context;
-using Entities.Migrations;
 using Entities.Universal.MainData;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using NetTopologySuite.Index.HPRtree;
 using OfficeOpenXml;
 using Services.AWS;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Policy;
-using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
-using Universal.DTO.ViewDTO;
 using static Universal.DTO.CommonModels.CommonModels;
 using Seo = Entities.Universal.MainData.Seo;
 
@@ -243,7 +229,8 @@ namespace Services
 			return from x in _context.Products
 				   .Include(x => x.Categories)
 				   where (id == 0 || x.ProductId == id) &&
-				   (langId == 0 || x.LanguageID == langId)
+				   (langId == 0 || x.LanguageID == langId) &&
+				   (x.IsActive == true)
 				   select _mapper.Map<ProductODTO>(x);
 		}
 
@@ -266,8 +253,8 @@ namespace Services
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)
 			{
-				DateTime startdate = DateTime.ParseExact(product.SaleIDTO.StartDate, "dd/MM/yyyy HH:mm:ss", null);
-				DateTime enddate = DateTime.ParseExact(product.SaleIDTO.EndDate, "dd/MM/yyyy HH:mm:ss", null);
+				DateTime startdate = DateTime.ParseExact(product.SaleIDTO.StartDate, "dd-MMM-yy HH:mm:ss", null);
+				DateTime enddate = DateTime.ParseExact(product.SaleIDTO.EndDate, "dd-MMM-yy HH:mm:ss", null);
 				product.SaleIDTO.StartDate = startdate.ToString("yyyy-MM-dd");
 				product.SaleIDTO.EndDate = enddate.ToString("yyyy-MM-dd");
 			}
@@ -329,13 +316,21 @@ namespace Services
 
 		public async Task<int> AddSeo(string googleDesc, string googleKeywords, int? langId)
 		{
-			Entities.Universal.MainData.Seo seo = new Entities.Universal.MainData.Seo();
+			Seo seo = new Seo();
 			seo.SeoId = 0;
 			seo.GoogleDesc = googleDesc;
 			seo.GoogleKeywords = googleKeywords;
 			seo.LanguageID = langId != null ? langId : null;
-			_context.Seos.Add(seo);
-			await SaveContextChangesAsync();
+			try
+			{
+				_context.Seos.Add(seo);
+				await SaveContextChangesAsync();
+			} 
+			catch(Exception ex)
+			{
+				Console.WriteLine(ex.ToString());	
+			}
+
 
 			return await (from x in _context.Seos
 						  where x.SeoId == seo.SeoId
@@ -439,15 +434,17 @@ namespace Services
 
 			var productODTO = await GetProductsById(id);
 
-			var prodAttr = await _context.ProductAttributes.Where(x => x.ProductId == product.ProductId).ToListAsync();
-			foreach (var item in prodAttr)
+			product.IsActive = false;
+
+			try
 			{
-				_context.ProductAttributes.Remove(item);
+				_context.Entry(product).State = EntityState.Modified;
+			} catch(Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
 			}
-
-			_context.Products.Remove(product);
+			
 			await SaveContextChangesAsync();
-
 			return productODTO;
 		}
 
@@ -634,7 +631,7 @@ namespace Services
 		{
 			var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);
 			siteContent.IsActive = true;
-			if (siteContentIDTO.IsImageChanged == "true")
+			if (siteContentIDTO.IsImageChanged == "true" && siteContentIDTO.MediaId == null)
 				siteContent.MediaId = null;
 			
 			if(siteContentIDTO.SeoIDTO.SeoId != null)
@@ -893,7 +890,7 @@ namespace Services
 
 		public async Task<DeclarationODTO> GetDeclarationById(int id)
 		{
-			return await GetDeclarations(id).AsNoTracking().SingleOrDefaultAsync();
+			return await GetDeclarations(id).AsNoTracking().FirstOrDefaultAsync();
 		}
 
 		public async Task<DeclarationIDTO> GetDeclarationForEditById(int id)
@@ -921,7 +918,7 @@ namespace Services
 		{
 			var declaration = _mapper.Map<Declaration>(declarationIDTO);
 			_context.Entry(declaration).State = EntityState.Modified;
-			await SaveContextChangesAsync();
+			await _context.SaveChangesAsync();
 
 			return await GetDeclarationById(declaration.DeclarationId);
 		}
@@ -951,6 +948,14 @@ namespace Services
 		{
 			var tag = await _context.Tags.FindAsync(id);
 			if (tag == null) return null;
+
+			var sitesContent = await _context.SiteContents.Where(x => x.TagId == id).ToListAsync();
+			foreach (var site in sitesContent)
+			{
+				site.TagId = null;
+				_context.Entry(site).State = EntityState.Modified;
+				await _context.SaveChangesAsync();
+			}
 
 			var tagODTO = await GetTagById(id);
 
@@ -1211,13 +1216,22 @@ namespace Services
 		{
 			var tag = _mapper.Map<Tag>(tagIDTO);
 			if (tagIDTO.IsImageChanged == "true")
-				tag.MediaId = null;
-			_context.Entry(tag).State = EntityState.Modified;
+				tagIDTO.MediaId = null;
+			
 			if(tagIDTO.TagImage == null && tagIDTO.IsImageChanged != "true")
 			{
 				_context.Entry(tag).Property(x => x.MediaId).IsModified = false;
 			}
-			await SaveContextChangesAsync();
+			try
+			{
+				_context.Entry(tag).State = EntityState.Modified;
+				await SaveContextChangesAsync();
+			} 
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
+
 
 			return await GetTagById(tag.TagId);
 		}

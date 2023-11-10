@@ -56,13 +56,13 @@
 		<header class="bg-dark header-navigation">
 			<div class="d-flex flex-row justify-content-between align-items-center" style="height:inherit">
 				<a href="/Dashboard"><img src="~/images/logo_2_2.svg" width="35" height="35" style="margin-left:15px" /></a>
-				<div class="d-flex flex-row h-75">
+				<div class="d-flex flex-row align-items-center gap-2">
 					@Html.DropDownList("language", new List<SelectListItem>
 					{
 					new SelectListItem() { Text = "English", Value = "1"},
 					new SelectListItem() { Text = "Serbian", Value = "2"}
 					}, new { @class="form-control" })
-					@Html.ActionLink("Log Out", "Logout", "Authentication", null, new { @class = "btn btn-secondary", style = "margin-right:15px; font-size: 12px;" })
+					@Html.ActionLink("Log Out", "Logout", "Authentication", null, new { @class = "btn btn-secondary", style = "margin-right:15px; font-size: 12px; width: 90%;" })
 				</div>
 			</div>
 		</header>

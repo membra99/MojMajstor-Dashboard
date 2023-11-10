@@ -1,5 +1,9 @@
 ﻿@*//TODO format doc to be more like a view*@
 
+@{
+	ViewData["Title"] = "Add new media";
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,9 +16,9 @@
 		<div class="form-group">
 			<div class="col-md-6 mx-auto" id="dropzone">
 				<div style="background-color:indigo">
-					<label style="font-size:20px; color:white; text-align:center;">Add new content</label>
+					<label style="font-size:20px; padding: 0.5em; color:white; text-align:center;">Add new content</label>
 				</div>
-				<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader" style="width:655px; height:280px">
+				<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader" style="height:280px">
 					Drop files here or click to upload <br />
 				</div>
 			</div>

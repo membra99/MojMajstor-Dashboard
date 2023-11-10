@@ -12,6 +12,7 @@
 	{
 		<div class="mb-3">
 			@Html.HiddenFor(model => model.LanguageID,new { @id = "lang" })
+			@Html.HiddenFor(model => model.DeclarationId, new { @model = "modelId"})
 		</div>
 		<div class="form-group mb-3">
 			@Html.LabelRequiredFor(model => model.DeclarationName, "Declaration name:", true)

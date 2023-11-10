@@ -69,7 +69,7 @@
 
 	<div class="d-flex flex-column justify-content-center mb-3">
 		@Html.Label("Avatar:")
-		<img id="avatar-preview" width="150" height="150" style="border: 2px solid indigo">
+		<img src="@Url.Action("GetImage", "Dashboard", new {path = @Model.ImageSrc})" id="avatar-preview" width="150" height="150" style="border: 2px solid indigo">
 	</div>
 
 </div>

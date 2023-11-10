@@ -101,8 +101,7 @@ namespace Services
 
 		public async Task<UsersIDTO> GetUserByIdForEdit(int id)
 		{
-			return _mapper.Map<UsersIDTO>(await _context.Users.Include(x => x.Media).Where(x => x.UsersId == id).AsNoTracking().SingleOrDefaultAsync());
-            
+			return _mapper.Map<UsersIDTO>(await _context.Users.Include(x => x.Media).Where(x => x.UsersId == id).AsNoTracking().SingleOrDefaultAsync()); 
 		}
 
 		public async Task<UsersIDTO> GetUserByPassword(string password)
@@ -129,9 +128,15 @@ namespace Services
             ms.SendEmail(new EmailIDTO { To = user.Email, Subject = user.FirstName + ", please set your password in order to access your new account!", 
                 Body = "Press the activation link to set your password and gain access to your account. <br> <a href='"+ AppBaseUrl + "/Dashboard/SetPassword?key=" + userKey + "'>Set your password</a>"
             });
-            _context.Users.Add(user);
+            try
+            {
+                _context.Users.Add(user);
 
-            await SaveContextChangesAsync();
+                await SaveContextChangesAsync();
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());   
+            }
 
             return await GetUserById(user.UsersId);
         }
@@ -182,11 +187,19 @@ namespace Services
                 var media = new Media();
                 media.Extension = successUpload.Split('.')[1];
                 media.Src = key.First();
-                media.MediaTypeId = (mediatypeId == null) ? _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == "Avatar").MediaTypeId : (int)mediatypeId;
+                media.MediaTypeId = (mediatypeId == null) ? _context.MediaTypes.Where(x => x.MediaTypeName == "Avatar").Select(x => x.MediaTypeId).FirstOrDefault() : (int)mediatypeId;
                 var index = media.Src.LastIndexOf('/');
                 media.MetaTitle = media.Src.Substring(index + 1);
-                _context.Medias.Add(media);
-                await _context.SaveChangesAsync();
+                try
+                {
+					_context.Medias.Add(media);
+					await _context.SaveChangesAsync();
+				}
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
                 return _mapper.Map<MediaODTO>(media);
             }
             else
@@ -198,7 +211,7 @@ namespace Services
         public async Task<UsersODTO> EditUser(UsersIDTO userIDTO)
         {
             var user = _mapper.Map<Users>(userIDTO);
-            if (userIDTO.IsImageChanged == "true")
+            if (userIDTO.IsImageChanged == "true" && userIDTO.MediaId == null)
                 user.MediaId = null;
             _context.Entry(user).State = EntityState.Modified;
 			if (userIDTO.Avatar == null && userIDTO.IsImageChanged != "true")

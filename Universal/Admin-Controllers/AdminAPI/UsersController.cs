@@ -21,6 +21,7 @@ namespace Universal.Admin_Controllers.AdminAPI
         }
 
 		[HttpGet]
+		[AllowAnonymous]
 		public async Task<ActionResult<List<UsersODTO>>> AllUsers()
 		{
 			var Users = await _userDataServices.GetAllUsers();
@@ -32,7 +33,8 @@ namespace Universal.Admin_Controllers.AdminAPI
 		}
 
 		[HttpGet("{id}")]
-        public async Task<ActionResult<UsersODTO>> GetById(int id)
+		[AllowAnonymous]
+		public async Task<ActionResult<UsersODTO>> GetById(int id)
         {
             var User = await _userDataServices.GetUserById(id);
             if (User == null)
@@ -140,6 +142,7 @@ namespace Universal.Admin_Controllers.AdminAPI
 		}
 
 		[HttpDelete("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<UsersODTO>> DeleteUsers(int id)
         {
             try

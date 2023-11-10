@@ -4,8 +4,7 @@
     z-index: 5;
     background-color: indigo;
     margin-top: 50px;
-}
-
+} 
 .header-navigation {
     width: 100vw;
     height: 50px;
@@ -63,6 +62,7 @@
     .side-anchor:hover {
         background-color: #f8f9fa;
         color: blueviolet;
+        cursor: pointer;
     }
 
 .user {

@@ -151,7 +151,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "DOT/noimg_202310041133074736.jpg";
+				path = "DOT/no_image_202311060853178444.jpg";
 
             var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
@@ -533,37 +533,52 @@ namespace Universal.Admin_Controllers.AdminMVC
             awsFile.Attachments = new List<IFormFile>();
             if (tagIDTO.TagImage != null)
                 awsFile.Attachments.Add(tagIDTO.TagImage);
-            try
-            {
-                string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-                if (!IsSupportedExtension(extension))
-                {
-                    _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-                    _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                    return RedirectToAction("NewTag");
-                }
-                else
-                {
-                    if (awsFile.Attachments[0].Length > 1000000)
-                    {
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                        return RedirectToAction("NewTag");
-                    }
-                    else
-                    {
-                        var media = await _userDataServices.UploadUserPicture(awsFile,5);
-                        if (media != null) tagIDTO.MediaId = media.MediaId;
-                        var tag = await _mainDataServices.AddTag(tagIDTO);
-                        return RedirectToAction("AllTags", "Dashboard");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("Home");
-            }
+			try
+			{
+				if (awsFile.Attachments.Count > 0)
+				{
+					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+					if (!IsSupportedExtension(extension))
+					{
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+						return RedirectToAction("NewTag");
+					}
+					else
+					{
+						if (awsFile.Attachments[0].Length > 1000000)
+						{
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+							return RedirectToAction("NewTag");
+						}
+						else
+						{
+							var media = await _userDataServices.UploadUserPicture(awsFile, null);
+							if (media != null) tagIDTO.MediaId = media.MediaId;
+							var tag = await _mainDataServices.AddTag(tagIDTO);
+							return RedirectToAction("AllTags", "Dashboard");
+						}
+					}
+				}
+				else
+				{
+					var tag = await _mainDataServices.AddTag(tagIDTO);
+					if(tag == null)
+					{
+						ModelState.AddModelError("Error", $"Error while adding new tag");
+						return View("Tag/Newtag");
+					}
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Tag is added");
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+					return RedirectToAction("AllTags", "Dashboard");
+				}
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
         }
 
         public async Task<IActionResult> EditTag(int id)
@@ -612,7 +627,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							var media = await _userDataServices.UploadUserPicture(awsFile,5);
+							var media = await _userDataServices.UploadUserPicture(awsFile, null);
 							if (media != null) tagIDTO.MediaId = media.MediaId;
 							await _mainDataServices.EditTag(tagIDTO);
 						}
