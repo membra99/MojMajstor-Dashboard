@@ -1145,7 +1145,10 @@ namespace Services
 		{
 			return await GetLanguage(id).AsNoTracking().SingleOrDefaultAsync();
 		}
-
+		public async Task<List<LanguageODTO>> GetAllLanguages()
+		{
+			return await GetLanguage(0).AsNoTracking().ToListAsync();
+		}
 		public async Task<LanguageODTO> EditLanguage(LanguageIDTO languageIDTO)
 		{
 			var language = _mapper.Map<Language>(languageIDTO);

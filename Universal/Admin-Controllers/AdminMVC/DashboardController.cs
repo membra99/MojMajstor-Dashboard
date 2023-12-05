@@ -128,7 +128,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					}
 					return RedirectToAction("AllUsers", "Dashboard");
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
@@ -153,11 +153,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 			if (path == null)
 				path = "DOT/no_image_202311060853178444.jpg";
 
-            var picture = await _AWSS3FileService.GetFile(path);
+			var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
 			using (MemoryStream ms = new MemoryStream())
 			{
-                picture.CopyTo(ms);
+				picture.CopyTo(ms);
 				bytes = ms.ToArray();
 			}
 
@@ -172,16 +172,16 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> DownloadExcelTemplate()
 		{
-            var picture = await _AWSS3FileService.GetFile("DOT/ExcelTemplate.xlsx");
-            byte[] bytes = null;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                picture.CopyTo(ms);
-                bytes = ms.ToArray();
-            }
+			var picture = await _AWSS3FileService.GetFile("DOT/ExcelTemplate.xlsx");
+			byte[] bytes = null;
+			using (MemoryStream ms = new MemoryStream())
+			{
+				picture.CopyTo(ms);
+				bytes = ms.ToArray();
+			}
 
-            return File(bytes, MediaTypeNames.Text.Plain,"ExcelTemplate.xlsx");
-        }
+			return File(bytes, MediaTypeNames.Text.Plain, "ExcelTemplate.xlsx");
+		}
 
 		public async Task<IActionResult> ImportExcel(IFormFile file)
 		{
@@ -194,11 +194,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 
 			var excelImport = await _mainDataServices.ImportFromExcel(file);
-            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage","Import data added successfully!");
-            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Import data added successfully!");
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
 
-            return RedirectToAction("ImportExc", "Dashboard");
-        }
+			return RedirectToAction("ImportExc", "Dashboard");
+		}
 
 
 		public async Task<IActionResult> EditUserAction(UsersIDTO userIDTO)
@@ -215,7 +215,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				awsFile.Attachments.Add(userIDTO.Avatar);
 			try
 			{
-				if(awsFile.Attachments.Count > 0)
+				if (awsFile.Attachments.Count > 0)
 				{
 					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
 					if (!IsSupportedExtension(extension))
@@ -234,7 +234,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							var media = await _userDataServices.UploadUserPicture(awsFile,null);
+							var media = await _userDataServices.UploadUserPicture(awsFile, null);
 							if (media != null) userIDTO.MediaId = media.MediaId;
 							var users = await _userDataServices.EditUser(userIDTO);
 							if (users == null)
@@ -260,7 +260,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
 					return RedirectToAction("AllUsers", "Dashboard");
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
@@ -286,15 +286,15 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Media/AddMedia");
 		}
 
-        public async Task<IActionResult> uploadMedia(IFormFile file)
-        {
+		public async Task<IActionResult> uploadMedia(IFormFile file)
+		{
 			var mediatypeId = 3;
-            AWSFileUpload awsFile = new AWSFileUpload();
-            awsFile.Attachments = new List<IFormFile>();
-                awsFile.Attachments.Add(file);
-            var media = await _userDataServices.UploadUserPicture(awsFile, mediatypeId);
+			AWSFileUpload awsFile = new AWSFileUpload();
+			awsFile.Attachments = new List<IFormFile>();
+			awsFile.Attachments.Add(file);
+			var media = await _userDataServices.UploadUserPicture(awsFile, mediatypeId);
 			return Ok();
-        }
+		}
 
 		public async Task<IActionResult> AllGallery()
 		{
@@ -350,13 +350,13 @@ namespace Universal.Admin_Controllers.AdminMVC
 			{
 				return View("SiteContent/EditSiteContent", await _mainDataServices.GetSiteContentByIdForEdit(siteContentIDTO.SiteContentId));
 			}
-			
+
 			AWSFileUpload awsFile = new AWSFileUpload();
 			awsFile.Attachments = new List<IFormFile>();
 			if (siteContentIDTO.Image != null)
 				awsFile.Attachments.Add(siteContentIDTO.Image);
-			
-			
+
+
 			try
 			{
 				if (awsFile.Attachments.Count > 0)
@@ -390,14 +390,14 @@ namespace Universal.Admin_Controllers.AdminMVC
 								_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Page is updated");
 							}
 							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-							return RedirectToAction("AllSiteContent", "Dashboard", new {type = siteContent.SiteContentTypeName, langId = siteContent.LanguageID });
+							return RedirectToAction("AllSiteContent", "Dashboard", new { type = siteContent.SiteContentTypeName, langId = siteContent.LanguageID });
 						}
 					}
 				}
 				else
 				{
 					var siteContent = await _mainDataServices.EditSiteContent(siteContentIDTO);
-					if(siteContent.SiteContentTypeName == "Blog")
+					if (siteContent.SiteContentTypeName == "Blog")
 					{
 						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Blog is updated");
 					}
@@ -474,8 +474,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 					return RedirectToAction("AllSiteContent", "Dashboard", new { type = site });
 				}
-				
-				
+
+
 			}
 			catch (Exception ex)
 			{
@@ -523,55 +523,40 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> AddTags(TagIDTO tagIDTO)
 		{
-            if (!ModelState.IsValid)
-            {
-                return View("Tag/NewTag", new TagIDTO());
-            }
+			if (!ModelState.IsValid)
+			{
+				return View("Tag/NewTag", new TagIDTO());
+			}
 
-            //						FILE UPLOAD SYSTEM
-            AWSFileUpload awsFile = new AWSFileUpload();
-            awsFile.Attachments = new List<IFormFile>();
-            if (tagIDTO.TagImage != null)
-                awsFile.Attachments.Add(tagIDTO.TagImage);
+			//						FILE UPLOAD SYSTEM
+			AWSFileUpload awsFile = new AWSFileUpload();
+			awsFile.Attachments = new List<IFormFile>();
+			if (tagIDTO.TagImage != null)
+				awsFile.Attachments.Add(tagIDTO.TagImage);
 			try
 			{
-				if (awsFile.Attachments.Count > 0)
+				string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+				if (!IsSupportedExtension(extension))
 				{
-					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-					if (!IsSupportedExtension(extension))
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+					return RedirectToAction("NewTag");
+				}
+				else
+				{
+					if (awsFile.Attachments[0].Length > 1000000)
 					{
-						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
 						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
 						return RedirectToAction("NewTag");
 					}
 					else
 					{
-						if (awsFile.Attachments[0].Length > 1000000)
-						{
-							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-							return RedirectToAction("NewTag");
-						}
-						else
-						{
-							var media = await _userDataServices.UploadUserPicture(awsFile, null);
-							if (media != null) tagIDTO.MediaId = media.MediaId;
-							var tag = await _mainDataServices.AddTag(tagIDTO);
-							return RedirectToAction("AllTags", "Dashboard");
-						}
+						var media = await _userDataServices.UploadUserPicture(awsFile, 5);
+						if (media != null) tagIDTO.MediaId = media.MediaId;
+						var tag = await _mainDataServices.AddTag(tagIDTO);
+						return RedirectToAction("AllTags", "Dashboard");
 					}
-				}
-				else
-				{
-					var tag = await _mainDataServices.AddTag(tagIDTO);
-					if(tag == null)
-					{
-						ModelState.AddModelError("Error", $"Error while adding new tag");
-						return View("Tag/Newtag");
-					}
-					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Tag is added");
-					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-					return RedirectToAction("AllTags", "Dashboard");
 				}
 			}
 			catch (Exception ex)
@@ -579,22 +564,22 @@ namespace Universal.Admin_Controllers.AdminMVC
 				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
 				return View("Home");
 			}
-        }
+		}
 
-        public async Task<IActionResult> EditTag(int id)
-        {
-            try
-            {
+		public async Task<IActionResult> EditTag(int id)
+		{
+			try
+			{
 				CheckForToast();
-                var tag = await _mainDataServices.GetTagForEditById(id);
-                return View("Tag/EditTag", tag);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("Home");
-            }
-        }
+				var tag = await _mainDataServices.GetTagForEditById(id);
+				return View("Tag/EditTag", tag);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
 
 		public async Task<IActionResult> EditTagModel(TagIDTO tagIDTO)
 		{
@@ -608,7 +593,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				awsFile.Attachments.Add(tagIDTO.TagImage);
 			try
 			{
-				if(awsFile.Attachments.Count != 0)
+				if (awsFile.Attachments.Count != 0)
 				{
 					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
 					if (!IsSupportedExtension(extension))
@@ -627,7 +612,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							var media = await _userDataServices.UploadUserPicture(awsFile, null);
+							var media = await _userDataServices.UploadUserPicture(awsFile, 5);
 							if (media != null) tagIDTO.MediaId = media.MediaId;
 							await _mainDataServices.EditTag(tagIDTO);
 						}
@@ -637,7 +622,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				{
 					await _mainDataServices.EditTag(tagIDTO);
 				}
-                
+
 			}
 			catch (Exception ex)
 			{
@@ -652,21 +637,21 @@ namespace Universal.Admin_Controllers.AdminMVC
 		}
 
 		public async Task<IActionResult> AllTags()
-        {
+		{
 			CheckForToast();
-            try
-            {
-                var tags = await _mainDataServices.GetTags();
-                return View("Tag/AllTags", tags);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("Home");
-            }
-        }
+			try
+			{
+				var tags = await _mainDataServices.GetTags();
+				return View("Tag/AllTags", tags);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
 
-        public async Task<IActionResult> NewTag()
+		public async Task<IActionResult> NewTag()
 		{
 			return View("Tag/NewTag");
 		}
@@ -699,19 +684,19 @@ namespace Universal.Admin_Controllers.AdminMVC
 		}
 
 		public async Task<IActionResult> AllDeclaration()
-        {
-            try
-            {
-                CheckForToast();
-                var declaration = await _mainDataServices.GetAllDeclarations();
-                return View("Declaration/Declaration", declaration);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("Home");
-            }
-        }
+		{
+			try
+			{
+				CheckForToast();
+				var declaration = await _mainDataServices.GetAllDeclarations();
+				return View("Declaration/Declaration", declaration);
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+				return View("Home");
+			}
+		}
 
 		public async Task<IActionResult> AddDeclarations(DeclarationIDTO declarationIDTO)
 		{
@@ -830,8 +815,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 				}
 				devidedList.Reverse();
 			}
-
 			var declarations = await _mainDataServices.GetAllDeclarations();
+			ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
 			return View("Data/NewData", new DataIDTO
 			{
 				CategoriesODTOs = categories,
@@ -875,6 +860,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				}
 
 				var declarations = await _mainDataServices.GetAllDeclarations();
+				ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
 				return View("Data/NewData", new DataIDTO
 				{
 					CategoriesODTOs = categories,
@@ -1169,7 +1155,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
 					return RedirectToAction("AllCategories");
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
@@ -1177,7 +1163,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
 				return View("Home");
 			}
-			
+
 		}
 
 		public async Task<IActionResult> EditCategory(CategoryAttributeIDTO categoryAttributeIDTO)
@@ -1189,10 +1175,10 @@ namespace Universal.Admin_Controllers.AdminMVC
 				awsFile.Attachments.Add(categoryAttributeIDTO.CategoryImage);
 				categoryAttributeIDTO.CategoryIDTO.CategoryImage = categoryAttributeIDTO.CategoryImage.FileName;
 			}
-				
+
 			try
 			{
-				if(categoryAttributeIDTO.CategoryImage != null)
+				if (categoryAttributeIDTO.CategoryImage != null)
 				{
 					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
 					if (!IsSupportedExtension(extension))
@@ -1225,7 +1211,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				}
 
 
-				
+
 			}
 			catch (Exception ex)
 			{
@@ -1233,7 +1219,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				ModelState.AddModelError("", $"An error occurred: {ex.Message}");
 				return View("Home");
 			}
-			
+
 		}
 
 		public async Task<IActionResult> EditDeclarationModel(DeclarationIDTO declarationIDTO)

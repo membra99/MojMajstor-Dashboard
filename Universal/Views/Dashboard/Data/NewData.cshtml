@@ -1,205 +1,223 @@
-﻿@model Universal.DTO.ViewDTO.DataIDTO
+﻿@using Universal.DTO.ODTO;
+@model Universal.DTO.ViewDTO.DataIDTO
 
 @{
 	ViewData["Title"] = "New Data";
+	string isActive = "active";
+	var languagesList = ViewData["Languages"] as List<LanguageODTO>;
 }
 
+
 <div class="col-12 bg-light mx-auto rounded-3">
-	@using (Html.BeginForm("AddData", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+	@using (Html.BeginForm("AddData", "Dashboard", FormMethod.Post, new { @id = "form", enctype = "multipart/form-data" }))
 	{
-		<div class="mb-3">
-			@Html.HiddenFor(model => model.ProductIDTO.LanguageID,new { @class = "lang" })
-		</div>
-		<div class="d-flex flex-row justify-content-around">
-			<div class="col-8">
-				<div class="mb-3">
-					<h4>Product</h4>
-				</div>
-				<div class="row">
-					<div class="mb-3">
-						@Html.HiddenFor(model => model.ProductIDTO.LanguageID,new { @class = "lang" })
-					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
-						@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class="text-danger" })
-					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelRequiredFor(model => model.ProductIDTO.ProductName, "Product name:", true)
-						@Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class="form-control", placeholder = "Product Name" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class="text-danger" })
+		@Html.HiddenFor(model => model.ProductIDTO.LanguageID, new { @class = "lang" })
+		<div class="d-flex">
+			<div class="d-flex flex-column" style="border-right:1px solid lightgray;">
+				<div class="d-flex align-items-start">
+					<div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+						@foreach (var language in languagesList)
+						{
+							<button class="nav-link @isActive" id="v-pills-home-tab" data-bs-toggle="pill"
+									data-bs-target="#v-pills-language-@language.LanguageID" type="button" role="tab"
+									aria-controls="v-pills-language-@language.LanguageID" aria-selected="true"
+									onclick="setLanguage(@language.LanguageID)">
+								@language.LanguageName.ToUpper()
+							</button>
+							isActive = "";
+						}
 					</div>
 				</div>
-				<div class="row">
-					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.Quantity, "Product quantity:")
-						@Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type="number", @class="form-control", placeholder="Quantity" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.Quantity, null, new { @class="text-danger" })
-					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelRequiredFor(model => model.ProductIDTO.Price, "Product price:", true)
-						@Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type="number", @class="form-control", placeholder="Price" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.Price, null, new { @class="text-danger" })
-					</div>
-				</div>
-				<div class="row justify-content-center">
-					<div class="form-check from-switch form-group col-3 mb-3">
-						@Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class="form-check-input", role="switch" })
-						@Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On sale", new{ @class="form-check-label" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.IsOnSale, null, new { @id="onSaleCheck", @class="text-danger" })
-					</div>
-					<div class="form-check from-switch form-group col-3 mb-3">
-						@Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class="form-check-input", role="switch" })
-						@Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended", new{ @class="form-check-label" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.Recommended, null, new { @class="text-danger" })
-					</div>
-					<div class="form-check from-switch form-group col-3 mb-3">
-						@Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class="form-check-input", role="switch" })
-						@Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best product", new{ @class="form-check-label" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.BestProduct, null, new { @class="text-danger" })
-					</div>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.Description, "Product description:")
-					@Html.TextAreaFor(model => model.ProductIDTO.Description, 15, 1, new { @Id="tiny", @class="form-control", placeholder = "Description" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class="text-danger" })
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.Specification, "Product specification:")
-					@Html.TextAreaFor(model => model.ProductIDTO.Specification, 15, 1, new { @Id="tiny", @class="form-control", placeholder = "Specification" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class="text-danger" })
-				</div>
-				
 			</div>
-			<div id="section2" class="col-3">
-				<div class="mb-3">
-					<h4>Category</h4>
+			<div class="d-flex flex-row justify-content-around">
+				<div class="col-8">
+					<div class="mb-3">
+						<h4>Product</h4>
+					</div>
+					<div class="row">
+						@Html.HiddenFor(model => model.ProductIDTO.LanguageID, new { @class = "lang" })
+						<div class="form-group col-6 mb-3">
+							@Html.LabelRequiredFor(model => model.ProductIDTO.ProductName, "Product name:", true)
+							@Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class = "form-control", placeholder = "Product Name" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-group mb-3">
+							@Html.LabelFor(model => model.ProductIDTO.Description, "Product description:")
+							@Html.TextAreaFor(model => model.ProductIDTO.Description, 15, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Description" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-group mb-3">
+							@Html.LabelFor(model => model.ProductIDTO.Specification, "Product specification:")
+							@Html.TextAreaFor(model => model.ProductIDTO.Specification, 15, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Specification" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class = "text-danger" })
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-4 mb-3">
+							@Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
+							@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class = "form-control", placeholder = "Product Code" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-group col-4 mb-3">
+							@Html.LabelFor(model => model.ProductIDTO.Quantity, "Product quantity:")
+							@Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type = "number", @class = "form-control", placeholder = "Quantity" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.Quantity, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-group col-4 mb-3">
+							@Html.LabelRequiredFor(model => model.ProductIDTO.Price, "Product price:", true)
+							@Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type = "number", @class = "form-control", placeholder = "Price" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.Price, null, new { @class = "text-danger" })
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="form-check from-switch form-group col-3 mb-3">
+							@Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class = "form-check-input", role = "switch" })
+							@Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On sale", new { @class = "form-check-label" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.IsOnSale, null, new { @id = "onSaleCheck", @class = "text-danger" })
+						</div>
+						<div class="form-check from-switch form-group col-3 mb-3">
+							@Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class = "form-check-input", role = "switch" })
+							@Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended", new { @class = "form-check-label" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.Recommended, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-check from-switch form-group col-3 mb-3">
+							@Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class = "form-check-input", role = "switch" })
+							@Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best product", new { @class = "form-check-label" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.BestProduct, null, new { @class = "text-danger" })
+						</div>
+					</div>
+
 				</div>
-				@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-				<div class="form-control mb-3 rounded-3 p-2">
-					@Html.HiddenFor(model => model.ProductIDTO.CategoriesId, new { @id = "categoryID"})
-					<ul id="main-list">
-					</ul>
-				</div>
-				@*<div class="form-group mb-3">
+				<div id="section2" class="col-3">
+					<div class="mb-3">
+						<h4>Category</h4>
+					</div>
 					@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-					@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
+					<div class="form-control mb-3 rounded-3 p-2">
+						@Html.HiddenFor(model => model.ProductIDTO.CategoriesId, new { @id = "categoryID" })
+						<ul id="main-list">
+						</ul>
+					</div>
+					@*<div class="form-group mb-3">
+				@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
+				@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
 				new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
 				"Select Category",new { @class="form-control"})
-					@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
+				@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
 				</div>*@
-				<div id="attributeSection" class="form-group mb-3">
-				</div>
-				<hr>
-				<div class="form-group col-6 mb-3">
-					<h4>Sale</h4>
-				</div>
-				<div class="row">
+					<div id="attributeSection" class="form-group mb-3">
+					</div>
+					<hr>
 					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, "Sale type:")
-						@Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
-					new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
-					"Select Sale Type",new { @class="form-control", disabled="disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class="text-danger" })
+						<h4>Sale</h4>
+					</div>
+					<div class="row">
+						<div class="form-group col-6 mb-3">
+							@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, "Sale type:")
+							@Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
+																new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
+																"Select Sale Type", new { @class = "form-control", disabled = "disabled" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-group col-6 mb-3">
+							@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.Value, "Sale value:")
+							@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled = "disabled" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class = "text-danger" })
+						</div>
+						<div class="form-group mb-3">
+							@Html.Label("Sale start & end date:")
+							@Html.TextBox("datefilter", null, null, new { @class = "form-control", placeholder = "Start & End Date", disabled = "disabled" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class = "text-danger" })
+							@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class = "text-danger" })
+
+							@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
+							@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
+						</div>
+						@*<div class="form-group col-6 mb-3">
+					@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
+					@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
+					@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
 					</div>
 					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.Value, "Sale value:")
-						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled="disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class="text-danger" })
+					@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
+					@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
+					@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
+					</div>*@
+					</div>
+					<hr>
+					<div class="form-group mb-3">
+						<h4>Declaration</h4>
 					</div>
 					<div class="form-group mb-3">
-						@Html.Label("Sale start & end date:")
-						@Html.TextBox("datefilter", null, null, new { @class="form-control", placeholder="Start & End Date", disabled="disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
-
-						@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
-						@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
+						@Html.LabelFor(model => model.ProductIDTO.DeclarationId, "Declaration:")
+						@Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
+												new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
+												"Select Declaration", new { @class = "form-control" })
+						@Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class = "text-danger" })
 					</div>
-					@*<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
-						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
+					<hr>
+					<div class="form-group mb-3">
+						<h4>SEO</h4>
 					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
-						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
-				</div>*@
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>Declaration</h4>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.DeclarationId, "Declaration:")
-					@Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
-				new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
-				"Select Declaration", new { @class="form-control" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class="text-danger" })
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>SEO</h4>
-				</div>
-				<div class="form-group mb-3">
-					<div class="mb-3">
-						@Html.HiddenFor(model => model.ProductIDTO.SeoIDTO.LanguageID,new { @class = "lang" })
+					<div class="form-group mb-3">
+						<div class="mb-3">
+							@Html.HiddenFor(model => model.ProductIDTO.SeoIDTO.LanguageID, new { @class = "lang" })
+						</div>
+						@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
+						@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "form-control", placeholder = "Google Description" })
+						@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "text-danger" })
 					</div>
-					@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
-					@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="form-control", placeholder = "Google Description" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="text-danger" })
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, "Meta keywords:")
-					@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="form-control", placeholder = "Google Keywords" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="text-danger" })
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>Feature Image</h4>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
-					@Html.TextBoxFor(model => model.FeaturedImage, null, new { type="file", @class="form-control mb-3", runat="server", onchange="loadFile(event)"})
-					@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class="text-danger" })
-					<div class="text-center image-container">
-						<img src="@Url.Action("GetImage","Dashboard")" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
-						<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
+					<div class="form-group mb-3">
+						@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, "Meta keywords:")
+						@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "form-control", placeholder = "Google Keywords" })
+						@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "text-danger" })
 					</div>
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>Gallery Images</h4>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.GalleryImages, "Product gallery images:")
-					@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file", id="file-gallery", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
-					@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" })
-					<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
+					<hr>
+					<div class="form-group mb-3">
+						<h4>Feature Image</h4>
+					</div>
+					<div class="form-group mb-3">
+						@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
+						@Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", runat = "server", onchange = "loadFile(event)" })
+						@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
 						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
+							<img src="@Url.Action("GetImage","Dashboard")" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+							<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
 						</div>
 					</div>
+					<hr>
+					<div class="form-group mb-3">
+						<h4>Gallery Images</h4>
+					</div>
+					<div class="form-group mb-3">
+						@Html.LabelFor(model => model.GalleryImages, "Product gallery images:")
+						@Html.TextBoxFor(model => model.GalleryImages, null, new { type = "file", id = "file-gallery", @class = "form-control mb-3", runat = "server", multiple = "multiple", onchange = "loadMultipleFile(event)" })
+						@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
+						<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
+							</div>
+						</div>
+					</div>
+					<hr>
 				</div>
-				<hr>
 			</div>
 		</div>
 
@@ -209,8 +227,14 @@
 	}
 </div>
 
-@section Scripts{
+@section Scripts {
 	<script>
+		const form = document.getElementById("form");
+		form.addEventListener("submit", function (event) {
+			console.log(event);
+			console.log($('#form').serializeArray())
+		});
+
 		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
 		for (let i = 0; i < categories.length; i++) {
 			for (let j = 0; j < categories[i].length; j++) {
@@ -265,7 +289,7 @@
 
 		function unsetImage(event) {
 			let image = document.getElementById('featured-preview');
-			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			image.src = '@Url.Action("GetImage", "Dashboard", null)';
 			$("#file-featured").val(null);
 
 			let element = image.nextElementSibling;
@@ -276,7 +300,7 @@
 		function unsetImageMultiple(event, position) {
 			$('[id^=gallery-preview-]').each(function () {
 				let image = this;
-				image.src = '@Url.Action("GetImage","Dashboard",null)';
+				image.src = '@Url.Action("GetImage", "Dashboard", null)';
 				let element = image.nextElementSibling;
 				element.classList.remove("hover-unset");
 			});
@@ -349,8 +373,7 @@
 		});
 
 		$(".category-select").click(function () {
-			if(this.classList.contains("category-selected"))
-			{
+			if (this.classList.contains("category-selected")) {
 				return;
 			}
 
@@ -391,9 +414,18 @@
 
 		$('.lang').val($('#language').val());
 
-		$('#language').change(function() {
+		$('#language').change(function () {
 			$('.lang').val($(this).val());
 		});
 
+		$("[id^='language_']").click(function () {
+			$("[id^='language_']").removeClass("language-active");
+			$(this).addClass("language-active");
+			$('.lang').val(this.id.split('_')[1]);
+		});
+
+		function setLanguage(langId) {
+			$('.lang').val(langId);
+		}
 	</script>
 }

@@ -243,3 +243,7 @@ ul, #main-list {
 .modclass {
     margin-bottom: 20px;
 }
+
+.language-active {
+    border-right: 5px solid indigo;
+}
