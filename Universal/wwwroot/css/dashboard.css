@@ -243,7 +243,17 @@ ul, #main-list {
 .modclass {
     margin-bottom: 20px;
 }
+#v-pills-lang-tab{
+    color:rebeccapurple;
+}
 
-.language-active {
-    border-right: 5px solid indigo;
+.language-active.active {
+    color: white !important;
+    background-color: rebeccapurple !important;
+}
+
+.dataTables_wrapper 
+{
+    width:100%;
+    padding-left:15px;
 }
