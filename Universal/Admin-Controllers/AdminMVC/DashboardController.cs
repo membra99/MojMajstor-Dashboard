@@ -151,7 +151,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "Universal/no_image_202311060853178444.jpg";
+				path = "Universal/no_image_202312121231258848.jpg";
 
 			var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
@@ -788,6 +788,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully Deleted Product");
 				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
 				CheckForToast();
+				ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
 				var data = await _mainDataServices.DeleteProduct(dataId);
 				var products = await _mainDataServices.GetAllProducts(0);
 				return View("Data/Data", products);
