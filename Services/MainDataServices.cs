@@ -247,8 +247,8 @@ namespace Services
 		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
-			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 7).Select(x => x.Src).SingleOrDefaultAsync();
-			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 3).Select(x => x.Src).ToListAsync();
+			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 4).Select(x => x.Src).SingleOrDefaultAsync();
+			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 6).Select(x => x.Src).ToListAsync();
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)
@@ -296,19 +296,25 @@ namespace Services
 
 			if (product.IsOnSale == true)
 			{
-				SaleIDTO sale = new SaleIDTO();
-				sale.Value = productIDTO.SaleIDTO.Value;
-				sale.SaleTypeId = productIDTO.SaleIDTO.SaleTypeId;
-				sale.StartDate = productIDTO.SaleIDTO.StartDate;
-				sale.EndDate = productIDTO.SaleIDTO.EndDate;
-				sale.IsActive = true;
-				sale.ProductId = product.ProductId;
-
-				var SaleForDB = _mapper.Map<Sale>(sale);
-
-				_context.Sales.Add(SaleForDB);
-
-				await SaveContextChangesAsync();
+				try
+				{
+					SaleIDTO sale = new SaleIDTO();
+					sale.Value = productIDTO.SaleIDTO.Value;
+					sale.SaleTypeId = productIDTO.SaleIDTO.SaleTypeId;
+					DateTime startDate = DateTime.ParseExact(productIDTO.SaleIDTO.StartDate, "MM/dd/yyyy", null);
+					DateTime endDate = DateTime.ParseExact(productIDTO.SaleIDTO.EndDate, "MM/dd/yyyy", null);
+					sale.StartDate = startDate.ToString("yyyy-MM-dd");
+					sale.EndDate = endDate.ToString("yyyy-MM-dd");
+					sale.IsActive = true;
+					sale.ProductId = product.ProductId;
+					var SaleForDB = _mapper.Map<Sale>(sale);
+					_context.Sales.Add(SaleForDB);
+					await SaveContextChangesAsync();
+				} catch(Exception ex)
+				{
+					Console.WriteLine(ex.ToString());
+				}
+				
 			}
 
 			return await GetProductsById(product.ProductId);

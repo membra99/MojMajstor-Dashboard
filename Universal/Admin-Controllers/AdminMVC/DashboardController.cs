@@ -151,7 +151,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "DOT/no_image_202311060853178444.jpg";
+				path = "Universal/no_image_202311060853178444.jpg";
 
 			var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
@@ -172,7 +172,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> DownloadExcelTemplate()
 		{
-			var picture = await _AWSS3FileService.GetFile("DOT/ExcelTemplate.xlsx");
+			var picture = await _AWSS3FileService.GetFile("Universal/ExcelTemplate.xlsx");
 			byte[] bytes = null;
 			using (MemoryStream ms = new MemoryStream())
 			{
@@ -898,7 +898,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId);
+							await _mainDataServices.UploadProductImage(awsFile, "FeaturedImage", product.ProductId);
 						}
 					}
 				}
@@ -1075,16 +1075,14 @@ namespace Universal.Admin_Controllers.AdminMVC
 			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 			var declarations = await _mainDataServices.GetAllDeclarations();
 			var productAtributes = await _mainDataServices.GetAllProductAttributes(dataId);
+			var productSale = await _mainDataServices.GetAllSaleType();
 			return View("Data/PreviewData", new DataIDTO
 			{
 				ProductIDTO = product,
 				CategoriesODTOs = categories,
 				DeclarationODTOs = declarations,
 				ProductAttributeValues = productAtributes,
-				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
-				{
-					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
-				}
+				SaleTypeODTOs = productSale
 			});
 		}
 
