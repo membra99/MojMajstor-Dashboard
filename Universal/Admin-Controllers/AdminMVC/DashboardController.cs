@@ -878,7 +878,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 					DeclarationODTOs = declarations,
 					SaleTypeODTOs = await _mainDataServices.GetAllSaleType(),
 					CategoriesTree = new CategoryAttributeIDTO { AllCategories = devidedList }
-				});
+					//ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
+			});
 			}
 			try
 			{
@@ -1041,6 +1042,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 				if (dataIDTO.ProductIDTO.SaleIDTO != null)
 				{
 					var sale = await _mainDataServices.AddSale(dataIDTO.ProductIDTO.SaleIDTO, dataIDTO.ProductIDTO.ProductId);
+				}
+
+				if (dataIDTO.MediaId != null)
+				{
+					await _mainDataServices.EditFeaturedImage(dataIDTO.ProductIDTO.ProductId, (int)dataIDTO.MediaId);
 				}
 
 				AWSFileUpload awsFile = new AWSFileUpload();

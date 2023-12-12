@@ -343,6 +343,53 @@ namespace Services
 						  select x.SeoId).SingleOrDefaultAsync();
 		}
 
+		public async Task EditFeaturedImage(int productId, int mediaId)
+		{
+			var currentImage = _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 4).FirstOrDefault();
+			if (currentImage != null)
+			{
+				currentImage.ProductId = null;
+				_context.Entry(currentImage).State = EntityState.Modified;
+				await SaveContextChangesAsync();
+
+				var newMedia = await _context.Medias.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+				if (newMedia.ProductId == null)
+				{
+					newMedia.ProductId = productId;
+					newMedia.MediaTypeId = 4;
+					_context.Entry(newMedia).State = EntityState.Modified;
+					await SaveContextChangesAsync();
+				}
+				else
+				{
+					Media newInsertMedia = new Media();
+					newInsertMedia.ProductId = productId;
+					newInsertMedia.MediaTypeId = 4;
+					newInsertMedia.Src = await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
+					newInsertMedia.Extension = Path.GetExtension(newInsertMedia.Src);
+					int lastIndex = newInsertMedia.Src.LastIndexOf('/');
+					newInsertMedia.MetaTitle = newInsertMedia.Src.Substring(lastIndex + 1);
+					_context.Medias.Add(newInsertMedia);
+					await SaveContextChangesAsync();
+				}
+			}
+			else
+			{
+				Media newInsertMedia = new Media();
+				newInsertMedia.ProductId = productId;
+				newInsertMedia.MediaTypeId = 4;
+				newInsertMedia.Src = await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
+				newInsertMedia.Extension = Path.GetExtension(newInsertMedia.Src);
+				int lastIndex = newInsertMedia.Src.LastIndexOf('/');
+				newInsertMedia.MetaTitle = newInsertMedia.Src.Substring(lastIndex + 1);
+				_context.Medias.Add(newInsertMedia);
+				await SaveContextChangesAsync();
+			}
+
+
+
+		}
+
 		public async Task<ParentChildODTO> GetTree(int Id, int langId)
 		{
 			ParentChildODTO retval = new ParentChildODTO();

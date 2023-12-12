@@ -14,7 +14,7 @@ namespace Universal.DTO.ViewDTO
         public ProductIDTO ProductIDTO { get; set; }
         public int? MediaId { get; set; }
         public List<int?> ProductAttributeValues { get; set; } = new List<int?>();
-        public IFormFile FeaturedImage { get; set; }
+        public IFormFile? FeaturedImage { get; set; }
         public List<IFormFile>? GalleryImages { get; set; } = new List<IFormFile>();
 
         public List<DeclarationODTO>? DeclarationODTOs { get; set; }
