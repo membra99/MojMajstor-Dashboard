@@ -771,6 +771,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 			{
 				CheckForToast();
 				var products = await _mainDataServices.GetAllProducts(langId);
+				ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
 				return View("Data/Data", products);
 			}
 			catch (Exception ex)
@@ -800,10 +801,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> NewData()
 		{
+			int? productID = (int?)TempData["productID"];
 			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 			var allCategories = await _mainDataServices.GetCategories();
 			var devidedList = new List<List<ChildODTO2>>();
-
+			var product = new ProductIDTO();
 			if (allCategories != null)
 			{
 				var rootList = allCategories.Where(x => x.ParentCategoryId == null).ToList();
@@ -815,10 +817,18 @@ namespace Universal.Admin_Controllers.AdminMVC
 				}
 				devidedList.Reverse();
 			}
+			if (productID != null)
+			{
+				product = await _mainDataServices.GetProductsByIdForEdit((int)productID);
+				product.ProductName = "";
+				product.Description = null;
+				product.Specification = null;
+			}
 			var declarations = await _mainDataServices.GetAllDeclarations();
 			ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
 			return View("Data/NewData", new DataIDTO
 			{
+				ProductIDTO = product,
 				CategoriesODTOs = categories,
 				DeclarationODTOs = declarations,
 				SaleTypeODTOs = await _mainDataServices.GetAllSaleType(),
@@ -944,9 +954,10 @@ namespace Universal.Admin_Controllers.AdminMVC
 					};
 					await _mainDataServices.AddProductAttributes(productAttributesIDTO);
 				}
-				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added Product");
-				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-				return RedirectToAction("AllData", "Dashboard");
+				//_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added Product");
+				//_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+				TempData["productID"] = product.ProductId;
+				return RedirectToAction("NewData", "Dashboard");
 			}
 			catch (Exception ex)
 			{

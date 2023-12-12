@@ -3,8 +3,10 @@
 
 @{
 	ViewData["Title"] = "New Data";
-	string isActive = "active";
+	string isActive = "language-active active";
 	var languagesList = ViewData["Languages"] as List<LanguageODTO>;
+	if (Model.ProductIDTO.LanguageID == null)
+		Model.ProductIDTO.LanguageID = languagesList?.First().LanguageID;
 }
 
 
@@ -18,10 +20,12 @@
 					<div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 						@foreach (var language in languagesList)
 						{
-							<button class="nav-link @isActive" id="v-pills-home-tab" data-bs-toggle="pill"
-									data-bs-target="#v-pills-language-@language.LanguageID" type="button" role="tab"
+							<button class="nav-link @isActive" id="v-pills-lang-tab" 
+									@* data-bs-toggle="pill" *@
+									@* data-bs-target="#v-pills-language-@language.LanguageID"  *@
+									type="button" role="tab"
 									aria-controls="v-pills-language-@language.LanguageID" aria-selected="true"
-									onclick="setLanguage(@language.LanguageID)">
+									onclick="setLanguage(@language.LanguageID, event)">
 								@language.LanguageName.ToUpper()
 							</button>
 							isActive = "";
@@ -98,6 +102,7 @@
 						<ul id="main-list">
 						</ul>
 					</div>
+					@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class = "text-danger" })
 					@*<div class="form-group mb-3">
 				@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
 				@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
@@ -279,27 +284,34 @@
 
 @section Scripts {
 	<script>
-		const form = document.getElementById("form");
-		form.addEventListener("submit", function (event) {
-			console.log(event);
-			console.log($('#form').serializeArray())
-		});
-
+		let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
 		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
 		for (let i = 0; i < categories.length; i++) {
 			for (let j = 0; j < categories[i].length; j++) {
 				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
 					let children = $(".child_of_" + categories[i][j].categoryId)
-					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + "'></ul>");
+
+					let isExpanded = "", isDown = "";
+					if (children.find(".category-selected").length > 0) {
+						isExpanded = "active-cat";
+						isDown = "multi-cat-down";
+					}
+					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + " " + isExpanded + "'></ul>");
 
 					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
 
-					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat'>"
+					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat " + isDown + "'>"
 						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span></div>");
 				}
 				else {
-					$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
-						+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+					if (productCategoryID == categories[i][j].categoryId) {
+						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select category-selected px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+					}
+					else {
+						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+					}
 				}
 			}
 		}
@@ -538,20 +550,29 @@
 			})
 		});
 
-		$('.lang').val($('#language').val());
+		function setLanguage(langId, event) {
+			if ($('.lang').val() != langId) {
+				if (languageInputCheck() == false) {
+					for (let child of event.target.parentElement.children) {
+						child.classList.remove("language-active");
+						child.classList.remove("active");
+					};
 
-		$('#language').change(function () {
-			$('.lang').val($(this).val());
-		});
+					event.target.classList.add("language-active");
+					event.target.classList.add("active");
+					$('.lang').val(langId);
+				}
+				else {
+					showToast("Save the product for the current language!", "warning")
+				}
+			}
+		}
 
-		$("[id^='language_']").click(function () {
-			$("[id^='language_']").removeClass("language-active");
-			$(this).addClass("language-active");
-			$('.lang').val(this.id.split('_')[1]);
-		});
-
-		function setLanguage(langId) {
-			$('.lang').val(langId);
+		function languageInputCheck() {
+			let productName = $("[name='ProductIDTO.ProductName']").val();
+			let productDescription = $("[name='ProductIDTO.Description']").val();
+			let productSpecification = $("[name='ProductIDTO.Specification']").val();
+			return productName !== '' || productDescription !== '' || productSpecification !== '';
 		}
 	</script>
 }
