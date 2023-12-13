@@ -157,7 +157,7 @@
 				<div class="form-group mb-3">
 					<h4>Feature Image</h4>
 				</div>
-				<div class="form-group mb-3">
+@* 				<div class="form-group mb-3">
 					@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
 					@Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", id = "file-featured", runat = "server", onchange = "loadFile(event)" })
 					@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
@@ -165,7 +165,66 @@
 						<img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
 						<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
 					</div>
+				</div> *@
+				<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+					<div class="modal-dialog modal-dialog-centered modal-lg">
+						<!-- Use modal-lg class for a larger modal -->
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
+							</div>
+							<div class="modal-body">
+								<!-- Nav tabs -->
+								<ul class="nav nav-tabs" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
+									</li>
+								</ul>
+
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<!-- Tab 1 Content -->
+									<div id="tab1" class="tab-pane active">
+										<form id="addImageForm">
+											<div class="form-group">
+												<label for="imageName">Choose image</label>
+												<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+												<div class="form-group col-2 mb-3 text-center">
+													<div class="image-container">
+														<img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
+														<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+													</div>
+												</div>
+												<small id="imageNameError" class="form-text text-danger"></small>
+											</div>
+										</form>
+									</div>
+
+									<!-- Tab 2 Content -->
+									<div id="tab2" class="tab-pane">
+										@Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
+										<div id="tab2-gallery">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
+							</div>
+						</div>
+					</div>
 				</div>
+				<div class="row">
+						<div class="form-group col-12 mb-3">
+							@Html.Label("Featured Image:")
+							<button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
+						</div>
+						<hr>
+					</div>
 				<hr>
 				<div class="form-group mb-3">
 					<h4>Gallery Images</h4>
@@ -249,13 +308,8 @@
 			}
 		}
 
-		let catrgory_elements = document.getElementsByClassName("multi-cat");
-		for (let i = 0; i < catrgory_elements.length; i++) {
-			catrgory_elements[i].addEventListener("click", function () {
-				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
-				this.classList.toggle("multi-cat-down");
-			});
-		}
+		//modal
+		let loaded = false;
 
 		let loadGallery = function () {
 			for (let i = 0; i < galleryImages.length; i++) {
@@ -264,22 +318,136 @@
 		}
 
 		let loadFile = function (event) {
-			let image = document.getElementById('featured-preview');
+			let image = document.getElementById('avatar-preview');
 			image.src = URL.createObjectURL(event.target.files[0]);
-			let element = image.nextElementSibling
+			let element = document.getElementById('unset');
 			element.classList.add("hover-unset");
+			var hiddenInput = document.getElementById("IsImageChanged");
+			hiddenInput.value = null;
 
 		};
 
-		function unsetImage(event) {
-			let image = document.getElementById('featured-preview');
-			image.src = '@Url.Action("GetImage", "Dashboard", null)';
-			$("#file-featured").val(null);
+		$(document).ready(function () {
+			let image = document.getElementById('avatar-preview');
+			var parts = image.src.split('/');
+			var result = parts.slice(3).join('/');
+			if (result != "Dashboard/GetImage") {
+				let element = document.getElementById('unset');
+				element.classList.add("hover-unset");
+			}
+		});
 
-			let element = image.nextElementSibling;
-			element.classList.remove("hover-unset");
-			event.preventDefault();
+
+
+		function unsetImage(event) {
+			let image = document.getElementById('avatar-preview');
+			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			$("#file").val(null);
+			var hiddenInput = document.getElementById("IsImageChanged");
+			hiddenInput.value = "true";
+			//let element = document.getElementById('unset');
 		}
+
+		$('#unset').click(function (event) {
+			unsetImage(event);
+			this.classList.remove("hover-unset");
+			event.preventDefault();
+		});
+
+		document.addEventListener("DOMContentLoaded", function () {
+			const openModalButton = document.getElementById("openModalButton");
+			const addImageModal = document.getElementById("addImageModal");
+
+			openModalButton.addEventListener("click", function () {
+				$(addImageModal).modal("show");
+			});
+
+			$("#closeImageButton").click(function (event) {
+				//unsetImage(event);
+				$('#addImageModal').modal('hide');
+			});
+
+		});
+
+		function unselectGallery() {
+			$(".overlay-checked").find('.fas').toggleClass('disable-icon')
+			$(".overlay-checked").removeClass("overlay-checked");
+			$("#input-media").val(null);
+		}
+
+		document.getElementById("tab1Link").classList.add("active");
+
+		document.getElementById("tab1Link").addEventListener("click", function () {
+			document.getElementById("tab1Link").classList.add("active");
+			document.getElementById("tab2Link").classList.remove("active");
+
+			document.getElementById("tab1").classList.add("active");
+			document.getElementById("tab2").classList.remove("active");
+
+			unselectGallery();
+		});
+
+		document.getElementById("tab2Link").addEventListener("click", function (event) {
+			document.getElementById("tab2Link").classList.add("active");
+			document.getElementById("tab1Link").classList.remove("active");
+
+			document.getElementById("tab2").classList.add("active");
+			document.getElementById("tab1").classList.remove("active");
+
+
+			if (!loaded) {
+				let url = '@Url.Action("GalleryGrid","Dashboard")'
+				$("#tab2-gallery").load(url, function () {
+					$(".fa-hand-pointer").click(function () {
+						unsetImage(event);
+						loaded = true;
+						mediaId = this.dataset.mediaId;
+						let parentElement = this.parentElement;
+						let children = parentElement.getElementsByClassName('fas');
+
+						unselectGallery();
+
+						for (var i = 0; i < children.length; i++) {
+							children[i].classList.toggle('disable-icon');
+						}
+
+						parentElement.parentElement.classList.add("overlay-checked");
+					});
+				});
+			}
+		});
+
+		let mediaId = null;
+		$("#saveImageButton").click(function () {
+			$("#input-media").val(mediaId);
+			$('#addImageModal').modal('hide');
+		});
+		//modal
+
+		let catrgory_elements = document.getElementsByClassName("multi-cat");
+		for (let i = 0; i < catrgory_elements.length; i++) {
+			catrgory_elements[i].addEventListener("click", function () {
+				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
+				this.classList.toggle("multi-cat-down");
+			});
+		}
+
+		// let loadFile = function (event) {
+		// 	let image = document.getElementById('featured-preview');
+		// 	image.src = URL.createObjectURL(event.target.files[0]);
+		// 	let element = image.nextElementSibling
+		// 	element.classList.add("hover-unset");
+		// };
+
+		// function unsetImage(event) {
+		// 	let image = document.getElementById('featured-preview');
+		// 	image.src = '@Url.Action("GetImage","Dashboard",null)';
+		// 	$("#file-featured").val(null);
+
+		// 	let element = image.nextElementSibling;
+		// 	element.classList.remove("hover-unset");
+		// 	event.preventDefault();
+		// }
 
 		function unsetImageMultiple(event, position) {
 			let isUpload = !event.target.previousElementSibling.src.includes("GetImage");

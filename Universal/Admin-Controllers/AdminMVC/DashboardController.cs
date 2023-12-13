@@ -151,7 +151,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "DOT/no_image_202311060853178444.jpg";
+				path = "Universal/no_image_202312121231258848.jpg";
 
 			var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
@@ -172,7 +172,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> DownloadExcelTemplate()
 		{
-			var picture = await _AWSS3FileService.GetFile("DOT/ExcelTemplate.xlsx");
+			var picture = await _AWSS3FileService.GetFile("Universal/ExcelTemplate.xlsx");
 			byte[] bytes = null;
 			using (MemoryStream ms = new MemoryStream())
 			{
@@ -788,6 +788,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully Deleted Product");
 				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
 				CheckForToast();
+				ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
 				var data = await _mainDataServices.DeleteProduct(dataId);
 				var products = await _mainDataServices.GetAllProducts(0);
 				return View("Data/Data", products);
@@ -877,7 +878,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 					DeclarationODTOs = declarations,
 					SaleTypeODTOs = await _mainDataServices.GetAllSaleType(),
 					CategoriesTree = new CategoryAttributeIDTO { AllCategories = devidedList }
-				});
+					//ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
+			});
 			}
 			try
 			{
@@ -908,7 +910,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId);
+							await _mainDataServices.UploadProductImage(awsFile, "FeaturedImage", product.ProductId);
 						}
 					}
 				}
@@ -1042,6 +1044,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 					var sale = await _mainDataServices.AddSale(dataIDTO.ProductIDTO.SaleIDTO, dataIDTO.ProductIDTO.ProductId);
 				}
 
+				if (dataIDTO.MediaId != null)
+				{
+					await _mainDataServices.EditFeaturedImage(dataIDTO.ProductIDTO.ProductId, (int)dataIDTO.MediaId);
+				}
+
 				AWSFileUpload awsFile = new AWSFileUpload();
 				awsFile.Attachments = new List<IFormFile>();
 				if (dataIDTO.FeaturedImage != null)
@@ -1086,16 +1093,14 @@ namespace Universal.Admin_Controllers.AdminMVC
 			var categories = await _mainDataServices.GetAllCategoriesWithAttributes();
 			var declarations = await _mainDataServices.GetAllDeclarations();
 			var productAtributes = await _mainDataServices.GetAllProductAttributes(dataId);
+			var productSale = await _mainDataServices.GetAllSaleType();
 			return View("Data/PreviewData", new DataIDTO
 			{
 				ProductIDTO = product,
 				CategoriesODTOs = categories,
 				DeclarationODTOs = declarations,
 				ProductAttributeValues = productAtributes,
-				SaleTypeODTOs = new List<DTO.ODTO.SaleTypeODTO> //TODO add methods for sale types
-				{
-					new DTO.ODTO.SaleTypeODTO{ SaleTypeId = 1, Value = "TEST" }
-				}
+				SaleTypeODTOs = productSale
 			});
 		}
 

@@ -248,7 +248,7 @@ namespace Services
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
 			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 4).Select(x => x.Src).SingleOrDefaultAsync();
-			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
+			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 6).Select(x => x.Src).ToListAsync();
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)
@@ -296,19 +296,25 @@ namespace Services
 
 			if (product.IsOnSale == true)
 			{
-				SaleIDTO sale = new SaleIDTO();
-				sale.Value = productIDTO.SaleIDTO.Value;
-				sale.SaleTypeId = productIDTO.SaleIDTO.SaleTypeId;
-				sale.StartDate = productIDTO.SaleIDTO.StartDate;
-				sale.EndDate = productIDTO.SaleIDTO.EndDate;
-				sale.IsActive = true;
-				sale.ProductId = product.ProductId;
-
-				var SaleForDB = _mapper.Map<Sale>(sale);
-
-				_context.Sales.Add(SaleForDB);
-
-				await SaveContextChangesAsync();
+				try
+				{
+					SaleIDTO sale = new SaleIDTO();
+					sale.Value = productIDTO.SaleIDTO.Value;
+					sale.SaleTypeId = productIDTO.SaleIDTO.SaleTypeId;
+					DateTime startDate = DateTime.ParseExact(productIDTO.SaleIDTO.StartDate, "MM/dd/yyyy", null);
+					DateTime endDate = DateTime.ParseExact(productIDTO.SaleIDTO.EndDate, "MM/dd/yyyy", null);
+					sale.StartDate = startDate.ToString("yyyy-MM-dd");
+					sale.EndDate = endDate.ToString("yyyy-MM-dd");
+					sale.IsActive = true;
+					sale.ProductId = product.ProductId;
+					var SaleForDB = _mapper.Map<Sale>(sale);
+					_context.Sales.Add(SaleForDB);
+					await SaveContextChangesAsync();
+				} catch(Exception ex)
+				{
+					Console.WriteLine(ex.ToString());
+				}
+				
 			}
 
 			return await GetProductsById(product.ProductId);
@@ -335,6 +341,53 @@ namespace Services
 			return await (from x in _context.Seos
 						  where x.SeoId == seo.SeoId
 						  select x.SeoId).SingleOrDefaultAsync();
+		}
+
+		public async Task EditFeaturedImage(int productId, int mediaId)
+		{
+			var currentImage = _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 4).FirstOrDefault();
+			if (currentImage != null)
+			{
+				currentImage.ProductId = null;
+				_context.Entry(currentImage).State = EntityState.Modified;
+				await SaveContextChangesAsync();
+
+				var newMedia = await _context.Medias.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+				if (newMedia.ProductId == null)
+				{
+					newMedia.ProductId = productId;
+					newMedia.MediaTypeId = 4;
+					_context.Entry(newMedia).State = EntityState.Modified;
+					await SaveContextChangesAsync();
+				}
+				else
+				{
+					Media newInsertMedia = new Media();
+					newInsertMedia.ProductId = productId;
+					newInsertMedia.MediaTypeId = 4;
+					newInsertMedia.Src = await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
+					newInsertMedia.Extension = Path.GetExtension(newInsertMedia.Src);
+					int lastIndex = newInsertMedia.Src.LastIndexOf('/');
+					newInsertMedia.MetaTitle = newInsertMedia.Src.Substring(lastIndex + 1);
+					_context.Medias.Add(newInsertMedia);
+					await SaveContextChangesAsync();
+				}
+			}
+			else
+			{
+				Media newInsertMedia = new Media();
+				newInsertMedia.ProductId = productId;
+				newInsertMedia.MediaTypeId = 4;
+				newInsertMedia.Src = await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
+				newInsertMedia.Extension = Path.GetExtension(newInsertMedia.Src);
+				int lastIndex = newInsertMedia.Src.LastIndexOf('/');
+				newInsertMedia.MetaTitle = newInsertMedia.Src.Substring(lastIndex + 1);
+				_context.Medias.Add(newInsertMedia);
+				await SaveContextChangesAsync();
+			}
+
+
+
 		}
 
 		public async Task<ParentChildODTO> GetTree(int Id, int langId)
