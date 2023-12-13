@@ -174,6 +174,12 @@
 					@Html.LabelFor(model => model.GalleryImages, "Product gallery images:")
 					@Html.TextBoxFor(model => model.GalleryImages, null, new { type = "file", id = "file-gallery", @class = "form-control mb-3", runat = "server", multiple = "multiple", onchange = "loadMultipleFile(event)" })
 					@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
+					<div id="newArrayVals">
+						@foreach (var img in Model.ProductIDTO.GalleyImg)
+							@Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
+
+
+					</div>
 					<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
 						<div class="text-center image-container">
 							<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 0) ? Model.ProductIDTO.GalleyImg[0] : null})" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
@@ -211,7 +217,7 @@
 	<script>
 		let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
 		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
-		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);	
+		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
 
 		for (let i = 0; i < categories.length; i++) {
 			for (let j = 0; j < categories[i].length; j++) {
@@ -276,49 +282,59 @@
 		}
 
 		function unsetImageMultiple(event, position) {
+			let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
+
 			$('[id^=gallery-preview-]').each(function () {
 				let image = this;
 				image.src = '@Url.Action("GetImage", "Dashboard", null)';
 				let element = image.nextElementSibling;
 				element.classList.remove("hover-unset");
 			});
+
+			if (galleryImages.length > 0) {
+				if (isUpload == false) {
+					let newArr = galleryImages.splice(position, 1);
+					$('#newArrayVals input[type="hidden"][value="' + newArr[0] + '"]').remove();
+				}
+				loadMultipleFileArray(galleryImages, "load", 0);
+			}
+
 			if (document.getElementById("file-gallery").files.length > 0) {
 				let fileInput = document.getElementById("file-gallery");
 				let selectedFiles = Array.from(fileInput.files);
-				selectedFiles.splice(position, 1);
+				if (isUpload == true) {
+					selectedFiles.splice(galleryImages.length - position, 1);
 
-				let newList = new DataTransfer();
-
-				for (let file of selectedFiles) {
-					newList.items.add(file);
+					let newList = new DataTransfer();
+					for (let file of selectedFiles) {
+						newList.items.add(file);
+					}
+					fileInput.files = newList.files
 				}
-				fileInput.files = newList.files
-				loadMultipleFileArray(selectedFiles, "upload")
+				loadMultipleFileArray(selectedFiles, "upload", galleryImages.length)
 			}
-			else {
-				galleryImages.splice(position, 1);
-				loadMultipleFileArray(galleryImages, "load");
-			}
-			console.log(galleryImages)
+
 			event.preventDefault();
 		}
 
 		let loadMultipleFile = function (event) {
+			let galleryNumber = $("[name = 'ProductIDTO.GalleyImg[]']").length;
+
 			for (let i = 0; i < event.target.files.length; i++) {
-				let image = document.getElementById('gallery-preview-' + i);
+				let image = document.getElementById('gallery-preview-' + (galleryNumber + i));
 				image.src = URL.createObjectURL(event.target.files[i]);
 				let element = image.nextElementSibling;
 				element.classList.add("hover-unset");
 			}
 		};
 
-		let loadMultipleFileArray = function (files, type) {
+		let loadMultipleFileArray = function (files, type, start) {
 			for (let i = 0; i < files.length; i++) {
-				let image = document.getElementById('gallery-preview-' + i);
-				if(type == "upload")
+				let image = document.getElementById('gallery-preview-' + (i + start));
+				if (type == "upload")
 					image.src = URL.createObjectURL(files[i]);
 				else
-					image.src = "/Dashboard/GetImage?path=" +files[i];
+					image.src = "/Dashboard/GetImage?path=" + files[i];
 				let element = image.nextElementSibling;
 				element.classList.add("hover-unset");
 			}
@@ -329,7 +345,7 @@
 			let image = document.getElementById('featured-preview');
 			var parts = image.src.split('/');
 			var result = parts.slice(3).join('/');
-			console.log("Aba", result);
+
 			if (result != "Dashboard/GetImage") {
 				let element = document.getElementById('unset');
 				element.classList.add("hover-unset");
@@ -379,7 +395,6 @@
 				$(this).val('');
 			});
 
-			console.log(@Json.Serialize(Model))
 			if ($("#ProductIDTO_IsOnSale").attr('checked')) {
 				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter'] ").removeAttr("disabled");
 			}
@@ -493,12 +508,6 @@
 					alert("Error on getting attributes!");
 				}
 			})
-		});
-		
-		$('.lang').val($('#language').val());
-
-		$('#language').change(function () {
-			$('.lang').val($(this).val());
 		});
 	</script>
 }
