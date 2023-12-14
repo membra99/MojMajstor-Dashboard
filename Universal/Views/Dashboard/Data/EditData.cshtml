@@ -4,9 +4,10 @@
 	ViewData["Title"] = "Edit Data";
 }
 
-<div class="col-12 bg-light mx-auto rounded-3">
 	@using (Html.BeginForm("EditDataAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 	{
+		<div class="col-12 bg-light mx-auto rounded-3">
+
 		@Html.HiddenFor(model => model.ProductIDTO.ProductId)
 		<div class="d-flex flex-row justify-content-around">
 			<div class="col-8">
@@ -96,8 +97,8 @@
 					<div class="form-group col-6 mb-3">
 						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, "Sale type:")
 						@Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
-												new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
-												"Select Sale Type", new { @class = "form-control", disabled = "disabled" })
+					new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
+					"Select Sale Type", new { @class = "form-control", disabled = "disabled" })
 						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class = "text-danger" })
 					</div>
 					<div class="form-group col-6 mb-3">
@@ -132,8 +133,8 @@
 				<div class="form-group mb-3">
 					@Html.LabelFor(model => model.ProductIDTO.DeclarationId, "Declaration:")
 					@Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
-										new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
-										"Select Declaration", new { @class = "form-control" })
+				new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
+				"Select Declaration", new { @class = "form-control" })
 					@Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class = "text-danger" })
 				</div>
 				<hr>
@@ -157,15 +158,15 @@
 				<div class="form-group mb-3">
 					<h4>Feature Image</h4>
 				</div>
-@* 				<div class="form-group mb-3">
-					@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
-					@Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", id = "file-featured", runat = "server", onchange = "loadFile(event)" })
-					@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
-					<div class="text-center image-container">
-						<img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
-						<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
-					</div>
-				</div> *@
+				@* 				<div class="form-group mb-3">
+			@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
+			@Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", id = "file-featured", runat = "server", onchange = "loadFile(event)" })
+			@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
+			<div class="text-center image-container">
+			<img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+			<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
+			</div>
+			</div> *@
 				<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
 					<div class="modal-dialog modal-dialog-centered modal-lg">
 						<!-- Use modal-lg class for a larger modal -->
@@ -195,7 +196,7 @@
 												<div class="form-group col-2 mb-3 text-center">
 													<div class="image-container">
 														<img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
-														<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+														<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
 													</div>
 												</div>
 												<small id="imageNameError" class="form-text text-danger"></small>
@@ -219,12 +220,12 @@
 					</div>
 				</div>
 				<div class="row">
-						<div class="form-group col-12 mb-3">
-							@Html.Label("Featured Image:")
-							<button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
-						</div>
-						<hr>
+					<div class="form-group col-12 mb-3">
+						@Html.Label("Featured Image:")
+						<button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
 					</div>
+					<hr>
+				</div>
 				<hr>
 				<div class="form-group mb-3">
 					<h4>Gallery Images</h4>
@@ -238,45 +239,66 @@
 							@Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
 
 
+
+						</div>
+						<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 0) ? Model.ProductIDTO.GalleyImg[0] : null})" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 1) ? Model.ProductIDTO.GalleyImg[1] : null})" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button @Model.ProductIDTO.GalleyImg.Count >= 2" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 2) ? Model.ProductIDTO.GalleyImg[2] : null})" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 3) ? Model.ProductIDTO.GalleyImg[3] : null})" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
+							</div>
+							<div class="text-center image-container">
+								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 4) ? Model.ProductIDTO.GalleyImg[4] : null})" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
+								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
+							</div>
+						</div>
 					</div>
-					<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 0) ? Model.ProductIDTO.GalleyImg[0] : null})" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 1) ? Model.ProductIDTO.GalleyImg[1] : null})" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button @Model.ProductIDTO.GalleyImg.Count >= 2" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 2) ? Model.ProductIDTO.GalleyImg[2] : null})" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 3) ? Model.ProductIDTO.GalleyImg[3] : null})" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
-						</div>
-						<div class="text-center image-container">
-							<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 4) ? Model.ProductIDTO.GalleyImg[4] : null})" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
-							<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
-						</div>
-					</div>
+					<hr>
 				</div>
-				<hr>
 			</div>
-		</div>
 
 		<div class="mx-auto mb-3 w-25">
 			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
 		</div>
+		</div>
 	}
-</div>
+
 
 @section Scripts {
 	<script>
+		let galleryLimit = 4;
+		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
+		$(document).ready(function () {
+			loadGallery();
+			if ($('#ProductIDTO_ProductTypeId :selected').val() == 5) {
+				$(".price-quantity").hide();
+			}
+			$("#ProductIDTO_ProductTypeId").change(function () {
+				console.log("changed");
+				let selectedItem = $(this).children("option:selected").text();
+				if (selectedItem === "Kolačići") {
+					$(".price-quantity").hide();
+				} else {
+					$(".price-quantity").show();
+				}
+			});
+		});
+
+		let loaded = false;
+
 		let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
 		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
-		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
 
 		for (let i = 0; i < categories.length; i++) {
 			for (let j = 0; j < categories[i].length; j++) {
@@ -308,44 +330,30 @@
 			}
 		}
 
-		//modal
-		let loaded = false;
-
-		let loadGallery = function () {
-			for (let i = 0; i < galleryImages.length; i++) {
-				document.getElementById('gallery-preview-' + i).nextElementSibling.classList.add("hover-unset");
-			}
+		let catrgory_elements = document.getElementsByClassName("multi-cat");
+		for (let i = 0; i < catrgory_elements.length; i++) {
+			catrgory_elements[i].addEventListener("click", function () {
+				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
+				this.classList.toggle("multi-cat-down");
+			});
 		}
 
 		let loadFile = function (event) {
 			let image = document.getElementById('avatar-preview');
 			image.src = URL.createObjectURL(event.target.files[0]);
-			let element = document.getElementById('unset');
+			let element = image.nextElementSibling
 			element.classList.add("hover-unset");
-			var hiddenInput = document.getElementById("IsImageChanged");
-			hiddenInput.value = null;
 
 		};
 
-		$(document).ready(function () {
-			let image = document.getElementById('avatar-preview');
-			var parts = image.src.split('/');
-			var result = parts.slice(3).join('/');
-			if (result != "Dashboard/GetImage") {
-				let element = document.getElementById('unset');
-				element.classList.add("hover-unset");
-			}
-		});
-
-
-
 		function unsetImage(event) {
 			let image = document.getElementById('avatar-preview');
-			image.src = '@Url.Action("GetImage","Dashboard",null)';
+			image.src = '@Url.Action("GetImage", "Dashboard", null)';
 			$("#file").val(null);
-			var hiddenInput = document.getElementById("IsImageChanged");
-			hiddenInput.value = "true";
-			//let element = document.getElementById('unset');
+
+			let element = image.nextElementSibling;
+			element.classList.remove("hover-unset");
+			event.preventDefault();
 		}
 
 		$('#unset').click(function (event) {
@@ -396,7 +404,7 @@
 
 
 			if (!loaded) {
-				let url = '@Url.Action("GalleryGrid","Dashboard")'
+				let url = '@Url.Action("GalleryGrid", "Dashboard")'
 				$("#tab2-gallery").load(url, function () {
 					$(".fa-hand-pointer").click(function () {
 						unsetImage(event);
@@ -421,78 +429,34 @@
 		$("#saveImageButton").click(function () {
 			$("#input-media").val(mediaId);
 			$('#addImageModal').modal('hide');
+			//console.log(mediaId);
 		});
-		//modal
-
-		let catrgory_elements = document.getElementsByClassName("multi-cat");
-		for (let i = 0; i < catrgory_elements.length; i++) {
-			catrgory_elements[i].addEventListener("click", function () {
-				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
-				this.classList.toggle("multi-cat-down");
-			});
-		}
-
-		// let loadFile = function (event) {
-		// 	let image = document.getElementById('featured-preview');
-		// 	image.src = URL.createObjectURL(event.target.files[0]);
-		// 	let element = image.nextElementSibling
-		// 	element.classList.add("hover-unset");
-		// };
-
-		// function unsetImage(event) {
-		// 	let image = document.getElementById('featured-preview');
-		// 	image.src = '@Url.Action("GetImage","Dashboard",null)';
-		// 	$("#file-featured").val(null);
-
-		// 	let element = image.nextElementSibling;
-		// 	element.classList.remove("hover-unset");
-		// 	event.preventDefault();
-		// }
-
-		function unsetImageMultiple(event, position) {
-			let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
-
-			$('[id^=gallery-preview-]').each(function () {
-				let image = this;
-				image.src = '@Url.Action("GetImage", "Dashboard", null)';
-				let element = image.nextElementSibling;
-				element.classList.remove("hover-unset");
-			});
-
-			if (galleryImages.length > 0) {
-				if (isUpload == false) {
-					let newArr = galleryImages.splice(position, 1);
-					$('#newArrayVals input[type="hidden"][value="' + newArr[0] + '"]').remove();
-				}
-				loadMultipleFileArray(galleryImages, "load", 0);
-			}
-
-			if (document.getElementById("file-gallery").files.length > 0) {
-				let fileInput = document.getElementById("file-gallery");
-				let selectedFiles = Array.from(fileInput.files);
-				if (isUpload == true) {
-					selectedFiles.splice(galleryImages.length - position, 1);
-
-					let newList = new DataTransfer();
-					for (let file of selectedFiles) {
-						newList.items.add(file);
-					}
-					fileInput.files = newList.files
-				}
-				loadMultipleFileArray(selectedFiles, "upload", galleryImages.length)
-			}
-
-			event.preventDefault();
-		}
 
 		let loadMultipleFile = function (event) {
-			let galleryNumber = $("[name = 'ProductIDTO.GalleyImg[]']").length;
+			let galleryCount = $("[name = 'ProductIDTO.GalleyImg[]']").length;
+			if (event.target.files.length + galleryCount <= galleryLimit) {
 
-			for (let i = 0; i < event.target.files.length; i++) {
-				let image = document.getElementById('gallery-preview-' + (galleryNumber + i));
-				image.src = URL.createObjectURL(event.target.files[i]);
-				let element = image.nextElementSibling;
-				element.classList.add("hover-unset");
+				let uploadStartPosition = 0;
+				for (let i = 0; i < event.target.files.length; i++) {
+					uploadStartPosition = galleryCount + i;
+					let image = document.getElementById('gallery-preview-' + (uploadStartPosition));
+					image.src = URL.createObjectURL(event.target.files[i]);
+					let element = image.nextElementSibling;
+					element.classList.add("hover-unset");
+				}
+
+				for (let i = ++uploadStartPosition; i < galleryLimit; i++) {
+					let image = document.getElementById('gallery-preview-' + i);
+					image.src = '@Url.Action("GetImage", "Dashboard", null)';
+					let element = image.nextElementSibling;
+					element.classList.remove("hover-unset");
+				}
+			}
+			else {
+				$("#file-gallery").val(null);
+				unsetAllImages();
+				loadMultipleFileArray(galleryImages, "load", 0)
+				showToast(`Number of allowed gallery images is ${galleryLimit}.`, "error");
 			}
 		};
 
@@ -507,31 +471,64 @@
 				element.classList.add("hover-unset");
 			}
 		};
+		let loadGallery = function () {
+			for (let i = 0; i < galleryImages.length; i++) {
+				document.getElementById('gallery-preview-' + i).nextElementSibling.classList.add("hover-unset")
+			}
+		}
+
+		function unsetAllImages() {
+			$('[id^=gallery-preview-]').each(function () {
+				let image = this;
+				image.src = '@Url.Action("GetImage", "Dashboard", null)';
+				let element = image.nextElementSibling;
+				element.classList.remove("hover-unset");
+			});
+		}
+
+		function unsetImageMultiple(event, position) {
+			let isUpload =! event.target.previousElementSibling.src.includes("GetImage");
+
+			unsetAllImages();
+
+			if (galleryImages.length > 0) {
+				if (isUpload == false) {
+					let newArr = galleryImages.splice(position, 1);
+					$('#newArrayVals input[type="hidden"][value="' + newArr[0] + '"]').remove();
+				}
+				loadMultipleFileArray(galleryImages, "load", 0);
+			}
+
+			if (document.getElementById("file-gallery").files.length > 0) {
+				let fileInput = document.getElementById("file-gallery");
+				let selectedFiles = Array.from(fileInput.files);
+				if (isUpload == true) {
+					selectedFiles.splice(Math.abs(galleryImages.length - position), 1);
+
+					let newList = new DataTransfer();
+					for (let file of selectedFiles) {
+						newList.items.add(file);
+					}
+					fileInput.files = newList.files
+				}
+				loadMultipleFileArray(selectedFiles, "upload", galleryImages.length)
+			}
+
+			event.preventDefault();
+		}
+
 		$(document).ready(function () {
-			loadGallery();
 
 			let image = document.getElementById('avatar-preview');
 			var parts = image.src.split('/');
 			var result = parts.slice(3).join('/');
-
+			//console.log("Aba", result);
 			if (result != "Dashboard/GetImage") {
 				let element = document.getElementById('unset');
 				element.classList.add("hover-unset");
 			}
 
 			let saleIdto = @Json.Serialize(Model.ProductIDTO.SaleIDTO);
-			// var startDate = saleIdto.startDate.split('-').reverse().join('/');
-			// var endDate = saleIdto.endDate.split('-').reverse().join('/');
-			// $('input[name="datefilter"]').daterangepicker({
-			// 	endDate: Date.parse(saleIdto.endDate),
-			// 	startDate: Date.parse(saleIdto.startDate),
-			// 	autoUpdateInput: false,
-			// 	locale: {
-			// 		cancelLabel: 'Clear',
-			// 		format: 'DD/MM/YYYY',
-			// 	}
-			// }).val(startDate + " - " + endDate);
-
 			if (saleIdto != null) {
 				var startDate = saleIdto.startDate.split('-').reverse().join('/');
 				var endDate = saleIdto.endDate.split('-').reverse().join('/');
@@ -563,6 +560,7 @@
 				$(this).val('');
 			});
 
+			// console.log(@Json.Serialize(Model))
 			if ($("#ProductIDTO_IsOnSale").attr('checked')) {
 				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter'] ").removeAttr("disabled");
 			}
@@ -676,6 +674,13 @@
 					alert("Error on getting attributes!");
 				}
 			})
+		});
+
+
+		$('.lang').val($('#language').val());
+
+		$('#language').change(function () {
+			$('.lang').val($(this).val());
 		});
 	</script>
 }

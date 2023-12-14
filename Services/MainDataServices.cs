@@ -473,6 +473,7 @@ namespace Services
 			{
 				product.SeoId = null;
 			}
+			product.LanguageID = 1;
 			_context.Entry(product).State = EntityState.Modified;
 
 			await SaveContextChangesAsync();
