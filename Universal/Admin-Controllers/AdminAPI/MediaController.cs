@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.AWS;
 using Universal.DTO.ODTO;
@@ -7,7 +8,8 @@ namespace Universal.Admin_Controllers.AdminAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MediaController
+	[EnableCors("CorsPolicy")]
+	public class MediaController : ControllerBase
     {
         private readonly MainDataServices _mainDataServices;
 		private readonly IAWSS3FileService _AWSS3FileService;

@@ -2,12 +2,14 @@
 using Services.AWS;
 using static Universal.DTO.CommonModels.CommonModels;
 using System.Web;
+using Microsoft.AspNetCore.Cors;
 
 namespace Universal.Admin_Controllers.AdminAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AWSS3FileController : ControllerBase
+	[EnableCors("CorsPolicy")]
+	public class AWSS3FileController : ControllerBase
     {
         private readonly IAWSS3FileService _AWSS3FileService;
         public AWSS3FileController(IAWSS3FileService AWSS3FileService)

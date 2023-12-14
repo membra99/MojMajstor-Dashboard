@@ -4,12 +4,14 @@ using Services;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using System.Net;
+using Microsoft.AspNetCore.Cors;
 
 namespace Universal.Admin_Controllers.AdminAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController
+	[EnableCors("CorsPolicy")]
+	public class OrderController : ControllerBase
     {
         private readonly MainDataServices _mainDataServices;
 

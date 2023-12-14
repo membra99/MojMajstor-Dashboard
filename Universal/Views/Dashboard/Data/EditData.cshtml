@@ -13,7 +13,7 @@
 				<div class="mb-3">
 					<h4>Product</h4>
 				</div>
-				<div class="row">
+				<div class="row align-items-baseline">
 					<div class="form-group col-6 mb-3">
 						<div class="mb-3">
 							@Html.HiddenFor(model => model.ProductIDTO.LanguageID, new { @class = "lang" })
@@ -270,7 +270,7 @@
 	<script>
 		let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
 		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
-		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);	
+		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
 
 		for (let i = 0; i < categories.length; i++) {
 			for (let j = 0; j < categories[i].length; j++) {
@@ -494,7 +494,7 @@
 		$(document).ready(function () {
 			loadGallery();
 
-			let image = document.getElementById('featured-preview');
+			let image = document.getElementById('avatar-preview');
 			var parts = image.src.split('/');
 			var result = parts.slice(3).join('/');
 			console.log("Aba", result);

@@ -1,4 +1,5 @@
 ﻿using Entities.Universal.MainData;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Authorization;
@@ -11,7 +12,8 @@ namespace Universal.Admin_Controllers.AdminAPI
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class UsersController : ControllerBase
+	[EnableCors("CorsPolicy")]
+	public class UsersController : ControllerBase
     {
         private readonly UsersServices _userDataServices;
 

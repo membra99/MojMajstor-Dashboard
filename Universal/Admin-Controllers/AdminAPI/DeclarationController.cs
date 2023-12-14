@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Services;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
@@ -7,7 +8,8 @@ namespace Universal.Admin_Controllers.AdminAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeclarationController
+	[EnableCors("CorsPolicy")]
+	public class DeclarationController : ControllerBase
     {
         private readonly MainDataServices _mainDataServices;
 

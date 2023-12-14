@@ -45,6 +45,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
+				policy =>
+				{
+					policy
+						.AllowAnyMethod()
+						.AllowAnyHeader()
+						.AllowAnyOrigin();
+				}));
+
+
+
+
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -101,6 +113,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.UseAuthentication();
 

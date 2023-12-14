@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Universal.DTO.IDTO;
@@ -8,6 +9,7 @@ namespace Universal.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[EnableCors("CorsPolicy")]
 	public class ProductController : ControllerBase
 	{
 		private readonly MainDataServices _mainDataServices;
