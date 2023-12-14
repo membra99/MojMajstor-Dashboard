@@ -3,6 +3,7 @@ using Entities.Context;
 using Entities.Universal.MainData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Index.HPRtree;
 using OfficeOpenXml;
 using Services.AWS;
 using Universal.DTO.IDTO;
@@ -53,9 +54,31 @@ namespace Services
 			}
 		}
 
+		public async Task SetProperGallery(List<string> galleryImg, int productId)
+		{
+			if(galleryImg == null)
+			{
+				var mediaIds = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5).ToListAsync();
+				_context.Medias.RemoveRange(mediaIds);
+				await SaveContextChangesAsync();
+			}
+			else
+			{
+				var galleryDb = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
+				List<string> itemsOnlyInGalleryDb = galleryDb.Except(galleryImg).ToList();
+				foreach (var item in itemsOnlyInGalleryDb)
+				{
+					var mediaId = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5 && x.Src == item).Select(x => x.MediaId).SingleOrDefaultAsync();
+					var mediaForDel = await _context.Medias.FindAsync(mediaId);
+					_context.Medias.Remove(mediaForDel);
+					await SaveContextChangesAsync();
+				}
+			}
+		}
+
 		public async Task<List<ProductODTO>> ImportFromExcel(IFormFile file)
 		{
-            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.Commercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
             var list = new List<Product>();
             using (var stream = new MemoryStream())
             {
@@ -248,7 +271,7 @@ namespace Services
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
 			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 4).Select(x => x.Src).SingleOrDefaultAsync();
-			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 6).Select(x => x.Src).ToListAsync();
+			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)
@@ -289,6 +312,7 @@ namespace Services
 
 			var product = _mapper.Map<Product>(productIDTO);
 			product.ProductId = 0;
+			product.CreatedAt = DateTime.Now;
 			product.SeoId = (seo != 0) ? seo : null;
 			_context.Products.Add(product);
 
@@ -385,9 +409,6 @@ namespace Services
 				_context.Medias.Add(newInsertMedia);
 				await SaveContextChangesAsync();
 			}
-
-
-
 		}
 
 		public async Task<ParentChildODTO> GetTree(int Id, int langId)
@@ -454,7 +475,7 @@ namespace Services
 					seoIDTO.GoogleDesc = productIDTO.SeoIDTO.GoogleDesc;
 					seoIDTO.GoogleKeywords = productIDTO.SeoIDTO.GoogleKeywords;
 
-					var s = _mapper.Map<Entities.Universal.MainData.Seo>(seoIDTO);
+					var s = _mapper.Map<Seo>(seoIDTO);
 					_context.Seos.Add(s);
 					await SaveContextChangesAsync();
 
@@ -467,14 +488,16 @@ namespace Services
 					_context.Entry(seo).State = EntityState.Modified;
 				}
 			}
-
 			var product = _mapper.Map<Product>(productIDTO);
+			_context.Entry(product).State = EntityState.Modified;
+
 			if (product.SeoId == 0)
 			{
 				product.SeoId = null;
 			}
-			product.LanguageID = 1;
-			_context.Entry(product).State = EntityState.Modified;
+			product.LanguageID = 1; //TODO Set LanguageID dinamicaly
+			_context.Entry(product).Property(x => x.CreatedAt).IsModified = false;
+			
 
 			await SaveContextChangesAsync();
 

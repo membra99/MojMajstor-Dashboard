@@ -192,7 +192,7 @@
 										<form id="addImageForm">
 											<div class="form-group">
 												<label for="imageName">Choose image</label>
-												<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+												<input type="file" name="FeaturedImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
 												<div class="form-group col-2 mb-3 text-center">
 													<div class="image-container">
 														<img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
@@ -258,10 +258,10 @@
 								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 3) ? Model.ProductIDTO.GalleyImg[3] : null})" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
 								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
 							</div>
-							<div class="text-center image-container">
+@* 							<div class="text-center image-container">
 								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 4) ? Model.ProductIDTO.GalleyImg[4] : null})" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
 								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
-							</div>
+							</div> *@
 						</div>
 					</div>
 					<hr>

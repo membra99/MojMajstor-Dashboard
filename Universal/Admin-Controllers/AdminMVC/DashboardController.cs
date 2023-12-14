@@ -1053,16 +1053,57 @@ namespace Universal.Admin_Controllers.AdminMVC
 				AWSFileUpload awsFile = new AWSFileUpload();
 				awsFile.Attachments = new List<IFormFile>();
 				if (dataIDTO.FeaturedImage != null)
+				{
 					awsFile.Attachments.Add(dataIDTO.FeaturedImage);
-				//await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId); //TODO vrv puca zbog aws
-
+					string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+					if (!IsSupportedExtension(extension))
+					{
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+						return RedirectToAction("AllData");
+					}
+					else
+					{
+						if (awsFile.Attachments[0].Length > 1000000)
+						{
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+							return RedirectToAction("AllData");
+						}
+						else
+						{
+							await _mainDataServices.UploadProductImage(awsFile, "FeaturedImage", product.ProductId);
+						}
+					}
+				}
+				
+				await _mainDataServices.SetProperGallery(dataIDTO.ProductIDTO.GalleyImg, dataIDTO.ProductIDTO.ProductId);
+				
 				foreach (IFormFile file in dataIDTO.GalleryImages)
 				{
-					awsFile.Attachments = new List<IFormFile>
-					{
+					awsFile.Attachments = new List<IFormFile> {
 						file
 					};
-					await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
+					string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
+					if (!IsSupportedExtension(extension))
+					{
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+						return RedirectToAction("AllData");
+					}
+					else
+					{
+						if (file.Length > 1000000)
+						{
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+							return RedirectToAction("AllData");
+						}
+						else
+						{
+							await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
+						}
+					}
 				}
 
 				await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
