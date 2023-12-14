@@ -20,6 +20,7 @@ using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Universal.Admin_Controllers.AdminMVC
 {
+	[RequiresAuthToken]
 	public class DashboardController : Controller
 	{
 		private readonly HttpClient _httpClient;
