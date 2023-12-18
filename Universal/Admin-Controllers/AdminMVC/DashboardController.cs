@@ -976,10 +976,10 @@ namespace Universal.Admin_Controllers.AdminMVC
 					};
 					await _mainDataServices.AddProductAttributes(productAttributesIDTO);
 				}
-				//_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added Product");
-				//_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-				TempData["productID"] = product.ProductId;
-				return RedirectToAction("NewData", "Dashboard");
+				TempData["productID"] = product.ProductId != null ? null : product.ProductId;
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added Product");
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+				return RedirectToAction(nameof(AllData));
 			}
 			catch (Exception ex)
 			{

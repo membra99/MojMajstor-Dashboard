@@ -44,6 +44,8 @@ namespace Services
 				media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
 				media.Src = key.First();
 				media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
+				var index = media.Src.LastIndexOf('/');
+				media.MetaTitle = media.Src.Substring(index + 1);
 				_context.Medias.Add(media);
 				await _context.SaveChangesAsync();
 				return _mapper.Map<MediaODTO>(media);
