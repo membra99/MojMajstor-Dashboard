@@ -1279,6 +1279,7 @@ namespace Services
 
 		public async Task<TagODTO> AddTag(TagIDTO tagIDTO)
 		{
+			tagIDTO.LanguageID = 1; //TODO - Set LanguageID dinamicaly
 			var tag = _mapper.Map<Tag>(tagIDTO);
 			tag.TagId = 0;
 			_context.Tags.Add(tag);
