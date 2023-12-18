@@ -186,18 +186,23 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> ImportExcel(IFormFile file)
 		{
-			string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
-			if (extension != ".xlsx")
+			if(file != null)
 			{
-				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "You need to enter Excel file");
-				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-				return RedirectToAction("ImportExc");
+				string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
+				if (extension != ".xlsx")
+				{
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "You need to enter Excel file");
+					_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+					return RedirectToAction("ImportExc");
+
+				}
+				var excelImport = await _mainDataServices.ImportFromExcel(file);
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Import data added successfully!");
+				_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+				return RedirectToAction("ImportExc", "Dashboard");
 			}
-
-			var excelImport = await _mainDataServices.ImportFromExcel(file);
-			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Import data added successfully!");
-			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "You need to upload file before importing!");
+			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "warning");
 			return RedirectToAction("ImportExc", "Dashboard");
 		}
 
