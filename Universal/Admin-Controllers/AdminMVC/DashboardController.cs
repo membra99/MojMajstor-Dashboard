@@ -468,6 +468,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 				else
 				{
 					siteContentIDTO.IsActive = true;
+					siteContentIDTO.LanguageID = 1; //TODO - set lanid dynamicaly 
 					var siteContent = await _mainDataServices.AddSiteContent(siteContentIDTO);
 					var site = (siteContentIDTO.SiteContentTypeId == 1) ? "Page" : "Blog";
 					_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "" + site + " added successfully!");
