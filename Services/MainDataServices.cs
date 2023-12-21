@@ -498,9 +498,7 @@ namespace Services
 				product.SeoId = null;
 			}
 			product.LanguageID = 1; //TODO Set LanguageID dinamicaly
-			_context.Entry(product).Property(x => x.CreatedAt).IsModified = false;
-			
-
+	
 			await SaveContextChangesAsync();
 
 			return await GetProductsById(product.ProductId);
