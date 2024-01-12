@@ -301,7 +301,6 @@ namespace Services
 		public async Task<List<ProductODTO>> GetAllProducts(int langId)
 		{
 			return await GetProducts(0, langId).AsNoTracking().ToListAsync();
-			
 		}
 
 		public async Task<ProductODTO> AddProduct(ProductIDTO productIDTO)

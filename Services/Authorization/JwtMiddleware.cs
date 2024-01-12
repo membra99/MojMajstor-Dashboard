@@ -23,7 +23,7 @@ namespace Services.Authorization
             if (userId != null)
             {
                 // attach user to context on successful jwt validation
-                context.Items["User"] = userService.GetUserById(userId.Value);
+                context.Items["User"] = await userService.GetUserById(userId.Value);
             }
 
             await _next(context);
