@@ -1,9 +1,12 @@
-﻿@using Universal.DTO.ODTO;
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@using Universal.DTO.ODTO;
 @model List<Universal.DTO.ODTO.ProductODTO>
 @{
 	ViewData["Title"] = "Data";
 	string isActive = "language-active active";
 	var languagesList = ViewData["Languages"] as List<LanguageODTO>;
+	var authToken = @HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
 }
 
 <div class="col-12">
@@ -53,8 +56,10 @@
 
 			function loadData(langID) {
 				toggleLoading();
-
 				$.ajax({
+					headers: {
+						'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+					},
 					url: '/api/Product/GetAllProducts',
 					method: 'GET',
 					data: { langID: langID },

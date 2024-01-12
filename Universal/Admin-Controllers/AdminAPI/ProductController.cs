@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using Services.Authorization;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 
@@ -9,6 +10,7 @@ namespace Universal.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	[EnableCors("CorsPolicy")]
 	public class ProductController : ControllerBase
 	{

@@ -1,7 +1,10 @@
-﻿@model List<Universal.DTO.ODTO.UsersODTO>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model List<Universal.DTO.ODTO.UsersODTO>
 
 @{
 	ViewData["Title"] = "All Users";
+	var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
 }
 
 <div class="col-12">
@@ -48,7 +51,7 @@
 @section Scripts
 	{
 	<script>
-		toggleLoading();
+		toggleLoading();;
 
 		$(document).ready(function () {
 			let data = @Json.Serialize(Model);
@@ -92,9 +95,10 @@
 
 			$.ajaxSetup({
 				headers: {
-					//headers: { "Authorization":  },
-					'Authorization': @Json.Serialize(ViewData["Token"])
-												}
+					headers: {
+						'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+					},								
+				}
 			});
 
 			$('#userTable tbody').on('click', 'td.actions-control', function () {
@@ -117,6 +121,9 @@
 						updateTableData();
 
 						$.ajax({
+							headers: {
+								'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+							},
 							type: 'DELETE',
 							url: 'https://localhost:7213/api/Users/' + selectedUserId,
 							contentType: 'application/json',
