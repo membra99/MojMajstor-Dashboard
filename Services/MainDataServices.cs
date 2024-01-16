@@ -17,11 +17,13 @@ namespace Services
 	{
 		public static UsersServices _userServices;
 		private readonly IAWSS3FileService _AWSS3FileService;
+		private readonly IAWSS3BucketHelper _AWSS3BucketHelper;
 
-		public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService) : base(context, mapper)
+		public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService, IAWSS3BucketHelper aWSS3BucketHelper) : base(context, mapper)
 		{
 			_userServices = usersServices;
 			_AWSS3FileService = AWSS3FileService;
+			_AWSS3BucketHelper = aWSS3BucketHelper;
 		}
 
 		public List<ChildODTO> children = new List<ChildODTO>();
@@ -56,26 +58,82 @@ namespace Services
 			}
 		}
 
-		public async Task SetProperGallery(List<string> galleryImg, int productId)
+		public async Task SetProperGallery(List<string>? galleryImg, List<int>? MediaIds, List<int>? UploadedImgIds, int productId)
 		{
-			if(galleryImg == null)
+			#region checkCurrentImages
+			if (galleryImg == null)
 			{
-				var mediaIds = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5).ToListAsync();
-				_context.Medias.RemoveRange(mediaIds);
+				var media = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3).ToListAsync();
+				_context.Medias.RemoveRange(media);
 				await SaveContextChangesAsync();
 			}
 			else
 			{
-				var galleryDb = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
+				var galleryDb = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3).Select(x => x.Src).ToListAsync();
 				List<string> itemsOnlyInGalleryDb = galleryDb.Except(galleryImg).ToList();
 				foreach (var item in itemsOnlyInGalleryDb)
 				{
-					var mediaId = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5 && x.Src == item).Select(x => x.MediaId).SingleOrDefaultAsync();
-					var mediaForDel = await _context.Medias.FindAsync(mediaId);
-					_context.Medias.Remove(mediaForDel);
-					await SaveContextChangesAsync();
+					try
+					{
+						var mediaId = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3 && x.Src == item).Select(x => x.MediaId).SingleOrDefaultAsync();
+						var mediaForDel = await _context.Medias.FindAsync(mediaId);
+						mediaForDel.ProductId = null;
+						_context.Medias.Entry(mediaForDel).State = EntityState.Modified;
+						//_context.Medias.Remove(mediaForDel);
+						await SaveContextChangesAsync();
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.ToString());
+					}
 				}
 			}
+			#endregion
+
+			#region checkImagesFromGallery
+			if (MediaIds != null && MediaIds.Count() > 0)
+			{
+				foreach (var mediaId in MediaIds)
+				{
+					var checkImage = await _context.Medias.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
+					if (checkImage.ProductId != null || checkImage.MediaTypeId != 3)
+					{
+						var newMed = new Media();
+						newMed.MediaId = 0;
+						newMed.ProductId = productId;
+						newMed.MediaTypeId = 3;
+						newMed.Src = checkImage.Src;
+						newMed.Extension = checkImage.Extension;
+						newMed.AltTitle = checkImage.AltTitle;
+						newMed.MetaDescription = checkImage.MetaDescription;
+						newMed.MetaTitle = checkImage.MetaTitle;
+						_context.Medias.Add(newMed);
+						await SaveContextChangesAsync();
+					}
+					else
+					{
+						checkImage.ProductId = productId;
+						_context.Medias.Entry(checkImage).State = EntityState.Modified;
+						await SaveContextChangesAsync();
+					}
+				}
+			}
+
+			#endregion
+
+			#region checkUploadedImages
+			if (UploadedImgIds != null)
+			{
+				foreach (var uploadedImgId in UploadedImgIds)
+				{
+					var updateMedia = await _context.Medias.Where(x => x.MediaId == uploadedImgId).SingleOrDefaultAsync();
+					updateMedia.ProductId = productId;
+					_context.Medias.Entry(updateMedia).State = EntityState.Modified;
+					await SaveContextChangesAsync();
+				}
+
+			}
+			#endregion
 		}
 
 		public async Task<List<ProductODTO>> ImportFromExcel(IFormFile file)
@@ -129,6 +187,24 @@ namespace Services
 			await SaveContextChangesAsync();
             return list.Select(x => _mapper.Map<ProductODTO>(x)).ToList();
         }
+
+		public async Task<string> DeleteUploadedImage(string img)
+		{
+			var imgToDelete = await _context.Medias.Where(x => x.Src.Contains(img)).OrderBy(x => x.MediaId).AsNoTracking().LastOrDefaultAsync();
+			if (imgToDelete != null)
+			{
+				var isDeleted = await _AWSS3BucketHelper.DeleteFile(imgToDelete.Src.ToString(), 0, 0);
+				if (isDeleted)
+				{
+					_context.Medias.Remove(imgToDelete);
+					await SaveContextChangesAsync();
+					return "Image " + img + " is deleted!";
+				}
+
+			}
+			return "Failed to delete image";
+
+		}
 
 		#endregion FileUploads
 
@@ -1058,6 +1134,14 @@ namespace Services
 			return media;
 		}
 
+		public async Task<List<string>> GetGalleryImagesSrc(List<int> mediaIds)
+		{
+			List<string> imagesSrc = new List<string>();
+			var src = await _context.Medias.Where(x => mediaIds.Contains(x.MediaId)).Select(x => x.Src).ToListAsync();
+			imagesSrc.AddRange(src);
+
+			return imagesSrc;
+		}
 		public async Task<string> GetStringForModal(int mediaId)
 		{
 			var retVal = "";

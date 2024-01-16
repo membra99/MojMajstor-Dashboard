@@ -4,6 +4,7 @@
 	ViewData["Title"] = "Edit Data";
 }
 
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 	@using (Html.BeginForm("EditDataAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
 	{
 		<div class="col-12 bg-light mx-auto rounded-3">
@@ -219,6 +220,87 @@
 						</div>
 					</div>
 				</div>
+
+				<!--Gallrty images_modal-->
+				<div class="modal fade" id="editGalleryModal" tabindex="-1" aria-labelledby="editGalleryModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+					<div class="modal-dialog modal-dialog-centered modal-lg">
+						<!-- Use modal-lg class for a larger modal -->
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="editGalleryModalLabel">Add new images</h5>
+							</div>
+							<div class="modal-body">
+								<!-- Nav tabs -->
+								<ul class="nav nav-tabs" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#galleryEditTab1" id="tab1editLink">Upload images</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#galleryEditTab2" id="tab2editLink">Gallery</a>
+									</li>
+								</ul>
+
+								<div id="galleryImgArray"></div>
+								<div id="uploadedImgArray"></div>
+
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<!-- Tab 1 Content -->
+									<div id="galleryEditTab1" class="tab-pane active">
+										<div id="addImageForm" style="color: black">
+											<div class="form-group">
+												<div class="form-group mt-3 mb-3">
+												@* @Html.LabelFor(model => model.GalleryImages, "Event gallery images:")
+												@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file",@id="file-gallery", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
+												@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" }) *@
+													<div id="gallery-images">
+														<div id="newArrayVals">
+															@foreach (var img in Model.ProductIDTO.GalleyImg)
+																@Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
+															</div>
+															<div class="currentImgs">
+																<h4>Current images</h4>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<form id="form" method="post" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
+														<div class="form-group">
+															<div class="col-md-6 mx-auto" id="dropzone">
+																<div class="p-2 text-center rounded-top" style="background-color:rebeccapurple">
+																	<label style="font-size:20px; color:white;">Add New Images</label>
+																</div>
+																<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
+															</div>
+														</div>
+													</form>
+
+													<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+												</div>
+												<div class="imagesFromGallery">
+													<h4>New images</h4>
+													<div class="addedImages"></div>
+												</div>
+											</div>
+										</div>
+
+										<!-- Tab 2 Content -->
+										<div id="galleryEditTab2" class="tab-pane">
+											@Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
+											<div id="tab2edit-gallery"></div>
+											<hr>
+											<button class="btn btn-dotnet text-center" id="addNewImages">Add images</button>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" id="closeGalleryImageButton" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-dotnet" id="saveGalleryImagesButton">Save Image</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				<div class="row">
 					<div class="form-group col-12 mb-3">
 						@Html.Label("Featured Image:")
@@ -226,45 +308,13 @@
 					</div>
 					<hr>
 				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>Gallery Images</h4>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.GalleryImages, "Product gallery images:")
-					@Html.TextBoxFor(model => model.GalleryImages, null, new { type = "file", id = "file-gallery", @class = "form-control mb-3", runat = "server", multiple = "multiple", onchange = "loadMultipleFile(event)" })
-					@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
-					<div id="newArrayVals">
-						@foreach (var img in Model.ProductIDTO.GalleyImg)
-							@Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
-
-
-
-						</div>
-						<div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
-							<div class="text-center image-container">
-								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 0) ? Model.ProductIDTO.GalleyImg[0] : null})" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
-								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
-							</div>
-							<div class="text-center image-container">
-								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 1) ? Model.ProductIDTO.GalleyImg[1] : null})" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
-								<a class="unset-button @Model.ProductIDTO.GalleyImg.Count >= 2" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
-							</div>
-							<div class="text-center image-container">
-								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 2) ? Model.ProductIDTO.GalleyImg[2] : null})" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
-								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
-							</div>
-							<div class="text-center image-container">
-								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 3) ? Model.ProductIDTO.GalleyImg[3] : null})" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
-								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
-							</div>
-@* 							<div class="text-center image-container">
-								<img src="@Url.Action("GetImage","Dashboard",new {path = (Model.ProductIDTO.GalleyImg.Count > 4) ? Model.ProductIDTO.GalleyImg[4] : null})" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
-								<a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
-							</div> *@
-						</div>
+					<div class="form-group mb-3">
+						<h4>Gallery Images</h4>
 					</div>
-					<hr>
+					<div>
+						<button type="button" class="form-control p-2 btn-dotnet" id="openGalleryModalButton">Edit Gallery Images</button>
+						@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
+					</div>
 				</div>
 			</div>
 
@@ -277,8 +327,78 @@
 
 @section Scripts {
 	<script>
+		//handle-image-upload_start
+		let uploadedImages = [];
+		let dropzoneQ = null;
+		let galleryLoaded = false;
+		Dropzone.options.uploader = {
+			maxFilesize: 5,
+			acceptedFiles: ".jpeg, .png, .jpg, .webp",
+			addRemoveLinks: true,
+			dictDefaultMessage: "Select a file",
+			init: function () {
+				let imgNames = [];
+				this.on("addedfile", function (file) {
+
+					//this piece of code gets dz-preview tag trough file params
+					//previewEelemnt is parent tag that holds all preview info about uploaded image (thumbnail, size, etc)
+					//lastChild of previewElement is dz-remove tag
+
+					let dz_remove_forUploadedImage = file.previewElement.lastChild;
+					dz_remove_forUploadedImage.addEventListener("click", function () {
+						let clearImageName = file.name.replace(/\.[^.]+$/, "");
+						$.ajax({
+							url: "/Dashboard/DeleteUploadedImage?img=" + clearImageName,
+							type: "GET",
+							success: function (resp) {
+								console.log(resp);
+							},
+							error: function (resp) {
+								console.error(resp);
+							}
+						});
+					});
+					// dz_remove_forUploadedImage.setAttribute("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
+					// $(".testlink").attr("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
+				});
+				this.on("complete", function (file) {
+					let image = file.name;
+					let clearImageName = image.replace(/\.[^.]+$/, "");
+					imgNames.push(clearImageName);
+					if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+						$.ajax({
+							method: "POST",
+							url: "/Dashboard/UploadedImageHandler/",
+							data: {
+								imgNames: imgNames
+							},
+							success: function (callResponse) {
+								uploadedImages.push(...callResponse);
+								console.log(uploadedImages);
+								for (let i = 0; i < uploadedImages.length; ++i) {
+									if (uploadedImages[i] != 0) {
+										$("#uploadedImgArray").append(`
+														<input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
+													`);
+									}
+									else {
+										continue;
+									}
+								}
+							},
+							error: function (callResponse) {
+								console.error(callResponse);
+							}
+						});
+					}
+				})
+			}
+		};
+
+		//handle-image-upload_end
 		let galleryLimit = 4;
 		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
+		loadCurrentImages(galleryImages);
 		$(document).ready(function () {
 			loadGallery();
 			if ($('#ProductIDTO_ProductTypeId :selected').val() == 5) {
@@ -371,8 +491,19 @@
 			});
 
 			$("#closeImageButton").click(function (event) {
-				//unsetImage(event);
 				$('#addImageModal').modal('hide');
+			});
+
+			const openGalleryModalButton = document.getElementById("openGalleryModalButton");
+			const editGalleryModal = document.getElementById("editGalleryModal");
+
+			openGalleryModalButton.addEventListener("click", function () {
+				$(editGalleryModal).modal("show");
+			});
+
+			$("#closeGalleryImageButton").click(function (event) {
+				$(editGalleryModal).modal("hide");
+				loaded = false;
 			});
 
 		});
@@ -382,6 +513,56 @@
 			$(".overlay-checked").removeClass("overlay-checked");
 			$("#input-media").val(null);
 		}
+
+		let selectedMediaIds = [];
+
+		document.getElementById("tab1editLink").classList.add("active");
+		document.getElementById("tab2editLink").classList.remove("active");
+
+		document.getElementById("tab1editLink").addEventListener("click", function () {
+			document.getElementById("tab1editLink").classList.add("active");
+			document.getElementById("tab2editLink").classList.remove("active");
+
+			$("#galleryEditTab1").addClass("active");
+			$("#galleryEditTab2").removeClass("active");
+
+			//unselectGallery();
+		});
+
+		document.getElementById("tab2editLink").addEventListener("click", function (event) {
+			document.getElementById("tab2editLink").classList.add("active");
+			document.getElementById("tab1editLink").classList.remove("active");
+
+			$("#galleryEditTab1").removeClass("active");
+			$("#galleryEditTab2").addClass("active");
+
+
+			if (!galleryLoaded) {
+				let url = '@Url.Action("GalleryGrid","Dashboard")'
+				$("#tab2edit-gallery").load(url, function () {
+					$(this).find(".fa-hand-pointer").each(function () {
+						$(this).click(function () {
+							galleryLoaded = true;
+							mediaId = this.dataset.mediaId;
+							let parentElement = this.parentElement;
+							let children = parentElement.getElementsByClassName('fas');
+
+							for (var i = 0; i < children.length; i++) {
+								children[i].classList.toggle('disable-icon');
+							}
+							parentElement.parentElement.classList.toggle("overlay-checked");
+
+							const index = selectedMediaIds.indexOf(mediaId);
+							if (index === -1) {
+								selectedMediaIds.push(parseInt(mediaId));
+							} else {
+								selectedMediaIds.splice(index, 1);
+							}
+						});
+					});
+				});
+			}
+		});
 
 		document.getElementById("tab1Link").classList.add("active");
 
@@ -422,6 +603,48 @@
 						parentElement.parentElement.classList.add("overlay-checked");
 					});
 				});
+			}
+		});
+
+		$("#addNewImages").click(function (event) {
+			event.preventDefault();
+			selectedMediaIds.sort();
+			$.ajax({
+				type: "POST",
+				url: "/Dashboard/GetGalleryImagesSrc/",
+				data: {
+					mediaIds: selectedMediaIds,
+				},
+				success: function (response) {
+					$(".addedImages").html(""); // Clear existing content
+					for (let i = 0; i < response.length; ++i) {
+						$(".addedImages").append(`
+								<div class="image-container">
+									<img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160" style="border: 2px solid indigo"/>
+									<a class="unset-button hover-unset" id="unset-button" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i})" title="Unset Image">x</a>
+								</div>
+									`);
+						//document.getElementById('unset').classList.add("hover-unset");
+					}
+				},
+				error: function (mediaSrc) {
+					console.error(mediaSrc);
+				}
+			});
+
+			document.getElementById("tab1editLink").classList.add("active");
+			document.getElementById("tab2editLink").classList.remove("active");
+
+			document.getElementById("galleryEditTab2").classList.remove("active");
+			document.getElementById("galleryEditTab1").classList.add("active");
+		});
+
+		$("#saveGalleryImagesButton").click(function (event) {
+			$('#editGalleryModal').modal('hide');
+			for (let i = 0; i < selectedMediaIds.length; ++i) {
+				$("#galleryImgArray").append(`
+							<input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
+						`);
 			}
 		});
 
@@ -471,6 +694,7 @@
 				element.classList.add("hover-unset");
 			}
 		};
+
 		let loadGallery = function () {
 			for (let i = 0; i < galleryImages.length; i++) {
 				document.getElementById('gallery-preview-' + i).nextElementSibling.classList.add("hover-unset")
@@ -486,34 +710,44 @@
 			});
 		}
 
-		function unsetImageMultiple(event, position) {
-			let isUpload =! event.target.previousElementSibling.src.includes("GetImage");
+		function loadCurrentImages(galleryImages) {
+			for (let i = 0; i < galleryImages.length; i++) {
+				$(".currentImgs").append(`
+							<div class="image-container">
+								<img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
+								<a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
+							</div>
+						`);
+			}
+		}
 
-			unsetAllImages();
+		function unsetGalleryImage(event, element, imageTagAt, modal) {
+			//function removes selected MediaId from selectedMediaIds arr
+			//then removes selected overlay from removed image in Gallery section
+			let position = selectedMediaIds.indexOf(element);
+			if (position !== -1) {
+				selectedMediaIds.splice(position, 1);
+				console.log(selectedMediaIds);
+			}
+			$("#gallery-new-preview-" + imageTagAt).remove();
+
+			let imageOverlay = $(modal + ' [data-media-id=' + element + "]").parent().parent();
+			imageOverlay.find('.fas').toggleClass('disable-icon');
+			imageOverlay.removeClass("overlay-checked");
+		}
+
+		function unsetImageMultiple(event, position, imageTagAt) {
+			let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
+			console.log(position);
+			//let position = galleryImages.indexOf(element);
 
 			if (galleryImages.length > 0) {
 				if (isUpload == false) {
-					let newArr = galleryImages.splice(position, 1);
-					$('#newArrayVals input[type="hidden"][value="' + newArr[0] + '"]').remove();
+					galleryImages.slice(0, position)
+					$('#newArrayVals input[type="hidden"][value="' + galleryImages[position] + '"]').remove();
+					$("#gallery-preview-" + imageTagAt).remove();
 				}
-				loadMultipleFileArray(galleryImages, "load", 0);
 			}
-
-			if (document.getElementById("file-gallery").files.length > 0) {
-				let fileInput = document.getElementById("file-gallery");
-				let selectedFiles = Array.from(fileInput.files);
-				if (isUpload == true) {
-					selectedFiles.splice(Math.abs(galleryImages.length - position), 1);
-
-					let newList = new DataTransfer();
-					for (let file of selectedFiles) {
-						newList.items.add(file);
-					}
-					fileInput.files = newList.files
-				}
-				loadMultipleFileArray(selectedFiles, "upload", galleryImages.length)
-			}
-
 			event.preventDefault();
 		}
 

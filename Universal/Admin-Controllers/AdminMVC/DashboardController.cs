@@ -165,6 +165,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return File(bytes, MediaTypeNames.Text.Plain);
 		}
 
+		public async Task<string> DeleteUploadedImage(string img)
+		{
+			return await _mainDataServices.DeleteUploadedImage(img);
+		}
+
 		public IActionResult ImportExc()
 		{
 			CheckForToast();
@@ -820,6 +825,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<List<string>> GetGalleryImagesSrc(List<int> mediaIds)
+		{
+			return await _mainDataServices.GetGalleryImagesSrc(mediaIds);
+		}
+
 		public async Task<IActionResult> NewData()
 		{
 			int? productID = (int?)TempData["productID"];
@@ -1096,34 +1106,34 @@ namespace Universal.Admin_Controllers.AdminMVC
 					}
 				}
 				
-				await _mainDataServices.SetProperGallery(dataIDTO.ProductIDTO.GalleyImg, dataIDTO.ProductIDTO.ProductId);
+				await _mainDataServices.SetProperGallery(dataIDTO.ProductIDTO.GalleyImg, dataIDTO.MediaIds, dataIDTO.UploadedImages, dataIDTO.ProductIDTO.ProductId);
 				
-				foreach (IFormFile file in dataIDTO.GalleryImages)
-				{
-					awsFile.Attachments = new List<IFormFile> {
-						file
-					};
-					string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
-					if (!IsSupportedExtension(extension))
-					{
-						_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-						_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-						return RedirectToAction("AllData");
-					}
-					else
-					{
-						if (file.Length > 1000000)
-						{
-							_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-							_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-							return RedirectToAction("AllData");
-						}
-						else
-						{
-							await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
-						}
-					}
-				}
+				//foreach (IFormFile file in dataIDTO.GalleryImages)
+				//{
+				//	awsFile.Attachments = new List<IFormFile> {
+				//		file
+				//	};
+				//	string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
+				//	if (!IsSupportedExtension(extension))
+				//	{
+				//		_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+				//		_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+				//		return RedirectToAction("AllData");
+				//	}
+				//	else
+				//	{
+				//		if (file.Length > 1000000)
+				//		{
+				//			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+				//			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+				//			return RedirectToAction("AllData");
+				//		}
+				//		else
+				//		{
+				//			await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
+				//		}
+				//	}
+				//}
 
 				await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
 
