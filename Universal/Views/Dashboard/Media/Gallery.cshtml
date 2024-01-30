@@ -9,6 +9,30 @@
 	await Html.RenderPartialAsync("/Views/Partials/_GalleryGrid.cshtml", Model);
 }
 
+<style>
+	.fa-eye:hover{
+		cursor: pointer;
+	}
+</style>
+
+<!-- view_picture_modal -->
+<div id="view-image-modal" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h6 class="modal-title text-center" id="view-modal-heading"></h6>
+			</div>
+			<div class="modal-body">
+				<img id="viewImage" name="viewImage" alt="image.png" width="100%" />
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- view_picture_modal -->
+
 <div id="edit-image-modal" class="modal fade" tabindex="-1" role="dialog">
 	@using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
 	{
@@ -68,6 +92,26 @@
 		let data = @Json.Serialize(Model.MediaList);
 		console.log(data);
 		$(document).ready(function () {
+
+			let view_buttons = document.getElementsByClassName("fa-eye");
+			let view_modal_image = document.getElementById("viewImage");
+			let view_modal_heading = document.getElementById("view-modal-heading");
+			for (let i = 0; i < view_buttons.length; i++) {
+				view_buttons[i].addEventListener("click", function () {
+					let modalHeading = this.dataset.mediaTitle;
+					let imageSrc = this.dataset.mediaSrc;
+					view_modal_image.src = "/Dashboard/GetImage?path=" + imageSrc;
+					if (modalHeading.length == 0) {
+						let parts = imageSrc.split('/');
+						view_modal_heading.textContent = parts[1];
+					} else {
+						view_modal_heading.textContent = modalHeading;
+					}
+					$("#view-image-modal").modal("toggle");
+				});
+			}
+
+
 			let edit_buttons = document.getElementsByClassName("fa-edit");
 			for (let i = 0; i < edit_buttons.length; i++) {
 				edit_buttons[i].addEventListener("click", function () {

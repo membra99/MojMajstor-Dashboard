@@ -133,6 +133,7 @@
 						<div class="overlay-icons">
 							@if (ViewData["Title"] == "Gallery")
 							{
+								<i class="fas fa-eye view-icon" date-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle" data-media-src="@mediaImage.Src"></i>
 								<i class="fas fa-edit edit-icon" data-media-id="@mediaImage.MediaId"></i>
 								<i class="fas fa-trash delete-icon" data-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle" data-media-mediatype="@mediaImage.MediaTypeId"></i>
 							}
