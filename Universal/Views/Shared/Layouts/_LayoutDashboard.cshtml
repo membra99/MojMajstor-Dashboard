@@ -9,26 +9,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewData["Title"] | Universal</title>
-	@*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
-	<link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link href=" https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/css/bootstrap-multiselect.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-	<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-	<link href=" https://cdn.jsdelivr.net/npm/bootstrap-switch@3.4.0/dist/css/bootstrap3/bootstrap-switch.min.css " rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Universal</title>
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,700">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Universal.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href=" https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/css/bootstrap-multiselect.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link href=" https://cdn.jsdelivr.net/npm/bootstrap-switch@3.4.0/dist/css/bootstrap3/bootstrap-switch.min.css " rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<style>
-        .home-section:hover {
-            color: rebeccapurple;
-        }
 
         .home-link:hover {
             color: rebeccapurple;
@@ -36,6 +34,10 @@
         }
 
         .nav-item-title:hover {
+            cursor: pointer;
+        }
+
+        .fa-chevron-down:hover {
             cursor: pointer;
         }
 
@@ -68,31 +70,36 @@
 			padding-right: 8px;
 		}
 	</style>
-	<script>
-		function getIcon() {
-			var currentURL = window.location.href;
-			var path = new URL(currentURL).pathname + new URL(currentURL).search;
-			var linkElement = $('a[href="' + path + '"]');
-			var dropdownLiElement = linkElement.closest('li.nav-item.dropdown-btn');
-			if (!dropdownLiElement[0]) dropdownLiElement = linkElement.closest('li.nav-item');
-			var iElement = dropdownLiElement.find('i');
-			if (iElement[0]) {
-				var iconHtml = iElement[0].outerHTML;
-				$(".page-title").html(iconHtml + $(".page-title").html());
-			}
-		}
-		tinymce.init({
-			selector: 'textarea#tiny',
-			plugins: [
-				'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
-				'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-				'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
-			],
-			toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
-				'bullist numlist checklist outdent indent | removeformat | code table help',
-			height: 500
-		})
-	</script>
+    <script>
+        function getIcon() {
+            var currentURL = window.location.href;
+            var path = new URL(currentURL).pathname + new URL(currentURL).search;
+            var linkElement = $('a[href="' + path + '"]');
+            var dropdownLiElement = linkElement.closest('li.nav-item.dropdown-btn');
+            if (!dropdownLiElement[0]) dropdownLiElement = linkElement.closest('li.nav-item');
+            var iElement = dropdownLiElement.find('i');
+            if (iElement[0]) {
+                var iconHtml = iElement[0].outerHTML;
+                $(".page-title").html(iconHtml + $(".page-title").html());
+            }
+        }
+        function initTiny() {
+            if (tinymce.get('tiny')) {
+                tinymce.get('tiny').remove();
+            }
+            tinymce.init({
+                selector: 'textarea#tiny',
+                plugins: [
+                    'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                    'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                    'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
+                    'bullist numlist checklist outdent indent | removeformat | code table help',
+                height: 500
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="m-0 p-0">
@@ -105,7 +112,6 @@
                     </a>
                 </li>
                 <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-user icon-spacing", null, new{ @class = "side-anchor" })</li>
-                
                 <li class="nav-item dropdown-btn">
                     <span class="side-anchor">
                         <i class="fa fa-file-lines icon-spacing"></i>
@@ -116,33 +122,6 @@
                         <li>
                             @Html.ActionLink("All Data", "AllData", "Dashboard", null, new{ @class = "side-anchor" })
                             @Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown-btn">
-                    <span class="side-anchor">
-                        <i class="fa fa-table-list icon-spacing"></i>
-                        <span class="nav-item-title">Categories</span>
-                        <i class="fa fa-chevron-down mt-1"></i>
-                    </span>
-                    <ul class="navbar-nav dropdown-container">
-                        <li>
-                            @*TODO Promeniti lang da ide iz sesije*@
-                            @Html.ActionLink("Category Tree", "AllCategories", "Dashboard",null, new{ @class = "side-anchor" })
-                            @Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown-btn">
-                <span class="side-anchor ">
-                    <i class="fa-solid fa-certificate icon-spacing"></i>
-                        <span class="nav-item-title">Declarations</span>
-                    <i class="fa fa-chevron-down mt-1"></i>
-                </span>
-                    <ul class="navbar-nav dropdown-container">
-                        <li>
-                            @Html.ActionLink("All Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
-                            @Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
                         </li>
                     </ul>
                 </li>
@@ -160,6 +139,34 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown-btn">
+                    <span class="side-anchor">
+                        <i class="fa fa-table-list icon-spacing"></i>
+                        <span class="nav-item-title">Categories</span>
+                        <i class="fa fa-chevron-down mt-1"></i>
+                    </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @*TODO Promeniti lang da ide iz sesije*@
+                            @Html.ActionLink("Category Tree", "AllCategories", "Dashboard",null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">@Html.ActionLinkIcon("Declarations", "AllDeclaration", "Dashboard", "fa-solid fa-certificate icon-spacing", null, new{ @class = "side-anchor" })</li>
+                @* <li class="nav-item dropdown-btn">
+                <span class="side-anchor ">
+                    <i class="fa-solid fa-certificate icon-spacing"></i>
+                        <span class="nav-item-title">Declarations</span>
+                    <i class="fa fa-chevron-down mt-1"></i>
+                </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @Html.ActionLink("All Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li> *@
                 <li class="nav-item dropdown-btn">
                     <span class="side-anchor">
                         <i class="fa fa-copy icon-spacing"></i>
