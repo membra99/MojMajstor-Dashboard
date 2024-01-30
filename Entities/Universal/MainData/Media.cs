@@ -16,6 +16,7 @@ namespace Entities.Universal.MainData
         public string? MetaTitle { get; set; }
         public string? MetaDescription { get; set; }
         public string? AltTitle { get; set; }
+        public string? MimeType { get; set; }
 
         public MediaType MediaType { get; set; }
         public Product? Product { get; set; }

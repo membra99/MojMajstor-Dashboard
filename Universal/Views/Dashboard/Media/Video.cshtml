@@ -1,0 +1,104 @@
+﻿@model Universal.DTO.ViewDTO.MultiMediaIDTO
+
+@{
+    ViewData["Title"] = "Videos";
+}
+
+<style>
+    .fa-pen:hover {
+        cursor: pointer;
+    }
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+<div class="action-button pt-2">
+    <button type="button" class="btn btn-dotnet" id="uploadVideoModal">Add new video</button>
+</div>
+
+<!-- Upload video modal -->
+<div class="modal fade" id="uploadVideo" tabindex="-1" aria-labelledby="uploadVideoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="uploadVideoLabel">Upload video</h1>
+            </div>
+            <div class="modal-body">
+                <!-- Image upload -->
+                <form id="form" method="post" class="w-100" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
+                    <div class="form-group">
+                        <div id="dropzone">
+                            <div class="p-2 text-center rounded-top" style="background-color: rebeccapurple">
+                                <label style="font-size:20px; color:white;">Add New Video</label>
+                            </div>
+                            <div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
+                        </div>
+                    </div>
+                </form>
+                <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+                <!-- Image upload -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-dotnet" id="saveVideo">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Upload video modal -->
+<!-- Loading modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div class="spinner-border" role="status"></div>
+                <p>Uploading video...</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Loading modal -->
+@{
+    await Html.RenderPartialAsync("/Views/Partials/_VideoGrid.cshtml", Model);
+}
+
+@section Scripts {
+    <script>
+        let uploadedVideoName = null;
+
+        Dropzone.autoDiscover = false;
+        let videoDropZone = new Dropzone("#uploader", {
+            acceptedFiles: ".mp4, .avi, .m4a",
+            maxFiles: 1,
+            uploadMultiple: false,
+            autoProcessQueue: false,
+            dictDefaultMessage: "Click here or drop file to upload",
+
+            sending: function (file, xhr, formData) {
+                formData.append("VideoPrice", $("#videoPrice").val());
+            },
+
+            init: function () {
+                this.on("complete", function (file) {
+                    $("#exampleModal").modal("hide");
+                    location.reload();
+                });
+            }
+        });
+
+        let formData = {};
+        let mediaIdInput = null;
+        $(document).ready(function () {
+            $("#uploadVideoModal").on("click", function () {
+                $("#uploadVideo").modal("show");
+            });
+
+            $("#saveVideo").on("click", function () {
+                videoDropZone.processQueue();
+                $("#uploadVideo").modal("hide");
+                $("#exampleModal").modal("show");
+            });
+        });
+    </script>
+}
+

@@ -1,9 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using Services;
+@inject IHttpContextAccessor HttpContextAccessor
+@inject UsersServices userServices
+@{
+    var user = await userServices.GetUserById(int.Parse(HttpContextAccessor.HttpContext.Session.GetString("UserId")));
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewData["Title"] - Universal</title>
+	<title>@ViewData["Title"] | Universal</title>
 	@*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
@@ -18,12 +26,33 @@
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<style>
+        .home-section:hover {
+            color: rebeccapurple;
+        }
+
+        .home-link:hover {
+            color: rebeccapurple;
+            transition: 0.3s ease-in-out;
+        }
+        .nav-item-title:hover {
+            cursor: pointer;
+        }
 		.toast-close {
 			color: black !important;
 		}
 
 		.active {
 			color: white;
+		}
+
+		.rotate {
+			transform: rotateX(180deg);
+			transition: transform 0.3s ease-in-out;
+		}
+
+		.rotate-back {
+			transform: rotateX(0deg);
+			transition: transform 0.3s ease-in-out;
 		}
 
 		.dropdown-container {
@@ -38,6 +67,18 @@
 		}
 	</style>
 	<script>
+		function getIcon() {
+			var currentURL = window.location.href;
+			var path = new URL(currentURL).pathname + new URL(currentURL).search;
+			var linkElement = $('a[href="' + path + '"]');
+			var dropdownLiElement = linkElement.closest('li.nav-item.dropdown-btn');
+			if (!dropdownLiElement[0]) dropdownLiElement = linkElement.closest('li.nav-item');
+			var iElement = dropdownLiElement.find('i');
+			if (iElement[0]) {
+				var iconHtml = iElement[0].outerHTML;
+				$(".page-title").html(iconHtml + $(".page-title").html());
+			}
+		}
 		tinymce.init({
 			selector: 'textarea#tiny',
 			plugins: [
@@ -52,187 +93,440 @@
 	</script>
 </head>
 <body>
-	<div class="container m-0 p-0">
-		<header class="bg-dark header-navigation">
-			<div class="d-flex flex-row justify-content-between align-items-center" style="height:inherit">
-				<a href="/Dashboard"><img src="~/images/logo_2_2.svg" width="35" height="35" style="margin-left:15px" /></a>
-				<div class="d-flex flex-row align-items-center gap-2">
-					@Html.ActionLink("Log Out", "Logout", "Authentication", null, new { @class = "btn btn-secondary", style = "margin-right:15px; font-size: 12px; width: 90%;" })
-				</div>
-			</div>
-		</header>
-		<aside class="side-navigation">
-			<ul class="navbar-nav side-list sidenav">
-				<li class="nav-item dropdown-btn">
-					<span class="side-anchor">
-						<i class="fa fa-user icon-spacing"></i>
-						Users
-						<i class="fa fa-caret-down"></i>
-					</span>
-					<ul class="navbar-nav dropdown-container">
-						<li>
-							@Html.ActionLink("All Users", "AllUsers", "Dashboard", null, new{ @class = "side-anchor" })
-							@Html.ActionLink("New Users", "NewUser", "Dashboard", null, new{ @class = "side-anchor" })
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item dropdown-btn">
-					<span class="side-anchor">
-						<i class="fa fa-file-lines icon-spacing"></i>
-						Data
-						<i class="fa fa-caret-down"></i>
-					</span>
-					<ul class="navbar-nav dropdown-container">
-						<li>
-							@Html.ActionLink("All Data", "AllData", "Dashboard", null, new{ @class = "side-anchor" })
-							@Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item dropdown-btn">
-					<span class="side-anchor">
-						<i class="fa fa-table-list icon-spacing"></i>
-						Categories
-						<i class="fa fa-caret-down"></i>
-					</span>
-					<ul class="navbar-nav dropdown-container">
-						<li>
-							@*TODO Promeniti lang da ide iz sesije*@
-							@Html.ActionLink("Category Tree", "AllCategories", "Dashboard",null, new{ @class = "side-anchor" })
-							@Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item dropdown-btn">
-					<span class="side-anchor ">
-						<i class="fa-solid fa-certificate icon-spacing"></i>
-						Declarations
-						<i class="fa fa-caret-down"></i>
-					</span>
-					<ul class="navbar-nav dropdown-container">
-						<li>
-							@Html.ActionLink("All Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
-							@Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item dropdown-btn">
-					<span class="side-anchor ">
-						<i class="fa-solid fa-folder-open icon-spacing"></i>
-						Media
-						<i class="fa fa-caret-down"></i>
-					</span>
-					<ul class="navbar-nav dropdown-container">
-						<li>
-							@Html.ActionLink("Gallery", "AllGallery", "Dashboard", null, new{ @class = "side-anchor" })
-							@Html.ActionLink("New Media", "AddMedia", "Dashboard", null, new{ @class = "side-anchor" })
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item dropdown-btn">
-					<span class="side-anchor ">
-						<i class="fa fa-copy icon-spacing"></i>
-						Blogs
-						<i class="fa fa-caret-down"></i>
-					</span>
-					<ul class="navbar-nav dropdown-container">
-						<li>
-							@Html.ActionLink("Blogs", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "side-anchor" })
-							@Html.ActionLink("All Tags", "AllTags", "Dashboard",null, new{ @class = "side-anchor" })
-							@Html.ActionLink("Tag", "NewTag", "Dashboard",null, new{ @class = "side-anchor" })
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf", null, new{ @class = "side-anchor" })</li>
-				<li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import", null, new{ @class = "side-anchor" })</li>
-				
-			</ul>
-		</aside>
-		<div class="content-wrapper bg-light">
-			<main role="main" class="content-offset">
-				<div class="loading-backdrop loading-inactive">
-					<div class="loading-container">
-						<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 500 500" fill="none">
-							<g id="Loading">
-								<circle id="Dot" cx="250" cy="250" r="50" fill="#4B0082" />
-								<path id="D" d="M250 500C282.83 500 315.339 493.534 345.671 480.97C376.002 468.406 403.562 449.991 426.777 426.777C449.991 403.562 468.406 376.002 480.97 345.671C493.534 315.339 500 282.83 500 250C500 217.17 493.534 184.661 480.97 154.329C468.406 123.998 449.991 96.4379 426.777 73.2233C403.562 50.0086 376.002 31.5938 345.671 19.0301C315.339 6.46644 282.83 -2.87013e-06 250 0L250 87.5C271.34 87.5 292.471 91.7032 312.186 99.8696C331.901 108.036 349.815 120.006 364.905 135.095C379.994 150.185 391.964 168.099 400.13 187.814C408.297 207.529 412.5 228.66 412.5 250C412.5 271.34 408.297 292.471 400.13 312.186C391.964 331.901 379.994 349.815 364.905 364.905C349.815 379.994 331.901 391.964 312.186 400.13C292.471 408.297 271.34 412.5 250 412.5V500Z" fill="#D9D9D9" />
-								<path id="o" d="M250 100C230.302 100 210.796 103.88 192.597 111.418C174.399 118.957 157.863 130.005 143.934 143.934C130.005 157.863 118.956 174.399 111.418 192.598C103.88 210.797 100 230.302 100 250C100 269.699 103.88 289.204 111.418 307.403C118.956 325.602 130.005 342.137 143.934 356.066C157.863 369.995 174.399 381.044 192.597 388.582C210.796 396.12 230.302 400 250 400L250 347.5C237.196 347.5 224.518 344.978 212.688 340.079C200.859 335.179 190.111 327.997 181.057 318.943C172.003 309.889 164.822 299.141 159.922 287.312C155.022 275.483 152.5 262.804 152.5 250C152.5 237.196 155.022 224.518 159.922 212.689C164.822 200.859 172.003 190.111 181.057 181.057C190.111 172.004 200.859 164.822 212.688 159.922C224.518 155.022 237.196 152.5 250 152.5V100Z" fill="#D9D9D9" />
-							</g>
-						</svg>
-					</div>
-				</div>
-				@RenderBody()
-			</main>
-		</div>
-	</div>
+    <div class="m-0 p-0">
+        <aside class="side-navigation">
+            <ul class="side-list sidenav">
+                <li class="nav-item">
+                    <a href="/Dashboard" class="home-section d-flex align-items-center justify-content-center p-4" style="text-decoration: none; color: grey; font;">
+                        <img src="~/images/Logo_2_2.svg" class="home-section" width="75" height="30" />
+                        <span class="home-link">Universal</span>
+                    </a>
+                </li>
+                <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-user icon-spacing", null, new{ @class = "side-anchor" })</li>
+                
+                <li class="nav-item dropdown-btn">
+                    <span class="side-anchor">
+                        <i class="fa fa-file-lines icon-spacing"></i>
+                        <span class="nav-item-title">Data</span>
+                        <i class="fa fa-chevron-down mt-1"></i>
+                    </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @Html.ActionLink("All Data", "AllData", "Dashboard", null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown-btn">
+                    <span class="side-anchor">
+                        <i class="fa fa-table-list icon-spacing"></i>
+                        <span class="nav-item-title">Categories</span>
+                        <i class="fa fa-chevron-down mt-1"></i>
+                    </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @*TODO Promeniti lang da ide iz sesije*@
+                            @Html.ActionLink("Category Tree", "AllCategories", "Dashboard",null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown-btn">
+                <span class="side-anchor ">
+                    <i class="fa-solid fa-certificate icon-spacing"></i>
+                        <span class="nav-item-title">Declarations</span>
+                    <i class="fa fa-chevron-down mt-1"></i>
+                </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @Html.ActionLink("All Declaration", "AllDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("New Declaration", "NewDeclaration", "Dashboard", null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown-btn">
+                    <span class="side-anchor ">
+                        <i class="fa-solid fa-photo-film icon-spacing"></i>
+                        <span class="nav-item-title">Media</span>
+                        <i class="fa fa-chevron-down mt-1"></i>
+                    </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @Html.ActionLink("Photo Gallery", "AllGallery", "Dashboard", null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("Video Gallery", "AllVideos", "Dashboard", null, new{ @class = "side-anchor" })
+                            @Html.ActionLink("New Media", "AddMedia", "Dashboard", null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown-btn">
+                    <span class="side-anchor">
+                        <i class="fa fa-copy icon-spacing"></i>
+                        <span class="nav-item-title">Blogs</span>
+                        <i class="fa fa-chevron-down mt-1"></i>
+                    </span>
+                    <ul class="navbar-nav dropdown-container">
+                        <li>
+                            @Html.ActionLink("Blogs", "AllSiteContent", "Dashboard", new {type = "Blog"}, new{ @class = "side-anchor" })
+                            @Html.ActionLink("All Tags", "AllTags", "Dashboard",null, new{ @class = "side-anchor" })
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import", null, new{ @class = "side-anchor" })</li>
+            </ul>
+            <div class="user-info">
+                <hr class="horizontal-rule-spec" />
+                <div class="user-info-container d-flex">
+                    <div class="user-image">
+                        @if (user.ImageSrc == null)
+                        {
+                            <img width="40" height="40" src="~/images/noimage-person.png" alt="userimage" />
+                        }
+                        else
+                        {
+                            <img width="40" height="40" src="@Url.Action("GetImage","Dashboard",new {path = user.ImageSrc})" />
+                        }
 
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
-	@*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/js/bootstrap-multiselect.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-	<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-	<script>
-		function showToast(text, type) {
-			let styleBg = '#2e844a';
-			let styleColor = 'white';
-			switch (type) {
-				case "success": styleBg = '#2e844a'; break;
-				case "error": styleBg = '#ea001e'; break;
-				case "info": styleBg = '#747474'; break;
-				case "warning": styleBg = '#dd7a01'; styleColor = 'black'; break;
-			}
+                    </div>
+                    <div class="user-meta">
+                        <span class="username-meta">
+                            @user.FirstName @user.LastName
+                        </span>
+                        <span class="email-meta">
+                            @user.Email
+                        </span>
+                    </div>
+                    <div class="logout-user">
+                        <a href="/Authentication/Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="content-wrapper">
+            <main role="main" class="content-offset">
+                <div class="loading-backdrop loading-inactive">
+                    <div class="loading-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 500 500" fill="none">
+                            <g id="Loading">
+                                <circle id="Dot" cx="250" cy="250" r="50" fill="#D9D9D9" />
+                                <path id="D" d="M250 500C282.83 500 315.339 493.534 345.671 480.97C376.002 468.406 403.562 449.991 426.777 426.777C449.991 403.562 468.406 376.002 480.97 345.671C493.534 315.339 500 282.83 500 250C500 217.17 493.534 184.661 480.97 154.329C468.406 123.998 449.991 96.4379 426.777 73.2233C403.562 50.0086 376.002 31.5938 345.671 19.0301C315.339 6.46644 282.83 -2.87013e-06 250 0L250 87.5C271.34 87.5 292.471 91.7032 312.186 99.8696C331.901 108.036 349.815 120.006 364.905 135.095C379.994 150.185 391.964 168.099 400.13 187.814C408.297 207.529 412.5 228.66 412.5 250C412.5 271.34 408.297 292.471 400.13 312.186C391.964 331.901 379.994 349.815 364.905 364.905C349.815 379.994 331.901 391.964 312.186 400.13C292.471 408.297 271.34 412.5 250 412.5V500Z" fill="#D9D9D9" />
+                                <path id="o" d="M250 100C230.302 100 210.796 103.88 192.597 111.418C174.399 118.957 157.863 130.005 143.934 143.934C130.005 157.863 118.956 174.399 111.418 192.598C103.88 210.797 100 230.302 100 250C100 269.699 103.88 289.204 111.418 307.403C118.956 325.602 130.005 342.137 143.934 356.066C157.863 369.995 174.399 381.044 192.597 388.582C210.796 396.12 230.302 400 250 400L250 347.5C237.196 347.5 224.518 344.978 212.688 340.079C200.859 335.179 190.111 327.997 181.057 318.943C172.003 309.889 164.822 299.141 159.922 287.312C155.022 275.483 152.5 262.804 152.5 250C152.5 237.196 155.022 224.518 159.922 212.689C164.822 200.859 172.003 190.111 181.057 181.057C190.111 172.004 200.859 164.822 212.688 159.922C224.518 155.022 237.196 152.5 250 152.5V100Z" fill="#D9D9D9" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div id="addModel" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 id="addModelTitle" class="modal-title"></h5>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="closeAddModelModalButton" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-dotnet" id="submitFormBtn" value="Save" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="editModel" class="modal fade" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 id="editModelTitle" class="modal-title"></h5>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="closeEditModelModalButton" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-dotnet" id="submitEditFormBtn" value="Save" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-			Toastify({
-				text: text,
-				duration: 3000,
-				close: true,
-				gravity: "top", // `top` or `bottom`
-				position: "center", // `left`, `center` or `right`
-				stopOnFocus: true, // Prevents dismissing of toast on hover
-				style: {
-					background: styleBg,
-					color: styleColor
-				},
-				onClick: function () { } // Callback after click
-			}).showToast();
-		}
+                <h1 class="page-title">@ViewData["Title"]</h1>
+                @RenderBody()
+            </main>
+        </div>
+    </div>
 
-		let toggleLoading = function () {
-			$(".loading-backdrop").toggleClass("loading-inactive loading-active");
-		}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/js/bootstrap-multiselect.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        function showToast(text, type) {
+            let styleBg = '#2e844a';
+            let styleColor = 'white';
+            switch (type) {
+                case "success": styleBg = '#2e844a'; break;
+                case "error": styleBg = '#ea001e'; break;
+                case "info": styleBg = '#747474'; break;
+                case "warning": styleBg = '#dd7a01'; styleColor = 'black'; break;
+            }
 
-		$(document).ready(function () {
-			let toastMessage = '@ViewBag.ToastMessage';
-			let toastType = '@ViewBag.ToastType';
-			if (toastMessage !== '') {
-				showToast(toastMessage, toastType == '' ? 'success' : toastType);
-			}
+            Toastify({
+                text: text,
+                duration: 3000,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "center", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                    background: styleBg,
+                    color: styleColor
+                },
+                onClick: function () { } // Callback after click
+            }).showToast();
+        }
 
-			var dropdown = document.getElementsByClassName("dropdown-btn");
-			var i;
+        let toggleLoading = function () {
+            $(".loading-backdrop").toggleClass("loading-inactive loading-active");
+        }
 
-			for (i = 0; i < dropdown.length; i++) {
-				dropdown[i].addEventListener("click", function () {
-					this.classList.toggle("active");
-					var dropdownContent = this.querySelector(".dropdown-container");
-					if (dropdownContent.style.display === "block") {
-						dropdownContent.style.display = "none";
-					} else {
-						dropdownContent.style.display = "block";
-					}
-				});
-			}
-		})
+        $(document).ready(function () {
+            let toastMessage = '@ViewBag.ToastMessage';
+            let toastType = '@ViewBag.ToastType';
+            if (toastMessage !== '') {
+                showToast(toastMessage, toastType == '' ? 'success' : toastType);
+            }
 
-	</script>
-	@await RenderSectionAsync("Scripts", required: false)
+            getIcon(); //get icon of current page category
+
+            $(".dropdown-container").hide(); // Hide the dropdown content initially
+
+            $(".dropdown-btn").click(function () {
+                $(this).toggleClass("active");
+                var dropdownContent = $(this).children(".dropdown-container");
+                var chevronIcon = $(this).find(".fa-chevron-down");
+
+                if (dropdownContent.is(":visible")) {
+                    dropdownContent.slideUp(300);
+                    chevronIcon.removeClass("rotate"); //remove the rotate class
+                    chevronIcon.addClass("rotate-back"); //add the rotate back animation
+                } else {
+                    dropdownContent.slideDown(300);
+                    chevronIcon.removeClass("rotate-back"); //remove the rotate back animation
+                    chevronIcon.addClass("rotate"); //add the rotate class
+                }
+            });
+
+            $.fn.dataTable.defaults.pageLength = 14; // set default amount to be 14 rows per page
+
+            setTimeout(function () {
+                if (!($(".dataTables_info").eq(0).html().split(' ')[5] > 10)) {
+                    var firstRowParent = $(".dataTables_info").eq(0).closest(".row");
+                    firstRowParent.hide();
+                }
+                var firstRowParent = $(".dataTables_info").eq(0).closest(".row");
+                firstRowParent.addClass("fixed-bottom");
+            }, 100);
+
+
+            //global functions for loading dynamic modals
+            function removePreviousHtml() {
+                $("#addModel .modal-body").html(null);
+                $("#editModel .modal-body").html(null);
+            }
+
+            function loadScripts(tempElement) {
+                var loadScriptTag = tempElement.find('#loadScriptDynamic');
+                if (loadScriptTag.length > 0) {
+                    var scriptId = 'loadedDynamicScriptFromPage';
+                    // remove the old script element if it exists
+                    var existingScript = document.getElementById(scriptId);
+                    if (existingScript) {
+                        existingScript.parentNode.removeChild(existingScript);
+                    }
+                    // create a new script element with a unique ID
+                    var newScript = document.createElement('script');
+                    newScript.type = 'text/javascript';
+                    newScript.id = scriptId; // Set the unique ID
+
+                    // Wrap the retrieved script content in an IIFE and set it as the inner HTML of the new script element
+                    newScript.innerHTML = '(function() {' + loadScriptTag.text() + '})();';
+
+                    // Append the new script to the document's body
+                    document.body.appendChild(newScript);
+                }
+            }
+            //code for dynamic loading of add model modal elements for existing pages
+            $("a.btn-dotnet").click(function (e) {
+                if ($(this).html() == "Add New Event" || $(this).html() == "Add New Blog" || $(this).html() == "Export in Excel" || $(this).html() == "Add New Page") return true; // dont run for data/product because of the large size of modal
+                e.preventDefault();
+                removePreviousHtml();
+                var hrefValue = $(this).attr("href");
+                $("#addModelTitle").html($(this).html());
+                $.get(hrefValue, function (data) {
+                    var tempElement = $('<div></div>').html(data);
+                    var containerElem = tempElement.find('.container.bg-light.w-50');
+                    containerElem.toggleClass("bg-light");
+                    containerElem.toggleClass("w-50");
+                    var formElement = containerElem.find("form").length ? containerElem.find("form") : containerElem.closest("form");
+                    formElement.attr("id", "formToSend")
+                    var submitButton = formElement.find('input[type="submit"][value="Save"]');
+                    var h2Element = formElement.find('h2');
+                    submitButton.hide();
+                    h2Element.hide();
+                    formElement.find("label:has(span.text-danger)").each(function () {
+                        var forAttribute = $(this).attr("for");
+                        var relatedInput = formElement.find('input[name="' + forAttribute + '"], select[name="' + forAttribute + '"]');
+                        relatedInput.addClass("required-input");
+                    });
+                    var extractedHtml = formElement.prop('outerHTML');
+                    //console.log(extractedHtml);
+                    $("#addModel .modal-body").html(extractedHtml);
+                    initTiny();
+                    loadScripts(tempElement);
+                });
+                $("#addModel").modal("toggle");
+            });
+
+            $("#submitFormBtn").click(function () {
+                $("[data-valmsg-for]").each(function () {
+                    var validationSpan = $(this);
+                    validationSpan.empty(); // Remove HTML content from the span
+                });
+
+                let errorPresent = false;
+                //check and validate errors
+                $(".required-input").each(function () {
+                    if ($(this).val() == null || $(this).val() === "") {
+                        var inputName = $(this).attr("name");
+                        var validationSpan = $("span[data-valmsg-for='" + inputName + "']");
+                        validationSpan.html(($(this).data("val-required")) ? $(this).data("val-required") : "The " + inputName + " field is required.");
+                        errorPresent = true;
+                    }
+                });
+                if (!errorPresent) {
+                    //send data to form action url
+                    var form = $("#formToSend");
+                    if (tinymce.get('tiny')) {
+                        //get the content of the TinyMCE editor named "content"
+                        var content = tinymce.get('tiny').getContent();
+                        form.find('textarea[name="Content"]').val(content);
+                    }
+
+                    var formData = new FormData(form[0]);
+                    // console.log(formData);
+
+                    $.ajax({
+                        type: "POST",
+                        url: form.attr("action"),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            window.location.reload();
+                        },
+                        error: function (error) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+
+            $("#closeAddModelModalButton").click(function () {
+                $('#addModel').modal('hide');
+            });
+            //end of dynamic modal code
+
+            //start of code for dynamic edit model modal elements
+            $("body").on("click", "td.actions-control a", function (e) {
+                let pageTitleExIcon = $('.page-title').clone().find('.fa').remove().end().html();
+                if (pageTitleExIcon.split(' ')[1] == 'Pages' || pageTitleExIcon.split(' ')[1] == "Blogs" || pageTitleExIcon.split(' ')[1] == "Events") return true;
+                e.preventDefault();
+                removePreviousHtml();
+                var hrefValue = $(this).attr("href");
+                $("#editModelTitle").html("Edit " + $(".page-title").html().split(' ')[4]);
+                $.get(hrefValue, function (data) {
+                    var tempElement = $('<div></div>').html(data);
+                    var containerElem = tempElement.find('.container.bg-light.w-50');
+                    containerElem.toggleClass("bg-light");
+                    containerElem.toggleClass("w-50");
+                    var formElement = containerElem.find("form").length ? containerElem.find("form") : containerElem.closest("form");
+                    formElement.attr("id", "formToSend")
+                    var submitButton = formElement.find('input[type="submit"][value="Save"]');
+                    var h2Element = formElement.find('h2');
+                    submitButton.hide();
+                    h2Element.hide();
+                    formElement.find("label:has(span.text-danger)").each(function () {
+                        var forAttribute = $(this).attr("for");
+                        var relatedInput = formElement.find('input[name="' + forAttribute + '"], select[name="' + forAttribute + '"]');
+                        relatedInput.addClass("required-input");
+                    });
+                    var extractedHtml = formElement.prop('outerHTML');
+                    //console.log(extractedHtml);
+                    $("#editModel .modal-body").html(extractedHtml);
+                    initTiny();
+                    loadScripts(tempElement);
+                });
+
+                $("#editModel").modal("toggle");
+            });
+
+            $("#submitEditFormBtn").click(function () {
+                $("[data-valmsg-for]").each(function () {
+                    var validationSpan = $(this);
+                    validationSpan.empty(); // Remove HTML content from the span
+                });
+
+                let errorPresent = false;
+                //check and validate errors
+                $(".required-input").each(function () {
+                    if ($(this).val() == null || $(this).val() === "") {
+                        var inputName = $(this).attr("name");
+                        var validationSpan = $("span[data-valmsg-for='" + inputName + "']");
+                        validationSpan.html(($(this).data("val-required")) ? $(this).data("val-required") : "The " + inputName + " field is required.");
+                        errorPresent = true;
+                    }
+                });
+                if (!errorPresent) {
+                    //send data to form action url
+                    var form = $("#formToSend");
+                    if (tinymce.get('tiny')) {
+                        //get the content of the TinyMCE editor named "content"
+                        var content = tinymce.get('tiny').getContent();
+                        form.find('textarea[name="Content"]').val(content);
+                    }
+
+                    var formData = new FormData(form[0]);
+                    // console.log(formData);
+
+                    $.ajax({
+                        type: "POST",
+                        url: form.attr("action"),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            window.location.reload();
+                        },
+                        error: function (error) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+
+            $("#closeEditModelModalButton").click(function () {
+                $('#editModel').modal('hide');
+            });
+
+            //end of dynamic modal code
+            initTiny();
+        });
+
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

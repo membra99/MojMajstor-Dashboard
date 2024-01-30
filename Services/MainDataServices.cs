@@ -1177,7 +1177,13 @@ namespace Services
 			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
 		}
 
-		public async Task EditMediaImageMetaProperties(MediaIDTO mediaIDTO)
+        public async Task<List<MediaODTO>> GetAllVideoRoute()
+        {
+            string[] cars = { "mp4", "avi", "m4a" };
+            return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+        }
+
+        public async Task EditMediaImageMetaProperties(MediaIDTO mediaIDTO)
 		{
 			var mediaImage = await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaIDTO.MediaId);
 			mediaImage.MetaTitle = mediaIDTO.MetaTitle;

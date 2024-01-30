@@ -16,5 +16,6 @@ namespace Universal.DTO.IDTO
 		public string? MetaTitle { get; set; }
 		public string? MetaDescription { get; set; }
 		public string? AltTitle { get; set; }
+        public string? MimeType { get; set; }
 	}
 }
