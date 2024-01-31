@@ -25,8 +25,13 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link href=" https://cdn.jsdelivr.net/npm/bootstrap-switch@3.4.0/dist/css/bootstrap3/bootstrap-switch.min.css " rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/r9lu9s349u2zutsi6auhp4mn341zbwbbelssj6bdbojpzxpf/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<style>
+
+        .fa-menu {
+            width: 18px;
+            height: 18px;
+        }
 
         .home-link:hover {
             color: rebeccapurple;
@@ -90,9 +95,9 @@
             tinymce.init({
                 selector: 'textarea#tiny',
                 plugins: [
-                    'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                    'advlist','autolink',
                     'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-                    'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    'fullscreen','insertdatetime', 'media', 'table', 'help', 'wordcount'
                 ],
                 toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
                     'bullist numlist checklist outdent indent | removeformat | code table help',
@@ -111,8 +116,9 @@
                         <span class="home-link">Universal</span>
                     </a>
                 </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-user icon-spacing", null, new{ @class = "side-anchor" })</li>
-                <li class="nav-item dropdown-btn">
+                <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-user fa-menu", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-file-lines fa-menu", null, new{ @class = "side-anchor" })</li>
+@*                 <li class="nav-item dropdown-btn">
                     <span class="side-anchor">
                         <i class="fa fa-file-lines icon-spacing"></i>
                         <span class="nav-item-title">Data</span>
@@ -124,10 +130,10 @@
                             @Html.ActionLink("New Data", "NewData", "Dashboard", null, new{ @class = "side-anchor" })
                         </li>
                     </ul>
-                </li>
+                </li> *@
                 <li class="nav-item dropdown-btn">
-                    <span class="side-anchor ">
-                        <i class="fa-solid fa-photo-film icon-spacing"></i>
+                    <span class="side-anchor">
+                        <i class="fa-solid fa-photo-film fa-menu icon-spacing"></i>
                         <span class="nav-item-title">Media</span>
                         <i class="fa fa-chevron-down mt-1"></i>
                     </span>
@@ -135,13 +141,13 @@
                         <li>
                             @Html.ActionLink("Photo Gallery", "AllGallery", "Dashboard", null, new{ @class = "side-anchor" })
                             @Html.ActionLink("Video Gallery", "AllVideos", "Dashboard", null, new{ @class = "side-anchor" })
-                            @Html.ActionLink("New Media", "AddMedia", "Dashboard", null, new{ @class = "side-anchor" })
+                            @* @Html.ActionLink("New Media", "AddMedia", "Dashboard", null, new{ @class = "side-anchor" }) *@
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown-btn">
                     <span class="side-anchor">
-                        <i class="fa fa-table-list icon-spacing"></i>
+                        <i class="fa fa-table-list icon-spacing fa-menu "></i>
                         <span class="nav-item-title">Categories</span>
                         <i class="fa fa-chevron-down mt-1"></i>
                     </span>
@@ -153,7 +159,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Declarations", "AllDeclaration", "Dashboard", "fa-solid fa-certificate icon-spacing", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Declarations", "AllDeclaration", "Dashboard", "fa-solid fa-certificate fa-menu", null, new{ @class = "side-anchor" })</li>
                 @* <li class="nav-item dropdown-btn">
                 <span class="side-anchor ">
                     <i class="fa-solid fa-certificate icon-spacing"></i>
@@ -180,10 +186,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open", null, new{ @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf", null, new{ @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper fa-menu", new {type = "Page", langid=1}, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open fa-menu", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf fa-menu", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import fa-menu", null, new{ @class = "side-anchor" })</li>
             </ul>
             <div class="user-info">
                 <hr class="horizontal-rule-spec" />
@@ -370,7 +376,7 @@
             }
             //code for dynamic loading of add model modal elements for existing pages
             $("a.btn-dotnet").click(function (e) {
-                if ($(this).html() == "Add New Event" || $(this).html() == "Add New Blog" || $(this).html() == "Export in Excel" || $(this).html() == "Add New Page") return true; // dont run for data/product because of the large size of modal
+                if ($(this).html() == "Add New Event" || $(this).html() == "Add New Blog" || $(this).html() == "Export in Excel" || $(this).html() == "Add New Page" || $(this).html() == "Add New Data") return true; // dont run for data/product because of the large size of modal
                 e.preventDefault();
                 removePreviousHtml();
                 var hrefValue = $(this).attr("href");

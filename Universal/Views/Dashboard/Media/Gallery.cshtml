@@ -4,6 +4,10 @@
 	ViewData["Title"] = "Gallery";
 }
 
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<div class="action-button pt-2">
+	<button type="button" class="btn btn-dotnet" id="uploadPictureModal">Add new picture</button>
+</div>
 
 @{
 	await Html.RenderPartialAsync("/Views/Partials/_GalleryGrid.cshtml", Model);
@@ -26,13 +30,14 @@
 				<img id="viewImage" name="viewImage" alt="image.png" width="100%" />
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-dotnet" data-bs-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
 <!-- view_picture_modal -->
 
+<!-- edit_picture_modal -->
 <div id="edit-image-modal" class="modal fade" tabindex="-1" role="dialog">
 	@using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
 	{
@@ -58,7 +63,10 @@
 		</div>
 	}
 </div>
+<!-- edit_picture_modal -->
 
+
+<!-- delete_picture_modal -->
 <div id="delete-image-modal" class="modal fade" tabindex="-1" role="dialog">
 	@using (Html.BeginForm("DeleteMeidaImage", "Dashboard", FormMethod.Post))
 	{
@@ -84,6 +92,38 @@
 		</div>
 	}
 </div>
+<!-- delete_picture_modal -->
+
+<!-- upload_picture_modal -->
+<div class="modal fade" id="uploadPicture" tabindex="-1" aria-labelledby="uploadPictureLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 60%">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="uploadPictureLabel">Upload picture</h1>
+			</div>
+			<div class="modal-body">
+				<!-- Image upload -->
+				<form id="form" method="post" class="w-100" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
+					<div class="form-group">
+						<div id="dropzone">
+							<div class="p-2 text-center rounded-top" style="background-color: rebeccapurple">
+								<label style="font-size:20px; color:white;">Add New Picture</label>
+							</div>
+							<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
+						</div>
+					</div>
+				</form>
+				<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+				<!-- Image upload -->
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-dotnet" id="saveVideo">Upload</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- upload_picture_modal -->
 
 @section Scripts{
 	<script>
@@ -92,6 +132,10 @@
 		let data = @Json.Serialize(Model.MediaList);
 		console.log(data);
 		$(document).ready(function () {
+
+			$("#uploadPictureModal").on("click", function () {
+				$("#uploadPicture").modal("show");
+			});
 
 			let view_buttons = document.getElementsByClassName("fa-eye");
 			let view_modal_image = document.getElementById("viewImage");
@@ -110,6 +154,7 @@
 					$("#view-image-modal").modal("toggle");
 				});
 			}
+
 
 
 			let edit_buttons = document.getElementsByClassName("fa-edit");
