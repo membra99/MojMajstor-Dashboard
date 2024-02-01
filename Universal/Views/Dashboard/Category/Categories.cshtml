@@ -1,231 +1,231 @@
 ﻿@model Universal.DTO.ViewDTO.CategoryAttributeIDTO
 
 @{
-	ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Categories";
 }
 
 <style>
-	
+
 </style>
 
 <div class="col-10">
-	@if (Model.AllCategories.Count > 0)
-	{
-		<ul id="main-list">
-		</ul>
-	}
-	else
-	{
-		<i class="fas fa-plus icon-spacing">Add Root Category</i>
-	}
+    @if (Model.AllCategories.Count > 0)
+    {
+        <ul id="main-list">
+        </ul>
+    }
+    else
+    {
+        <i class="fas fa-plus icon-spacing">Add Root Category</i>
+    }
 </div>
 
 <div id="add-edit-modal" class="modal fade" tabindex="-1" role="dialog">
-	@using (Html.BeginForm("ACTION", "CONTROLLER", FormMethod.Post, new { @id = "form-add-delete", enctype = "multipart/form-data" }))
-	{
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 id="add-edit-title" class="modal-title"></h5>
-				</div>
-				<div id="add-edit-body" class="modal-body">
-					@Html.HiddenFor(model => model.CategoryIDTO.CategoryId, new { @id="input-category" })
-					@Html.HiddenFor(model => model.CategoryIDTO.ParentCategoryId, new { @id="input-parent" })
-					@Html.HiddenFor(model => model.CategoryIDTO.LanguageID, new { @class="lang" })
-					@Html.HiddenFor(model => model.CategoryIDTO.IsImageChanged, new { @id="IsImageChanged" })
-					@Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control modclass", placeholder = "Category Name" })
-					<div class="row d-flex align-items-center">
-						<div class="col-8">
-							<input type="file" name="CategoryImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
-						</div>
-						<div class="col-4">
-							<div class="image-container mb-2">
-								<img src="@Url.Action("GetImage","Dashboard",new {path = Model.CategoryImage})" id="category_preview" width="75" height="75" style="border: 2px solid indigo">
-								<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
-							</div>
-						</div>
-					</div>
-					@Html.HiddenFor(model => model.CategoryIDTO.SeoIDTO.LanguageID, new { @class="lang" })
-					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleDesc, new { @id="input-seoDesc", @class = "form-control modclass", placeholder = "Seo Description" })
-					@Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleKeywords, new { @id="input-seoKeyword", @class = "form-control modclass", placeholder = "Seo Keywords" })
-				</div>
-				<div class="modal-footer">
-					<input type="submit" class="btn btn-dotnet" value="Save" />
-					<button type="button" class="btn btn-secondary" id="closeAddModalButton" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	}
+    @using (Html.BeginForm("ACTION", "CONTROLLER", FormMethod.Post, new { @id = "form-add-delete", enctype = "multipart/form-data" }))
+    {
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="add-edit-title" class="modal-title"></h5>
+                </div>
+                <div id="add-edit-body" class="modal-body">
+                    @Html.HiddenFor(model => model.CategoryIDTO.CategoryId, new { @id="input-category" })
+                    @Html.HiddenFor(model => model.CategoryIDTO.ParentCategoryId, new { @id="input-parent" })
+                    @Html.HiddenFor(model => model.CategoryIDTO.LanguageID, new { @class="lang" })
+                    @Html.HiddenFor(model => model.CategoryIDTO.IsImageChanged, new { @id="IsImageChanged" })
+                    @Html.TextBoxFor(model => model.CategoryIDTO.CategoryName, new { @id="input-name", @class = "form-control modclass", placeholder = "Category Name" })
+                    <div class="row d-flex align-items-center">
+                        <div class="col-8">
+                            <input type="file" name="CategoryImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+                        </div>
+                        <div class="col-4">
+                            <div class="image-container mb-2">
+                                <img src="@Url.Action("GetImage","Dashboard",new {path = Model.CategoryImage})" id="category_preview" width="75" height="75" style="border: 2px solid indigo">
+                                <a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => model.CategoryIDTO.SeoIDTO.LanguageID, new { @class="lang" })
+                    @Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleDesc, new { @id="input-seoDesc", @class = "form-control modclass", placeholder = "Seo Description" })
+                    @Html.TextBoxFor(model => model.CategoryIDTO.SeoIDTO.GoogleKeywords, new { @id="input-seoKeyword", @class = "form-control modclass", placeholder = "Seo Keywords" })
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-dotnet" value="Save" />
+                    <button type="button" class="btn btn-secondary" id="closeAddModalButton" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 <div id="delete-modal" class="modal fade" tabindex="-1" role="dialog">
-	@using (Html.BeginForm("DeleteCategory", "Dashboard", FormMethod.Post))
-	{
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Delete Category</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p>Are you sure you want to delete the category?</p>
-					<input id="input-delete" type="hidden" name="categoryId"/>
-				</div>
-				<div class="modal-footer">
-					<input type="submit" class="btn btn-dotnet" value="Delete" />
-					<button type="button" class="btn btn-secondary" id="closeDeleteModalButton" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	}
+    @using (Html.BeginForm("DeleteCategory", "Dashboard", FormMethod.Post))
+    {
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the category?</p>
+                    <input id="input-delete" type="hidden" name="categoryId" />
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-dotnet" value="Delete" />
+                    <button type="button" class="btn btn-secondary" id="closeDeleteModalButton" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts{
-	<script>
-		let loadFile = function (event) {
-			let image = document.getElementById('category_preview');
-			image.src = URL.createObjectURL(event.target.files[0]);
-			let element = document.getElementById('unset');
-			element.classList.add("hover-unset");
-			var hiddenInput = document.getElementById("IsImageChanged");
-			hiddenInput.value = null;
-			
-		};
+    <script>
+        let loadFile = function (event) {
+            let image = document.getElementById('category_preview');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            let element = document.getElementById('unset');
+            element.classList.add("hover-unset");
+            var hiddenInput = document.getElementById("IsImageChanged");
+            hiddenInput.value = null;
 
-		function unsetImage(event) {
-			let image = document.getElementById('category_preview');
-			image.src = '@Url.Action("GetImage","Dashboard",null)';
-			$("#file").val(null);
-			var hiddenInput = document.getElementById("IsImageChanged");
-			hiddenInput.value = "true";
+        };
 
-			let element = document.getElementById('unset');
-			element.classList.remove("hover-unset");
-			event.preventDefault();
-		}
+        function unsetImage(event) {
+            let image = document.getElementById('category_preview');
+            image.src = '@Url.Action("GetImage","Dashboard",null)';
+            $("#file").val(null);
+            var hiddenInput = document.getElementById("IsImageChanged");
+            hiddenInput.value = "true";
 
-
-		let categories = @Json.Serialize(Model.AllCategories);
-
-		for (let i = 0; i < categories.length; i++) {
-			//debugger;
-			for (let j = 0; j < categories[i].length; j++) {
-				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
-					let children = $(".child_of_" + categories[i][j].categoryId)
-					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + "'></ul>");
-
-					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
-
-					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat'>"
-						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span>"
-						+ "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
-						+ "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
-						+ "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
-				}
-				else {
-					$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
-						+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name'>" + categories[i][j].categoryName + "</span>"
-						+ "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
-						+ "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
-						+ "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
-				}
-			}
-		}
-
-		let catrgory_elements = document.getElementsByClassName("multi-cat");
-		for (let i = 0; i < catrgory_elements.length; i++) {
-			catrgory_elements[i].addEventListener("click", function () {
-				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
-				this.classList.toggle("multi-cat-down");
-			});
-		}
-
-		//v v v BUTTONS v v v
-		let add_buttons = document.getElementsByClassName("fa-plus");
-		for (let i = 0; i < add_buttons.length; i++) {
-			add_buttons[i].addEventListener("click", function () {
-				let categoryId = this.dataset.catId;
-				$("#input-parent").val(categoryId);
-
-				$("#add-edit-modal").modal("toggle");
-				$("#add-edit-title").html("Add Category");
-
-				$("#form-add-delete").attr("action", "@Url.Action("AddCategory", "Dashboard")");
-			});
-
-			let lang = $("#language").val();
-			$(".lang").val(lang);
-			//console.log(lang);
-		}
-
-		$("#closeAddModalButton").click(function () {
-			$('#add-edit-modal').modal('hide');
-		});
-
-		$("#closeDeleteModalButton").click(function () {
-			$('#delete-modal').modal('hide');
-		});
-
-		$('#language').change(function() {
-			$('.lang').val($(this).val());
-		});
-
-		let edit_buttons = document.getElementsByClassName("fa-pen");
-		for (let i = 0; i < edit_buttons.length; i++) {
-			edit_buttons[i].addEventListener("click", function () {
-				let categoryId = this.dataset.catId;
-				let parentId = this.dataset.parentId;
-				$.ajax({
-					url: 'https://localhost:7213/api/Categories/' + categoryId,
-					type:'GET',
-					data: categoryId,
-					success:function(response){
-						console.log(response);
-						$('#input-name').val(response.categoryName);
-						$('#input-seoDesc').val(response.googleDesc);
-						$('#input-seoKeyword').val(response.googleKeywords);
-						$('#lang').val($('#language').val());
-						console.log("aloha",response.mediaSrc);
-						let url = '@Url.Action("GetImage", "Dashboard", new { path = "js-id" })'.replace("js-id", encodeURIComponent(response.mediaSrc == null  ? "" : response.mediaSrc ));
-						$('#category_preview').attr("src", url);
-
-						let image = document.getElementById('category_preview');
-						var parts = image.src.split('/');
-						var result = parts.slice(3).join('/');
-						if (result != "Dashboard/GetImage?path=") {
-							let element = document.getElementById('unset');
-							element.classList.add("hover-unset");
-						}
-						
-					},
-					error:function(){
-
-					}
-				});
-				
-
-				$("#input-category").val(categoryId);
-				$("#input-parent").val(parentId);
-
-				$("#add-edit-modal").modal("toggle");
-				$("#add-edit-title").html("Edit Category");
-
-				$("#form-add-delete").attr("action", "@Url.Action("EditCategory", "Dashboard")");
-			});
-		}
+            let element = document.getElementById('unset');
+            element.classList.remove("hover-unset");
+            event.preventDefault();
+        }
 
 
+        let categories = @Json.Serialize(Model.AllCategories);
+
+        for (let i = 0; i < categories.length; i++) {
+            //debugger;
+            for (let j = 0; j < categories[i].length; j++) {
+                if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
+                    let children = $(".child_of_" + categories[i][j].categoryId)
+                    children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + "'></ul>");
+
+                    $(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
+
+                    $(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat'>"
+                        + "<span class='category-name'>" + categories[i][j].categoryName + "</span></span>"
+                        + "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
+                        + "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
+                        + "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
+                }
+                else {
+                    $("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+                        + "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name'>" + categories[i][j].categoryName + "</span>"
+                        + "<i class='fas fa-plus icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i>"
+                        + "<i class='fa-solid fa-pen icon-spacing' data-cat-id='" + categories[i][j].categoryId + "' data-parent-id='" + categories[i][j].parentCategoryId + "'></i>"
+                        + "<i class='fa-solid fa-trash-can icon-spacing' data-cat-id='" + categories[i][j].categoryId + "'></i></div>");
+                }
+            }
+        }
+
+        let catrgory_elements = document.getElementsByClassName("multi-cat");
+        for (let i = 0; i < catrgory_elements.length; i++) {
+            catrgory_elements[i].addEventListener("click", function () {
+                this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
+                this.classList.toggle("multi-cat-down");
+            });
+        }
+
+        //v v v BUTTONS v v v
+        let add_buttons = document.getElementsByClassName("fa-plus");
+        for (let i = 0; i < add_buttons.length; i++) {
+            add_buttons[i].addEventListener("click", function () {
+                let categoryId = this.dataset.catId;
+                $("#input-parent").val(categoryId);
+
+                $("#add-edit-modal").modal("toggle");
+                $("#add-edit-title").html("Add Category");
+
+                $("#form-add-delete").attr("action", "@Url.Action("AddCategory", "Dashboard")");
+            });
+
+            let lang = $("#language").val();
+            $(".lang").val(lang);
+            //console.log(lang);
+        }
+
+        $("#closeAddModalButton").click(function () {
+            $('#add-edit-modal').modal('hide');
+        });
+
+        $("#closeDeleteModalButton").click(function () {
+            $('#delete-modal').modal('hide');
+        });
+
+        $('#language').change(function () {
+            $('.lang').val($(this).val());
+        });
+
+        let edit_buttons = document.getElementsByClassName("fa-pen");
+        for (let i = 0; i < edit_buttons.length; i++) {
+            edit_buttons[i].addEventListener("click", function () {
+                let categoryId = this.dataset.catId;
+                let parentId = this.dataset.parentId;
+                $.ajax({
+                    url: 'https://localhost:7213/api/Categories/' + categoryId,
+                    type: 'GET',
+                    data: categoryId,
+                    success: function (response) {
+                        console.log(response);
+                        $('#input-name').val(response.categoryName);
+                        $('#input-seoDesc').val(response.googleDesc);
+                        $('#input-seoKeyword').val(response.googleKeywords);
+                        $('#lang').val($('#language').val());
+                        console.log("aloha", response.mediaSrc);
+                        let url = '@Url.Action("GetImage", "Dashboard", new { path = "js-id" })'.replace("js-id", encodeURIComponent(response.mediaSrc == null ? "" : response.mediaSrc));
+                        $('#category_preview').attr("src", url);
+
+                        let image = document.getElementById('category_preview');
+                        var parts = image.src.split('/');
+                        var result = parts.slice(3).join('/');
+                        if (result != "Dashboard/GetImage?path=") {
+                            let element = document.getElementById('unset');
+                            element.classList.add("hover-unset");
+                        }
+
+                    },
+                    error: function () {
+
+                    }
+                });
 
 
-		let delete_buttons = document.getElementsByClassName("fa-trash-can");
-		for (let i = 0; i < delete_buttons.length; i++) {
-			delete_buttons[i].addEventListener("click", function () {
-				let categoryId = this.dataset.catId;
-				$("#input-delete").val(categoryId);
-				$("#delete-modal").modal("toggle");
-			});
-		}
-	</script>
+                $("#input-category").val(categoryId);
+                $("#input-parent").val(parentId);
+
+                $("#add-edit-modal").modal("toggle");
+                $("#add-edit-title").html("Edit Category");
+
+                $("#form-add-delete").attr("action", "@Url.Action("EditCategory", "Dashboard")");
+            });
+        }
+
+
+
+
+        let delete_buttons = document.getElementsByClassName("fa-trash-can");
+        for (let i = 0; i < delete_buttons.length; i++) {
+            delete_buttons[i].addEventListener("click", function () {
+                let categoryId = this.dataset.catId;
+                $("#input-delete").val(categoryId);
+                $("#delete-modal").modal("toggle");
+            });
+        }
+    </script>
 }

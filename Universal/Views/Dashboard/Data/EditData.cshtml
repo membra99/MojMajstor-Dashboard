@@ -258,6 +258,7 @@
                                                             @foreach (var img in Model.ProductIDTO.GalleyImg)
                                                                 @Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
 
+
                                                             </div>
                                                             <div class="currentImgs">
                                                                 <h4>Current images</h4>
@@ -321,7 +322,7 @@
                         <button type="button" class="form-control p-2 btn-dotnet" id="openGalleryModalButton">Edit Gallery Images</button>
                         @Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
                     </div>
-                    <hr/>
+                    <hr />
                     <div>
                         <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
                     </div>
@@ -385,8 +386,8 @@
                                 for (let i = 0; i < uploadedImages.length; ++i) {
                                     if (uploadedImages[i] != 0) {
                                         $("#uploadedImgArray").append(`
-                                                                <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
-                                                            `);
+                                                                        <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
+                                                                    `);
                                     }
                                     else {
                                         continue;
@@ -626,11 +627,11 @@
                     $(".addedImages").html(""); // Clear existing content
                     for (let i = 0; i < response.length; ++i) {
                         $(".addedImages").append(`
-                                        <div class="image-container">
-                                            <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160" style="border: 2px solid indigo"/>
-                                            <a class="unset-button hover-unset" id="unset-button" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i})" title="Unset Image">x</a>
-                                        </div>
-                                            `);
+                                                <div class="image-container">
+                                                    <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160" style="border: 2px solid indigo"/>
+                                                    <a class="unset-button hover-unset" id="unset-button" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i})" title="Unset Image">x</a>
+                                                </div>
+                                                    `);
                         //document.getElementById('unset').classList.add("hover-unset");
                     }
                 },
@@ -650,8 +651,8 @@
             $('#editGalleryModal').modal('hide');
             for (let i = 0; i < selectedMediaIds.length; ++i) {
                 $("#galleryImgArray").append(`
-                                    <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
-                                `);
+                                            <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
+                                        `);
             }
         });
 
@@ -720,11 +721,11 @@
         function loadCurrentImages(galleryImages) {
             for (let i = 0; i < galleryImages.length; i++) {
                 $(".currentImgs").append(`
-                                    <div class="image-container">
-                                        <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
-                                        <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
-                                    </div>
-                                `);
+                                            <div class="image-container">
+                                                <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
+                                                <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
+                                            </div>
+                                        `);
             }
         }
 
