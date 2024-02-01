@@ -784,6 +784,7 @@ namespace Services
 
 			var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);
 			siteContent.SiteContentId = 0;
+			siteContent.LanguageID = 1;
 			siteContent.SeoId = (seo != 0) ? seo : null;
 			_context.SiteContents.Add(siteContent);
 
@@ -1193,7 +1194,7 @@ namespace Services
 		public async Task<List<MediaODTO>> GetAllImagesRoute()
 		{
             string[] cars = { "png", "jpg", "webp", "jiff" };
-			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+			return await _context.Medias.Where(x => cars.Contains(x.Extension) && x.Src != "Universal/noimage_202402011203429124.jpg").Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
 		}
 
         public async Task<List<MediaODTO>> GetAllVideoRoute()
