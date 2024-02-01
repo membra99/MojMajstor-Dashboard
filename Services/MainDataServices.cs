@@ -101,7 +101,7 @@ namespace Services
 						var newMed = new Media();
 						newMed.MediaId = 0;
 						newMed.ProductId = productId;
-						newMed.MediaTypeId = 3;
+						newMed.MediaTypeId = 5;
 						newMed.Src = checkImage.Src;
 						newMed.Extension = checkImage.Extension;
 						newMed.AltTitle = checkImage.AltTitle;
@@ -128,6 +128,7 @@ namespace Services
 				{
 					var updateMedia = await _context.Medias.Where(x => x.MediaId == uploadedImgId).SingleOrDefaultAsync();
 					updateMedia.ProductId = productId;
+					updateMedia.MediaTypeId = 5;
 					_context.Medias.Entry(updateMedia).State = EntityState.Modified;
 					await SaveContextChangesAsync();
 				}
@@ -187,6 +188,18 @@ namespace Services
 			await SaveContextChangesAsync();
             return list.Select(x => _mapper.Map<ProductODTO>(x)).ToList();
         }
+
+		public async Task<List<int>> UploadedImageHandler(List<string> imgNames)
+		{
+			List<int> mediaIds = new List<int>();
+			foreach (var imgName in imgNames)
+			{
+				var uploadedMediaId = await _context.Medias.Where(x => x.Src.Contains(imgName)).OrderBy(x => x.MediaId).Select(x => x.MediaId).LastOrDefaultAsync();
+				mediaIds.Add(uploadedMediaId);
+			}
+
+			return mediaIds;
+		}
 
 		public async Task<string> DeleteUploadedImage(string img)
 		{
@@ -572,7 +585,7 @@ namespace Services
 			{
 				product.SeoId = null;
 			}
-			product.LanguageID = 1; //TODO Set LanguageID dinamicaly
+			product.LanguageID = productIDTO.LanguageID; //TODO Set LanguageID dinamicaly
 	
 			await SaveContextChangesAsync();
 
@@ -1142,6 +1155,12 @@ namespace Services
 
 			return imagesSrc;
 		}
+
+		public async Task<string> GetImageSrcFromGallery(int mediaId)
+		{
+			return await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
+		}
+
 		public async Task<string> GetStringForModal(int mediaId)
 		{
 			var retVal = "";

@@ -27,12 +27,6 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.tiny.cloud/1/r9lu9s349u2zutsi6auhp4mn341zbwbbelssj6bdbojpzxpf/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<style>
-
-        .fa-menu {
-            width: 18px;
-            height: 18px;
-        }
-
         .home-link:hover {
             color: rebeccapurple;
             transition: 0.3s ease-in-out;
@@ -116,8 +110,8 @@
                         <span class="home-link">Universal</span>
                     </a>
                 </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-user fa-menu", null, new{ @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-file-lines fa-menu", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-thin fa-users", null, new{ @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-solid fa-file-pen", null, new{ @class = "side-anchor" })</li>
 @*                 <li class="nav-item dropdown-btn">
                     <span class="side-anchor">
                         <i class="fa fa-file-lines icon-spacing"></i>
@@ -175,7 +169,7 @@
                 </li> *@
                 <li class="nav-item dropdown-btn">
                     <span class="side-anchor">
-                        <i class="fa fa-copy icon-spacing"></i>
+                        <i class="fa fa-solid fa-blog icon-spacing"></i>
                         <span class="nav-item-title">Blogs</span>
                         <i class="fa fa-chevron-down mt-1"></i>
                     </span>

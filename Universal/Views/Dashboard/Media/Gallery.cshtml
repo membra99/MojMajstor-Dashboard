@@ -117,7 +117,7 @@
 				<!-- Image upload -->
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-secondary" id="closeModal">Close</button>
 				<button type="button" class="btn btn-dotnet" id="saveVideo">Upload</button>
 			</div>
 		</div>
@@ -130,7 +130,7 @@
 		toggleLoading();
 
 		let data = @Json.Serialize(Model.MediaList);
-		console.log(data);
+		//console.log(data);
 		$(document).ready(function () {
 
 			$("#uploadPictureModal").on("click", function () {
@@ -186,8 +186,8 @@
 						success: function (response) {
 							$("#delete-message").html(`Do you want to delete "${mediaTitle}" image?<br><br> <span class="text-danger">${response}</span>`)
 						},
-						error: function () {
-
+						error: function (repsonse) {
+							console.error(response);
 						}
 					});
 
@@ -198,6 +198,12 @@
 					$("#delete-image-modal").modal("toggle");
 				});
 			}
+
+			$("#closeModal").click(function () {
+				console.log("click");
+				$("#uploadPicture").modal('hide');
+				location.reload();
+			});
 
 			$(".closeEditModalButton").click(function () {
 				$('#edit-image-modal').modal('hide');

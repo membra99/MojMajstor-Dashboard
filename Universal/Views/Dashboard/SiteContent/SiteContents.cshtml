@@ -76,7 +76,7 @@ else
 
 			const defaultLangID = 1;
 
-			console.log(type);
+			//console.log(type);
 
 			$(document).on('click', '#addPageButton', function () {
 				window.location.href = '/Dashboard/PostSiteContent?siteContentType=' + 1;
@@ -137,7 +137,7 @@ else
 
 
 			function loadData(type, langID) {
-				console.log(type, langID);
+				//console.log(type, langID);
 				$.ajax({
 					url: '/api/SiteContent/AllByType',
 					method: 'GET',

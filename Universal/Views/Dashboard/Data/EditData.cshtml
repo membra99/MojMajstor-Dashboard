@@ -1,923 +1,932 @@
 ﻿@model Universal.DTO.ViewDTO.DataIDTO
 
 @{
-	ViewData["Title"] = "Edit Data";
+    ViewData["Title"] = "Edit Data";
 }
 
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
-	@using (Html.BeginForm("EditDataAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-	{
-		<div class="col-12 bg-light mx-auto rounded-3">
+@using (Html.BeginForm("EditDataAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="col-12 bg-light mx-auto rounded-3">
 
-		@Html.HiddenFor(model => model.ProductIDTO.ProductId)
-		@Html.HiddenFor(model => model.ProductIDTO.CreatedAt)
-		<div class="d-flex flex-row justify-content-around">
-			<div class="col-8">
-				<div class="mb-3">
-					<h4>Product</h4>
-				</div>
-				<div class="row align-items-baseline">
-					<div class="form-group col-6 mb-3">
-						<div class="mb-3">
-							@Html.HiddenFor(model => model.ProductIDTO.LanguageID, new { @class = "lang" })
-						</div>
-						@Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
-						@Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class = "form-control", placeholder = "Product Code" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class = "text-danger" })
-					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelRequiredFor(model => model.ProductIDTO.ProductName, "Product name:", true)
-						@Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class = "form-control", placeholder = "Product Name" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class = "text-danger" })
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.Quantity, "Product quantity:")
-						@Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type = "number", @class = "form-control", placeholder = "Quantity" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.Quantity, null, new { @class = "text-danger" })
-					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelRequiredFor(model => model.ProductIDTO.Price, "Product price:", true)
-						@Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type = "number", @class = "form-control", placeholder = "Price" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.Price, null, new { @class = "text-danger" })
-					</div>
-				</div>
-				<div class="row justify-content-center">
-					<div class="form-check from-switch form-group col-3 mb-3">
-						@Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class = "form-check-input", role = "switch" })
-						@Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On sale", new { @class = "form-check-label" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.IsOnSale, null, new { @id = "onSaleCheck", @class = "text-danger" })
-					</div>
-					<div class="form-check from-switch form-group col-3 mb-3">
-						@Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class = "form-check-input", role = "switch" })
-						@Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended", new { @class = "form-check-label" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.Recommended, null, new { @class = "text-danger" })
-					</div>
-					<div class="form-check from-switch form-group col-3 mb-3">
-						@Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class = "form-check-input", role = "switch" })
-						@Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best product", new { @class = "form-check-label" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.BestProduct, null, new { @class = "text-danger" })
-					</div>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.Description, "Product description:")
-					@Html.TextAreaFor(model => model.ProductIDTO.Description, 15, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Description" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class = "text-danger" })
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.Specification, "Product specification:")
-					@Html.TextAreaFor(model => model.ProductIDTO.Specification, 15, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Specification" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class = "text-danger" })
-				</div>
-			</div>
-			<div id="section2" class="col-3">
-				<div class="mb-3">
-					<h4>Category</h4>
-				</div>
-				@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-				<div class="form-control mb-3 rounded-3 p-2">
-					@Html.HiddenFor(model => model.ProductIDTO.CategoriesId, new { @id = "categoryID" })
-					<ul id="main-list">
-					</ul>
-				</div>
-				@*<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-			@Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
-			new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
-			"Select Category",new { @class="form-control"})
-			@Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
-			</div>*@
-				<div id="attributeSection" class="form-group mb-3">
-				</div>
-				<hr>
-				<div class="form-group col-6 mb-3">
-					<h4>Sale</h4>
-				</div>
-				<div class="row">
-					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, "Sale type:")
-						@Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
-					new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
-					"Select Sale Type", new { @class = "form-control", disabled = "disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class = "text-danger" })
-					</div>
-					<div class="form-group col-6 mb-3">
-						@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.Value, "Sale value:")
-						@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled = "disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class = "text-danger" })
-					</div>
-					<div class="form-group mb-3">
-						@Html.Label("Sale start & end date:")
-						@Html.TextBox("datefilter", null, null, new { @class = "form-control", placeholder = "Start & End Date", id = "datefromto", disabled = "disabled" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class = "text-danger" })
-						@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ProductIDTO.ProductId)
+        @Html.HiddenFor(model => model.ProductIDTO.CreatedAt)
+        <div class="d-flex flex-row justify-content-around">
+            <div class="col-8">
+                <div class="mb-3">
+                    <h4>Product</h4>
+                </div>
+                <div class="row align-items-baseline">
+                    <div class="form-group col-6 mb-3">
+                        <div class="mb-3">
+                            @Html.HiddenFor(model => model.ProductIDTO.LanguageID, new { @class = "Productang" })
+                        </div>
+                        @Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
+                        @Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class = "form-control", placeholder = "Product Code" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.ProductCode, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-6 mb-3">
+                        @Html.LabelRequiredFor(model => model.ProductIDTO.ProductName, "Product name:", true)
+                        @Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class = "form-control", placeholder = "Product Name" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.ProductName, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-6 mb-3">
+                        @Html.LabelFor(model => model.ProductIDTO.Quantity, "Product quantity:")
+                        @Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type = "number", @class = "form-control", placeholder = "Quantity" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.Quantity, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-6 mb-3">
+                        @Html.LabelRequiredFor(model => model.ProductIDTO.Price, "Product price:", true)
+                        @Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type = "number", @class = "form-control", placeholder = "Price" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.Price, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="form-check from-switch form-group col-3 mb-3">
+                        @Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class = "form-check-input", role = "switch" })
+                        @Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On sale", new { @class = "form-check-label" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.IsOnSale, null, new { @id = "onSaleCheck", @class = "text-danger" })
+                    </div>
+                    <div class="form-check from-switch form-group col-3 mb-3">
+                        @Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class = "form-check-input", role = "switch" })
+                        @Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended", new { @class = "form-check-label" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.Recommended, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-check from-switch form-group col-3 mb-3">
+                        @Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class = "form-check-input", role = "switch" })
+                        @Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best product", new { @class = "form-check-label" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.BestProduct, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.ProductIDTO.Description, "Product description:")
+                    @Html.TextAreaFor(model => model.ProductIDTO.Description, 15, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Description" })
+                    @Html.ValidationMessageFor(model => model.ProductIDTO.Description, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.ProductIDTO.Specification, "Product specification:")
+                    @Html.TextAreaFor(model => model.ProductIDTO.Specification, 15, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Specification" })
+                    @Html.ValidationMessageFor(model => model.ProductIDTO.Specification, null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div id="section2" class="col-3">
+                <div class="mb-3">
+                    <h4>Category</h4>
+                </div>
+                @Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
+                <div class="form-control mb-3 rounded-3 p-2">
+                    @Html.HiddenFor(model => model.ProductIDTO.CategoriesId, new { @id = "categoryID" })
+                    <ul id="main-list">
+                    </ul>
+                </div>
+                @*<div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
+            @Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
+            new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
+            "Select Category",new { @class="form-control"})
+            @Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
+            </div>*@
+                <div id="attributeSection" class="form-group mb-3">
+                </div>
+                <hr>
+                <div class="form-group col-6 mb-3">
+                    <h4>Sale</h4>
+                </div>
+                <div class="row">
+                    <div class="form-group col-6 mb-3">
+                        @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, "Sale type:")
+                        @Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
+                    new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
+                    "Select Sale Type", new { @class = "form-control", disabled = "disabled" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-6 mb-3">
+                        @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.Value, "Sale value:")
+                        @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", disabled = "disabled" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mb-3">
+                        @Html.Label("Sale start & end date:")
+                        @Html.TextBox("datefilter", null, null, new { @class = "form-control", placeholder = "Start & End Date", id = "datefromto", disabled = "disabled" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class = "text-danger" })
 
-						@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
-						@Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
-					</div>
-					@*<div class="form-group col-6 mb-3">
-				@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
-				@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
-				@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
-				</div>
-				<div class="form-group col-6 mb-3">
-				@Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
-				@Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
-				@Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
-				</div>*@
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>Declaration</h4>
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.DeclarationId, "Declaration:")
-					@Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
-				new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
-				"Select Declaration", new { @class = "form-control" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class = "text-danger" })
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>SEO</h4>
-				</div>
-				<div class="form-group mb-3">
-					<div class="mb-3">
-						@Html.HiddenFor(model => model.ProductIDTO.SeoIDTO.LanguageID, new { @class = "lang" })
-					</div>
-					@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
-					@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "form-control", placeholder = "Google Description" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "text-danger" })
-				</div>
-				<div class="form-group mb-3">
-					@Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, "Meta keywords:")
-					@Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "form-control", placeholder = "Google Keywords" })
-					@Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "text-danger" })
-				</div>
-				<hr>
-				<div class="form-group mb-3">
-					<h4>Feature Image</h4>
-				</div>
-				@* 				<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
-			@Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", id = "file-featured", runat = "server", onchange = "loadFile(event)" })
-			@Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
-			<div class="text-center image-container">
-			<img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
-			<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
-			</div>
-			</div> *@
-				<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-					<div class="modal-dialog modal-dialog-centered modal-lg">
-						<!-- Use modal-lg class for a larger modal -->
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
-							</div>
-							<div class="modal-body">
-								<!-- Nav tabs -->
-								<ul class="nav nav-tabs" role="tablist">
-									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
-									</li>
-								</ul>
+                        @Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
+                        @Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
+                    </div>
+                    @*<div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
+                @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
+                @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
+                </div>
+                <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
+                @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
+                @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
+                </div>*@
+                </div>
+                <hr>
+                <div class="form-group mb-3">
+                    <h4>Declaration</h4>
+                </div>
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.ProductIDTO.DeclarationId, "Declaration:")
+                    @Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
+                new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
+                "Select Declaration", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ProductIDTO.DeclarationId, null, new { @class = "text-danger" })
+                </div>
+                <hr>
+                <div class="form-group mb-3">
+                    <h4>SEO</h4>
+                </div>
+                <div class="form-group mb-3">
+                    <div class="mb-3">
+                        @Html.HiddenFor(model => model.ProductIDTO.SeoIDTO.LanguageID, new { @class = "lang" })
+                    </div>
+                    @Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
+                    @Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "form-control", placeholder = "Google Description" })
+                    @Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "text-danger" })
+                </div>
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, "Meta keywords:")
+                    @Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "form-control", placeholder = "Google Keywords" })
+                    @Html.ValidationMessageFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "text-danger" })
+                </div>
+                <hr>
+                <div class="form-group mb-3">
+                    <h4>Feature Image</h4>
+                </div>
+                @* 				<div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
+            @Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", id = "file-featured", runat = "server", onchange = "loadFile(event)" })
+            @Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
+            <div class="text-center image-container">
+            <img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
+            <a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
+            </div>
+            </div> *@
+                <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <!-- Use modal-lg class for a larger modal -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
+                                    </li>
+                                </ul>
 
-								<!-- Tab panes -->
-								<div class="tab-content">
-									<!-- Tab 1 Content -->
-									<div id="tab1" class="tab-pane active">
-										<form id="addImageForm">
-											<div class="form-group">
-												<label for="imageName">Choose image</label>
-												<input type="file" name="FeaturedImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
-												<div class="form-group col-2 mb-3 text-center">
-													<div class="image-container">
-														<img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
-														<a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
-													</div>
-												</div>
-												<small id="imageNameError" class="form-text text-danger"></small>
-											</div>
-										</form>
-									</div>
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <!-- Tab 1 Content -->
+                                    <div id="tab1" class="tab-pane active">
+                                        <form id="addImageForm">
+                                            <div class="form-group">
+                                                <label for="imageName">Choose image</label>
+                                                <input type="file" name="FeaturedImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+                                                <div class="form-group col-2 mb-3 text-center">
+                                                    <div class="image-container">
+                                                        <img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
+                                                        <a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
+                                                    </div>
+                                                </div>
+                                                <small id="imageNameError" class="form-text text-danger"></small>
+                                            </div>
+                                        </form>
+                                    </div>
 
-									<!-- Tab 2 Content -->
-									<div id="tab2" class="tab-pane">
-										@Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
-										<div id="tab2-gallery">
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
-							</div>
-						</div>
-					</div>
-				</div>
+                                    <!-- Tab 2 Content -->
+                                    <div id="tab2" class="tab-pane">
+                                        @Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
+                                        <div id="tab2-gallery">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<!--Gallrty images_modal-->
-				<div class="modal fade" id="editGalleryModal" tabindex="-1" aria-labelledby="editGalleryModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-					<div class="modal-dialog modal-dialog-centered modal-lg">
-						<!-- Use modal-lg class for a larger modal -->
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="editGalleryModalLabel">Add new images</h5>
-							</div>
-							<div class="modal-body">
-								<!-- Nav tabs -->
-								<ul class="nav nav-tabs" role="tablist">
-									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#galleryEditTab1" id="tab1editLink">Upload images</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#galleryEditTab2" id="tab2editLink">Gallery</a>
-									</li>
-								</ul>
+                <!--Gallrty images_modal-->
+                <div class="modal fade" id="editGalleryModal" tabindex="-1" aria-labelledby="editGalleryModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <!-- Use modal-lg class for a larger modal -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editGalleryModalLabel">Add new images</h5>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#galleryEditTab1" id="tab1editLink">Upload images</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#galleryEditTab2" id="tab2editLink">Gallery</a>
+                                    </li>
+                                </ul>
 
-								<div id="galleryImgArray"></div>
-								<div id="uploadedImgArray"></div>
+                                <div id="galleryImgArray"></div>
+                                <div id="uploadedImgArray"></div>
 
-								<!-- Tab panes -->
-								<div class="tab-content">
-									<!-- Tab 1 Content -->
-									<div id="galleryEditTab1" class="tab-pane active">
-										<div id="addImageForm" style="color: black">
-											<div class="form-group">
-												<div class="form-group mt-3 mb-3">
-												@* @Html.LabelFor(model => model.GalleryImages, "Event gallery images:")
-												@Html.TextBoxFor(model => model.GalleryImages, null, new { type="file",@id="file-gallery", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
-												@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" }) *@
-													<div id="gallery-images">
-														<div id="newArrayVals">
-															@foreach (var img in Model.ProductIDTO.GalleyImg)
-																@Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
-															</div>
-															<div class="currentImgs">
-																<h4>Current images</h4>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="form-group">
-													<form id="form" method="post" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
-														<div class="form-group">
-															<div class="col-md-6 mx-auto" id="dropzone">
-																<div class="p-2 text-center rounded-top" style="background-color:rebeccapurple">
-																	<label style="font-size:20px; color:white;">Add New Images</label>
-																</div>
-																<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
-															</div>
-														</div>
-													</form>
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <!-- Tab 1 Content -->
+                                    <div id="galleryEditTab1" class="tab-pane active">
+                                        <div id="addImageForm" style="color: black">
+                                            <div class="form-group">
+                                                <div class="form-group mt-3 mb-3">
+                                                    @* @Html.LabelFor(model => model.GalleryImages, "Event gallery images:")
+                                                @Html.TextBoxFor(model => model.GalleryImages, null, new { type="file",@id="file-gallery", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
+                                                @Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" }) *@
+                                                    <div id="gallery-images">
+                                                        <div id="newArrayVals">
+                                                            @foreach (var img in Model.ProductIDTO.GalleyImg)
+                                                                @Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
 
-													<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-												</div>
-												<div class="imagesFromGallery">
-													<h4>New images</h4>
-													<div class="addedImages"></div>
-												</div>
-											</div>
-										</div>
+                                                            </div>
+                                                            <div class="currentImgs">
+                                                                <h4>Current images</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <form id="form" method="post" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
+                                                        <div class="form-group">
+                                                            <div class="col-md-6 mx-auto" id="dropzone">
+                                                                <div class="p-2 text-center rounded-top" style="background-color:rebeccapurple">
+                                                                    <label style="font-size:20px; color:white;">Add New Images</label>
+                                                                </div>
+                                                                <div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
 
-										<!-- Tab 2 Content -->
-										<div id="galleryEditTab2" class="tab-pane">
-											@Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
-											<div id="tab2edit-gallery"></div>
-											<hr>
-											<button class="btn btn-dotnet text-center" id="addNewImages">Add images</button>
-										</div>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" id="closeGalleryImageButton" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-dotnet" id="saveGalleryImagesButton">Save Image</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				<div class="row">
-					<div class="form-group col-12 mb-3">
-						@Html.Label("Featured Image:")
-						<button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
-					</div>
-					<hr>
-				</div>
-					<div class="form-group mb-3">
-						<h4>Gallery Images</h4>
-					</div>
-					<div>
-						<button type="button" class="form-control p-2 btn-dotnet" id="openGalleryModalButton">Edit Gallery Images</button>
-						@Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
-					</div>
-				</div>
-			</div>
+                                                    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+                                                </div>
+                                                <div class="imagesFromGallery">
+                                                    <h4>New images</h4>
+                                                    <div class="addedImages"></div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-		<div class="mx-auto mb-3 w-25">
-			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
-		</div>
-		</div>
-	}
+                                        <!-- Tab 2 Content -->
+                                        <div id="galleryEditTab2" class="tab-pane">
+                                            @Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
+                                            <div id="tab2edit-gallery"></div>
+                                            <hr>
+                                            <button class="btn btn-dotnet text-center" id="addNewImages">Add images</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" id="closeGalleryImageButton" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-dotnet" id="saveGalleryImagesButton">Save Image</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-12">
+                        @Html.LabelRequiredFor(model => model.FeaturedImage, "Image:", false)
+                    </div>
+                    <div class="image-container mb-2">
+                        <img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="content-preview2" style="margin-top:10px; width:auto; max-height:100px;">
+                        <a class="unset-button" id="unset" title="Unset Image">x</a>
+                    </div>
+                    <div>
+                        <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Add Image</button>
+                        @Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
+                    </div>
+                    <hr />
+                    <div class="form-group mb-3">
+                        <h4>Gallery Images</h4>
+                    </div>
+                    <div>
+                        <button type="button" class="form-control p-2 btn-dotnet" id="openGalleryModalButton">Edit Gallery Images</button>
+                        @Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
+                    </div>
+                    <hr/>
+                    <div>
+                        <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+                    </div>
+                </div>
+            </div>
+        </div>
+}
 
 
 @section Scripts {
-	<script>
-		//handle-image-upload_start
-		let uploadedImages = [];
-		let dropzoneQ = null;
-		let galleryLoaded = false;
-		Dropzone.options.uploader = {
-			maxFilesize: 5,
-			acceptedFiles: ".jpeg, .png, .jpg, .webp",
-			addRemoveLinks: true,
-			dictDefaultMessage: "Select a file",
-			init: function () {
-				let imgNames = [];
-				this.on("addedfile", function (file) {
-
-					//this piece of code gets dz-preview tag trough file params
-					//previewEelemnt is parent tag that holds all preview info about uploaded image (thumbnail, size, etc)
-					//lastChild of previewElement is dz-remove tag
-
-					let dz_remove_forUploadedImage = file.previewElement.lastChild;
-					dz_remove_forUploadedImage.addEventListener("click", function () {
-						let clearImageName = file.name.replace(/\.[^.]+$/, "");
-						$.ajax({
-							url: "/Dashboard/DeleteUploadedImage?img=" + clearImageName,
-							type: "GET",
-							success: function (resp) {
-								console.log(resp);
-							},
-							error: function (resp) {
-								console.error(resp);
-							}
-						});
-					});
-					// dz_remove_forUploadedImage.setAttribute("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
-					// $(".testlink").attr("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
-				});
-				this.on("complete", function (file) {
-					let image = file.name;
-					let clearImageName = image.replace(/\.[^.]+$/, "");
-					imgNames.push(clearImageName);
-					if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-						$.ajax({
-							method: "POST",
-							url: "/Dashboard/UploadedImageHandler/",
-							data: {
-								imgNames: imgNames
-							},
-							success: function (callResponse) {
-								uploadedImages.push(...callResponse);
-								console.log(uploadedImages);
-								for (let i = 0; i < uploadedImages.length; ++i) {
-									if (uploadedImages[i] != 0) {
-										$("#uploadedImgArray").append(`
-														<input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
-													`);
-									}
-									else {
-										continue;
-									}
-								}
-							},
-							error: function (callResponse) {
-								console.error(callResponse);
-							}
-						});
-					}
-				})
-			}
-		};
-
-		//handle-image-upload_end
-		let galleryLimit = 4;
-		let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
-		loadCurrentImages(galleryImages);
-		$(document).ready(function () {
-			loadGallery();
-			if ($('#ProductIDTO_ProductTypeId :selected').val() == 5) {
-				$(".price-quantity").hide();
-			}
-			$("#ProductIDTO_ProductTypeId").change(function () {
-				console.log("changed");
-				let selectedItem = $(this).children("option:selected").text();
-				if (selectedItem === "Kolačići") {
-					$(".price-quantity").hide();
-				} else {
-					$(".price-quantity").show();
-				}
-			});
-		});
-
-		let loaded = false;
-
-		let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
-		let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
-
-		for (let i = 0; i < categories.length; i++) {
-			for (let j = 0; j < categories[i].length; j++) {
-				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
-					let children = $(".child_of_" + categories[i][j].categoryId)
-
-					let isExpanded = "", isDown = "";
-					if (children.find(".category-selected").length > 0) {
-						isExpanded = "active-cat";
-						isDown = "multi-cat-down";
-					}
-					children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + " " + isExpanded + "'></ul>");
-
-					$(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
-
-					$(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat " + isDown + "'>"
-						+ "<span class='category-name'>" + categories[i][j].categoryName + "</span></span></div>");
-				}
-				else {
-					if (productCategoryID == categories[i][j].categoryId) {
-						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
-							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select category-selected px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
-					}
-					else {
-						$("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
-							+ "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
-					}
-				}
-			}
-		}
-
-		let catrgory_elements = document.getElementsByClassName("multi-cat");
-		for (let i = 0; i < catrgory_elements.length; i++) {
-			catrgory_elements[i].addEventListener("click", function () {
-				this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
-				this.classList.toggle("multi-cat-down");
-			});
-		}
-
-		let loadFile = function (event) {
-			let image = document.getElementById('avatar-preview');
-			image.src = URL.createObjectURL(event.target.files[0]);
-			let element = image.nextElementSibling
-			element.classList.add("hover-unset");
-
-		};
-
-		function unsetImage(event) {
-			let image = document.getElementById('avatar-preview');
-			image.src = '@Url.Action("GetImage", "Dashboard", null)';
-			$("#file").val(null);
-
-			let element = image.nextElementSibling;
-			element.classList.remove("hover-unset");
-			event.preventDefault();
-		}
-
-		$('#unset').click(function (event) {
-			unsetImage(event);
-			this.classList.remove("hover-unset");
-			event.preventDefault();
-		});
-
-		document.addEventListener("DOMContentLoaded", function () {
-			const openModalButton = document.getElementById("openModalButton");
-			const addImageModal = document.getElementById("addImageModal");
-
-			openModalButton.addEventListener("click", function () {
-				$(addImageModal).modal("show");
-			});
-
-			$("#closeImageButton").click(function (event) {
-				$('#addImageModal').modal('hide');
-			});
-
-			const openGalleryModalButton = document.getElementById("openGalleryModalButton");
-			const editGalleryModal = document.getElementById("editGalleryModal");
-
-			openGalleryModalButton.addEventListener("click", function () {
-				$(editGalleryModal).modal("show");
-			});
-
-			$("#closeGalleryImageButton").click(function (event) {
-				$(editGalleryModal).modal("hide");
-				loaded = false;
-			});
-
-		});
-
-		function unselectGallery() {
-			$(".overlay-checked").find('.fas').toggleClass('disable-icon')
-			$(".overlay-checked").removeClass("overlay-checked");
-			$("#input-media").val(null);
-		}
-
-		let selectedMediaIds = [];
-
-		document.getElementById("tab1editLink").classList.add("active");
-		document.getElementById("tab2editLink").classList.remove("active");
-
-		document.getElementById("tab1editLink").addEventListener("click", function () {
-			document.getElementById("tab1editLink").classList.add("active");
-			document.getElementById("tab2editLink").classList.remove("active");
-
-			$("#galleryEditTab1").addClass("active");
-			$("#galleryEditTab2").removeClass("active");
-
-			//unselectGallery();
-		});
-
-		document.getElementById("tab2editLink").addEventListener("click", function (event) {
-			document.getElementById("tab2editLink").classList.add("active");
-			document.getElementById("tab1editLink").classList.remove("active");
-
-			$("#galleryEditTab1").removeClass("active");
-			$("#galleryEditTab2").addClass("active");
-
-
-			if (!galleryLoaded) {
-				let url = '@Url.Action("GalleryGrid","Dashboard")'
-				$("#tab2edit-gallery").load(url, function () {
-					$(this).find(".fa-hand-pointer").each(function () {
-						$(this).click(function () {
-							galleryLoaded = true;
-							mediaId = this.dataset.mediaId;
-							let parentElement = this.parentElement;
-							let children = parentElement.getElementsByClassName('fas');
-
-							for (var i = 0; i < children.length; i++) {
-								children[i].classList.toggle('disable-icon');
-							}
-							parentElement.parentElement.classList.toggle("overlay-checked");
-
-							const index = selectedMediaIds.indexOf(mediaId);
-							if (index === -1) {
-								selectedMediaIds.push(parseInt(mediaId));
-							} else {
-								selectedMediaIds.splice(index, 1);
-							}
-						});
-					});
-				});
-			}
-		});
-
-		document.getElementById("tab1Link").classList.add("active");
-
-		document.getElementById("tab1Link").addEventListener("click", function () {
-			document.getElementById("tab1Link").classList.add("active");
-			document.getElementById("tab2Link").classList.remove("active");
-
-			document.getElementById("tab1").classList.add("active");
-			document.getElementById("tab2").classList.remove("active");
-
-			unselectGallery();
-		});
-
-		document.getElementById("tab2Link").addEventListener("click", function (event) {
-			document.getElementById("tab2Link").classList.add("active");
-			document.getElementById("tab1Link").classList.remove("active");
-
-			document.getElementById("tab2").classList.add("active");
-			document.getElementById("tab1").classList.remove("active");
-
-
-			if (!loaded) {
-				let url = '@Url.Action("GalleryGrid", "Dashboard")'
-				$("#tab2-gallery").load(url, function () {
-					$(".fa-hand-pointer").click(function () {
-						unsetImage(event);
-						loaded = true;
-						mediaId = this.dataset.mediaId;
-						let parentElement = this.parentElement;
-						let children = parentElement.getElementsByClassName('fas');
-
-						unselectGallery();
-
-						for (var i = 0; i < children.length; i++) {
-							children[i].classList.toggle('disable-icon');
-						}
-
-						parentElement.parentElement.classList.add("overlay-checked");
-					});
-				});
-			}
-		});
-
-		$("#addNewImages").click(function (event) {
-			event.preventDefault();
-			selectedMediaIds.sort();
-			$.ajax({
-				type: "POST",
-				url: "/Dashboard/GetGalleryImagesSrc/",
-				data: {
-					mediaIds: selectedMediaIds,
-				},
-				success: function (response) {
-					$(".addedImages").html(""); // Clear existing content
-					for (let i = 0; i < response.length; ++i) {
-						$(".addedImages").append(`
-								<div class="image-container">
-									<img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160" style="border: 2px solid indigo"/>
-									<a class="unset-button hover-unset" id="unset-button" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i})" title="Unset Image">x</a>
-								</div>
-									`);
-						//document.getElementById('unset').classList.add("hover-unset");
-					}
-				},
-				error: function (mediaSrc) {
-					console.error(mediaSrc);
-				}
-			});
-
-			document.getElementById("tab1editLink").classList.add("active");
-			document.getElementById("tab2editLink").classList.remove("active");
-
-			document.getElementById("galleryEditTab2").classList.remove("active");
-			document.getElementById("galleryEditTab1").classList.add("active");
-		});
-
-		$("#saveGalleryImagesButton").click(function (event) {
-			$('#editGalleryModal').modal('hide');
-			for (let i = 0; i < selectedMediaIds.length; ++i) {
-				$("#galleryImgArray").append(`
-							<input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
-						`);
-			}
-		});
-
-		let mediaId = null;
-		$("#saveImageButton").click(function () {
-			$("#input-media").val(mediaId);
-			$('#addImageModal').modal('hide');
-			//console.log(mediaId);
-		});
-
-		let loadMultipleFile = function (event) {
-			let galleryCount = $("[name = 'ProductIDTO.GalleyImg[]']").length;
-			if (event.target.files.length + galleryCount <= galleryLimit) {
-
-				let uploadStartPosition = 0;
-				for (let i = 0; i < event.target.files.length; i++) {
-					uploadStartPosition = galleryCount + i;
-					let image = document.getElementById('gallery-preview-' + (uploadStartPosition));
-					image.src = URL.createObjectURL(event.target.files[i]);
-					let element = image.nextElementSibling;
-					element.classList.add("hover-unset");
-				}
-
-				for (let i = ++uploadStartPosition; i < galleryLimit; i++) {
-					let image = document.getElementById('gallery-preview-' + i);
-					image.src = '@Url.Action("GetImage", "Dashboard", null)';
-					let element = image.nextElementSibling;
-					element.classList.remove("hover-unset");
-				}
-			}
-			else {
-				$("#file-gallery").val(null);
-				unsetAllImages();
-				loadMultipleFileArray(galleryImages, "load", 0)
-				showToast(`Number of allowed gallery images is ${galleryLimit}.`, "error");
-			}
-		};
-
-		let loadMultipleFileArray = function (files, type, start) {
-			for (let i = 0; i < files.length; i++) {
-				let image = document.getElementById('gallery-preview-' + (i + start));
-				if (type == "upload")
-					image.src = URL.createObjectURL(files[i]);
-				else
-					image.src = "/Dashboard/GetImage?path=" + files[i];
-				let element = image.nextElementSibling;
-				element.classList.add("hover-unset");
-			}
-		};
-
-		let loadGallery = function () {
-			for (let i = 0; i < galleryImages.length; i++) {
-				document.getElementById('gallery-preview-' + i).nextElementSibling.classList.add("hover-unset")
-			}
-		}
-
-		function unsetAllImages() {
-			$('[id^=gallery-preview-]').each(function () {
-				let image = this;
-				image.src = '@Url.Action("GetImage", "Dashboard", null)';
-				let element = image.nextElementSibling;
-				element.classList.remove("hover-unset");
-			});
-		}
-
-		function loadCurrentImages(galleryImages) {
-			for (let i = 0; i < galleryImages.length; i++) {
-				$(".currentImgs").append(`
-							<div class="image-container">
-								<img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
-								<a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
-							</div>
-						`);
-			}
-		}
-
-		function unsetGalleryImage(event, element, imageTagAt, modal) {
-			//function removes selected MediaId from selectedMediaIds arr
-			//then removes selected overlay from removed image in Gallery section
-			let position = selectedMediaIds.indexOf(element);
-			if (position !== -1) {
-				selectedMediaIds.splice(position, 1);
-				console.log(selectedMediaIds);
-			}
-			$("#gallery-new-preview-" + imageTagAt).remove();
-
-			let imageOverlay = $(modal + ' [data-media-id=' + element + "]").parent().parent();
-			imageOverlay.find('.fas').toggleClass('disable-icon');
-			imageOverlay.removeClass("overlay-checked");
-		}
-
-		function unsetImageMultiple(event, position, imageTagAt) {
-			let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
-			console.log(position);
-			//let position = galleryImages.indexOf(element);
-
-			if (galleryImages.length > 0) {
-				if (isUpload == false) {
-					galleryImages.slice(0, position)
-					$('#newArrayVals input[type="hidden"][value="' + galleryImages[position] + '"]').remove();
-					$("#gallery-preview-" + imageTagAt).remove();
-				}
-			}
-			event.preventDefault();
-		}
-
-		$(document).ready(function () {
-
-			let image = document.getElementById('avatar-preview');
-			var parts = image.src.split('/');
-			var result = parts.slice(3).join('/');
-			//console.log("Aba", result);
-			if (result != "Dashboard/GetImage") {
-				let element = document.getElementById('unset');
-				element.classList.add("hover-unset");
-			}
-
-			let saleIdto = @Json.Serialize(Model.ProductIDTO.SaleIDTO);
-			if (saleIdto != null) {
-				var startDate = saleIdto.startDate.split('-').reverse().join('/');
-				var endDate = saleIdto.endDate.split('-').reverse().join('/');
-				$('input[name="datefilter"]').daterangepicker({
-					endDate: Date.parse(saleIdto.endDate),
-					startDate: Date.parse(saleIdto.startDate),
-					autoUpdateInput: false,
-					locale: {
-						cancelLabel: 'Clear',
-						format: 'MM/DD/YYYY',
-					}
-				}).val(startDate + " - " + endDate);
-			} else {
-				$('input[name="datefilter"]').daterangepicker({
-					autoUpdateInput: false,
-					locale: {
-						cancelLabel: 'Clear'
-					}
-				});
-			}
-
-			$('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
-				$(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-				$("[name^='ProductIDTO.SaleIDTO.StartDate']").val(picker.startDate.format('MM/DD/YYYY'));
-				$("[name^='ProductIDTO.SaleIDTO.EndDate']").val(picker.endDate.format('MM/DD/YYYY'));
-			});
-
-			$('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
-				$(this).val('');
-			});
-
-			// console.log(@Json.Serialize(Model))
-			if ($("#ProductIDTO_IsOnSale").attr('checked')) {
-				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter'] ").removeAttr("disabled");
-			}
-			else {
-				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
-			}
-
-
-			$.ajax({
-				headers: {
-					
-				},
-				type: "GET",
-				url: "/Dashboard/AllAttributesByCategory",
-				data: { CategoryId: productCategoryID },
-				success: function (data) {
-					let counter = 0;
-					$('#attributeSection').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
-					$.each(data.data.attrValues, function (index, attribute) {
-						if (attribute.length > 0) {
-							let attributesOptions = ""
-							$.each(attribute, function (i, attr) {
-								attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
-							});
-							let htmlAttributes = "<label>" + data.data.attrs[counter++].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
-							$("#attributeArea").append(htmlAttributes);
-						}
-					});
-
-					let selectedAttributes = @Json.Serialize(Model.ProductAttributeValues);
-					$('.multipleSelect > option').each(function (index) {
-						if (selectedAttributes.includes(parseInt($(this).val()))) {
-							$(this).prop("selected", "selected");
-						}
-					});
-
-					generateMultiselect();
-				},
-				error: function () {
-					alert("Error on getting attributes!");
-				}
-			})
-		});
-
-		let generateMultiselect = function () {
-			$('.multipleSelect').multiselect({
-				nonSelectedText: '-Select value-',
-				//allSelectedText: 'All values are selected',
-				numberDisplayed: 100,
-				nSelectedText: ' Values selected',
-				includeSelectAllOption: true,
-
-				enableFiltering: true,
-				enableCaseInsensitiveFiltering: true,
-
-				buttonClass: "btn bg-white",
-				enableHTML: true
-			});
-
-			var elements = $("[data-toggle]");
-
-			elements.each(function () {
-				var oldValue = $(this).attr("data-toggle");
-
-				$(this).removeAttr("data-toggle");
-				$(this).attr("data-bs-toggle", oldValue);
-			});
-		}
-
-
-		$("#ProductIDTO_IsOnSale").change(function () {
-			if (this.checked) {
-				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").removeAttr("disabled");
-			}
-			else {
-				$("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
-			}
-		});
-
-		$(".category-select").click(function () {
-			if (this.classList.contains("category-selected")) {
-				return;
-			}
-
-			$('.attr').html("");
-			$(".category-selected").addClass("category-select")
-			$(".category-selected").removeClass("category-selected");
-			$(this).addClass("category-selected");
-			$(this).removeClass("category-select");
-
-			$("#categoryID").val(this.dataset.categoryId);
-			$.ajax({
-				type: "GET",
-				url: "/Dashboard/AllAttributesByCategory",
-				data: { CategoryId: this.dataset.categoryId },
-				success: function (data) {
-					let counter = 0;
-					if (data.data.attrs.length > 0) {
-						$('#attributeSection').append('<div class="form-group col-6 mb-3 attr"><h4>Attributes</h4><div id="attributeArea" class="form-group col-6 mb-3"></div></div>')
-					}
-					$.each(data.data.attrValues, function (index, attribute) {
-						if (attribute.length > 0) {
-							let attributesOptions = ""
-							$.each(attribute, function (i, attr) {
-								attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
-							});
-							let htmlAttributes = "<label>" + data.data.attrs[counter].categoryName + "</label><div class='form-group col-6 mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
-							$("#attributeArea").append(htmlAttributes);
-						}
-					});
-					generateMultiselect();
-				},
-				error: function () {
-					alert("Error on getting attributes!");
-				}
-			})
-		});
-
-
-		$('.lang').val($('#language').val());
-
-		$('#language').change(function () {
-			$('.lang').val($(this).val());
-		});
-	</script>
+    <script>
+        console.log(@Json.Serialize(Model))
+        //handle-image-upload_start
+        let uploadedImages = [];
+        let dropzoneQ = null;
+        let galleryLoaded = false;
+        Dropzone.options.uploader = {
+            maxFilesize: 5,
+            acceptedFiles: ".jpeg, .png, .jpg, .webp",
+            addRemoveLinks: true,
+            dictDefaultMessage: "Select a file",
+            init: function () {
+                let imgNames = [];
+                this.on("addedfile", function (file) {
+
+                    //this piece of code gets dz-preview tag trough file params
+                    //previewEelemnt is parent tag that holds all preview info about uploaded image (thumbnail, size, etc)
+                    //lastChild of previewElement is dz-remove tag
+
+                    let dz_remove_forUploadedImage = file.previewElement.lastChild;
+                    dz_remove_forUploadedImage.addEventListener("click", function () {
+                        let clearImageName = file.name.replace(/\.[^.]+$/, "");
+                        $.ajax({
+                            url: "/Dashboard/DeleteUploadedImage?img=" + clearImageName,
+                            type: "GET",
+                            success: function (resp) {
+                                console.log(resp);
+                            },
+                            error: function (resp) {
+                                console.error(resp);
+                            }
+                        });
+                    });
+                    // dz_remove_forUploadedImage.setAttribute("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
+                    // $(".testlink").attr("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
+                });
+                this.on("complete", function (file) {
+                    let image = file.name;
+                    let clearImageName = image.replace(/\.[^.]+$/, "");
+                    imgNames.push(clearImageName);
+                    if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Dashboard/UploadedImageHandler/",
+                            data: {
+                                imgNames: imgNames
+                            },
+                            success: function (callResponse) {
+                                uploadedImages.push(...callResponse);
+                                console.log(uploadedImages);
+                                for (let i = 0; i < uploadedImages.length; ++i) {
+                                    if (uploadedImages[i] != 0) {
+                                        $("#uploadedImgArray").append(`
+                                                                <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
+                                                            `);
+                                    }
+                                    else {
+                                        continue;
+                                    }
+                                }
+                            },
+                            error: function (callResponse) {
+                                console.error(callResponse);
+                            }
+                        });
+                    }
+                })
+            }
+        };
+
+        //handle-image-upload_end
+        let galleryLimit = 4;
+        let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
+        loadCurrentImages(galleryImages);
+        $(document).ready(function () {
+            loadGallery();
+            if ($('#ProductIDTO_ProductTypeId :selected').val() == 5) {
+                $(".price-quantity").hide();
+            }
+            $("#ProductIDTO_ProductTypeId").change(function () {
+                console.log("changed");
+                let selectedItem = $(this).children("option:selected").text();
+                if (selectedItem === "Kolačići") {
+                    $(".price-quantity").hide();
+                } else {
+                    $(".price-quantity").show();
+                }
+            });
+        });
+
+        let loaded = false;
+
+        let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
+        let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
+
+        for (let i = 0; i < categories.length; i++) {
+            for (let j = 0; j < categories[i].length; j++) {
+                if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
+                    let children = $(".child_of_" + categories[i][j].categoryId)
+
+                    let isExpanded = "", isDown = "";
+                    if (children.find(".category-selected").length > 0) {
+                        isExpanded = "active-cat";
+                        isDown = "multi-cat-down";
+                    }
+                    children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + " " + isExpanded + "'></ul>");
+
+                    $(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
+
+                    $(".parent_" + categories[i][j].categoryId).before("<div class='mb-2 d-flex flex-row align-items-center'><span class='multi-cat " + isDown + "'>"
+                        + "<span class='category-name'>" + categories[i][j].categoryName + "</span></span></div>");
+                }
+                else {
+                    if (productCategoryID == categories[i][j].categoryId) {
+                        $("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+                            + "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select category-selected px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+                    }
+                    else {
+                        $("#main-list").append("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'>"
+                            + "<div class='mb-2 d-flex flex-row align-items-center'><span class='category-name category-select px-2 py-1 rounded-3' data-category-id='" + categories[i][j].categoryId + "'>" + categories[i][j].categoryName + "</span></div>");
+                    }
+                }
+            }
+        }
+
+        let catrgory_elements = document.getElementsByClassName("multi-cat");
+        for (let i = 0; i < catrgory_elements.length; i++) {
+            catrgory_elements[i].addEventListener("click", function () {
+                this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
+                this.classList.toggle("multi-cat-down");
+            });
+        }
+
+        let loadFile = function (event) {
+            let image = document.getElementById('avatar-preview');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            let element = image.nextElementSibling
+            element.classList.add("hover-unset");
+
+        };
+
+        function unsetImage(event) {
+            let image = document.getElementById('avatar-preview');
+            image.src = '@Url.Action("GetImage", "Dashboard", null)';
+            $("#file").val(null);
+
+            let element = image.nextElementSibling;
+            element.classList.remove("hover-unset");
+            event.preventDefault();
+        }
+
+        $('#unset').click(function (event) {
+            unsetImage(event);
+            this.classList.remove("hover-unset");
+            event.preventDefault();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const openModalButton = document.getElementById("openModalButton");
+            const addImageModal = document.getElementById("addImageModal");
+
+            openModalButton.addEventListener("click", function () {
+                $(addImageModal).modal("show");
+            });
+
+            $("#closeImageButton").click(function (event) {
+                $('#addImageModal').modal('hide');
+            });
+
+            const openGalleryModalButton = document.getElementById("openGalleryModalButton");
+            const editGalleryModal = document.getElementById("editGalleryModal");
+
+            openGalleryModalButton.addEventListener("click", function () {
+                $(editGalleryModal).modal("show");
+            });
+
+            $("#closeGalleryImageButton").click(function (event) {
+                $(editGalleryModal).modal("hide");
+                loaded = false;
+            });
+
+        });
+
+        function unselectGallery() {
+            $(".overlay-checked").find('.fas').toggleClass('disable-icon')
+            $(".overlay-checked").removeClass("overlay-checked");
+            $("#input-media").val(null);
+        }
+
+        let selectedMediaIds = [];
+
+        document.getElementById("tab1editLink").classList.add("active");
+        document.getElementById("tab2editLink").classList.remove("active");
+
+        document.getElementById("tab1editLink").addEventListener("click", function () {
+            document.getElementById("tab1editLink").classList.add("active");
+            document.getElementById("tab2editLink").classList.remove("active");
+
+            $("#galleryEditTab1").addClass("active");
+            $("#galleryEditTab2").removeClass("active");
+
+            //unselectGallery();
+        });
+
+        document.getElementById("tab2editLink").addEventListener("click", function (event) {
+            document.getElementById("tab2editLink").classList.add("active");
+            document.getElementById("tab1editLink").classList.remove("active");
+
+            $("#galleryEditTab1").removeClass("active");
+            $("#galleryEditTab2").addClass("active");
+
+
+            if (!galleryLoaded) {
+                let url = '@Url.Action("GalleryGrid","Dashboard")'
+                $("#tab2edit-gallery").load(url, function () {
+                    $(this).find(".fa-hand-pointer").each(function () {
+                        $(this).click(function () {
+                            galleryLoaded = true;
+                            mediaId = this.dataset.mediaId;
+                            let parentElement = this.parentElement;
+                            let children = parentElement.getElementsByClassName('fas');
+
+                            for (var i = 0; i < children.length; i++) {
+                                children[i].classList.toggle('disable-icon');
+                            }
+                            parentElement.parentElement.classList.toggle("overlay-checked");
+
+                            const index = selectedMediaIds.indexOf(mediaId);
+                            if (index === -1) {
+                                selectedMediaIds.push(parseInt(mediaId));
+                            } else {
+                                selectedMediaIds.splice(index, 1);
+                            }
+                        });
+                    });
+                });
+            }
+        });
+
+        document.getElementById("tab1Link").classList.add("active");
+
+        document.getElementById("tab1Link").addEventListener("click", function () {
+            document.getElementById("tab1Link").classList.add("active");
+            document.getElementById("tab2Link").classList.remove("active");
+
+            document.getElementById("tab1").classList.add("active");
+            document.getElementById("tab2").classList.remove("active");
+
+            unselectGallery();
+        });
+
+        document.getElementById("tab2Link").addEventListener("click", function (event) {
+            document.getElementById("tab2Link").classList.add("active");
+            document.getElementById("tab1Link").classList.remove("active");
+
+            document.getElementById("tab2").classList.add("active");
+            document.getElementById("tab1").classList.remove("active");
+
+
+            if (!loaded) {
+                let url = '@Url.Action("GalleryGrid", "Dashboard")'
+                $("#tab2-gallery").load(url, function () {
+                    $(".fa-hand-pointer").click(function () {
+                        unsetImage(event);
+                        loaded = true;
+                        mediaId = this.dataset.mediaId;
+                        let parentElement = this.parentElement;
+                        let children = parentElement.getElementsByClassName('fas');
+
+                        unselectGallery();
+
+                        for (var i = 0; i < children.length; i++) {
+                            children[i].classList.toggle('disable-icon');
+                        }
+
+                        parentElement.parentElement.classList.add("overlay-checked");
+                    });
+                });
+            }
+        });
+
+        $("#addNewImages").click(function (event) {
+            event.preventDefault();
+            selectedMediaIds.sort();
+            $.ajax({
+                type: "POST",
+                url: "/Dashboard/GetGalleryImagesSrc/",
+                data: {
+                    mediaIds: selectedMediaIds,
+                },
+                success: function (response) {
+                    $(".addedImages").html(""); // Clear existing content
+                    for (let i = 0; i < response.length; ++i) {
+                        $(".addedImages").append(`
+                                        <div class="image-container">
+                                            <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160" style="border: 2px solid indigo"/>
+                                            <a class="unset-button hover-unset" id="unset-button" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i})" title="Unset Image">x</a>
+                                        </div>
+                                            `);
+                        //document.getElementById('unset').classList.add("hover-unset");
+                    }
+                },
+                error: function (mediaSrc) {
+                    console.error(mediaSrc);
+                }
+            });
+
+            document.getElementById("tab1editLink").classList.add("active");
+            document.getElementById("tab2editLink").classList.remove("active");
+
+            document.getElementById("galleryEditTab2").classList.remove("active");
+            document.getElementById("galleryEditTab1").classList.add("active");
+        });
+
+        $("#saveGalleryImagesButton").click(function (event) {
+            $('#editGalleryModal').modal('hide');
+            for (let i = 0; i < selectedMediaIds.length; ++i) {
+                $("#galleryImgArray").append(`
+                                    <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
+                                `);
+            }
+        });
+
+        let mediaId = null;
+        $("#saveImageButton").click(function () {
+            $("#input-media").val(mediaId);
+            $('#addImageModal').modal('hide');
+            //console.log(mediaId);
+        });
+
+        let loadMultipleFile = function (event) {
+            let galleryCount = $("[name = 'ProductIDTO.GalleyImg[]']").length;
+            if (event.target.files.length + galleryCount <= galleryLimit) {
+
+                let uploadStartPosition = 0;
+                for (let i = 0; i < event.target.files.length; i++) {
+                    uploadStartPosition = galleryCount + i;
+                    let image = document.getElementById('gallery-preview-' + (uploadStartPosition));
+                    image.src = URL.createObjectURL(event.target.files[i]);
+                    let element = image.nextElementSibling;
+                    element.classList.add("hover-unset");
+                }
+
+                for (let i = ++uploadStartPosition; i < galleryLimit; i++) {
+                    let image = document.getElementById('gallery-preview-' + i);
+                    image.src = '@Url.Action("GetImage", "Dashboard", null)';
+                    let element = image.nextElementSibling;
+                    element.classList.remove("hover-unset");
+                }
+            }
+            else {
+                $("#file-gallery").val(null);
+                unsetAllImages();
+                loadMultipleFileArray(galleryImages, "load", 0)
+                showToast(`Number of allowed gallery images is ${galleryLimit}.`, "error");
+            }
+        };
+
+        let loadMultipleFileArray = function (files, type, start) {
+            for (let i = 0; i < files.length; i++) {
+                let image = document.getElementById('gallery-preview-' + (i + start));
+                if (type == "upload")
+                    image.src = URL.createObjectURL(files[i]);
+                else
+                    image.src = "/Dashboard/GetImage?path=" + files[i];
+                let element = image.nextElementSibling;
+                element.classList.add("hover-unset");
+            }
+        };
+
+        let loadGallery = function () {
+            for (let i = 0; i < galleryImages.length; i++) {
+                document.getElementById('gallery-preview-' + i).nextElementSibling.classList.add("hover-unset")
+            }
+        }
+
+        function unsetAllImages() {
+            $('[id^=gallery-preview-]').each(function () {
+                let image = this;
+                image.src = '@Url.Action("GetImage", "Dashboard", null)';
+                let element = image.nextElementSibling;
+                element.classList.remove("hover-unset");
+            });
+        }
+
+        function loadCurrentImages(galleryImages) {
+            for (let i = 0; i < galleryImages.length; i++) {
+                $(".currentImgs").append(`
+                                    <div class="image-container">
+                                        <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
+                                        <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
+                                    </div>
+                                `);
+            }
+        }
+
+        function unsetGalleryImage(event, element, imageTagAt, modal) {
+            //function removes selected MediaId from selectedMediaIds arr
+            //then removes selected overlay from removed image in Gallery section
+            let position = selectedMediaIds.indexOf(element);
+            if (position !== -1) {
+                selectedMediaIds.splice(position, 1);
+                console.log(selectedMediaIds);
+            }
+            $("#gallery-new-preview-" + imageTagAt).remove();
+
+            let imageOverlay = $(modal + ' [data-media-id=' + element + "]").parent().parent();
+            imageOverlay.find('.fas').toggleClass('disable-icon');
+            imageOverlay.removeClass("overlay-checked");
+        }
+
+        function unsetImageMultiple(event, position, imageTagAt) {
+            let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
+            console.log(position);
+            //let position = galleryImages.indexOf(element);
+
+            if (galleryImages.length > 0) {
+                if (isUpload == false) {
+                    galleryImages.slice(0, position)
+                    $('#newArrayVals input[type="hidden"][value="' + galleryImages[position] + '"]').remove();
+                    $("#gallery-preview-" + imageTagAt).remove();
+                }
+            }
+            event.preventDefault();
+        }
+
+        $(document).ready(function () {
+
+            let image = document.getElementById('avatar-preview');
+            var parts = image.src.split('/');
+            var result = parts.slice(3).join('/');
+            //console.log("Aba", result);
+            if (result != "Dashboard/GetImage") {
+                let element = document.getElementById('unset');
+                element.classList.add("hover-unset");
+            }
+
+            let saleIdto = @Json.Serialize(Model.ProductIDTO.SaleIDTO);
+            if (saleIdto != null) {
+                var startDate = saleIdto.startDate.split('-').reverse().join('/');
+                var endDate = saleIdto.endDate.split('-').reverse().join('/');
+                $('input[name="datefilter"]').daterangepicker({
+                    endDate: Date.parse(saleIdto.endDate),
+                    startDate: Date.parse(saleIdto.startDate),
+                    autoUpdateInput: false,
+                    locale: {
+                        cancelLabel: 'Clear',
+                        format: 'MM/DD/YYYY',
+                    }
+                }).val(startDate + " - " + endDate);
+            } else {
+                $('input[name="datefilter"]').daterangepicker({
+                    autoUpdateInput: false,
+                    locale: {
+                        cancelLabel: 'Clear'
+                    }
+                });
+            }
+
+            $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                $("[name^='ProductIDTO.SaleIDTO.StartDate']").val(picker.startDate.format('MM/DD/YYYY'));
+                $("[name^='ProductIDTO.SaleIDTO.EndDate']").val(picker.endDate.format('MM/DD/YYYY'));
+            });
+
+            $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
+
+            // console.log(@Json.Serialize(Model))
+            if ($("#ProductIDTO_IsOnSale").attr('checked')) {
+                $("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter'] ").removeAttr("disabled");
+            }
+            else {
+                $("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
+            }
+
+
+            $.ajax({
+                headers: {
+
+                },
+                type: "GET",
+                url: "/Dashboard/AllAttributesByCategory",
+                data: { CategoryId: productCategoryID },
+                success: function (data) {
+                    let counter = 0;
+                    $('#attributeSection').append('<div class="mb-3 attr"><h2>Attributes</h2><div id="attributeArea" class="mb-3"></div></div>')
+                    $.each(data.data.attrValues, function (index, attribute) {
+                        if (attribute.length > 0) {
+                            let attributesOptions = ""
+                            $.each(attribute, function (i, attr) {
+                                attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
+                            });
+                            let htmlAttributes = "<label>" + data.data.attrs[counter++].categoryName + "</label><div class='mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
+                            $("#attributeArea").append(htmlAttributes);
+                        }
+                    });
+
+                    let selectedAttributes = @Json.Serialize(Model.ProductAttributeValues);
+                    $('.multipleSelect > option').each(function (index) {
+                        if (selectedAttributes.includes(parseInt($(this).val()))) {
+                            $(this).prop("selected", "selected");
+                        }
+                    });
+
+                    generateMultiselect();
+                },
+                error: function () {
+                    alert("Error on getting attributes!");
+                }
+            })
+        });
+
+        let generateMultiselect = function () {
+            $('.multipleSelect').multiselect({
+                nonSelectedText: '-Select value-',
+                //allSelectedText: 'All values are selected',
+                numberDisplayed: 100,
+                nSelectedText: ' Values selected',
+                includeSelectAllOption: true,
+
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+
+                buttonClass: "btn bg-white",
+                enableHTML: true
+            });
+
+            var elements = $("[data-toggle]");
+
+            elements.each(function () {
+                var oldValue = $(this).attr("data-toggle");
+
+                $(this).removeAttr("data-toggle");
+                $(this).attr("data-bs-toggle", oldValue);
+            });
+        }
+
+
+        $("#ProductIDTO_IsOnSale").change(function () {
+            if (this.checked) {
+                $("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").removeAttr("disabled");
+            }
+            else {
+                $("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter']").attr("disabled", true);
+            }
+        });
+
+        $(".category-select").click(function () {
+            if (this.classList.contains("category-selected")) {
+                return;
+            }
+
+            $('.attr').html("");
+            $(".category-selected").addClass("category-select")
+            $(".category-selected").removeClass("category-selected");
+            $(this).addClass("category-selected");
+            $(this).removeClass("category-select");
+
+            $("#categoryID").val(this.dataset.categoryId);
+            $.ajax({
+                type: "GET",
+                url: "/Dashboard/AllAttributesByCategory",
+                data: { CategoryId: this.dataset.categoryId },
+                success: function (data) {
+                    let counter = 0;
+                    if (data.data.attrs.length > 0) {
+                        $('#attributeSection').append('<div class="form-group col-6 mb-3 attr"><h4>Attributes</h4><div id="attributeArea" class="form-group col-6 mb-3"></div></div>')
+                    }
+                    $.each(data.data.attrValues, function (index, attribute) {
+                        if (attribute.length > 0) {
+                            let attributesOptions = ""
+                            $.each(attribute, function (i, attr) {
+                                attributesOptions += "<option value='" + attr.attributesId + "'>" + attr.value + "</option>"
+                            });
+                            let htmlAttributes = "<label>" + data.data.attrs[counter].categoryName + "</label><div class='form-group col-6 mb-3'><select name='ProductAttributeValues[]' class='form-control multipleSelect' multiple>" + attributesOptions + "</select></div>";
+                            $("#attributeArea").append(htmlAttributes);
+                        }
+                    });
+                    generateMultiselect();
+                },
+                error: function () {
+                    alert("Error on getting attributes!");
+                }
+            })
+        });
+
+        let langID = @Json.Serialize(Model.ProductIDTO.LanguageID);
+        console.log(langID);
+
+        $('.lang').val($('#language').val());
+
+        $('#language').change(function () {
+            $('.lang').val($(this).val());
+        });
+    </script>
 }

@@ -110,7 +110,7 @@
 		let categories = @Json.Serialize(Model.AllCategories);
 
 		for (let i = 0; i < categories.length; i++) {
-			debugger;
+			//debugger;
 			for (let j = 0; j < categories[i].length; j++) {
 				if ($(".child_of_" + categories[i][j].categoryId).length > 0) {
 					let children = $(".child_of_" + categories[i][j].categoryId)
@@ -157,7 +157,7 @@
 
 			let lang = $("#language").val();
 			$(".lang").val(lang);
-			console.log(lang);
+			//console.log(lang);
 		}
 
 		$("#closeAddModalButton").click(function () {

@@ -190,7 +190,8 @@ namespace Services
                 media.MediaTypeId = (mediatypeId == null) ? _context.MediaTypes.Where(x => x.MediaTypeName == "Avatar").Select(x => x.MediaTypeId).FirstOrDefault() : (int)mediatypeId;
                 var index = media.Src.LastIndexOf('/');
                 media.MetaTitle = media.Src.Substring(index + 1);
-                try
+				media.MimeType = awsFile.Attachments[0].ContentType;
+				try
                 {
 					_context.Medias.Add(media);
 					await _context.SaveChangesAsync();

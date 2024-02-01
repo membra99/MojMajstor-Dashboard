@@ -152,7 +152,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "Universal/no_image_202312121231258848.jpg";
+				path = "Universal/noimage_202402011203429124.jpg";
 
 			var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
@@ -305,6 +305,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 			awsFile.Attachments.Add(file);
 			var media = await _userDataServices.UploadUserPicture(awsFile, mediatypeId);
 			return Ok();
+		}
+
+		public async Task<List<int>> UploadedImageHandler(List<string> imgNames)
+		{
+			return await _mainDataServices.UploadedImageHandler(imgNames);
 		}
 
 		public async Task<IActionResult> AllGallery()
@@ -837,6 +842,11 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		public async Task<string> GetImageFromGallery(int mediaId)
+		{
+			return await _mainDataServices.GetImageSrcFromGallery(mediaId);
+		}
+
 		public async Task<List<string>> GetGalleryImagesSrc(List<int> mediaIds)
 		{
 			return await _mainDataServices.GetGalleryImagesSrc(mediaIds);
@@ -986,6 +996,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 					}
 				}
 
+				await _mainDataServices.SetProperGallery(dataIDTO.ProductIDTO.GalleyImg, dataIDTO.MediaIds, dataIDTO.UploadedImages, product.ProductId);
+
 				await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
 
 				foreach (var attributeID in dataIDTO.ProductAttributeValues)
@@ -1120,33 +1132,6 @@ namespace Universal.Admin_Controllers.AdminMVC
 				
 				await _mainDataServices.SetProperGallery(dataIDTO.ProductIDTO.GalleyImg, dataIDTO.MediaIds, dataIDTO.UploadedImages, dataIDTO.ProductIDTO.ProductId);
 				
-				//foreach (IFormFile file in dataIDTO.GalleryImages)
-				//{
-				//	awsFile.Attachments = new List<IFormFile> {
-				//		file
-				//	};
-				//	string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
-				//	if (!IsSupportedExtension(extension))
-				//	{
-				//		_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-				//		_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-				//		return RedirectToAction("AllData");
-				//	}
-				//	else
-				//	{
-				//		if (file.Length > 1000000)
-				//		{
-				//			_httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-				//			_httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-				//			return RedirectToAction("AllData");
-				//		}
-				//		else
-				//		{
-				//			await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
-				//		}
-				//	}
-				//}
-
 				await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
 
 				foreach (var attributeID in dataIDTO.ProductAttributeValues)
