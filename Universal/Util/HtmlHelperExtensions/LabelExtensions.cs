@@ -12,9 +12,9 @@ namespace Universal.Util.HtmlHelperExtensions
 			this IHtmlHelper<TModel> htmlHelper,
 			Expression<Func<TModel, TValue>> expression,
 			string labelText,
-			bool required, 
+			bool required,
 			object htmlAttributes = null)
-		{		
+		{
 			var htmlField = htmlHelper.ViewContext.HttpContext.RequestServices.GetService(typeof(ModelExpressionProvider)) as ModelExpressionProvider;
 			string htmlFieldName = htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(htmlField.GetExpressionText(expression));
 			TagBuilder labelBuilder = new TagBuilder("label");
@@ -29,8 +29,8 @@ namespace Universal.Util.HtmlHelperExtensions
 				spanBuilder.InnerHtml.AppendHtml("*");
 				labelBuilder.InnerHtml.AppendHtml(spanBuilder);
 			}
-			
-			if(htmlAttributes != null)
+
+			if (htmlAttributes != null)
 			{
 				labelBuilder.MergeAttributes(JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(htmlAttributes)));
 			}

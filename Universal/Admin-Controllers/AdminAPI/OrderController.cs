@@ -8,64 +8,64 @@ using Microsoft.AspNetCore.Cors;
 
 namespace Universal.Admin_Controllers.AdminAPI
 {
-    [Route("api/[controller]")]
-    [ApiController]
+	[Route("api/[controller]")]
+	[ApiController]
 	[EnableCors("CorsPolicy")]
 	public class OrderController : ControllerBase
-    {
-        private readonly MainDataServices _mainDataServices;
+	{
+		private readonly MainDataServices _mainDataServices;
 
-        public OrderController(MainDataServices mainServices)
-        {
-            _mainDataServices = mainServices;
-        }
+		public OrderController(MainDataServices mainServices)
+		{
+			_mainDataServices = mainServices;
+		}
 
-        [HttpPost]
-        public async Task<ActionResult> PostSiteContent(OrderDetailsIDTO orderIDTO)
-        {
-            try
-            {
-                await _mainDataServices.PostOrder(orderIDTO);
-                return new OkResult();
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+		[HttpPost]
+		public async Task<ActionResult> PostSiteContent(OrderDetailsIDTO orderIDTO)
+		{
+			try
+			{
+				await _mainDataServices.PostOrder(orderIDTO);
+				return new OkResult();
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
 
-        [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<OrderODTO>>> GetAllOrders()
-        {
-            try
-            {
-                return await _mainDataServices.GetAllOrder();
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+		[HttpGet("GetAll")]
+		public async Task<ActionResult<IEnumerable<OrderODTO>>> GetAllOrders()
+		{
+			try
+			{
+				return await _mainDataServices.GetAllOrder();
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
 
 		[HttpGet("GetFullOrderById")]
-        public async Task<ActionResult<FullOrderODTO>> GetFullOrderByIds(int id)
-        {
-            try
-            {
-                return await _mainDataServices.GetFullOrderById(id);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+		public async Task<ActionResult<FullOrderODTO>> GetFullOrderByIds(int id)
+		{
+			try
+			{
+				return await _mainDataServices.GetFullOrderById(id);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
 
 		[HttpPost("CreateInvoice")]
 		public async Task<ActionResult<bool>> Invoice(InvoiceIDTO htmltable)
 		{
 			try
 			{
-                return await _mainDataServices.CreateInvoice(htmltable);
+				return await _mainDataServices.CreateInvoice(htmltable);
 			}
 			catch (Exception e)
 			{
@@ -74,29 +74,29 @@ namespace Universal.Admin_Controllers.AdminAPI
 		}
 
 		[HttpPut]
-        public async Task<ActionResult<OrderODTO>> PutOrder(int id, string status)
-        {
-            try
-            {
-                return await _mainDataServices.EditOrder(id, status);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+		public async Task<ActionResult<OrderODTO>> PutOrder(int id, string status)
+		{
+			try
+			{
+				return await _mainDataServices.EditOrder(id, status);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<OrderODTO>> DeleteOrders(int id)
-        {
-            try
-            {
-                return await _mainDataServices.DeleteOrder(id);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
-    }
+		[HttpDelete("{id}")]
+		public async Task<ActionResult<OrderODTO>> DeleteOrders(int id)
+		{
+			try
+			{
+				return await _mainDataServices.DeleteOrder(id);
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
+	}
 }

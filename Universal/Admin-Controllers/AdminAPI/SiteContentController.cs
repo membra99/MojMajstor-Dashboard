@@ -86,16 +86,16 @@ namespace Universal.Admin_Controllers.AdminAPI
 		}
 
 		[HttpGet("GetAllTags")]
-        public async Task<ActionResult<IEnumerable<TagODTO>>> GetAllTags()
-        {
-            try
-            {
-                return await _mainDataServices.GetTags();
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
-    }
+		public async Task<ActionResult<IEnumerable<TagODTO>>> GetAllTags()
+		{
+			try
+			{
+				return await _mainDataServices.GetTags();
+			}
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+		}
+	}
 }

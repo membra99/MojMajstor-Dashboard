@@ -8,7 +8,7 @@ namespace Universal.Util.HtmlHelperExtensions
 	public static class DateExtensions
 	{
 		public static IHtmlContent DateRangeFor<TModel, TValue>(
-			this IHtmlHelper<TModel> htmlHelper, 
+			this IHtmlHelper<TModel> htmlHelper,
 			Expression<Func<TModel, TValue>> expression,
 			object htmlAttributes = null)
 		{

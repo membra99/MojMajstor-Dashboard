@@ -27,11 +27,11 @@ namespace Universal.Util.HtmlHelperExtensions
 		/// </param>
 		/// <returns>A new <see cref="IHtmlContent"/> containing the anchor element (&lt;a&gt;&lt;span&gt;&lt;i&gt;).</returns>
 		public static IHtmlContent ActionLinkIcon(
-			this IHtmlHelper helper, 
-			string linkText, 
+			this IHtmlHelper helper,
+			string linkText,
 			string actionName,
-			string controllerName, 
-			string icon, 
+			string controllerName,
+			string icon,
 			object routeValues = null,
 			object htmlAttributes = null)
 		{
@@ -45,7 +45,7 @@ namespace Universal.Util.HtmlHelperExtensions
 
 			TagBuilder anchorBuilder = new TagBuilder("a");
 			string path = $"/{controllerName}/{actionName}";
-			
+
 			anchorBuilder.InnerHtml.AppendHtml(spanBuilder);
 			anchorBuilder.InnerHtml.AppendHtml(linkText);
 
@@ -68,7 +68,8 @@ namespace Universal.Util.HtmlHelperExtensions
 			}
 			anchorBuilder.Attributes.Add("href", path);
 
-			if (htmlAttributes != null) {
+			if (htmlAttributes != null)
+			{
 				anchorBuilder.MergeAttributes(JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(htmlAttributes)));
 			}
 			return anchorBuilder;

@@ -191,7 +191,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> ImportExcel(IFormFile file)
 		{
-			if(file != null)
+			if (file != null)
 			{
 				string extension = System.IO.Path.GetExtension(file.FileName)?.ToLower();
 				if (extension != ".xlsx")
@@ -318,25 +318,25 @@ namespace Universal.Admin_Controllers.AdminMVC
 			return View("Media/Gallery", new MultiMediaIDTO { MediaList = media });
 		}
 
-        public async Task<IActionResult> AllVideos()
-        {
-            var video = await _mainDataServices.GetAllVideoRoute();
-            return View("Media/Video", new MultiMediaIDTO { MediaList = video });
-        }
+		public async Task<IActionResult> AllVideos()
+		{
+			var video = await _mainDataServices.GetAllVideoRoute();
+			return View("Media/Video", new MultiMediaIDTO { MediaList = video });
+		}
 
-        public async Task<IActionResult> GalleryGrid()
+		public async Task<IActionResult> GalleryGrid()
 		{
 			var media = await _mainDataServices.GetAllImagesRoute();
 			return PartialView("/Views/Partials/_GalleryGrid.cshtml", new MultiMediaIDTO { MediaList = media });
 		}
 
-        public async Task<IActionResult> VideoGrid()
-        {
-            var media = await _mainDataServices.GetAllVideoRoute();
-            return PartialView("/Views/Partials/_VideoGrid.cshtml", new MultiMediaIDTO { MediaList = media });
-        }
+		public async Task<IActionResult> VideoGrid()
+		{
+			var media = await _mainDataServices.GetAllVideoRoute();
+			return PartialView("/Views/Partials/_VideoGrid.cshtml", new MultiMediaIDTO { MediaList = media });
+		}
 
-        public async Task<IActionResult> EditMeidaImage(MediaIDTO mediaIDTO)
+		public async Task<IActionResult> EditMeidaImage(MediaIDTO mediaIDTO)
 		{
 			await _mainDataServices.EditMediaImageMetaProperties(mediaIDTO);
 			//TODO Maybe change name on server?
@@ -931,7 +931,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 					SaleTypeODTOs = await _mainDataServices.GetAllSaleType(),
 					CategoriesTree = new CategoryAttributeIDTO { AllCategories = devidedList }
 					//ViewData.Add("Languages", await _mainDataServices.GetAllLanguages());
-			});
+				});
 			}
 			try
 			{
@@ -1129,9 +1129,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 					}
 				}
-				
+
 				await _mainDataServices.SetProperGallery(dataIDTO.ProductIDTO.GalleyImg, dataIDTO.MediaIds, dataIDTO.UploadedImages, dataIDTO.ProductIDTO.ProductId);
-				
+
 				await _mainDataServices.DeleteAllProductAttributes(dataIDTO.ProductIDTO.ProductId);
 
 				foreach (var attributeID in dataIDTO.ProductAttributeValues)

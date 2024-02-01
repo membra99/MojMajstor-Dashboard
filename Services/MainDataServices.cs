@@ -139,21 +139,21 @@ namespace Services
 
 		public async Task<List<ProductODTO>> ImportFromExcel(IFormFile file)
 		{
-            ExcelPackage.LicenseContext = LicenseContext.Commercial;
-            var list = new List<Product>();
-            using (var stream = new MemoryStream())
-            {
-                await file.CopyToAsync(stream);
-                using (var package = new ExcelPackage(stream))
-                {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowcount = worksheet.Dimension.Rows;
-                    for (int i = 2; i <= rowcount; i++)
-                    {
-                        var catName = await _context.Categories.Where(x => x.CategoryName == worksheet.Cells[i, 3].Value.ToString().Trim()).SingleOrDefaultAsync();
+			ExcelPackage.LicenseContext = LicenseContext.Commercial;
+			var list = new List<Product>();
+			using (var stream = new MemoryStream())
+			{
+				await file.CopyToAsync(stream);
+				using (var package = new ExcelPackage(stream))
+				{
+					ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+					var rowcount = worksheet.Dimension.Rows;
+					for (int i = 2; i <= rowcount; i++)
+					{
+						var catName = await _context.Categories.Where(x => x.CategoryName == worksheet.Cells[i, 3].Value.ToString().Trim()).SingleOrDefaultAsync();
 						if (catName == null) throw new Exception("This category name does not exists");
 
-                        Seo seo = new Seo();
+						Seo seo = new Seo();
 						seo.GoogleDesc = worksheet.Cells[i, 10].Value.ToString().Trim();
 						seo.GoogleKeywords = worksheet.Cells[i, 11].Value.ToString().Trim();
 						seo.LanguageID = Convert.ToInt32(worksheet.Cells[i, 13].Value.ToString().Trim());
@@ -161,7 +161,7 @@ namespace Services
 						await SaveContextChangesAsync();
 
 
-                        list.Add(new Product
+						list.Add(new Product
 						{
 							ProductId = 0,
 							ProductName = worksheet.Cells[i, 1].Value.ToString().Trim(),
@@ -169,7 +169,7 @@ namespace Services
 							CategoriesId = catName.CategoryId,
 							CreatedAt = DateTime.Now,
 							Description = worksheet.Cells[i, 4].Value.ToString().Trim(),
-                            IsOnSale = Convert.ToBoolean(worksheet.Cells[i, 5].Value.ToString().Trim()),
+							IsOnSale = Convert.ToBoolean(worksheet.Cells[i, 5].Value.ToString().Trim()),
 							Price = Convert.ToInt32(worksheet.Cells[i, 6].Value.ToString().Trim()),
 							ProductCode = worksheet.Cells[i, 7].Value.ToString().Trim(),
 							Recommended = Convert.ToBoolean(worksheet.Cells[i, 8].Value.ToString().Trim()),
@@ -180,14 +180,14 @@ namespace Services
 							IsActive = true,
 							Quantity = Convert.ToInt32(worksheet.Cells[i, 12].Value.ToString().Trim()),
 							LanguageID = Convert.ToInt32(worksheet.Cells[i, 13].Value.ToString().Trim())
-                        }) ;
-                    }
-                }
-            }
+						});
+					}
+				}
+			}
 			_context.Products.AddRange(list);
 			await SaveContextChangesAsync();
-            return list.Select(x => _mapper.Map<ProductODTO>(x)).ToList();
-        }
+			return list.Select(x => _mapper.Map<ProductODTO>(x)).ToList();
+		}
 
 		public async Task<List<int>> UploadedImageHandler(List<string> imgNames)
 		{
@@ -424,11 +424,12 @@ namespace Services
 					var SaleForDB = _mapper.Map<Sale>(sale);
 					_context.Sales.Add(SaleForDB);
 					await SaveContextChangesAsync();
-				} catch(Exception ex)
+				}
+				catch (Exception ex)
 				{
 					Console.WriteLine(ex.ToString());
 				}
-				
+
 			}
 
 			return await GetProductsById(product.ProductId);
@@ -445,10 +446,10 @@ namespace Services
 			{
 				_context.Seos.Add(seo);
 				await SaveContextChangesAsync();
-			} 
-			catch(Exception ex)
+			}
+			catch (Exception ex)
 			{
-				Console.WriteLine(ex.ToString());	
+				Console.WriteLine(ex.ToString());
 			}
 
 
@@ -586,7 +587,7 @@ namespace Services
 				product.SeoId = null;
 			}
 			product.LanguageID = productIDTO.LanguageID; //TODO Set LanguageID dinamicaly
-	
+
 			await SaveContextChangesAsync();
 
 			return await GetProductsById(product.ProductId);
@@ -604,11 +605,12 @@ namespace Services
 			try
 			{
 				_context.Entry(product).State = EntityState.Modified;
-			} catch(Exception ex)
+			}
+			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());
 			}
-			
+
 			await SaveContextChangesAsync();
 			return productODTO;
 		}
@@ -756,8 +758,8 @@ namespace Services
 		public async Task<SiteContentIDTO> GetSiteContentByIdForEdit(int id)
 		{
 			var siteContent = _mapper.Map<SiteContentIDTO>(await _context.SiteContents.Include(x => x.Media).Where(x => x.SiteContentId == id).AsNoTracking().SingleOrDefaultAsync());
-			siteContent.TagODTOs = await _context.Tags.Select(x => new TagODTO { TagId = x.TagId, Title = x.Title, Description = x.Description, LanguageID = x.LanguageID} ).ToListAsync();
-			if(siteContent.SeoId != null)
+			siteContent.TagODTOs = await _context.Tags.Select(x => new TagODTO { TagId = x.TagId, Title = x.Title, Description = x.Description, LanguageID = x.LanguageID }).ToListAsync();
+			if (siteContent.SeoId != null)
 			{
 				siteContent.SeoIDTO = new SeoIDTO();
 				var seo = await _context.Seos.Where(x => x.SeoId == siteContent.SeoId).SingleOrDefaultAsync();
@@ -799,8 +801,8 @@ namespace Services
 			siteContent.IsActive = true;
 			if (siteContentIDTO.IsImageChanged == "true" && siteContentIDTO.MediaId == null)
 				siteContent.MediaId = null;
-			
-			if(siteContentIDTO.SeoIDTO.SeoId != null)
+
+			if (siteContentIDTO.SeoIDTO.SeoId != null)
 			{
 				var seo = await _context.Seos.Where(x => x.SeoId == siteContentIDTO.SeoIDTO.SeoId).SingleOrDefaultAsync();
 				seo.GoogleDesc = siteContentIDTO.SeoIDTO.GoogleDesc;
@@ -809,7 +811,7 @@ namespace Services
 				await SaveContextChangesAsync();
 				siteContent.SeoId = siteContentIDTO.SeoIDTO.SeoId;
 			}
-			else if(siteContentIDTO.SeoIDTO.GoogleKeywords != null || siteContentIDTO.SeoIDTO.GoogleDesc != null)
+			else if (siteContentIDTO.SeoIDTO.GoogleKeywords != null || siteContentIDTO.SeoIDTO.GoogleDesc != null)
 			{
 				var newSeo = _mapper.Map<Seo>(siteContentIDTO.SeoIDTO);
 				newSeo.SeoId = 0;
@@ -817,14 +819,14 @@ namespace Services
 				await SaveContextChangesAsync();
 				siteContent.SeoId = newSeo.SeoId;
 			}
-			
+
 			_context.Entry(siteContent).State = EntityState.Modified;
 			if (siteContentIDTO.Image == null && siteContentIDTO.IsImageChanged != "true")
 			{
 				_context.Entry(siteContent).Property(x => x.MediaId).IsModified = false;
 			}
 
-			
+
 
 			await SaveContextChangesAsync();
 
@@ -871,7 +873,8 @@ namespace Services
 			pdf.RenderingOptions.CustomCssUrl = Directory.GetCurrentDirectory() + @"\wwwroot\css\RenderHtml.css";
 			string headerHtml = "<div class='headerFlex'>" +
 				"<div><ul class='noSymbol'>";
-			foreach (var data in companyData) {
+			foreach (var data in companyData)
+			{
 				headerHtml += "<li>" + data + "</li>";
 			}
 			headerHtml += "</ul></div>";
@@ -895,16 +898,16 @@ namespace Services
 			aws.Attachments.Add(file);
 			var mediaOdto = await UploadProductImage(aws, "Invoice", null);
 
-            InvoiceEntitiesIDTO entitiesIDTO = new InvoiceEntitiesIDTO();
-            entitiesIDTO.InvoiceId = 0;
+			InvoiceEntitiesIDTO entitiesIDTO = new InvoiceEntitiesIDTO();
+			entitiesIDTO.InvoiceId = 0;
 			entitiesIDTO.MediaId = mediaOdto.MediaId;
-            entitiesIDTO.PdfName = "test.pdf";
-            entitiesIDTO.DateOfPayment = Convert.ToDateTime(html.Dateofpayment);
-            entitiesIDTO.CreatedAt = DateTime.Now;
-            entitiesIDTO.UpdatedAt = DateTime.Now;
-            var invoice = _mapper.Map<Invoice>(entitiesIDTO);
-            _context.Invoices.Add(invoice);
-            await SaveContextChangesAsync();
+			entitiesIDTO.PdfName = "test.pdf";
+			entitiesIDTO.DateOfPayment = Convert.ToDateTime(html.Dateofpayment);
+			entitiesIDTO.CreatedAt = DateTime.Now;
+			entitiesIDTO.UpdatedAt = DateTime.Now;
+			var invoice = _mapper.Map<Invoice>(entitiesIDTO);
+			_context.Invoices.Add(invoice);
+			await SaveContextChangesAsync();
 
 
 			return true;
@@ -941,24 +944,24 @@ namespace Services
 		}
 
 		public async Task<FullOrderODTO> GetFullOrderById(int id)
-        {
-            var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
-            FullOrderODTO fullOrder = new FullOrderODTO();
-            fullOrder.UsersODTO = new UsersODTO();
-            fullOrder.OrderId = id;
-            fullOrder.CreatedAt = order.OrderDate.ToString();
-            var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
-            fullOrder.UsersODTO.Address = user.Address;
-            fullOrder.UsersODTO.Email = user.Email;
-            fullOrder.UsersODTO.FirstName = user.FirstName;
-            fullOrder.UsersODTO.LastName = user.LastName;
-            fullOrder.UsersODTO.Country = user.Country;
-            fullOrder.UsersODTO.Role = user.Role;
-            fullOrder.UsersODTO.City = user.City;
-            fullOrder.UsersODTO.Zip = user.Zip;
-            fullOrder.UsersODTO.Phone = user.Phone;
-            fullOrder.Name = user.FirstName + " " + user.LastName;
-            fullOrder.Status = order.OrderStatus;
+		{
+			var order = await _context.Orders.Where(x => x.OrderId == id).SingleOrDefaultAsync();
+			FullOrderODTO fullOrder = new FullOrderODTO();
+			fullOrder.UsersODTO = new UsersODTO();
+			fullOrder.OrderId = id;
+			fullOrder.CreatedAt = order.OrderDate.ToString();
+			var user = await _context.Users.Where(x => x.UsersId == order.UsersId).SingleOrDefaultAsync();
+			fullOrder.UsersODTO.Address = user.Address;
+			fullOrder.UsersODTO.Email = user.Email;
+			fullOrder.UsersODTO.FirstName = user.FirstName;
+			fullOrder.UsersODTO.LastName = user.LastName;
+			fullOrder.UsersODTO.Country = user.Country;
+			fullOrder.UsersODTO.Role = user.Role;
+			fullOrder.UsersODTO.City = user.City;
+			fullOrder.UsersODTO.Zip = user.Zip;
+			fullOrder.UsersODTO.Phone = user.Phone;
+			fullOrder.Name = user.FirstName + " " + user.LastName;
+			fullOrder.Status = order.OrderStatus;
 
 			var products = await _context.OrderDetails.Where(x => x.OrderId == id).Select(x => x.ProductId).ToListAsync();
 			List<ProductDetailsForOrderODTO> productList = new List<ProductDetailsForOrderODTO>();
@@ -1169,41 +1172,41 @@ namespace Services
 			if (user != null) retVal += "This picture is connected with User<br>";
 
 			var tag = await _context.Tags.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
-			if (tag != null) retVal+= "This picture is connected with Tag<br>";
+			if (tag != null) retVal += "This picture is connected with Tag<br>";
 
 			var siteContent = await _context.SiteContents.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
-			if(siteContent != null)
+			if (siteContent != null)
 			{
-				if(siteContent.SiteContentTypeId == 1)
+				if (siteContent.SiteContentTypeId == 1)
 				{
-					retVal+= "This picture is connected with Page<br>";
+					retVal += "This picture is connected with Page<br>";
 				}
 				else
 				{
-					retVal+= "This picture is connected with Blog<br>";
+					retVal += "This picture is connected with Blog<br>";
 				}
 
 			}
 
 			var category = await _context.Categories.Where(x => x.MediaId == mediaId).FirstOrDefaultAsync();
-			if (category != null) retVal+= "This picture is connected with Category<br>";
+			if (category != null) retVal += "This picture is connected with Category<br>";
 
 			return retVal;
 		}
 
 		public async Task<List<MediaODTO>> GetAllImagesRoute()
 		{
-            string[] cars = { "png", "jpg", "webp", "jiff" };
+			string[] cars = { "png", "jpg", "webp", "jiff" };
 			return await _context.Medias.Where(x => cars.Contains(x.Extension) && x.Src != "Universal/noimage_202402011203429124.jpg").Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
 		}
 
-        public async Task<List<MediaODTO>> GetAllVideoRoute()
-        {
-            string[] cars = { "mp4", "avi", "m4a" };
-            return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
-        }
+		public async Task<List<MediaODTO>> GetAllVideoRoute()
+		{
+			string[] cars = { "mp4", "avi", "m4a" };
+			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+		}
 
-        public async Task EditMediaImageMetaProperties(MediaIDTO mediaIDTO)
+		public async Task EditMediaImageMetaProperties(MediaIDTO mediaIDTO)
 		{
 			var mediaImage = await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaIDTO.MediaId);
 			mediaImage.MetaTitle = mediaIDTO.MetaTitle;
@@ -1407,8 +1410,8 @@ namespace Services
 			var tag = _mapper.Map<Tag>(tagIDTO);
 			if (tagIDTO.IsImageChanged == "true")
 				tagIDTO.MediaId = null;
-			
-			if(tagIDTO.TagImage == null && tagIDTO.IsImageChanged != "true")
+
+			if (tagIDTO.TagImage == null && tagIDTO.IsImageChanged != "true")
 			{
 				_context.Entry(tag).Property(x => x.MediaId).IsModified = false;
 			}
@@ -1416,7 +1419,7 @@ namespace Services
 			{
 				_context.Entry(tag).State = EntityState.Modified;
 				await SaveContextChangesAsync();
-			} 
+			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex.ToString());

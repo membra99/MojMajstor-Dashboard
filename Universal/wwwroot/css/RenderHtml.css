@@ -1,26 +1,25 @@
 ﻿.table1 {
     border: 1px solid black;
-    border-bottom:0px;
-    border-left:0px;
+    border-bottom: 0px;
+    border-left: 0px;
     border-collapse: collapse;
 }
 
-.table1 td, .table1 th {
+    .table1 td, .table1 th {
         border-bottom: 1px solid black;
         border-right: 1px solid black;
-        border-left:1px solid black;
-}
+        border-left: 1px solid black;
+    }
 
-.no-border  {
+.no-border {
     border: none !important;
 }
 
 .headerFlex {
-display:flex;
-justify-content:space-between;
+    display: flex;
+    justify-content: space-between;
 }
+
 .noSymbol, .noSymbol li {
-    list-style-type:none!important;
+    list-style-type: none !important;
 }
-
-
