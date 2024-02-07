@@ -69,13 +69,13 @@ namespace Services
 			}
 			else
 			{
-				var galleryDb = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3).Select(x => x.Src).ToListAsync();
+				var galleryDb = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
 				List<string> itemsOnlyInGalleryDb = galleryDb.Except(galleryImg).ToList();
 				foreach (var item in itemsOnlyInGalleryDb)
 				{
 					try
 					{
-						var mediaId = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3 && x.Src == item).Select(x => x.MediaId).SingleOrDefaultAsync();
+						var mediaId = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 5 && x.Src == item).Select(x => x.MediaId).SingleOrDefaultAsync();
 						var mediaForDel = await _context.Medias.FindAsync(mediaId);
 						mediaForDel.ProductId = null;
 						_context.Medias.Entry(mediaForDel).State = EntityState.Modified;
@@ -96,7 +96,7 @@ namespace Services
 				foreach (var mediaId in MediaIds)
 				{
 					var checkImage = await _context.Medias.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
-					if (checkImage.ProductId != null || checkImage.MediaTypeId != 3)
+					if (checkImage.ProductId != null || checkImage.MediaTypeId != 5)
 					{
 						var newMed = new Media();
 						newMed.MediaId = 0;
@@ -106,7 +106,7 @@ namespace Services
 						newMed.Extension = checkImage.Extension;
 						newMed.AltTitle = checkImage.AltTitle;
 						newMed.MetaDescription = checkImage.MetaDescription;
-						newMed.MetaTitle = checkImage.MetaTitle;
+						newMed.MetaTitle = checkImage.MetaTitle.Split("@")[1] + "@" + DateTime.Now.ToString();
 						_context.Medias.Add(newMed);
 						await SaveContextChangesAsync();
 					}
@@ -1196,14 +1196,14 @@ namespace Services
 
 		public async Task<List<MediaODTO>> GetAllImagesRoute()
 		{
-			string[] cars = { "png", "jpg", "webp", "jiff" };
-			return await _context.Medias.Where(x => cars.Contains(x.Extension) && x.Src != "Universal/noimage_202402011203429124.jpg").Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+			string[] ext = { "png", "jpg", "webp", "jiff" };
+			return await _context.Medias.Where(x => ext.Contains(x.Extension) && x.Src != "Universal/noimage@202402021126392851.jpg").Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
 		}
 
 		public async Task<List<MediaODTO>> GetAllVideoRoute()
 		{
-			string[] cars = { "mp4", "avi", "m4a" };
-			return await _context.Medias.Where(x => cars.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
+			string[] ext = { "mp4", "avi", "m4a" };
+			return await _context.Medias.Where(x => ext.Contains(x.Extension)).Select(x => _mapper.Map<MediaODTO>(x)).ToListAsync();
 		}
 
 		public async Task EditMediaImageMetaProperties(MediaIDTO mediaIDTO)

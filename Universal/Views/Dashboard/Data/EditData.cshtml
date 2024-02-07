@@ -196,7 +196,7 @@
                                                 <input type="file" name="FeaturedImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
                                                 <div class="form-group col-2 mb-3 text-center">
                                                     <div class="image-container">
-                                                        <img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
+                                                        <img src="@Url.Action("GetImage","Dashboard", new {path = Model.ProductIDTO.FeatureImg})" id="content-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
                                                         <a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
                                                     </div>
                                                 </div>
@@ -221,7 +221,7 @@
                     </div>
                 </div>
 
-                <!--Gallrty images_modal-->
+                <!--Gallery images_modal-->
                 <div class="modal fade" id="editGalleryModal" tabindex="-1" aria-labelledby="editGalleryModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <!-- Use modal-lg class for a larger modal -->
@@ -257,8 +257,6 @@
                                                         <div id="newArrayVals">
                                                             @foreach (var img in Model.ProductIDTO.GalleyImg)
                                                                 @Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
-
-
                                                             </div>
                                                             <div class="currentImgs">
                                                                 <h4>Current images</h4>
@@ -338,7 +336,6 @@
         //handle-image-upload_start
         let uploadedImages = [];
         let dropzoneQ = null;
-        let galleryLoaded = false;
         Dropzone.options.uploader = {
             maxFilesize: 5,
             acceptedFiles: ".jpeg, .png, .jpg, .webp",
@@ -366,9 +363,8 @@
                             }
                         });
                     });
-                    // dz_remove_forUploadedImage.setAttribute("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
-                    // $(".testlink").attr("href", "/Dashboard/DeleteUploadedImage?img=" + file.name);
                 });
+
                 this.on("complete", function (file) {
                     let image = file.name;
                     let clearImageName = image.replace(/\.[^.]+$/, "");
@@ -386,8 +382,8 @@
                                 for (let i = 0; i < uploadedImages.length; ++i) {
                                     if (uploadedImages[i] != 0) {
                                         $("#uploadedImgArray").append(`
-                                                                        <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
-                                                                    `);
+                                                            <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
+                                                        `);
                                     }
                                     else {
                                         continue;
@@ -402,13 +398,283 @@
                 })
             }
         };
-
         //handle-image-upload_end
-        let galleryLimit = 4;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const openModalButton = document.getElementById("openModalButton");
+            const addImageModal = document.getElementById("addImageModal");
+
+            openModalButton.addEventListener("click", function () {
+                $(addImageModal).modal("show");
+            });
+
+            $("#closeImageButton").click(function (event) {
+                $('#addImageModal').modal('hide');
+            });
+
+            const openGalleryModalButton = document.getElementById("openGalleryModalButton");
+            const editGalleryModal = document.getElementById("editGalleryModal");
+
+            openGalleryModalButton.addEventListener("click", function () {
+                $(editGalleryModal).modal("show");
+            });
+
+            $("#closeGalleryImageButton").click(function (event) {
+                $(editGalleryModal).modal("hide");
+                loaded = false;
+            });
+
+        });
+
+        function unselectGallery() {
+            $(".overlay-checked").find('.fas').toggleClass('disable-icon')
+            $(".overlay-checked").removeClass("overlay-checked");
+            $("#input-media").val(null);
+        }
+
+        let loaded = false;
+        let loadedGallery = false;
         let galleryImages = @Json.Serialize(Model.ProductIDTO.GalleyImg);
         loadCurrentImages(galleryImages);
+
+        let loadFile = function (event) {
+            IsImgUnset = false;
+            let image = document.getElementById('content-preview');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            let image1 = document.getElementById('content-preview2');
+            image1.src = URL.createObjectURL(event.target.files[0]);
+            let element = document.getElementById('unset');
+            element.classList.add("hover-unset");
+
+        };
+
+        let IsImgUnset = false;
+        function unsetImage(event) {
+            IsImgUnset = true;
+            mediaId = null;
+            let image = document.getElementById('content-preview'); //image is null
+            console.log(image);
+            image.src = '@Url.Action("GetImage","Dashboard",null)';
+
+            let image1 = document.getElementById('content-preview2');
+            image1.src = '@Url.Action("GetImage", "Dashboard", null)';
+            $("#file").val(null);
+
+            let element = document.getElementById('unset');
+            element.classList.remove("hover-unset");
+            event.preventDefault();
+        }
+
+        $(".unset-button").click(function (e) {
+            unsetImage(e);
+        });
+
+        $('input[name="FeaturedImage"]').on('change', function (e) {
+            loadFile(e);
+        });
+
+        const openModalButton = document.getElementById("openModalButton");
+        const addImageModal = document.getElementById("addImageModal");
+
+        openModalButton.addEventListener("click", function () {
+            $(addImageModal).modal("show");
+        });
+
+        $("#closeImageButton").click(function (event) {
+            unsetImage(event);
+            $('#addImageModal').modal('hide');
+            unselectGallery();
+            loaded = false;
+        });
+
+        const openGalleryModalButton = document.getElementById("openGalleryModalButton");
+        const editGalleryModal = document.getElementById("editGalleryModal");
+
+        openGalleryModalButton.addEventListener("click", function () {
+            $(editGalleryModal).modal("show");
+        });
+
+        $("#closeGalleryImageButton").click(function (event) {
+            $(editGalleryModal).modal("hide");
+            loadedGallery = false;
+        });
+
+        function unselectGallery(modal) {
+            $(modal + " .overlay-checked").each(function () {
+                $(this).find('.fas').toggleClass('disable-icon');
+                $(this).removeClass("overlay-checked");
+                $(this).find("#input-media").val(null);
+            });
+
+        }
+
+        let selectedMediaIds = [];
+
+        document.getElementById("tab1editLink").classList.add("active");
+        document.getElementById("tab2editLink").classList.remove("active");
+
+        document.getElementById("tab1editLink").addEventListener("click", function () {
+            document.getElementById("tab1editLink").classList.add("active");
+            document.getElementById("tab2editLink").classList.remove("active");
+
+            $("#galleryEditTab1").addClass("active");
+            $("#galleryEditTab2").removeClass("active");
+
+            //unselectGallery();
+        });
+
+        document.getElementById("tab2editLink").addEventListener("click", function (event) {
+            document.getElementById("tab2editLink").classList.add("active");
+            document.getElementById("tab1editLink").classList.remove("active");
+
+            $("#galleryEditTab1").removeClass("active");
+            $("#galleryEditTab2").addClass("active");
+
+
+            if (!loadedGallery) {
+                let url = '@Url.Action("GalleryGrid","Dashboard")'
+                $("#tab2edit-gallery").load(url, function () {
+                    $(this).find(".fa-hand-pointer").each(function () {
+                        $(this).click(function () {
+                            loadedGallery = true;
+                            mediaId = this.dataset.mediaId;
+                            let parentElement = this.parentElement;
+                            let children = parentElement.getElementsByClassName('fas');
+
+                            for (var i = 0; i < children.length; i++) {
+                                children[i].classList.toggle('disable-icon');
+                            }
+                            parentElement.parentElement.classList.toggle("overlay-checked");
+
+                            const index = selectedMediaIds.indexOf(mediaId);
+                            if (index === -1) {
+                                selectedMediaIds.push(parseInt(mediaId));
+                            } else {
+                                selectedMediaIds.splice(index, 1);
+                            }
+                        });
+                    });
+                });
+            }
+        });
+
+        document.getElementById("tab1Link").classList.add("active");
+
+        document.getElementById("tab1Link").addEventListener("click", function () {
+            document.getElementById("tab1Link").classList.add("active");
+            document.getElementById("tab2Link").classList.remove("active");
+
+            document.getElementById("tab1").classList.add("active");
+            document.getElementById("tab2").classList.remove("active");
+
+            unselectGallery();
+        });
+
+        document.getElementById("tab2Link").addEventListener("click", function (event) {
+            document.getElementById("tab2Link").classList.add("active");
+            document.getElementById("tab1Link").classList.remove("active");
+
+            document.getElementById("tab2").classList.add("active");
+            document.getElementById("tab1").classList.remove("active");
+
+            //unsetImage(event);
+            if (!loaded) {
+                let url = '@Url.Action("GalleryGrid","Dashboard")'
+                $("#tab2-gallery").load(url, function () {
+                    $(this).find(".fa-hand-pointer").click(function () {
+                        loaded = true;
+                        mediaId = this.dataset.mediaId;
+                        let parentElement = this.parentElement;
+                        let children = parentElement.getElementsByClassName('fas');
+
+                        unselectGallery('#tab2-gallery');
+
+                        for (var i = 0; i < children.length; i++) {
+                            children[i].classList.toggle('disable-icon');
+                        }
+
+                        parentElement.parentElement.classList.add("overlay-checked");
+                    });
+                });
+            }
+        });
+
+        $("#addNewImages").click(function (event) {
+            event.preventDefault();
+            selectedMediaIds.sort();
+            $.ajax({
+                type: "POST",
+                url: "/Dashboard/GetGalleryImagesSrc/",
+                data: {
+                    mediaIds: selectedMediaIds,
+                },
+                success: function (response) {
+                    $(".addedImages").html(""); // Clear existing content
+                    for (let i = 0; i < response.length; ++i) {
+                        $(".addedImages").append(`
+                                                        <div class="image-container">
+                                                            <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160"/>
+                                                            <a class="unset-button hover-unset" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i}, '#editGalleryModal')" title="Unset Image">x</a>
+                                                        </div>
+                                                            `);
+                        //document.getElementById('unset').classList.add("hover-unset");
+                    }
+                },
+                error: function (mediaSrc) {
+                    console.error(mediaSrc);
+                }
+            });
+
+            document.getElementById("tab1editLink").classList.add("active");
+            document.getElementById("tab2editLink").classList.remove("active");
+
+            document.getElementById("galleryEditTab2").classList.remove("active");
+            document.getElementById("galleryEditTab1").classList.add("active");
+            loaded = false;
+        });
+
+        let mediaId = null;
+        $("#saveImageButton").click(function (event) {
+            $("#input-media").val(mediaId);
+            if (mediaId != null) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Dashboard/GetImageFromGallery?mediaId=' + mediaId,
+                    contentType: 'application/json',
+                    success: function (response) {
+                        let image = document.getElementById('content-preview2');
+                        let image1 = document.getElementById('content-preview');
+                        image.src = '/Dashboard/GetImage?path=' + response + '';
+                        image1.src = '/Dashboard/GetImage?path=' + response + '';
+                        let element = document.getElementById('unset');
+                        element.classList.add("hover-unset");
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
+            $('#addImageModal').modal('hide');
+            if (IsImgUnset) {
+                IsImgUnset = false;
+                let image = document.getElementById('content-preview2');
+                image.src = '@Url.Action("GetImage", "Dashboard", null)';
+                event.preventDefault();
+            }
+
+        });
+
+        $("#saveGalleryImagesButton").click(function (event) {
+            $('#editGalleryModal').modal('hide');
+            for (let i = 0; i < selectedMediaIds.length; ++i) {
+                $("#galleryImgArray").append(`
+                    <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
+                `);
+            }
+            unselectGallery();
+        });
+
         $(document).ready(function () {
-            loadGallery();
             if ($('#ProductIDTO_ProductTypeId :selected').val() == 5) {
                 $(".price-quantity").hide();
             }
@@ -422,8 +688,6 @@
                 }
             });
         });
-
-        let loaded = false;
 
         let productCategoryID = @Json.Serialize(Model.ProductIDTO.CategoriesId);
         let categories = @Json.Serialize(Model.CategoriesTree.AllCategories);
@@ -466,234 +730,20 @@
             });
         }
 
-        let loadFile = function (event) {
-            let image = document.getElementById('avatar-preview');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            let element = image.nextElementSibling
-            element.classList.add("hover-unset");
-
-        };
-
-        function unsetImage(event) {
-            let image = document.getElementById('avatar-preview');
-            image.src = '@Url.Action("GetImage", "Dashboard", null)';
-            $("#file").val(null);
-
-            let element = image.nextElementSibling;
-            element.classList.remove("hover-unset");
-            event.preventDefault();
-        }
-
-        $('#unset').click(function (event) {
-            unsetImage(event);
-            this.classList.remove("hover-unset");
-            event.preventDefault();
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const openModalButton = document.getElementById("openModalButton");
-            const addImageModal = document.getElementById("addImageModal");
-
-            openModalButton.addEventListener("click", function () {
-                $(addImageModal).modal("show");
-            });
-
-            $("#closeImageButton").click(function (event) {
-                $('#addImageModal').modal('hide');
-            });
-
-            const openGalleryModalButton = document.getElementById("openGalleryModalButton");
-            const editGalleryModal = document.getElementById("editGalleryModal");
-
-            openGalleryModalButton.addEventListener("click", function () {
-                $(editGalleryModal).modal("show");
-            });
-
-            $("#closeGalleryImageButton").click(function (event) {
-                $(editGalleryModal).modal("hide");
-                loaded = false;
-            });
-
-        });
-
-        function unselectGallery() {
-            $(".overlay-checked").find('.fas').toggleClass('disable-icon')
-            $(".overlay-checked").removeClass("overlay-checked");
-            $("#input-media").val(null);
-        }
-
-        let selectedMediaIds = [];
-
-        document.getElementById("tab1editLink").classList.add("active");
-        document.getElementById("tab2editLink").classList.remove("active");
-
-        document.getElementById("tab1editLink").addEventListener("click", function () {
-            document.getElementById("tab1editLink").classList.add("active");
-            document.getElementById("tab2editLink").classList.remove("active");
-
-            $("#galleryEditTab1").addClass("active");
-            $("#galleryEditTab2").removeClass("active");
-
-            //unselectGallery();
-        });
-
-        document.getElementById("tab2editLink").addEventListener("click", function (event) {
-            document.getElementById("tab2editLink").classList.add("active");
-            document.getElementById("tab1editLink").classList.remove("active");
-
-            $("#galleryEditTab1").removeClass("active");
-            $("#galleryEditTab2").addClass("active");
-
-
-            if (!galleryLoaded) {
-                let url = '@Url.Action("GalleryGrid","Dashboard")'
-                $("#tab2edit-gallery").load(url, function () {
-                    $(this).find(".fa-hand-pointer").each(function () {
-                        $(this).click(function () {
-                            galleryLoaded = true;
-                            mediaId = this.dataset.mediaId;
-                            let parentElement = this.parentElement;
-                            let children = parentElement.getElementsByClassName('fas');
-
-                            for (var i = 0; i < children.length; i++) {
-                                children[i].classList.toggle('disable-icon');
-                            }
-                            parentElement.parentElement.classList.toggle("overlay-checked");
-
-                            const index = selectedMediaIds.indexOf(mediaId);
-                            if (index === -1) {
-                                selectedMediaIds.push(parseInt(mediaId));
-                            } else {
-                                selectedMediaIds.splice(index, 1);
-                            }
-                        });
-                    });
-                });
-            }
-        });
-
-        document.getElementById("tab1Link").classList.add("active");
-
-        document.getElementById("tab1Link").addEventListener("click", function () {
-            document.getElementById("tab1Link").classList.add("active");
-            document.getElementById("tab2Link").classList.remove("active");
-
-            document.getElementById("tab1").classList.add("active");
-            document.getElementById("tab2").classList.remove("active");
-
-            unselectGallery();
-        });
-
-        document.getElementById("tab2Link").addEventListener("click", function (event) {
-            document.getElementById("tab2Link").classList.add("active");
-            document.getElementById("tab1Link").classList.remove("active");
-
-            document.getElementById("tab2").classList.add("active");
-            document.getElementById("tab1").classList.remove("active");
-
-
-            if (!loaded) {
-                let url = '@Url.Action("GalleryGrid", "Dashboard")'
-                $("#tab2-gallery").load(url, function () {
-                    $(".fa-hand-pointer").click(function () {
-                        unsetImage(event);
-                        loaded = true;
-                        mediaId = this.dataset.mediaId;
-                        let parentElement = this.parentElement;
-                        let children = parentElement.getElementsByClassName('fas');
-
-                        unselectGallery();
-
-                        for (var i = 0; i < children.length; i++) {
-                            children[i].classList.toggle('disable-icon');
-                        }
-
-                        parentElement.parentElement.classList.add("overlay-checked");
-                    });
-                });
-            }
-        });
-
-        $("#addNewImages").click(function (event) {
-            event.preventDefault();
-            selectedMediaIds.sort();
-            $.ajax({
-                type: "POST",
-                url: "/Dashboard/GetGalleryImagesSrc/",
-                data: {
-                    mediaIds: selectedMediaIds,
-                },
-                success: function (response) {
-                    $(".addedImages").html(""); // Clear existing content
-                    for (let i = 0; i < response.length; ++i) {
-                        $(".addedImages").append(`
-                                                <div class="image-container">
-                                                    <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160" style="border: 2px solid indigo"/>
-                                                    <a class="unset-button hover-unset" id="unset-button" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i})" title="Unset Image">x</a>
-                                                </div>
-                                                    `);
-                        //document.getElementById('unset').classList.add("hover-unset");
-                    }
-                },
-                error: function (mediaSrc) {
-                    console.error(mediaSrc);
-                }
-            });
-
-            document.getElementById("tab1editLink").classList.add("active");
-            document.getElementById("tab2editLink").classList.remove("active");
-
-            document.getElementById("galleryEditTab2").classList.remove("active");
-            document.getElementById("galleryEditTab1").classList.add("active");
-        });
-
-        $("#saveGalleryImagesButton").click(function (event) {
-            $('#editGalleryModal').modal('hide');
-            for (let i = 0; i < selectedMediaIds.length; ++i) {
-                $("#galleryImgArray").append(`
-                                            <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
-                                        `);
-            }
-        });
-
-        let mediaId = null;
-        $("#saveImageButton").click(function () {
-            $("#input-media").val(mediaId);
-            $('#addImageModal').modal('hide');
-            //console.log(mediaId);
-        });
-
         let loadMultipleFile = function (event) {
-            let galleryCount = $("[name = 'ProductIDTO.GalleyImg[]']").length;
-            if (event.target.files.length + galleryCount <= galleryLimit) {
-
-                let uploadStartPosition = 0;
-                for (let i = 0; i < event.target.files.length; i++) {
-                    uploadStartPosition = galleryCount + i;
-                    let image = document.getElementById('gallery-preview-' + (uploadStartPosition));
-                    image.src = URL.createObjectURL(event.target.files[i]);
-                    let element = image.nextElementSibling;
-                    element.classList.add("hover-unset");
-                }
-
-                for (let i = ++uploadStartPosition; i < galleryLimit; i++) {
-                    let image = document.getElementById('gallery-preview-' + i);
-                    image.src = '@Url.Action("GetImage", "Dashboard", null)';
-                    let element = image.nextElementSibling;
-                    element.classList.remove("hover-unset");
-                }
-            }
-            else {
-                $("#file-gallery").val(null);
-                unsetAllImages();
-                loadMultipleFileArray(galleryImages, "load", 0)
-                showToast(`Number of allowed gallery images is ${galleryLimit}.`, "error");
+            for (let i = 0; i < event.target.files.length; i++) {
+                let image = document.getElementById('gallery-preview-' + i);
+                image.src = URL.createObjectURL(event.target.files[i]);
+                let element = image.nextElementSibling;
+                element.classList.add("hover-unset");
             }
         };
 
         let loadMultipleFileArray = function (files, type, start) {
+            //console.log(files);
             for (let i = 0; i < files.length; i++) {
                 let image = document.getElementById('gallery-preview-' + (i + start));
+                //image.src = URL.createObjectURL(files[i]);
                 if (type == "upload")
                     image.src = URL.createObjectURL(files[i]);
                 else
@@ -703,10 +753,23 @@
             }
         };
 
-        let loadGallery = function () {
-            for (let i = 0; i < galleryImages.length; i++) {
-                document.getElementById('gallery-preview-' + i).nextElementSibling.classList.add("hover-unset")
+        function unsetImageMultiple(event, position) {
+            $('[id^=gallery-preview-]').each(function () {
+                let image = this;
+                image.src = '@Url.Action("GetImage","Dashboard",null)';
+                let element = image.nextElementSibling;
+                element.classList.remove("hover-unset");
+            });
+            let fileInput = document.getElementById("file-gallery");
+            let selectedFiles = Array.from(fileInput.files);
+            selectedFiles.splice(position, 1);
+            let newList = new DataTransfer();
+            for (let file of selectedFiles) {
+                newList.items.add(file);
             }
+            fileInput.files = newList.files
+            loadMultipleFileArray(selectedFiles)
+            event.preventDefault();
         }
 
         function unsetAllImages() {
@@ -716,17 +779,6 @@
                 let element = image.nextElementSibling;
                 element.classList.remove("hover-unset");
             });
-        }
-
-        function loadCurrentImages(galleryImages) {
-            for (let i = 0; i < galleryImages.length; i++) {
-                $(".currentImgs").append(`
-                                            <div class="image-container">
-                                                <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
-                                                <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
-                                            </div>
-                                        `);
-            }
         }
 
         function unsetGalleryImage(event, element, imageTagAt, modal) {
@@ -743,6 +795,18 @@
             imageOverlay.find('.fas').toggleClass('disable-icon');
             imageOverlay.removeClass("overlay-checked");
         }
+
+        function loadCurrentImages(galleryImages) {
+            for (let i = 0; i < galleryImages.length; i++) {
+                $(".currentImgs").append(`
+                                            <div class="image-container">
+                                                <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
+                                                <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
+                                            </div>
+                                        `);
+            }
+        }
+
 
         function unsetImageMultiple(event, position, imageTagAt) {
             let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
@@ -761,7 +825,7 @@
 
         $(document).ready(function () {
 
-            let image = document.getElementById('avatar-preview');
+            let image = document.getElementById('content-preview');
             var parts = image.src.split('/');
             var result = parts.slice(3).join('/');
             //console.log("Aba", result);

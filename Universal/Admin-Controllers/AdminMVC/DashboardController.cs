@@ -1,18 +1,9 @@
-﻿using AutoMapper;
-using Entities.Universal.MainData;
-using IronPdf;
-using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.AWS;
-using SixLabors.ImageSharp.Drawing;
-using System.IO;
 using System.Net.Mime;
-using System.Security.Policy;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
-using Universal.DTO.ViewDTO;
-
 using Universal.DTO.ViewDTO;
 
 using Universal.Util;
@@ -20,7 +11,7 @@ using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Universal.Admin_Controllers.AdminMVC
 {
-	[RequiresAuthToken]
+    [RequiresAuthToken]
 	public class DashboardController : Controller
 	{
 		private readonly HttpClient _httpClient;
@@ -299,8 +290,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 
 		public async Task<IActionResult> uploadMedia(IFormFile file)
 		{
-			var mediatypeId = 3;
-			AWSFileUpload awsFile = new AWSFileUpload();
+			int mediatypeId = (file.ContentType == "video/mp4" || file.ContentType == "video/x-msvideo" || file.ContentType == "video/mpeg") ? 5 : 3;
+            AWSFileUpload awsFile = new AWSFileUpload();
 			awsFile.Attachments = new List<IFormFile>();
 			awsFile.Attachments.Add(file);
 			var media = await _userDataServices.UploadUserPicture(awsFile, mediatypeId);

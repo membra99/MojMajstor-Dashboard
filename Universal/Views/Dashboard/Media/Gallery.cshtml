@@ -41,7 +41,7 @@
 <div id="edit-image-modal" class="modal fade" tabindex="-1" role="dialog">
 	@using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
 	{
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title">Edit Image Properties</h5>
@@ -117,8 +117,7 @@
 				<!-- Image upload -->
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" id="closeModal">Close</button>
-				<button type="button" class="btn btn-dotnet" id="saveVideo">Upload</button>
+				<button type="button" class="btn btn-dotnet" id="closeModal">Close</button>
 			</div>
 		</div>
 	</div>
@@ -127,6 +126,9 @@
 
 @section Scripts{
 	<script>
+		let videoDropZone = new Dropzone("#uploader", {
+			
+		});
 		toggleLoading();
 
 		let data = @Json.Serialize(Model.MediaList);
@@ -202,7 +204,6 @@
 			$("#closeModal").click(function () {
 				console.log("click");
 				$("#uploadPicture").modal('hide');
-				location.reload();
 			});
 
 			$(".closeEditModalButton").click(function () {
