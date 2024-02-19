@@ -67,8 +67,9 @@
     <script>
         let uploadedVideoName = null;
 
-        Dropzone.autoDiscover = false;
+
         let videoDropZone = new Dropzone("#uploader", {
+            autoDiscover: false,
             acceptedFiles: ".mp4, .avi, .m4a",
             maxFiles: 1,
             uploadMultiple: false,

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Context;
 using Entities.Universal.MainData;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Index.HPRtree;
@@ -104,16 +105,18 @@ namespace Services
 						newMed.MediaTypeId = 5;
 						newMed.Src = checkImage.Src;
 						newMed.Extension = checkImage.Extension;
-						newMed.AltTitle = checkImage.AltTitle;
-						newMed.MetaDescription = checkImage.MetaDescription;
-						newMed.MetaTitle = checkImage.MetaTitle.Split("@")[1] + "@" + DateTime.Now.ToString();
-						_context.Medias.Add(newMed);
-						await SaveContextChangesAsync();
+                        newMed.MetaDescription = checkImage.MetaDescription;
+                        newMed.AltTitle = checkImage.AltTitle;
+						newMed.MimeType = checkImage.MimeType;
+                        newMed.MetaTitle = checkImage.MetaTitle.Split("@")[0] + "@" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                        _context.Medias.Add(newMed);
+                        await SaveContextChangesAsync();
 					}
 					else
 					{
 						checkImage.ProductId = productId;
-						_context.Medias.Entry(checkImage).State = EntityState.Modified;
+						checkImage.MediaTypeId = 5;
+                        _context.Medias.Entry(checkImage).State = EntityState.Modified;
 						await SaveContextChangesAsync();
 					}
 				}
