@@ -1,5 +1,5 @@
 ﻿* {
-    font-family: 'Lucida Console';
+    font-family: 'Segoe UI';
 }
 
 .admin-login-background {
@@ -8,15 +8,15 @@
     background-image: url(/images/dot_background.jpg);
     background-position: center;
     background-size: cover;
-    background-repeat: no-repeat;
 }
 
 .logo-login {
-    width: 25%;
+    width: 15%;
 }
 
 .btn-dotnet {
     color: #f0f0f0;
+    border-radius: 20px;
     background-color: rebeccapurple;
     border-color: rebeccapurple;
 }

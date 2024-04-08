@@ -1,263 +1,259 @@
 ﻿@model Universal.DTO.IDTO.UsersIDTO
 
 @{
-	ViewData["Title"] = "Edit User";
+    ViewData["Title"] = "Edit User";
 }
 <div class="container bg-light w-50">
-	<div class="text-center">
-		<h2>Edit User</h2>
-	</div>
-	@Html.ValidationMessage("UserExist")
-	@using (Html.BeginForm("EditUserAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-	{
-		@Html.HiddenFor(model => model.UsersId)
-		<div class="row">
-			<div class="form-group col-6 mb-3">
-				@Html.LabelRequiredFor(model => model.Role, "Role:", true)
-				@Html.DropDownListFor(model => model.Role, new List<SelectListItem>
-			{
-			new SelectListItem() { Text = "User", Value = "User"},
-			new SelectListItem() { Text = "Admin", Value = "Admin"}
-			},
-			"Select Role", new { @class="form-control" })
-				@Html.ValidationMessageFor(model => model.Role, null, new { @class="text-danger" })
-			</div>
-			<div class="form-group col-6 mb-3">
-				@Html.LabelFor(model => model.UserType, "User type:")
-				@Html.DropDownListFor(model => model.UserTypes, new List<SelectListItem>
-			{
-			new SelectListItem() { Text = "Private", Value = "Private"},
-			new SelectListItem() { Text = "Company", Value = "Company"}
-			},
-			"Select User Type", new { @class="form-control" })
-				@Html.ValidationMessageFor(model => model.UserTypes, null, new { @class="text-danger" })
-			</div>
-		</div>
-		<div class="row">
-			<div class="form-group col-6 mb-3">
-				@Html.LabelRequiredFor(model => model.FirstName, "First name:", true)
-				@Html.TextBoxFor(model => model.FirstName, new { @class="form-control", placeholder = "First Name"})
-				@Html.ValidationMessageFor(model => model.FirstName, null, new { @class="text-danger" })
-			</div>
-			<div class="form-group col-6 mb-3">
-				@Html.LabelRequiredFor(model => model.LastName, "Last name:", true)
-				@Html.TextBoxFor(model => model.LastName, new { @class="form-control", placeholder = "Last Name"})
-				@Html.ValidationMessageFor(model => model.LastName, null, new { @class="text-danger" })
-			</div>
-		</div>
-		<div class="form-group col-12 mb-3">
-			@Html.LabelRequiredFor(model => model.Email, "Email:", true)
-			@Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
-			@Html.ValidationMessageFor(model => model.Email, null, new { @class="text-danger" })
-		</div>
-		<div class="row">
-			<div class="form-group col-6 mb-3">
-				@Html.LabelFor(model => model.Phone, "Phone:")
-				@Html.TextBoxFor(model => model.Phone, new { @class="form-control", placeholder = "Phone"})
-				@Html.ValidationMessageFor(model => model.Phone, null, new { @class="text-danger" })
-			</div>
-			<div class="form-group col-6 mb-3">
-				@Html.LabelFor(model => model.Address, "Address:")
-				@Html.TextBoxFor(model => model.Address, new { @class="form-control", placeholder = "Address"})
-				@Html.ValidationMessageFor(model => model.Address, null, new { @class="text-danger" })
-			</div>
-		</div>
-		<div class="row">
-			<div class="form-group col-5 mb-3">
-				@Html.LabelFor(model => model.Country, "Country:")
-				@Html.TextBoxFor(model => model.Country, new { @class="form-control", placeholder = "Country"})
-				@Html.ValidationMessageFor(model => model.Country, null, new { @class="text-danger" })
-			</div>
-			<div class="form-group col-5 mb-3">
-				@Html.LabelFor(model => model.City, "City:")
-				@Html.TextBoxFor(model => model.City, new { @class="form-control", placeholder = "City"})
-				@Html.ValidationMessageFor(model => model.City, null, new { @class="text-danger" })
-			</div>
-			<div class="form-group col-2 mb-3">
-				@Html.LabelFor(model => model.Zip, "Zip:")
-				@Html.TextBoxFor(model => model.Zip, new { @class="form-control", placeholder = "Zip"})
-				@Html.ValidationMessageFor(model => model.Zip, null, new { @class="text-danger" })
-			</div>
-		</div>
+    <div class="text-center">
+        <h2>Edit User</h2>
+    </div>
+    @Html.ValidationMessage("UserExist")
+    @using (Html.BeginForm("EditUserAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(model => model.UsersId)
+        <div class="row">
+            <div class="form-group col-6 mb-3">
+                @Html.LabelRequiredFor(model => model.Role, "Role:", true)
+                @Html.DropDownListFor(model => model.Role, new List<SelectListItem>
+            {
+            new SelectListItem() { Text = "User", Value = "User"},
+            new SelectListItem() { Text = "Admin", Value = "Admin"}
+            },
+                         "Select Role", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Role, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.UserType, "User type:")
+                @Html.DropDownListFor(model => model.UserTypes, new List<SelectListItem>
+            {
+            new SelectListItem() { Text = "Private", Value = "Private"},
+            new SelectListItem() { Text = "Company", Value = "Company"}
+            },
+                         "Select User Type", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.UserTypes, null, new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6 mb-3">
+                @Html.LabelRequiredFor(model => model.FirstName, "First name:", true)
+                @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "First Name" })
+                @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-6 mb-3">
+                @Html.LabelRequiredFor(model => model.LastName, "Last name:", true)
+                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", placeholder = "Last Name" })
+                @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-12 mb-3">
+            @Html.LabelRequiredFor(model => model.Email, "Email:", true)
+            @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
+            @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
+        </div>
+        <div class="row">
+            <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.Phone, "Phone:")
+                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = "Phone" })
+                @Html.ValidationMessageFor(model => model.Phone, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.Address, "Address:")
+                @Html.TextBoxFor(model => model.Address, new { @class = "form-control", placeholder = "Address" })
+                @Html.ValidationMessageFor(model => model.Address, null, new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-5 mb-3">
+                @Html.LabelFor(model => model.Country, "Country:")
+                @Html.TextBoxFor(model => model.Country, new { @class = "form-control", placeholder = "Country" })
+                @Html.ValidationMessageFor(model => model.Country, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-5 mb-3">
+                @Html.LabelFor(model => model.City, "City:")
+                @Html.TextBoxFor(model => model.City, new { @class = "form-control", placeholder = "City" })
+                @Html.ValidationMessageFor(model => model.City, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-2 mb-3">
+                @Html.LabelFor(model => model.Zip, "Zip:")
+                @Html.TextBoxFor(model => model.Zip, new { @class = "form-control", placeholder = "Zip" })
+                @Html.ValidationMessageFor(model => model.Zip, null, new { @class = "text-danger" })
+            </div>
+        </div>
 
-		<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-			<div class="modal-dialog modal-dialog-centered modal-lg">
-				<!-- Use modal-lg class for a larger modal -->
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
-					</div>
-					<div class="modal-body">
-						<!-- Nav tabs -->
-						<ul class="nav nav-tabs" role="tablist">
-							<li class="nav-item">
-								<a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
-							</li>
-						</ul>
+        <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <!-- Use modal-lg class for a larger modal -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
+                            </li>
+                        </ul>
 
-						<!-- Tab panes -->
-						<div class="tab-content">
-							<!-- Tab 1 Content -->
-							<div id="tab1" class="tab-pane active">
-								<div id="addImageForm">
-									<div class="form-group">
-										@Html.HiddenFor(model => model.IsImageChanged, new {id = "IsImageChanged"})
-										<label for="imageName">Choose image</label>
-										<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
-										<div class="form-group col-2 mb-3 text-center">
-											<div class="image-container">
-												<img src="@Url.Action("GetImage","Dashboard", new {path = Model.Photo})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
-												<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
-											</div>
-										</div>
-										<small id="imageNameError" class="form-text text-danger"></small>
-									</div>
-								</div>
-							</div>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <!-- Tab 1 Content -->
+                            <div id="tab1" class="tab-pane active">
+                                <div id="addImageForm">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(model => model.IsImageChanged, new { id = "IsImageChanged" })
+                                        <label for="imageName">Choose image</label>
+                                        <input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+                                        <div class="form-group col-2 mb-3 text-center">
+                                            <div class="image-container">
+                                                <img src="@Url.Action("GetImage","Dashboard", new {path = Model.Photo})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
+                                                <a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+                                            </div>
+                                        </div>
+                                        <small id="imageNameError" class="form-text text-danger"></small>
+                                    </div>
+                                </div>
+                            </div>
 
-							<!-- Tab 2 Content -->
-							<div id="tab2" class="tab-pane">
-								@Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
-								<div id="tab2-gallery">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
-					</div>
-				</div>
-			</div>
-		</div>
+                            <!-- Tab 2 Content -->
+                            <div id="tab2" class="tab-pane">
+                                @Html.HiddenFor(model => model.MediaId, new { @id = "input-media" });
+                                <div id="tab2-gallery">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<div class="row">
-			<div class="form-group col-12 mb-3">
-				@Html.LabelRequiredFor(model => model.Avatar, "Avatar:", true)
-				@*@<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />*@
-				<button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
-				@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })
-			</div>
-		</div>
+        <div class="row">
+            <div class="form-group col-12 mb-3">
+                @Html.LabelRequiredFor(model => model.Avatar, "Avatar:", true)
+                <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
+                @Html.ValidationMessageFor(model => model.Avatar, null, new { @class = "text-danger" })
+            </div>
+        </div>
 
 
-		<div class="mx-auto mb-3 w-25">
-			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
-		</div>
-	}
+        <div class="mx-auto mb-3 w-25">
+            <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+        </div>
+    }
 </div>
 
-@section Scripts{
-	<script>
-		let loaded = false;
+@section Scripts {
+    <script>
+        let loaded = false;
 
-		let loadFile = function (event) {
-			let image = document.getElementById('avatar-preview');
-			image.src = URL.createObjectURL(event.target.files[0]);
-			let element = document.getElementById('unset');
-			element.classList.add("hover-unset");
-			var hiddenInput = document.getElementById("IsImageChanged");
-			hiddenInput.value = null;
+        let loadFile = function (event) {
+            let image = document.getElementById('avatar-preview');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            let element = document.getElementById('unset');
+            element.classList.add("hover-unset");
+            var hiddenInput = document.getElementById("IsImageChanged");
+            hiddenInput.value = null;
 
-		};
+        };
 
-		$(document).ready(function(){
-			let image = document.getElementById('avatar-preview');
-			var parts = image.src.split('/');
-			var result = parts.slice(3).join('/');
-			if (result != "Dashboard/GetImage") {
-				let element = document.getElementById('unset');
-				element.classList.add("hover-unset");
-			}
-		});
+        $(document).ready(function () {
+            let image = document.getElementById('avatar-preview');
+            var parts = image.src.split('/');
+            var result = parts.slice(3).join('/');
+            if (result != "Dashboard/GetImage") {
+                let element = document.getElementById('unset');
+                element.classList.add("hover-unset");
+            }
+        });
 
 
 
-		function unsetImage(event) {
-			let image = document.getElementById('avatar-preview');
-			image.src = '@Url.Action("GetImage","Dashboard",null)';
-			$("#file").val(null);
-			var hiddenInput = document.getElementById("IsImageChanged");
-			hiddenInput.value = "true";
-			//let element = document.getElementById('unset');
-		}
+        function unsetImage(event) {
+            let image = document.getElementById('avatar-preview');
+            image.src = '@Url.Action("GetImage", "Dashboard", null)';
+            $("#file").val(null);
+            var hiddenInput = document.getElementById("IsImageChanged");
+            hiddenInput.value = "true";
+            //let element = document.getElementById('unset');
+        }
 
-		$('#unset').click(function (event) {
-			unsetImage(event);
-			this.classList.remove("hover-unset");
-			event.preventDefault();
-		});
+        $('#unset').click(function (event) {
+            unsetImage(event);
+            this.classList.remove("hover-unset");
+            event.preventDefault();
+        });
 
-		document.addEventListener("DOMContentLoaded", function () {
-			const openModalButton = document.getElementById("openModalButton");
-			const addImageModal = document.getElementById("addImageModal");
+        const openModalButton = document.getElementById("openModalButton");
+        const addImageModal = document.getElementById("addImageModal");
 
-			openModalButton.addEventListener("click", function () {
-				$(addImageModal).modal("show");
-			});
+        openModalButton.addEventListener("click", function () {
+            $(addImageModal).modal("show");
+        });
 
-			$("#closeImageButton").click(function (event) {
-				//unsetImage(event);
-				$('#addImageModal').modal('hide');
-			});
+        $("#closeImageButton").click(function (event) {
+            //unsetImage(event);
+            $('#addImageModal').modal('hide');
+        });
 
-		});
+        function unselectGallery() {
+            $(".overlay-checked").find('.fas').toggleClass('disable-icon')
+            $(".overlay-checked").removeClass("overlay-checked");
+            $("#input-media").val(null);
+        }
 
-		function unselectGallery() {
-			$(".overlay-checked").find('.fas').toggleClass('disable-icon')
-			$(".overlay-checked").removeClass("overlay-checked");
-			$("#input-media").val(null);
-		}
+        document.getElementById("tab1Link").classList.add("active");
 
-		document.getElementById("tab1Link").classList.add("active");
+        document.getElementById("tab1Link").addEventListener("click", function () {
+            document.getElementById("tab1Link").classList.add("active");
+            document.getElementById("tab2Link").classList.remove("active");
 
-		document.getElementById("tab1Link").addEventListener("click", function () {
-			document.getElementById("tab1Link").classList.add("active");
-			document.getElementById("tab2Link").classList.remove("active");
+            document.getElementById("tab1").classList.add("active");
+            document.getElementById("tab2").classList.remove("active");
 
-			document.getElementById("tab1").classList.add("active");
-			document.getElementById("tab2").classList.remove("active");
+            unselectGallery();
+        });
 
-			unselectGallery();
-		});
+        document.getElementById("tab2Link").addEventListener("click", function (event) {
+            document.getElementById("tab2Link").classList.add("active");
+            document.getElementById("tab1Link").classList.remove("active");
 
-		document.getElementById("tab2Link").addEventListener("click", function (event) {
-			document.getElementById("tab2Link").classList.add("active");
-			document.getElementById("tab1Link").classList.remove("active");
+            document.getElementById("tab2").classList.add("active");
+            document.getElementById("tab1").classList.remove("active");
 
-			document.getElementById("tab2").classList.add("active");
-			document.getElementById("tab1").classList.remove("active");
 
-			
-			if (!loaded) {
-				let url = '@Url.Action("GalleryGrid","Dashboard")'
-				$("#tab2-gallery").load(url, function () {
-					$(".fa-hand-pointer").click(function () {
-						unsetImage(event);
-						loaded = true;
-						mediaId = this.dataset.mediaId;
-						let parentElement = this.parentElement;
-						let children = parentElement.getElementsByClassName('fas');
+            if (!loaded) {
+                let url = '@Url.Action("GalleryGrid", "Dashboard")'
+                $("#tab2-gallery").load(url, function () {
+                    $(".fa-hand-pointer").click(function () {
+                        unsetImage(event);
+                        loaded = true;
+                        mediaId = this.dataset.mediaId;
+                        let parentElement = this.parentElement;
+                        let children = parentElement.getElementsByClassName('fas');
 
-						unselectGallery();
+                        unselectGallery();
 
-						for (var i = 0; i < children.length; i++) {
-							children[i].classList.toggle('disable-icon');
-						}
+                        for (var i = 0; i < children.length; i++) {
+                            children[i].classList.toggle('disable-icon');
+                        }
 
-						parentElement.parentElement.classList.add("overlay-checked");
-					});
-				});
-			}
-		});
+                        parentElement.parentElement.classList.add("overlay-checked");
+                    });
+                });
+            }
+        });
 
-		let mediaId = null;
-		$("#saveImageButton").click(function () {
-			$("#input-media").val(mediaId);
-			$('#addImageModal').modal('hide');
-		});
-	</script>
+        let mediaId = null;
+        $("#saveImageButton").click(function () {
+            $("#input-media").val(mediaId);
+            $('#addImageModal').modal('hide');
+        });
+    </script>
 }

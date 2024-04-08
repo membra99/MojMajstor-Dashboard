@@ -42,7 +42,6 @@ body {
 
 .content-wrapper {
     display: flex;
-    /*width: 100vw;*/
 }
 
 .icon-spacing {
@@ -105,7 +104,10 @@ body {
 
 .user-info {
     position: absolute;
-    bottom: 32px;
+    background-color: white;
+    z-index: 999;
+    bottom: 0;
+    padding-bottom: 0.5em;
 }
 
 .user-info-container {
@@ -360,6 +362,10 @@ body {
 
 .image-container:hover .hover-unset {
     display: block;
+}
+
+.nav-item:hover {
+    cursor: pointer;
 }
 
 .nav-link .active {

@@ -37,8 +37,8 @@ namespace Services.AWS
                 if (file.Length > 0)
                 {
 					string timeStamp = GetTimestamp(DateTime.Now);
-					string imageNametmp = file.FileName;
-                    imageName = "Universal/" + Path.GetFileNameWithoutExtension(imageNametmp) +"@"+ timeStamp + Path.GetExtension(imageNametmp);
+					string imageNametmp = file.FileName.Replace("_", "-");
+                    imageName = "Universal/" + Path.GetFileNameWithoutExtension(imageNametmp) +"_"+ timeStamp + Path.GetExtension(imageNametmp);
                     
 					using (var ms = new MemoryStream())
                     {

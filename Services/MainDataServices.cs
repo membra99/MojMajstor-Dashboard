@@ -108,7 +108,7 @@ namespace Services
                         newMed.MetaDescription = checkImage.MetaDescription;
                         newMed.AltTitle = checkImage.AltTitle;
 						newMed.MimeType = checkImage.MimeType;
-                        newMed.MetaTitle = checkImage.MetaTitle.Split("@")[0] + "@" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                        newMed.MetaTitle = checkImage.MetaTitle.Split("_")[0] + "_" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                         _context.Medias.Add(newMed);
                         await SaveContextChangesAsync();
 					}

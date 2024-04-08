@@ -143,7 +143,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 		public async Task<IActionResult> GetImage(string path)
 		{
 			if (path == null)
-				path = "Universal/noimage_202402011203429124.jpg";
+				path = "Universal/noimage_202402021126392851.jpg";
 
 			var picture = await _AWSS3FileService.GetFile(path);
 			byte[] bytes = null;
