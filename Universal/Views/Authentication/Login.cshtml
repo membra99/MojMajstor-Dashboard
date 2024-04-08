@@ -6,7 +6,7 @@
 }
 
 <div class="admin-login-background d-flex align-items-center justify-content-center">
-    <div class="col-4 bg-light mx-auto p-5 rounded-3">
+    <div class="col-6 bg-light mx-auto p-5 rounded-3">
         <div class="form-group">
             <div class="text-center p-2">
                 <img class="logo-login" src="\images\Logo_2_2.svg" alt="logo" />
@@ -17,7 +17,7 @@
             @using (Html.BeginForm("Login", "Authentication", FormMethod.Post))
             {
                 <div class="mb-3">
-                    @Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
+                    @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
                     @Html.ValidationMessageFor(model => model.Email, null, new { @class="text-danger" })
                 </div>
                 <div class="mb-3">
@@ -34,8 +34,5 @@
 
 @section Scripts{
     <script>
-        //$('form').keypress(function (event) {
-            //return event.keyCode != 13;
-        //});
     </script>
 }

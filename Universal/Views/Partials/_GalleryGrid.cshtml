@@ -124,6 +124,10 @@
 	<div class="row">
 		@foreach (var mediaImage in Model.MediaList)
 		{
+			if(mediaImage.MetaTitle.Contains("noimage"))
+			{
+				continue;
+			}
 			<div class="gallery-container col-sm-3 col-md-2 col-xl-8r col-xxl-12r">
 				<div class="gallery-item">
 					<div class="image-container">

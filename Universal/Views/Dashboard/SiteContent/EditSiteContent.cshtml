@@ -173,7 +173,6 @@
 			event.preventDefault();
 		});
 
-		document.addEventListener("DOMContentLoaded", function () {
 			const openModalButton = document.getElementById("openModalButton");
 			const addImageModal = document.getElementById("addImageModal");
 
@@ -185,8 +184,6 @@
 				//unsetImage(event);
 				$('#addImageModal').modal('hide');
 			});
-
-		});
 
 		function unselectGallery() {
 			$(".overlay-checked").find('.fas').toggleClass('disable-icon')

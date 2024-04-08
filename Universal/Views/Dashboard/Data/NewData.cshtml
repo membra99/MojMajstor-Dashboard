@@ -351,7 +351,7 @@
                 </div>
                 </div>*@
                     <hr>
-                    <div class="mx-auto mb-3 w-25">
+                    <div class="mx-auto mb-3 w-50">
                         <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
                     </div>
                 </div>
@@ -365,71 +365,6 @@
 @section Scripts {
     <script>
         //handle-image-upload_start
-        let uploadedImages = [];
-        let dropzoneQ = null;
-        Dropzone.options.uploader = {
-            maxFilesize: 5,
-            acceptedFiles: ".jpeg, .png, .jpg, .webp",
-            addRemoveLinks: true,
-            dictDefaultMessage: "Select a file",
-            init: function () {
-                let imgNames = [];
-                this.on("addedfile", function (file) {
-
-                    //this piece of code gets dz-preview tag trough file params
-                    //previewEelemnt is parent tag that holds all preview info about uploaded image (thumbnail, size, etc)
-                    //lastChild of previewElement is dz-remove tag
-
-                    let dz_remove_forUploadedImage = file.previewElement.lastChild;
-                    dz_remove_forUploadedImage.addEventListener("click", function () {
-                        let clearImageName = file.name.replace(/\.[^.]+$/, "");
-                        $.ajax({
-                            url: "/Dashboard/DeleteUploadedImage?img=" + clearImageName,
-                            type: "GET",
-                            success: function (resp) {
-                                console.log(resp);
-                            },
-                            error: function (resp) {
-                                console.error(resp);
-                            }
-                        });
-                    });
-                });
-
-                this.on("complete", function (file) {
-                    let image = file.name;
-                    let clearImageName = image.replace(/\.[^.]+$/, "");
-                    imgNames.push(clearImageName);
-                    if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        $.ajax({
-                            method: "POST",
-                            url: "/Dashboard/UploadedImageHandler/",
-                            data: {
-                                imgNames: imgNames
-                            },
-                            success: function (callResponse) {
-                                uploadedImages.push(...callResponse);
-                                console.log(uploadedImages);
-                                for (let i = 0; i < uploadedImages.length; ++i) {
-                                    if (uploadedImages[i] != 0) {
-                                        $("#uploadedImgArray").append(`
-                                                    <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
-                                                `);
-                                    }
-                                    else {
-                                        continue;
-                                    }
-                                }
-                            },
-                            error: function (callResponse) {
-                                console.error(callResponse);
-                            }
-                        });
-                    }
-                })
-            }
-        };
-        //handle-image-upload_end  //handle-image-upload_start
         let uploadedImages = [];
         let dropzoneQ = null;
         Dropzone.options.uploader = {

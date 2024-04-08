@@ -126,9 +126,6 @@
 
 @section Scripts{
 	<script>
-		let videoDropZone = new Dropzone("#uploader", {
-			
-		});
 		toggleLoading();
 
 		let data = @Json.Serialize(Model.MediaList);
@@ -146,6 +143,7 @@
 				view_buttons[i].addEventListener("click", function () {
 					let modalHeading = this.dataset.mediaTitle;
 					let imageSrc = this.dataset.mediaSrc;
+					console.log(imageSrc);
 					view_modal_image.src = "/Dashboard/GetImage?path=" + imageSrc;
 					if (modalHeading.length == 0) {
 						let parts = imageSrc.split('/');
