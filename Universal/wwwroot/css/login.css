@@ -1,22 +1,35 @@
 ﻿* {
-    font-family: 'Segoe UI';
+    font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif';
+}
+
+.form-login {
+    background-color: white;
+    padding: 2em;
+    border-radius: 15px;
+    width: 45%;
+    border: 2px solid rgba(230,230,230);
+
+    -webkit-box-shadow: 0px 0px 16px 0px rgba(204,204,204,0.30);
+    -moz-box-shadow: 0px 0px 16px 0px rgba(204,204,204,0.30);
+    box-shadow: 0px 0px 16px 0px rgba(204,204,204,0.30);
 }
 
 .admin-login-background {
     width: 100vw;
     height: 100vh;
-    background-image: url(/images/dot_background.jpg);
+    background-image: url('/images/universal background.jpg');
     background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
 }
 
-.logo-login {
-    width: 15%;
+#Email, #Password {
+    border: 2px solid rgba(230,230,230);
+    border-radius: 10px;
 }
 
 .btn-dotnet {
     color: #f0f0f0;
-    border-radius: 20px;
     background-color: rebeccapurple;
     border-color: rebeccapurple;
 }
@@ -26,3 +39,5 @@
         background-color: indigo;
         border-color: blueviolet;
     }
+
+

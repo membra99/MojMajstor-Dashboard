@@ -6,33 +6,33 @@
 }
 
 <div class="admin-login-background d-flex align-items-center justify-content-center">
-    <div class="col-6 bg-light mx-auto p-5 rounded-3">
+    <div class="form-login">
         <div class="form-group">
-            <div class="text-center p-2">
-                <img class="logo-login" src="\images\Logo_2_2.svg" alt="logo" />
+            <div class="form-header d-flex flex-row justify-content-between align-items-center pb-3">
+                <div class="text-center p-2">
+                    <h3 class="login-heading">Login</h3>
+                </div>
+                <div class="p-2 d-flex justify-content-end">
+                    <img class="logo-login" src="\images\dotLogo.png" alt="logo" width="80px" />
+               </div>
             </div>
-            <div class="text-center p-2">
-                <h3>LOGIN</h3>
-            </div>
+
             @using (Html.BeginForm("Login", "Authentication", FormMethod.Post))
             {
                 <div class="mb-3">
-                    @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
+                    @Html.Label("Username:")
+                    @Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
                     @Html.ValidationMessageFor(model => model.Email, null, new { @class="text-danger" })
                 </div>
-                <div class="mb-3">
+                <div class="mb-4">
+                    @Html.Label("Password:")
                     @Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
                     @Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
                 </div>
-                <div class="mx-auto mb-3 w-50">
+                <div class="mx-auto mb-3">
                     <input type="submit" value="Log in" class="form-control p-2 btn-dotnet" />
                 </div>
             }
         </div>
     </div>
 </div>
-
-@section Scripts{
-    <script>
-    </script>
-}

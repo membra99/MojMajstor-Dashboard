@@ -9,9 +9,16 @@ using Services.Authorization;
 using Services.AWS;
 using Services.Helpers;
 using System.Configuration;
+using DotNetEnv;
 using static Universal.DTO.CommonModels.CommonModels;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load("./.env");
+
+builder.Configuration
+    .AddJsonFile($"appsettings.json", optional: false)
+    .AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddMvc();
