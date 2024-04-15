@@ -471,7 +471,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							var media = await _userDataServices.UploadUserPicture(awsFile, 4);
+							var media = await _userDataServices.UploadUserPicture(awsFile, 3);
 							if (media != null) siteContentIDTO.MediaId = media.MediaId;
 							siteContentIDTO.IsActive = true;
 							var siteContent = await _mainDataServices.AddSiteContent(siteContentIDTO);

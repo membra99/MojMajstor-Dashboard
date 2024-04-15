@@ -784,7 +784,7 @@ namespace Services
 			int seo = 0;
 			if (siteContentIDTO.SeoIDTO.GoogleKeywords != null || siteContentIDTO.SeoIDTO.GoogleKeywords != null)
 			{
-				seo = await AddSeo(siteContentIDTO.SeoIDTO.GoogleDesc, siteContentIDTO.SeoIDTO.GoogleKeywords, siteContentIDTO.SeoIDTO.LanguageID);
+				seo = await AddSeo(siteContentIDTO.SeoIDTO.GoogleDesc, siteContentIDTO.SeoIDTO.GoogleKeywords, siteContentIDTO.LanguageID);
 			}
 
 			var siteContent = _mapper.Map<SiteContent>(siteContentIDTO);

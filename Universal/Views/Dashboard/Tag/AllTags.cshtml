@@ -23,7 +23,9 @@
 </div>
 
 <div class="col-12">
-    @Html.ActionLink("Add New Tag", "NewTag", "Dashboard", null, new { @class="btn btn-dotnet" })
+    <div class="pb-2 d-flex justify-content-end">
+        @Html.ActionLink("Add New Tag", "NewTag", "Dashboard", null, new { @class="btn btn-dotnet" })
+    </div>
     <table id="tagTable" class="table table-striped display text-center w-100">
         <thead>
             <tr>
@@ -42,7 +44,6 @@
     <script>
         toggleLoading();
         $(document).ready(function () {
-            //console.log(@Json.Serialize(Model));
             $("#closeConfirmDeleteButton").click(function () {
                 $('#confirmDeleteModal').modal('hide');
             });

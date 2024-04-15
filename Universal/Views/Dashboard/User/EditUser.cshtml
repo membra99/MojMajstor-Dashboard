@@ -163,15 +163,13 @@
 
         };
 
-        $(document).ready(function () {
-            let image = document.getElementById('avatar-preview');
-            var parts = image.src.split('/');
-            var result = parts.slice(3).join('/');
-            if (result != "Dashboard/GetImage") {
-                let element = document.getElementById('unset');
-                element.classList.add("hover-unset");
-            }
-        });
+        let image = document.getElementById('avatar-preview');
+        var parts = image.src.split('/');
+        var result = parts.slice(3).join('/');
+        if (result != "Dashboard/GetImage") {
+            let element = document.getElementById('unset');
+            element.classList.add("hover-unset");
+        }
 
 
 

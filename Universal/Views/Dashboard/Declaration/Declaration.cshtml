@@ -5,7 +5,9 @@
 }
 
 <div class="col-12">
-	@Html.ActionLink("Add New Declaration", "NewDeclaration", "Dashboard", null, new { @class="btn btn-dotnet" })
+	<div class="pb-2 d-flex justify-content-end">
+		@Html.ActionLink("Add New Declaration", "NewDeclaration", "Dashboard", null, new { @class="btn btn-dotnet" })
+	</div>
 	<table id="declarationTable" class="table table-striped display text-center">
 		<thead>
 			<tr>

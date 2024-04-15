@@ -8,7 +8,9 @@
 }
 
 <div class="col-12">
-	@Html.ActionLink("Add New User", "NewUser", "Dashboard", null, new { @class="btn btn-dotnet" })
+	<div class="pb-2 d-flex justify-content-end">
+		@Html.ActionLink("Add New User", "NewUser", "Dashboard", null, new { @class="btn btn-dotnet" })
+	</div>
 	<table id="userTable" class="table table-striped display text-center w-100">
 		<thead>
 			<tr>

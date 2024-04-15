@@ -312,7 +312,7 @@
                         <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Add Image</button>
                         @Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
                     </div>
-
+                    <hr/>
                     <div class="form-group mb-3">
                         <h4>Gallery Images</h4>
                     </div>
@@ -320,38 +320,8 @@
                         <button type="button" class="form-control p-2 btn-dotnet" id="openGalleryModalButton">Gallery Images</button>
                         @Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
                     </div>
-                    @*<div class="form-group mb-3">
-                <h4>Gallery Images</h4>
-                </div>
-                <div class="form-group mb-3">
-                @Html.LabelFor(model => model.GalleryImages, "Product gallery images:")
-                @Html.TextBoxFor(model => model.GalleryImages, null, new { type = "file", id = "file-gallery", @class = "form-control mb-3", runat = "server", multiple = "multiple", onchange = "loadMultipleFile(event)" })
-                @Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class = "text-danger" })
-                <div id="gallery-images" class="d-flex flex-row justify-content-between text-center">
-                <div class="text-center image-container">
-                <img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-0" width="75" height="75" style="border: 2px solid indigo">
-                <a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 0)" title="Unset Image">x</a>
-                </div>
-                <div class="text-center image-container">
-                <img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
-                <a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 1)" title="Unset Image">x</a>
-                </div>
-                <div class="text-center image-container">
-                <img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
-                <a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 2)" title="Unset Image">x</a>
-                </div>
-                <div class="text-center image-container">
-                <img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
-                <a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 3)" title="Unset Image">x</a>
-                </div>
-                <div class="text-center image-container">
-                <img src="@Url.Action("GetImage","Dashboard")" id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo">
-                <a class="unset-button" id="unset" onclick="unsetImageMultiple(event, 4)" title="Unset Image">x</a>
-                </div>
-                </div>
-                </div>*@
                     <hr>
-                    <div class="mx-auto mb-3 w-50">
+                    <div class="mx-auto mb-3 w-100">
                         <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
                     </div>
                 </div>

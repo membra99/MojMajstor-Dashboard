@@ -5,14 +5,16 @@
 	ViewData["Title"] = "All SiteContents";
 }
 
+<div class="pb-2 d-flex justify-content-end">
 @if (ViewBag.siteType == "Page")
 {
-	<button type="button" class="btn btn-dotnet" id="addPageButton" style="margin-bottom:15px;">Add New Page</button>
+	<button type="button" class="btn btn-dotnet" id="addPageButton">Add New Page</button>
 }
 else
 {
-	<button type="button" class="btn btn-dotnet" id="addBlogButton" style="margin-bottom:15px;">Add New Blog</button>
+	<button type="button" class="btn btn-dotnet" id="addBlogButton">Add New Blog</button>
 }
+</div>
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
