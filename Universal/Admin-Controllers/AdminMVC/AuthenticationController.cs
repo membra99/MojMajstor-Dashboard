@@ -6,6 +6,7 @@ using static Universal.DTO.CommonModels.CommonModels;
 using System.Net.Http;
 using Universal.Util;
 using Services;
+using Microsoft.AspNetCore.Components;
 
 namespace Universal.Controllers
 {
@@ -48,7 +49,7 @@ namespace Universal.Controllers
 				{
 					_httpContextAccessor.HttpContext.Session.Set("UserId", model.Id); //save user to session and token for further use
 					_httpContextAccessor.HttpContext.Session.Set("AuthToken", model.Token);
-					return RedirectToAction("Index", "Dashboard");
+					return RedirectToAction("AllUsers", "Dashboard", new { layout = "_LayoutDashboard" });
 				}
 				else
 				{
