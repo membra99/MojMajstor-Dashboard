@@ -106,11 +106,11 @@
                                     <div class="form-group">
                                         @Html.HiddenFor(model => model.IsImageChanged, new { id = "IsImageChanged" })
                                         <label for="imageName">Choose image</label>
-                                        <input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+                                        <input type="file" name="Avatar" runat="server" id="file" class="form-control" />
                                         <div class="form-group col-2 mb-3 text-center">
                                             <div class="image-container">
                                                 <img src="@Url.Action("GetImage","Dashboard", new {path = Model.Photo})" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
-                                                <a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+                                                <a class="unset-button" id="unset" title="Unset Image">x</a>
                                             </div>
                                         </div>
                                         <small id="imageNameError" class="form-text text-danger"></small>
@@ -150,7 +150,7 @@
 </div>
 
 @section Scripts {
-    <script>
+    <script id="loadScriptDynamic">
         let loaded = false;
 
         let loadFile = function (event) {
@@ -160,7 +160,6 @@
             element.classList.add("hover-unset");
             var hiddenInput = document.getElementById("IsImageChanged");
             hiddenInput.value = null;
-
         };
 
         let image = document.getElementById('avatar-preview');
@@ -186,6 +185,14 @@
             unsetImage(event);
             this.classList.remove("hover-unset");
             event.preventDefault();
+        });
+
+        $(".unset-button").click(function (e) {
+            unsetImage(e);
+        });
+
+        $('input[name="Avatar"]').on('change', function (e) {
+            loadFile(e);
         });
 
         const openModalButton = document.getElementById("openModalButton");

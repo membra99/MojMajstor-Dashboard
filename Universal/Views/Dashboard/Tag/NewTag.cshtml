@@ -1,209 +1,199 @@
 ﻿@model Universal.DTO.IDTO.TagIDTO
 
 @{
-	ViewData["Title"] = "New Tag";
+    ViewData["Title"] = "New Tag";
 }
 
 <div class="container bg-light w-50">
-	<div class="text-center">
-		<h2>Add Tag</h2>
-	</div>
-	@using (Html.BeginForm("AddTags", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-	{
-		<div class="form-group mb-3">
-			@Html.HiddenFor(model => model.LanguageID,new { @id = "lang" })
-		</div>
-		<div class="form-group mb-3">
-			@Html.LabelFor(model => model.Title, "Tag title:")
-			@Html.TextBoxFor(model => model.Title, null, new { @class="form-control", placeholder = "Title"})
-			@Html.ValidationMessageFor(model => model.Title, null, new { @class="text-danger" })
-		</div>
-		<div class="from-group mb-3">
-			@Html.LabelFor(model => model.Description, "Tag description:")
-			@Html.TextBoxFor(model => model.Description, new { @class="form-control", placeholder = "Description"})
-			@Html.ValidationMessageFor(model => model.Description, null, new { @class="text-danger" })
-		</div>
+    <div class="text-center">
+        <h2>Add Tag</h2>
+    </div>
+    @using (Html.BeginForm("AddTags", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-group mb-3">
+            @Html.HiddenFor(model => model.LanguageID, new { @id = "lang" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelFor(model => model.Title, "Tag title:")
+            @Html.TextBoxFor(model => model.Title, null, new { @class = "form-control", placeholder = "Title" })
+            @Html.ValidationMessageFor(model => model.Title, null, new { @class = "text-danger" })
+        </div>
+        <div class="from-group mb-3">
+            @Html.LabelFor(model => model.Description, "Tag description:")
+            @Html.TextBoxFor(model => model.Description, new { @class = "form-control", placeholder = "Description" })
+            @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
+        </div>
 
-		/*<div class="row">
-			<div class="form-group col-10 mb-3">
-				@Html.LabelRequiredFor(model => model.TagImage, "Avatar:", true)
-				<input type="file" name="TagImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+        <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <!-- Use modal-lg class for a larger modal -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
+                            </li>
+                        </ul>
 
-				@*@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })*@
-			</div>
-			<div class="form-group col-2 mb-3 text-center">
-				<div class="image-container">
-					<img src="@Url.Action("GetImage","Dashboard",null)" id="tag-preview" width="75" height="75" style="border: 2px solid indigo">
-					<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
-				</div>
-			</div>
-		</div> */
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <!-- Tab 1 Content -->
+                            <div id="tab1" class="tab-pane active">
+                                <div id="addImageForm">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(model => model.IsImageChanged, new { id = "IsImageChanged" })
+                                        <label for="imageName">Choose image</label>
+                                        <input type="file" name="TagImage" runat="server" id="file" class="form-control" />
+                                        <div class="form-group col-2 mb-3 text-center">
+                                            <div class="image-container">
+                                                <img src="@Url.Action("GetImage","Dashboard", null)" id="tag-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
+                                                <a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+                                            </div>
+                                        </div>
+                                        <small id="imageNameError" class="form-text text-danger"></small>
+                                    </div>
+                                </div>
+                            </div>
 
-		<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-			<div class="modal-dialog modal-dialog-centered modal-lg">
-				<!-- Use modal-lg class for a larger modal -->
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="addImageModalLabel">Add New Image</h5>
-					</div>
-					<div class="modal-body">
-						<!-- Nav tabs -->
-						<ul class="nav nav-tabs" role="tablist">
-							<li class="nav-item">
-								<a class="nav-link" data-toggle="tab" href="#tab1" id="tab1Link">Add New Image</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" data-toggle="tab" href="#tab2" id="tab2Link">Gallery</a>
-							</li>
-						</ul>
-
-						<!-- Tab panes -->
-						<div class="tab-content">
-							<!-- Tab 1 Content -->
-							<div id="tab1" class="tab-pane active">
-								<div id="addImageForm">
-									<div class="form-group">
-										@Html.HiddenFor(model => model.IsImageChanged, new {id = "IsImageChanged"})
-										<label for="imageName">Choose image</label>
-										<input type="file" name="TagImage" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
-										<div class="form-group col-2 mb-3 text-center">
-											<div class="image-container">
-												<img src="@Url.Action("GetImage","Dashboard", null)" id="tag-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
-												<a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
-											</div>
-										</div>
-										<small id="imageNameError" class="form-text text-danger"></small>
-									</div>
-								</div>
-							</div>
-
-							<!-- Tab 2 Content -->
-							<div id="tab2" class="tab-pane">
-								@Html.HiddenFor(model => model.MediaId, new { @id="input-media" });
-								<div id="tab2-gallery">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
-					</div>
-				</div>
-			</div>
-		</div>
+                            <!-- Tab 2 Content -->
+                            <div id="tab2" class="tab-pane">
+                                @Html.HiddenFor(model => model.MediaId, new { @id = "input-media" });
+                                <div id="tab2-gallery">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dotnet" id="saveImageButton">Save Image</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
-		<div class="row">
-			<div class="form-group col-12 mb-3">
-				@Html.LabelRequiredFor(model => model.TagImage, "Tag image:", true)
-				@*@<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />*@
-				<button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
-				@Html.ValidationMessageFor(model => model.TagImage, null, new { @class="text-danger" })
-			</div>
-		</div>
+        <div class="row">
+            <div class="form-group col-12 mb-3">
+                @Html.LabelRequiredFor(model => model.TagImage, "Tag image:", true)
+                @*@<input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />*@
+                <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
+                @Html.ValidationMessageFor(model => model.TagImage, null, new { @class = "text-danger" })
+            </div>
+        </div>
 
-		<div class="mx-auto mb-3 w-50">
-			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
-		</div>
-	}
+        <div class="mx-auto mb-3 w-50">
+            <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+        </div>
+    }
 </div>
 
-@section Scripts{
-	<script>
-		let loaded = false;
-		let loadFile = function (event) {
-			let image = document.getElementById('tag-preview');
-			image.src = URL.createObjectURL(event.target.files[0]);
-			let element = document.getElementById('unset');
-			element.classList.add("hover-unset");
+@section Scripts {
+    <script id="loadScriptDynamic">
+        let loaded = false;
+        let loadFile = function (event) {
+            let image = document.getElementById('tag-preview');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            let element = document.getElementById('unset');
+            element.classList.add("hover-unset");
 
-		};
+        };
 
-		function unsetImage(event) {
-			let image = document.getElementById('tag-preview');
-			image.src = '@Url.Action("GetImage","Dashboard",null)';
-			$("#file").val(null);
+        function unsetImage(event) {
+            let image = document.getElementById('tag-preview');
+            image.src = '@Url.Action("GetImage", "Dashboard", null)';
+            $("#file").val(null);
 
-			let element = document.getElementById('unset');
-			element.classList.remove("hover-unset");
-			event.preventDefault();
-		};
+            let element = document.getElementById('unset');
+            element.classList.remove("hover-unset");
+            event.preventDefault();
+        };
 
-		document.addEventListener("DOMContentLoaded", function () {
-			const openModalButton = document.getElementById("openModalButton");
-			const addImageModal = document.getElementById("addImageModal");
+        const openModalButton = document.getElementById("openModalButton");
+        const addImageModal = document.getElementById("addImageModal");
 
-			openModalButton.addEventListener("click", function () {
-				$(addImageModal).modal("show");
-			});
+        openModalButton.addEventListener("click", function () {
+            $(addImageModal).modal("show");
+        });
 
-			$("#closeImageButton").click(function (event) {
-				unsetImage(event);
-				$('#addImageModal').modal('hide');
-			});
+        $("#closeImageButton").click(function (event) {
+            unsetImage(event);
+            $('#addImageModal').modal('hide');
+        });
 
-		});
+        $(".unset-button").click(function (e) {
+            unsetImage(e);
+        });
 
-		function unselectGallery() {
-			$(".overlay-checked").find('.fas').toggleClass('disable-icon')
-			$(".overlay-checked").removeClass("overlay-checked");
-			$("#input-media").val(null);
-		};
+        $('input[name="TagImage"]').on('change', function (e) {
+            loadFile(e);
+        });
 
-		document.getElementById("tab1Link").classList.add("active");
+        function unselectGallery() {
+            $(".overlay-checked").find('.fas').toggleClass('disable-icon')
+            $(".overlay-checked").removeClass("overlay-checked");
+            $("#input-media").val(null);
+        };
 
-		document.getElementById("tab1Link").addEventListener("click", function () {
-			document.getElementById("tab1Link").classList.add("active");
-			document.getElementById("tab2Link").classList.remove("active");
+        document.getElementById("tab1Link").classList.add("active");
 
-			document.getElementById("tab1").classList.add("active");
-			document.getElementById("tab2").classList.remove("active");
+        document.getElementById("tab1Link").addEventListener("click", function () {
+            document.getElementById("tab1Link").classList.add("active");
+            document.getElementById("tab2Link").classList.remove("active");
 
-			unselectGallery();
-		});
+            document.getElementById("tab1").classList.add("active");
+            document.getElementById("tab2").classList.remove("active");
 
-		document.getElementById("tab2Link").addEventListener("click", function (event) {
-			document.getElementById("tab2Link").classList.add("active");
-			document.getElementById("tab1Link").classList.remove("active");
+            unselectGallery();
+        });
 
-			document.getElementById("tab2").classList.add("active");
-			document.getElementById("tab1").classList.remove("active");
+        document.getElementById("tab2Link").addEventListener("click", function (event) {
+            document.getElementById("tab2Link").classList.add("active");
+            document.getElementById("tab1Link").classList.remove("active");
 
-			unsetImage(event);
-			if (!loaded) {
-				let url = '@Url.Action("GalleryGrid","Dashboard")'
-				$("#tab2-gallery").load(url, function () {
-					$(".fa-hand-pointer").click(function () {
-						loaded = true;
-						mediaId = this.dataset.mediaId;
-						let parentElement = this.parentElement;
-						let children = parentElement.getElementsByClassName('fas');
+            document.getElementById("tab2").classList.add("active");
+            document.getElementById("tab1").classList.remove("active");
 
-						unselectGallery();
+            unsetImage(event);
+            if (!loaded) {
+                let url = '@Url.Action("GalleryGrid", "Dashboard")'
+                $("#tab2-gallery").load(url, function () {
+                    $(".fa-hand-pointer").click(function () {
+                        loaded = true;
+                        mediaId = this.dataset.mediaId;
+                        let parentElement = this.parentElement;
+                        let children = parentElement.getElementsByClassName('fas');
 
-						for (var i = 0; i < children.length; i++) {
-							children[i].classList.toggle('disable-icon');
-						}
+                        unselectGallery();
 
-						parentElement.parentElement.classList.add("overlay-checked");
-					});
-				});
-			}
-		});
+                        for (var i = 0; i < children.length; i++) {
+                            children[i].classList.toggle('disable-icon');
+                        }
 
-		let mediaId = null;
-		$("#saveImageButton").click(function () {
-			$("#input-media").val(mediaId);
-			$('#addImageModal').modal('hide');
-		});
+                        parentElement.parentElement.classList.add("overlay-checked");
+                    });
+                });
+            }
+        });
+
+        let mediaId = null;
+        $("#saveImageButton").click(function () {
+            $("#input-media").val(mediaId);
+            $('#addImageModal').modal('hide');
+        });
 
 
-		$('#lang').val($('#language').val());
+        $('#lang').val($('#language').val());
 
-		$('#language').change(function () {
-			$('#lang').val($(this).val());
-		});
-	</script>
-	}
+        $('#language').change(function () {
+            $('#lang').val($(this).val());
+        });
+    </script>
+}

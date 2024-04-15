@@ -103,11 +103,11 @@
                                 <div id="addImageForm">
                                     <div class="form-group">
                                         <label for="imageName">Choose image</label>
-                                        <input type="file" name="Avatar" runat="server" id="file" class="form-control" onchange="loadFile(event)" />
+                                        <input type="file" name="Avatar" runat="server" id="file" class="form-control" />
                                         <div class="form-group col-2 mb-3 text-center">
                                             <div class="image-container">
                                                 <img src="@Url.Action("GetImage","Dashboard",null)" id="avatar-preview" style="margin-top:10px; border: 2px solid indigo;  width:auto; max-height:200px;">
-                                                <a class="unset-button" id="unset" onclick="unsetImage()" title="Unset Image">x</a>
+                                                <a class="unset-button" id="unset" title="Unset Image">x</a>
                                             </div>
                                         </div>
                                         <small id="imageNameError" class="form-text text-danger"></small>
@@ -151,6 +151,7 @@
     <script id="loadScriptDynamic">
         let loaded = false;
         let loadFile = function (event) {
+            console.log("AAAA");
             let image = document.getElementById('avatar-preview');
             image.src = URL.createObjectURL(event.target.files[0]);
             let element = document.getElementById('unset');
@@ -167,11 +168,18 @@
             event.preventDefault();
         }
 
+        $(".unset-button").click(function (e) {
+            unsetImage(e);
+        });
+
+        $('input[name="FeaturedImage"]').on('change', function (e) {
+            loadFile(e);
+        });
+
         const openModalButton = document.getElementById("openModalButton");
         const addImageModal = document.getElementById("addImageModal");
 
         openModalButton.addEventListener("click", function () {
-            console.log("cao")
             $(addImageModal).modal("show");
         });
 
@@ -232,6 +240,5 @@
             $("#input-media").val(mediaId);
             $('#addImageModal').modal('hide');
         });
-        console.log("CAO");
     </script>
 }

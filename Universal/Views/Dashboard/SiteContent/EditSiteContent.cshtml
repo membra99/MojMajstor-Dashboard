@@ -131,8 +131,7 @@
 
 
 @section Scripts{
-
-	<script>
+	<script id="loadScriptDynamic">
 		let loaded = false;
 		let loadFile = function (event) {
 			let image = document.getElementById('content-preview');
@@ -171,6 +170,14 @@
 			unsetImage(event);
 			this.classList.remove("hover-unset");
 			event.preventDefault();
+		});
+
+		$(".unset-button").click(function (e) {
+			unsetImage(e);
+		});
+
+		$('input[name="FeaturedImage"]').on('change', function (e) {
+			loadFile(e);
 		});
 
 			const openModalButton = document.getElementById("openModalButton");
