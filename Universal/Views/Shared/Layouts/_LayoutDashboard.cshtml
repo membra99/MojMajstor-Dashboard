@@ -47,7 +47,7 @@
 
         .dropdown-container {
             display: none;
-            background-color: rebeccapurple;
+            background-color: #0A80D8;
             font-size: 14px;
         }
 
@@ -60,12 +60,15 @@
         function getIcon() {
             var currentURL = window.location.href;
             var path = new URL(currentURL).pathname + new URL(currentURL).search;
+            if (path == "/Dashboard") {
+                path = "/Dashboard/AllUsers";
+            }
             var linkElement = $('a[href="' + path + '"]');
             var dropdownLiElement = linkElement.closest('li.nav-item.dropdown-btn');
             if (!dropdownLiElement[0]) dropdownLiElement = linkElement.closest('li.nav-item');
             var iElement = dropdownLiElement.find('i');
             if (iElement[0]) {
-                var iconHtml = iElement[0].outerHTML;
+                var iconHtml = iElement[0].outerHTML
                 $(".page-title").html(iconHtml + $(".page-title").html());
             }
         }
@@ -93,7 +96,7 @@
             <ul class="side-list sidenav">
                 <li class="nav-item">
                     <a href="#" class="home-section d-flex align-items-center justify-content-center p-4 gap-2" style="text-decoration: none; color: grey; font;">
-                        <img src="~/images/dotLogo.png" class="home-section" width="35" height="auto" />
+                        <img src="~/images/Logo.svg" class="home-section" width="35" height="auto" />
                         <span class="home-link">Universal</span>
                     </a>
                 </li>
@@ -283,7 +286,7 @@
                         $(this).addClass("active");
                         $(this).children("ul").css('display', 'block');
                         $(this).children("ul").find('a[href="/Dashboard/' + methodName + '"').css({
-                            "color": "rebeccapurple",
+                            "color": "#0A80D8",
                         });
                     }
                 });

@@ -49,7 +49,7 @@ namespace Universal.Controllers
 				{
 					_httpContextAccessor.HttpContext.Session.Set("UserId", model.Id); //save user to session and token for further use
 					_httpContextAccessor.HttpContext.Session.Set("AuthToken", model.Token);
-					return RedirectToAction("AllUsers", "Dashboard", new { layout = "_LayoutDashboard" });
+					return RedirectToAction("Index", "Dashboard");
 				}
 				else
 				{

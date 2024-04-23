@@ -18,7 +18,7 @@
 
 <!-- Upload video modal -->
 <div class="modal fade" id="uploadVideo" tabindex="-1" aria-labelledby="uploadVideoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 60%">
+    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 40%">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="uploadVideoLabel">Upload video</h1>
@@ -28,9 +28,9 @@
                 <form id="form" method="post" class="w-100" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
                     <div class="form-group">
                         <div id="dropzone">
-                            <div class="p-2 text-center rounded-top" style="background-color: rebeccapurple">
+                            @* <div class="p-2 text-center rounded-top" style="background-color: #0A80D8">
                                 <label style="font-size:20px; color:white;">Add New Video</label>
-                            </div>
+                            </div> *@
                             <div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
                         </div>
                     </div>

@@ -17,7 +17,7 @@
 .admin-login-background {
     width: 100vw;
     height: 100vh;
-    background-image: url('/images/universal background.jpg');
+    background-image: url('/images/BGIMG.jpg');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -30,13 +30,13 @@
 
 .btn-dotnet {
     color: #f0f0f0;
-    background-color: rebeccapurple;
-    border-color: rebeccapurple;
+    background-color: #0A80D8;
+    border-color: #0A80D8;
 }
 
     .btn-dotnet:hover {
         color: #f0f0f0;
-        background-color: indigo;
+        background-color: #0866ac;
         border-color: blueviolet;
     }
 

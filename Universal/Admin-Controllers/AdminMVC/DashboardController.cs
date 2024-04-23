@@ -30,9 +30,10 @@ namespace Universal.Admin_Controllers.AdminMVC
 			_AWSS3FileService = AWSS3FileService;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			return View("Home");
+			var users = await _userDataServices.GetAllUsers();
+			return View("User/Users", users);
 		}
 
 		#region Users
