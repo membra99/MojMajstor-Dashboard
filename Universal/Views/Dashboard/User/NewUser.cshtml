@@ -172,7 +172,7 @@
             unsetImage(e);
         });
 
-        $('input[name="FeaturedImage"]').on('change', function (e) {
+        $('input[name="Avatar"]').on('change', function (e) {
             loadFile(e);
         });
 
@@ -203,7 +203,7 @@
             document.getElementById("tab1").classList.add("active");
             document.getElementById("tab2").classList.remove("active");
 
-            unselectGallery();
+            //unselectGallery();
         });
 
         document.getElementById("tab2Link").addEventListener("click", function (event) {
@@ -238,6 +238,7 @@
         let mediaId = null;
         $("#saveImageButton").click(function () {
             $("#input-media").val(mediaId);
+            console.log($("#input-media").val());
             $('#addImageModal').modal('hide');
         });
     </script>
