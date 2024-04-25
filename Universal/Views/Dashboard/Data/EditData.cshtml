@@ -333,7 +333,6 @@
 
 @section Scripts {
     <script id="loadScriptDynamic">
-        console.log(@Json.Serialize(Model))
         //handle-image-upload_start
         let uploadedImages = [];
         let dropzoneQ = null;
@@ -471,31 +470,31 @@
             loadFile(e);
         });
 
-        const openModalButton = document.getElementById("openModalButton");
-        const addImageModal = document.getElementById("addImageModal");
+        // const openModalButton = document.getElementById("openModalButton");
+        // const addImageModal = document.getElementById("addImageModal");
 
-        openModalButton.addEventListener("click", function () {
-            $(addImageModal).modal("show");
-        });
+        // openModalButton.addEventListener("click", function () {
+        //     $(addImageModal).modal("show");
+        // });
 
-        $("#closeImageButton").click(function (event) {
-            unsetImage(event);
-            $('#addImageModal').modal('hide');
-            unselectGallery();
-            loaded = false;
-        });
+        // $("#closeImageButton").click(function (event) {
+        //     unsetImage(event);
+        //     $('#addImageModal').modal('hide');
+        //     unselectGallery();
+        //     loaded = false;
+        // });
 
-        const openGalleryModalButton = document.getElementById("openGalleryModalButton");
-        const editGalleryModal = document.getElementById("editGalleryModal");
+        // const openGalleryModalButton = document.getElementById("openGalleryModalButton");
+        // const editGalleryModal = document.getElementById("editGalleryModal");
 
-        openGalleryModalButton.addEventListener("click", function () {
-            $(editGalleryModal).modal("show");
-        });
+        // openGalleryModalButton.addEventListener("click", function () {
+        //     $(editGalleryModal).modal("show");
+        // });
 
-        $("#closeGalleryImageButton").click(function (event) {
-            $(editGalleryModal).modal("hide");
-            loadedGallery = false;
-        });
+        // $("#closeGalleryImageButton").click(function (event) {
+        //     $(editGalleryModal).modal("hide");
+        //     loadedGallery = false;
+        // });
 
         function unselectGallery(modal) {
             $(modal + " .overlay-checked").each(function () {
