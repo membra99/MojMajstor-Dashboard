@@ -84,11 +84,13 @@ namespace Entities.Mapping
 			CreateMap<Language, LanguageODTO>();
 			CreateMap<LanguageIDTO, Language>();
 
-            CreateMap<PromoCodes, PromocodesODTO>();
+			CreateMap<PromoCodes, PromocodesODTO>();
             CreateMap<PromocodesODTO, PromoCodes>();
 
-            CreateMap<PromoCodes, PromoCodesIDTO>();
-            CreateMap<PromoCodesIDTO, PromoCodes>();
+			CreateMap<PromoCodes, PromoCodesIDTO>()
+			.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
+			.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("yyyy-MM-dd")));
+			CreateMap<PromoCodesIDTO, PromoCodes>();
         }
 	}
 }

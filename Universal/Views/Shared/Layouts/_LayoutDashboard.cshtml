@@ -449,7 +449,8 @@
             //start of code for dynamic edit model modal elements
             $("body").on("click", "td.actions-control a", function (e) {
                 let pageTitleExIcon = $('.page-title').clone().find('.fa').remove().end().html();
-                if (pageTitleExIcon.split(' ')[1] == 'Pages' || pageTitleExIcon.split(' ')[1] == "Blogs" || pageTitleExIcon.split(' ')[1] == "Events") return true;
+                console.log(pageTitleExIcon);
+                if (pageTitleExIcon == 'All promo codes' || pageTitleExIcon.split(' ')[1] == 'Pages' || pageTitleExIcon.split(' ')[1] == "Blogs" || pageTitleExIcon.split(' ')[1] == "Events") return true;
                 e.preventDefault();
                 removePreviousHtml();
                 var hrefValue = $(this).attr("href");

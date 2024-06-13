@@ -44,11 +44,15 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
 	let data = @Json.Serialize(Model);
+
+	console.log("Raw startDate:", data.startDate);
+	console.log("Raw endDate:", data.endDate);
+
 	let startDate = new Date(data.startDate);
 	startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
 	startDate = startDate.toISOString().split('T')[0];
 
-	// Convert end date to local time zone
+	Convert end date to local time zone
 	let endDate = new Date(data.endDate);
 	endDate.setMinutes(endDate.getMinutes() - endDate.getTimezoneOffset());
 	endDate = endDate.toISOString().split('T')[0];
