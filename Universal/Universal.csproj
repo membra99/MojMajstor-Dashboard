@@ -46,4 +46,12 @@
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Views\Dashboard\Newsletters\SendNewsLetter.cshtml" />
+    <None Include="Views\Dashboard\PromoCodes\AddNewPromoCode.cshtml" />
+    <None Include="Views\Dashboard\PromoCodes\AllPromoCodes.cshtml" />
+    <None Include="Views\Dashboard\PromoCodes\EditPromoCode.cshtml" />
+    <None Include="Views\Dashboard\PromoCodes\SendPromocodes.cshtml" />
+  </ItemGroup>
+
 </Project>

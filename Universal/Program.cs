@@ -1,21 +1,19 @@
 global using Universal.Util.HtmlHelperExtensions;
 using Amazon.S3;
+using DotNetEnv;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Services;
 using Services.Authorization;
 using Services.AWS;
 using Services.Helpers;
-using System.Configuration;
-using DotNetEnv;
 using static Universal.DTO.CommonModels.CommonModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//configure dynamic appsetting.json trough env file NOTE: appsetting.json musn't be empty, otherwise this won't work
 Env.Load("./.env");
-
 builder.Configuration
     .AddJsonFile($"appsettings.json", optional: false)
     .AddEnvironmentVariables();
@@ -24,10 +22,13 @@ builder.Configuration
 builder.Services.AddMvc();
 builder.Services.AddEndpointsApiExplorer();
 
+//configure maindatabase
 builder.Services.AddDbContext<MainContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MainDatabase"));
 });
+
+//configure openapi docs
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DOT", Version = "v1" });
@@ -52,6 +53,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+//configure cors policy for APIs
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
 				policy =>
 				{
@@ -61,9 +63,6 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy",
 						.AllowAnyOrigin();
 				}));
 
-
-
-
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -72,22 +71,21 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<MainDataServices>();
+
 //configure aws services
 var appSettingsSectionAws = builder.Configuration.GetSection("ServiceConfiguration");
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.Configure<ServiceConfiguration>(appSettingsSectionAws);
 builder.Services.AddTransient<IAWSS3FileService, AWSS3FileService>();
 builder.Services.AddTransient<IAWSS3BucketHelper, AWSS3BucketHelper>();
+
 // configure for JWT Auth
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 builder.Services.AddScoped<UsersServices>();
 
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddHttpClient();
-
 builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSession(options =>

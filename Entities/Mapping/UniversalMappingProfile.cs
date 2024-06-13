@@ -83,6 +83,12 @@ namespace Entities.Mapping
 
 			CreateMap<Language, LanguageODTO>();
 			CreateMap<LanguageIDTO, Language>();
-		}
+
+            CreateMap<PromoCodes, PromocodesODTO>();
+            CreateMap<PromocodesODTO, PromoCodes>();
+
+            CreateMap<PromoCodes, PromoCodesIDTO>();
+            CreateMap<PromoCodesIDTO, PromoCodes>();
+        }
 	}
 }

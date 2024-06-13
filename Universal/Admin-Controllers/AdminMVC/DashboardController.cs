@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Services;
 using Services.AWS;
+using Services.Helpers;
 using System.Net.Mime;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
@@ -19,8 +21,9 @@ namespace Universal.Admin_Controllers.AdminMVC
 		private readonly IAWSS3FileService _AWSS3FileService;
 		private readonly MainDataServices _mainDataServices;
 		private readonly UsersServices _userDataServices;
+        private readonly IOptions<EmailSettings> _emailSettings;
 
-		public DashboardController(IHttpClientFactory httpClientFactory, IAWSS3FileService AWSS3FileService, IHttpContextAccessor contextAccessor, MainDataServices mainDataServices, UsersServices usersServices)
+        public DashboardController(IHttpClientFactory httpClientFactory, IAWSS3FileService AWSS3FileService, IHttpContextAccessor contextAccessor, MainDataServices mainDataServices, UsersServices usersServices, IOptions<EmailSettings> emailSettings)
 		{
 			_httpClient = httpClientFactory.CreateClient();
 			_httpClient.BaseAddress = new Uri("https://localhost:7213"); ////TODO change later to be dynamic
@@ -28,7 +31,8 @@ namespace Universal.Admin_Controllers.AdminMVC
 			_mainDataServices = mainDataServices;
 			_userDataServices = usersServices;
 			_AWSS3FileService = AWSS3FileService;
-		}
+            _emailSettings = emailSettings;
+        }
 
 		public async Task<IActionResult> Index()
 		{
@@ -1332,11 +1336,113 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-		#endregion Categories
+        #endregion Categories
 
-		#region Helpers
+        #region Newsletter
+        public async Task<ActionResult> SendNewsLetter()
+        {
+            return View("Newsletters/SendNewsLetter");
+        }
 
-		private void CheckForToast()
+        public async Task<ActionResult> SendNewsletterAction(string newsletterContent)
+        {
+            var newslettersUsers = await _mainDataServices.GetAllNewsletterMails();
+
+            MailService ms = new MailService(_emailSettings);
+            int newsletterCount = newslettersUsers.Count();
+            for (int i = 0; i < newsletterCount; i++)
+            {
+                await Task.Delay(1000);
+                ms.SendEmail(new EmailIDTO
+                {
+                    To = newslettersUsers[i].NewsletterMail,
+                    Subject = "Check out news from Exclusive cookies",
+                    Body = newsletterContent + "\n" + "<div style='text-align: center;'><a style='text-decoration: none; color: grey;' href='https://localhost:7213/Dashboard/UnsubscribeFromNewsletter?useremail=" + newslettersUsers[i].NewsletterMail.ToString() + "'>Odjavite se sa newslettera</a></div>"
+                });
+            }
+            return RedirectToAction(nameof(SendNewsLetter));
+        }
+
+        public async Task<ActionResult> UnsubscribeFromNewsletter(string useremail)
+        {
+            var response = await _mainDataServices.UnsubscribeFromNewsletter(useremail);
+            return View("~/Views/Authentication/NewsletterUnsubscribe.cshtml", response);
+        }
+        #endregion
+
+        #region PromoCodes
+        public async Task<ActionResult> PromoCodes()
+        {
+            CheckForToast();
+            var promCodes = await _mainDataServices.GetAllPromoCodes();
+            return View("PromoCodes/AllPromoCodes", promCodes);
+        }
+
+        public async Task<ActionResult> AddNewPromocode()
+        {
+            CheckForToast();
+            return View("PromoCodes/AddNewPromoCode");
+        }
+
+        public async Task<IActionResult> AddNewPromocodeAction(PromoCodesIDTO promoCodeIDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                await _mainDataServices.AddNewPromocode(promoCodeIDTO);
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully added promo code");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("PromoCodes");
+            }
+            return View("PromoCodes/AddNewPromoCode");
+        }
+
+        public async Task<ActionResult> EditPromoCode(int promoCodesId)
+        {
+            var promoCode = await _mainDataServices.GetPromocodeById(promoCodesId);
+            return View("PromoCodes/EditPromoCode", promoCode);
+        }
+
+        public async Task<ActionResult> EditPromoCodeAction(PromoCodesIDTO promoCodeIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Error while updating promo code");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "warning");
+            }
+            try
+            {
+                var promocode = await _mainDataServices.EditPromocode(promoCodeIDTO);
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Successfully updated promo code");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("PromoCodes", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return View("PromoCodes/EditPromoCode", await _mainDataServices.GetPromocodeById((int)promoCodeIDTO.PromoCodesId));
+
+        }
+
+        public async Task<ActionResult> SendPromoCode(int promoCodesId)
+        {
+            var promoCode = await _mainDataServices.GetPromocodeById(promoCodesId);
+            return View("PromoCodes/SendPromocodes", promoCode);
+        }
+
+        public async Task<ActionResult> SendPromoCodeAction(PromoCodesIDTO promoCodeIDTO)
+        {
+            await _mainDataServices.SendPromoCode(promoCodeIDTO);
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Promocode has been sent");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+            return RedirectToAction("PromoCodes");
+        }
+        #endregion
+
+        #region Helpers
+
+        private void CheckForToast()
 		{
 			ViewBag.ToastMessage = _httpContextAccessor.HttpContext.Session.Get<string>("ToastMessage");
 			ViewBag.ToastType = _httpContextAccessor.HttpContext.Session.Get<string>("ToastType");

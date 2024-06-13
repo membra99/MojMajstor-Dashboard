@@ -30,10 +30,12 @@ namespace Entities.Context
         public DbSet<Attributes> Attributes { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
 		public DbSet<Language> Languages { get; set; }
+        public DbSet<Newsletter> Newsletters { get; set; }
+        public DbSet<PromoCodes> PromoCodes { get; set; }
 
-		#endregion MainDataDataSET
+        #endregion MainDataDataSET
 
-		private void UniversalModelCreating(ModelBuilder modelBuilder)
+        private void UniversalModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Product>(entity =>
 			{
@@ -229,6 +231,10 @@ namespace Entities.Context
 				.WithMany(x => x.Invoices)
 				.OnDelete(DeleteBehavior.Restrict);
 			});
-		}
+            modelBuilder.Entity<Newsletter>(entity =>
+            {
+                entity.HasKey(x => x.NewsletterId);
+            });
+        }
     }
 }

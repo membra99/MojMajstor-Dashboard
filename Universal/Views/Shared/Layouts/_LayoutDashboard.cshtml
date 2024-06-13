@@ -143,8 +143,10 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item">@Html.ActionLinkIcon("Newsletters", "SendNewsLetter", "Dashboard", "fa-envelope", null, new { @class = "side-anchor" })</li>
                 <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper fa-menu", new { type = "Page", langid = 1 }, new { @class = "side-anchor" })</li>
                 <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open fa-menu", null, new { @class = "side-anchor" })</li>
+                <li class="nav-item">@Html.ActionLinkIcon("Promo codes", "PromoCodes", "Dashboard", "fa-solid fa-receipt", null, new { @class = "side-anchor" })</li>
                 <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf fa-menu", null, new { @class = "side-anchor" })</li>
                 <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import fa-menu", null, new { @class = "side-anchor" })</li>
             </ul>
@@ -364,7 +366,8 @@
             }
             //code for dynamic loading of add model modal elements for existing pages
             $("a.btn-dotnet").click(function (e) {
-                if ($(this).html() == "Add New Event" || $(this).html() == "Add New Blog" || $(this).html() == "Export in Excel" || $(this).html() == "Add New Page" || $(this).html() == "Add New Data") return true; // dont run for data/product because of the large size of modal
+                console.log();
+                if ($(this).html() == "Add new promo code" || $(this).html() == "Add New Event" || $(this).html() == "Add New Blog" || $(this).html() == "Export in Excel" || $(this).html() == "Add New Page" || $(this).html() == "Add New Data") return true; // dont run for data/product because of the large size of modal
                 e.preventDefault();
                 removePreviousHtml();
                 var hrefValue = $(this).attr("href");
