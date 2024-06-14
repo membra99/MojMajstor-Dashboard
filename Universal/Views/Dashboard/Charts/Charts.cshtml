@@ -1,0 +1,131 @@
+﻿@model Universal.DTO.ODTO.ChartsODTO
+
+@{
+    ViewData["Title"] = "Charts";
+    var CurrentYear = DateTime.Now.Year;
+}
+<style>
+    .tile_stats_count {
+        text-align: left;
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        width: 170px;
+        flex: 0 0 16.666667%;
+        min-height: 1px;
+        float: left;
+        padding: 0 10px 0 20px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        margin-bottom: 10px;
+        border-bottom: 0;
+        padding-bottom: 10px;
+    }
+
+    .tile_count .tile_stats_count:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        height: 65px;
+        border-left: 2px solid #ADB2B5;
+        margin-top: 10px;
+    }
+
+    .tile_count .tile_stats_count:first-child:before {
+        border-left: 0px;
+    }
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div>
+    <div>
+        <div class="row">
+            <div class="tile_count">
+                <div class="col-md-2 col-sm-4  tile_stats_count">
+                    <span class="count_top"></i>Total Register User</span>
+                    <div class="count" style="font-size:40px;">@Model.SumRegistredUser</div>
+                    <span class="count_bottom" style="font-size:13px;"></span>
+                </div>
+                <div class="col-md-2 col-sm-4  tile_stats_count">
+                    <span class="count_top"></i>Total Orders By Year</span>
+                    <div class="count" style="font-size:40px;">@Model.SumOrders</div>
+                    <span class="count_bottom" style="font-size:13px;"></span>
+                </div>
+                <div class="col-md-2 col-sm-4  tile_stats_count">
+                    <span class="count_top"></i> Total Revenue</span>
+                    <div class="count" style="font-size:40px;">@Model.TotalByYear</div>
+                    <span class="count_bottom" style="font-size:13px;"></span>
+                </div>
+                <div class="col-md-2 col-sm-4  tile_stats_count">
+                    <span class="count_top"></i> Total Products Delivered</span>
+                    <div class="count" style="font-size:40px;">@Model.TotalProductsDelivered</div>
+                    <span class="count_bottom" style="font-size:13px;"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        Choose Year: 
+        <select class="selectpicker">
+            @for (int i = 0; i <= 9; i++)
+            {
+                int year = CurrentYear - i;
+                <option value="@year">@year</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <canvas height="400px" width="1000px" id="myChart"></canvas>
+    </div>
+
+    <div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        var Values = @Json.Serialize(Model.SumByYear);
+        document.addEventListener("DOMContentLoaded", function () {
+            const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Summary by month',
+                        data: Values,
+                        borderColor: '#0A80D8',
+                        backgroundColor: '#FFFFFF',
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                },
+            };
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, config);
+        });
+    </script>
+
+}

@@ -786,7 +786,6 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
-
 		public async Task<IActionResult> SetPassword(string key)
 		{
 			try
@@ -1450,6 +1449,20 @@ namespace Universal.Admin_Controllers.AdminMVC
 			_httpContextAccessor.HttpContext.Session.Remove("ToastType");
 		}
 
-		#endregion Helpers
-	}
+        #endregion Helpers
+
+        public async Task<IActionResult> GetCharts()
+        {
+            try
+            {
+                var orders = await _mainDataServices.GetOrderForChart();
+                return View("Charts/Charts", orders);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+    }
 }

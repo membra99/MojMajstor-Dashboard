@@ -1592,4 +1592,41 @@ namespace Services
         }
         #endregion
     }
+		#endregion
+
+		#region Charts
+
+		public async Task<ChartsODTO> GetOrderForChart()
+		{
+			ChartsODTO retval = new ChartsODTO();
+
+            List<int> SumByMonth = new List<int>();
+            int sumQuantity = 0;
+			int sumOrders = 0;
+			for (int i = 1; i <= 12; i++)
+			{
+				var OrderByMonthSum = await _context.Orders.Where(x => x.OrderDate.Year == DateTime.Now.Year && x.OrderDate.Month == i).Select(x => x.OrderId).ToListAsync();
+				int SUMM = 0;
+				foreach (var item in OrderByMonthSum)
+				{
+					var summary = await _context.OrderDetails.Where(x => x.OrderId == item).Select(x => new { x.Quantity, x.ProductId }).SingleOrDefaultAsync();
+					var price = await _context.Products.Where(x => x.ProductId == summary.ProductId).Select(x => x.Price).SingleOrDefaultAsync();
+					SUMM += summary.Quantity * (int)price;
+					sumQuantity += summary.Quantity;
+					sumOrders++;
+
+                }
+				SumByMonth.Add(SUMM);
+			}
+			retval.SumByYear = SumByMonth;
+			retval.SumRegistredUser = await _context.Users.CountAsync(x => x.Role == "User" && x.IsActive == true);
+			retval.SumOrders = sumOrders;
+            retval.TotalByYear = SumByMonth.Sum();
+			retval.TotalProductsDelivered = sumQuantity;
+
+			return retval;
+        }
+
+		#endregion
+	}
 }
