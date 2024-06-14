@@ -1566,31 +1566,31 @@ namespace Services
 		public async Task<PromoCodeCheckIDTO> CheckPromocode(PromoCodeCheckIDTO promoCodeCheckIDTO)
 		{
 
-			var currentDate = DateTime.Now;
-			var promocodefromdb = await _context.PromoCodes
-				.Where(x => x.PromoCode == promoCodeCheckIDTO.promocode
-						 && x.StartDate <= currentDate
-						 && x.EndDate >= currentDate)
-				.SingleOrDefaultAsync();
-			if (promocodefromdb != null)
-			{
-				string promocodeValue = promocodefromdb.PromoCodeValue.ToString();
-				if (promocodeValue.Contains("%"))
-				{
-					float percentage = Convert.ToInt32(promocodeValue.Replace("%", ""));
-					float decPercentage = percentage / 100;
-					promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - (promoCodeCheckIDTO.productPrice * decPercentage);
-				}
-				if (promocodeValue.Contains("din"))
-				{
-					int value = Convert.ToInt32(promocodeValue.Replace("din", ""));
-					promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - value;
-				}
-				return promoCodeCheckIDTO;
-			}
-			return null;
-		}
-		#endregion
+            var currentDate = DateTime.Now;
+            var promocodefromdb = await _context.PromoCodes
+                .Where(x => x.PromoCode == promoCodeCheckIDTO.promocode
+                         && x.StartDate <= currentDate
+                         && x.EndDate >= currentDate)
+                .SingleOrDefaultAsync();
+            if (promocodefromdb != null)
+            {
+                string promocodeValue = promocodefromdb.PromoCodeValue.ToString();
+                if (promocodeValue.Contains("%"))
+                {
+                    float percentage = Convert.ToInt32(promocodeValue.Replace("%", ""));
+                    float decPercentage = percentage / 100;
+                    promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - (promoCodeCheckIDTO.productPrice * decPercentage);
+                }
+                if (promocodeValue.Contains("din"))
+                {
+                    int value = Convert.ToInt32(promocodeValue.Replace("din", ""));
+                    promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - value;
+                }
+                return promoCodeCheckIDTO;
+            }
+            return null;
+        }
+        #endregion
 
 		#region Charts
 
