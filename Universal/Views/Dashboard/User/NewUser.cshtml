@@ -151,7 +151,6 @@
     <script id="loadScriptDynamic">
         let loaded = false;
         let loadFile = function (event) {
-            console.log("AAAA");
             let image = document.getElementById('avatar-preview');
             image.src = URL.createObjectURL(event.target.files[0]);
             let element = document.getElementById('unset');

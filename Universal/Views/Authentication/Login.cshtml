@@ -14,25 +14,33 @@
                 </div>
                 <div class="p-2 d-flex justify-content-end">
                     <img class="logo-login" src="\images\Logo.svg" alt="logo" width="80px" />
-               </div>
+                </div>
             </div>
 
             @using (Html.BeginForm("Login", "Authentication", FormMethod.Post))
             {
                 <div class="mb-3">
                     @Html.Label("Username:")
-                    @Html.TextBoxFor(model => model.Email, null, new { @class="form-control", placeholder = "Email"})
-                    @Html.ValidationMessageFor(model => model.Email, null, new { @class="text-danger" })
+                    @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
+                    @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
                 </div>
                 <div class="mb-4">
                     @Html.Label("Password:")
-                    @Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
-                    @Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
+                    @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password" })
+                    @Html.ValidationMessageFor(model => model.Password, null, new { @class = "text-danger" })
                 </div>
                 <div class="mx-auto mb-3">
-                    <input type="submit" value="Log in" class="form-control p-2 btn-dotnet" />
+                    <input type="submit" value="Log in" id="loginBtn" class="form-control p-2 btn-dotnet" />
                 </div>
             }
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $("#loginBtn").on("click", function () {
+            $("#loginBtn").append(``);
+        });
+    </script>
+}

@@ -130,6 +130,8 @@ body {
 }
 
 .logout-user {
+    display: flex;
+    align-items: center;
     font-size: 20px;
     position: relative;
     bottom: 8px;
@@ -139,6 +141,10 @@ body {
     .logout-user i {
         color: #667085 !important;
     }
+
+        .logout-user i:hover {
+            color: #0A80D8 !important;
+        }
 
 .user-meta {
     margin-left: 12px;
