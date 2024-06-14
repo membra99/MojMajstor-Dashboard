@@ -14,20 +14,20 @@ using Seo = Entities.Universal.MainData.Seo;
 
 namespace Services
 {
-    public class MainDataServices : BaseServices
+	public class MainDataServices : BaseServices
 	{
 		public static UsersServices _userServices;
 		private readonly IAWSS3FileService _AWSS3FileService;
 		private readonly IAWSS3BucketHelper _AWSS3BucketHelper;
-        private readonly IOptions<EmailSettings> _emailSettings;
+		private readonly IOptions<EmailSettings> _emailSettings;
 
-        public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService, IAWSS3BucketHelper aWSS3BucketHelper, IOptions<EmailSettings> emailSettings) : base(context, mapper)
+		public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService, IAWSS3BucketHelper aWSS3BucketHelper, IOptions<EmailSettings> emailSettings) : base(context, mapper)
 		{
 			_userServices = usersServices;
 			_AWSS3FileService = AWSS3FileService;
 			_AWSS3BucketHelper = aWSS3BucketHelper;
-            _emailSettings = emailSettings;
-        }
+			_emailSettings = emailSettings;
+		}
 
 		public List<ChildODTO> children = new List<ChildODTO>();
 		private int i = 0;
@@ -107,18 +107,18 @@ namespace Services
 						newMed.MediaTypeId = 5;
 						newMed.Src = checkImage.Src;
 						newMed.Extension = checkImage.Extension;
-                        newMed.MetaDescription = checkImage.MetaDescription;
-                        newMed.AltTitle = checkImage.AltTitle;
+						newMed.MetaDescription = checkImage.MetaDescription;
+						newMed.AltTitle = checkImage.AltTitle;
 						newMed.MimeType = checkImage.MimeType;
-                        newMed.MetaTitle = checkImage.MetaTitle.Split("_")[0] + "_" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
-                        _context.Medias.Add(newMed);
-                        await SaveContextChangesAsync();
+						newMed.MetaTitle = checkImage.MetaTitle.Split("_")[0] + "_" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+						_context.Medias.Add(newMed);
+						await SaveContextChangesAsync();
 					}
 					else
 					{
 						checkImage.ProductId = productId;
 						checkImage.MediaTypeId = 5;
-                        _context.Medias.Entry(checkImage).State = EntityState.Modified;
+						_context.Medias.Entry(checkImage).State = EntityState.Modified;
 						await SaveContextChangesAsync();
 					}
 				}
@@ -1447,151 +1447,149 @@ namespace Services
 			return await GetTagsIDTO(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
-        #endregion
+		#endregion
 
-        #region Newsletters
-        public async Task<List<Newsletter>> GetAllNewsletterMails()
-        {
-            return await _context.Newsletters.ToListAsync();
-        }
+		#region Newsletters
+		public async Task<List<Newsletter>> GetAllNewsletterMails()
+		{
+			return await _context.Newsletters.ToListAsync();
+		}
 
-        public async Task<string> InsertNewsletterUser(string email)
-        {
-            var newsletterUsers = await _context.Newsletters.ToListAsync();
-            if (email != null && !(newsletterUsers.Any(x => x.NewsletterMail == email)))
-            {
-                var newsletter = new Newsletter();
-                newsletter.NewsletterId = 0;
-                newsletter.NewsletterMail = email;
-                _context.Newsletters.Add(newsletter);
-                await SaveContextChangesAsync();
-                return "You have been registered to our newsletters";
-            }
-            return "You are already subscribied to our newsletters";
-        }
+		public async Task<string> InsertNewsletterUser(string email)
+		{
+			var newsletterUsers = await _context.Newsletters.ToListAsync();
+			if (email != null && !(newsletterUsers.Any(x => x.NewsletterMail == email)))
+			{
+				var newsletter = new Newsletter();
+				newsletter.NewsletterId = 0;
+				newsletter.NewsletterMail = email;
+				_context.Newsletters.Add(newsletter);
+				await SaveContextChangesAsync();
+				return "You have been registered to our newsletters";
+			}
+			return "You are already subscribied to our newsletters";
+		}
 
-        public async Task<string> UnsubscribeFromNewsletter(string useremail)
-        {
-            var newsletterUser = await _context.Newsletters.Where(x => x.NewsletterMail == useremail).SingleOrDefaultAsync();
-            if (newsletterUser != null)
-            {
-                _context.Newsletters.Remove(newsletterUser);
-                await SaveContextChangesAsync();
-                return "You are unsubscribed from our newsletter";
-            }
-            return "You are already unsubscribed from our newsletter";
-        }
-        #endregion
+		public async Task<string> UnsubscribeFromNewsletter(string useremail)
+		{
+			var newsletterUser = await _context.Newsletters.Where(x => x.NewsletterMail == useremail).SingleOrDefaultAsync();
+			if (newsletterUser != null)
+			{
+				_context.Newsletters.Remove(newsletterUser);
+				await SaveContextChangesAsync();
+				return "You are unsubscribed from our newsletter";
+			}
+			return "You are already unsubscribed from our newsletter";
+		}
+		#endregion
 
-        #region PromoCodes
+		#region PromoCodes
 
-        public async Task<List<PromocodesODTO>> GetAllPromoCodes()
-        {
-            var promocodes = await _context.PromoCodes.Select(x => _mapper.Map<PromocodesODTO>(x)).ToListAsync();
-            foreach (var promocode in promocodes)
-            {
-                DateTime startDate = DateTime.Parse(promocode.StartDate);
-                DateTime endDate = DateTime.Parse(promocode.EndDate);
+		public async Task<List<PromocodesODTO>> GetAllPromoCodes()
+		{
+			var promocodes = await _context.PromoCodes.Select(x => _mapper.Map<PromocodesODTO>(x)).ToListAsync();
+			foreach (var promocode in promocodes)
+			{
+				DateTime startDate = DateTime.Parse(promocode.StartDate);
+				DateTime endDate = DateTime.Parse(promocode.EndDate);
 
-                if (promocode.StartDate != null && promocode.EndDate != null)
-                {
-                    if (DateTime.Now >= startDate && DateTime.Now <= endDate)
-                        promocode.IsActive = true;
-                    else
-                        promocode.IsActive = false;
+				if (promocode.StartDate != null && promocode.EndDate != null)
+				{
+					if (DateTime.Now >= startDate && DateTime.Now <= endDate)
+						promocode.IsActive = true;
+					else
+						promocode.IsActive = false;
 
-                    promocode.StartDate = startDate.ToString("dd/MMM/yyyy");
-                    promocode.EndDate = endDate.ToString("dd/MMM/yyyy");
+					promocode.StartDate = startDate.ToString("dd/MMM/yyyy");
+					promocode.EndDate = endDate.ToString("dd/MMM/yyyy");
 
-                }
-                else
-                {
-                    promocode.IsActive = false;
-                }
-            }
+				}
+				else
+				{
+					promocode.IsActive = false;
+				}
+			}
 
-            return promocodes;
-        }
+			return promocodes;
+		}
 
-        public async Task AddNewPromocode(PromoCodesIDTO promoCode)
-        {
-            var promocode = _mapper.Map<PromoCodes>(promoCode);
-            promocode.CreatedAt = DateTime.Now;
-            _context.PromoCodes.Add(promocode);
-            await SaveContextChangesAsync();
-        }
+		public async Task AddNewPromocode(PromoCodesIDTO promoCode)
+		{
+			var promocode = _mapper.Map<PromoCodes>(promoCode);
+			promocode.CreatedAt = DateTime.Now;
+			_context.PromoCodes.Add(promocode);
+			await SaveContextChangesAsync();
+		}
 
-        public async Task<PromoCodesIDTO> GetPromocodeById(int promoCodeId)
-        {
-            var promocode = await _context.PromoCodes.Where(x => x.PromoCodesId == promoCodeId).Select(x => _mapper.Map<PromoCodesIDTO>(x)).SingleOrDefaultAsync();
+		public async Task<PromoCodesIDTO> GetPromocodeById(int promoCodeId)
+		{
+			var promocode = await _context.PromoCodes.Where(x => x.PromoCodesId == promoCodeId).Select(x => _mapper.Map<PromoCodesIDTO>(x)).SingleOrDefaultAsync();
 			return promocode;
-        }
+		}
 
-        public async Task<PromoCodesIDTO> EditPromocode(PromoCodesIDTO promoCode)
-        {
-            var promocode = _mapper.Map<PromoCodes>(promoCode);
-            _context.Entry(promocode).State = EntityState.Modified;
-            await SaveContextChangesAsync();
-            return promoCode;
-        }
+		public async Task<PromoCodesIDTO> EditPromocode(PromoCodesIDTO promoCode)
+		{
+			var promocode = _mapper.Map<PromoCodes>(promoCode);
+			_context.Entry(promocode).State = EntityState.Modified;
+			await SaveContextChangesAsync();
+			return promoCode;
+		}
 
-        public async Task<string> DeletePromocode(int promoCodeId)
-        {
-            var promocode = await _context.PromoCodes.FindAsync(promoCodeId);
-            if (promocode != null)
-            {
-                _context.PromoCodes.Remove(promocode);
-                await SaveContextChangesAsync();
-                return "done";
-            }
-            return "no promocode found";
-        }
+		public async Task<string> DeletePromocode(int promoCodeId)
+		{
+			var promocode = await _context.PromoCodes.FindAsync(promoCodeId);
+			if (promocode != null)
+			{
+				_context.PromoCodes.Remove(promocode);
+				await SaveContextChangesAsync();
+				return "done";
+			}
+			return "no promocode found";
+		}
 
-        public async Task<string> SendPromoCode(PromoCodesIDTO promoCodesIDTO)
-        {
-            var activeUsers = await _context.Users.Where(x => x.IsActive == true).ToListAsync();
-            MailService ms = new MailService(_emailSettings);
-            foreach (var user in activeUsers)
-            {
-                ms.SendEmail(new EmailIDTO
-                {
-                    To = user.Email,
-                    Subject = "Bliss Yoga Promo Kod",
-                    Body = "Iskoristite promo kod <br/> <h2>" + promoCodesIDTO.PromoCode + "</h2>" + "od " + promoCodesIDTO.StartDate + " do " + promoCodesIDTO.EndDate + " i ostvarite " + promoCodesIDTO.PromoCodeValue + " popusta na sve Bliss Yoga časove" + "<br/> " + promoCodesIDTO.Message + "<br/><br/>" + "BlissYoga"
-                });
-            }
-            return "done";
-        }
+		public async Task<string> SendPromoCode(PromoCodesIDTO promoCodesIDTO)
+		{
+			var activeUsers = await _context.Users.Where(x => x.IsActive == true).ToListAsync();
+			MailService ms = new MailService(_emailSettings);
+			foreach (var user in activeUsers)
+			{
+				ms.SendEmail(new EmailIDTO
+				{
+					To = user.Email,
+					Subject = "Bliss Yoga Promo Kod",
+					Body = "Iskoristite promo kod <br/> <h2>" + promoCodesIDTO.PromoCode + "</h2>" + "od " + promoCodesIDTO.StartDate + " do " + promoCodesIDTO.EndDate + " i ostvarite " + promoCodesIDTO.PromoCodeValue + " popusta na sve Bliss Yoga časove" + "<br/> " + promoCodesIDTO.Message + "<br/><br/>" + "BlissYoga"
+				});
+			}
+			return "done";
+		}
 
-        public async Task<PromoCodeCheckIDTO> CheckPromocode(PromoCodeCheckIDTO promoCodeCheckIDTO)
-        {
+		public async Task<PromoCodeCheckIDTO> CheckPromocode(PromoCodeCheckIDTO promoCodeCheckIDTO)
+		{
 
-            var currentDate = DateTime.Now;
-            var promocodefromdb = await _context.PromoCodes
-                .Where(x => x.PromoCode == promoCodeCheckIDTO.promocode
-                         && x.StartDate <= currentDate
-                         && x.EndDate >= currentDate)
-                .SingleOrDefaultAsync();
-            if (promocodefromdb != null)
-            {
-                string promocodeValue = promocodefromdb.PromoCodeValue.ToString();
-                if (promocodeValue.Contains("%"))
-                {
-                    float percentage = Convert.ToInt32(promocodeValue.Replace("%", ""));
-                    float decPercentage = percentage / 100;
-                    promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - (promoCodeCheckIDTO.productPrice * decPercentage);
-                }
-                if (promocodeValue.Contains("din"))
-                {
-                    int value = Convert.ToInt32(promocodeValue.Replace("din", ""));
-                    promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - value;
-                }
-                return promoCodeCheckIDTO;
-            }
-            return null;
-        }
-        #endregion
-    }
+			var currentDate = DateTime.Now;
+			var promocodefromdb = await _context.PromoCodes
+				.Where(x => x.PromoCode == promoCodeCheckIDTO.promocode
+						 && x.StartDate <= currentDate
+						 && x.EndDate >= currentDate)
+				.SingleOrDefaultAsync();
+			if (promocodefromdb != null)
+			{
+				string promocodeValue = promocodefromdb.PromoCodeValue.ToString();
+				if (promocodeValue.Contains("%"))
+				{
+					float percentage = Convert.ToInt32(promocodeValue.Replace("%", ""));
+					float decPercentage = percentage / 100;
+					promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - (promoCodeCheckIDTO.productPrice * decPercentage);
+				}
+				if (promocodeValue.Contains("din"))
+				{
+					int value = Convert.ToInt32(promocodeValue.Replace("din", ""));
+					promoCodeCheckIDTO.productPrice = promoCodeCheckIDTO.productPrice - value;
+				}
+				return promoCodeCheckIDTO;
+			}
+			return null;
+		}
 		#endregion
 
 		#region Charts
@@ -1600,8 +1598,8 @@ namespace Services
 		{
 			ChartsODTO retval = new ChartsODTO();
 
-            List<int> SumByMonth = new List<int>();
-            int sumQuantity = 0;
+			List<int> SumByMonth = new List<int>();
+			int sumQuantity = 0;
 			int sumOrders = 0;
 			for (int i = 1; i <= 12; i++)
 			{
@@ -1615,18 +1613,17 @@ namespace Services
 					sumQuantity += summary.Quantity;
 					sumOrders++;
 
-                }
+				}
 				SumByMonth.Add(SUMM);
 			}
 			retval.SumByYear = SumByMonth;
 			retval.SumRegistredUser = await _context.Users.CountAsync(x => x.Role == "User" && x.IsActive == true);
 			retval.SumOrders = sumOrders;
-            retval.TotalByYear = SumByMonth.Sum();
+			retval.TotalByYear = SumByMonth.Sum();
 			retval.TotalProductsDelivered = sumQuantity;
 
 			return retval;
-        }
-
+		}
 		#endregion
 	}
 }
