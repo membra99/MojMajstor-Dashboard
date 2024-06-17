@@ -93,90 +93,96 @@
 <body>
     <div class="m-0 p-0">
         <aside class="side-navigation">
-            <ul class="side-list sidenav">
-                <li class="nav-item">
-                    <a href="#" class="home-section d-flex align-items-center justify-content-center p-4 gap-2" style="text-decoration: none; color: grey; font;">
-                        <img src="~/images/Logo.svg" class="home-section" width="35" height="auto" />
-                        <span class="home-link">Universal</span>
-                    </a>
-                </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-thin fa-users", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-solid fa-file-pen", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item dropdown-btn">
-                    <span class="side-anchor">
-                        <i class="fa-solid fa-photo-film fa-menu icon-spacing"></i>
-                        <span class="nav-item-title">Media</span>
-                        <i class="fa fa-chevron-down mt-1"></i>
-                    </span>
-                    <ul class="navbar-nav dropdown-container">
-                        <li>
-                            @Html.ActionLink("Photo Gallery", "AllGallery", "Dashboard", null, new { @class = "side-anchor" })
-                            @Html.ActionLink("Video Gallery", "AllVideos", "Dashboard", null, new { @class = "side-anchor" })
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown-btn">
-                    <span class="side-anchor">
-                        <i class="fa fa-table-list icon-spacing fa-menu "></i>
-                        <span class="nav-item-title">Categories</span>
-                        <i class="fa fa-chevron-down mt-1"></i>
-                    </span>
-                    <ul class="navbar-nav dropdown-container">
-                        <li>
-                            @*TODO Promeniti lang da ide iz sesije*@
-                            @Html.ActionLink("Category Tree", "AllCategories", "Dashboard", null, new { @class = "side-anchor" })
-                            @Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new { @class = "side-anchor" })
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Declarations", "AllDeclaration", "Dashboard", "fa-solid fa-certificate fa-menu icon-spacing", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item dropdown-btn">
-                    <span class="side-anchor">
-                        <i class="fa fa-solid fa-blog icon-spacing"></i>
-                        <span class="nav-item-title">Blogs</span>
-                        <i class="fa fa-chevron-down mt-1"></i>
-                    </span>
-                    <ul class="navbar-nav dropdown-container">
-                        <li>
-                            @Html.ActionLink("Blogs", "AllSiteContent", "Dashboard", new { type = "Blog" }, new { @class = "side-anchor" })
-                            @Html.ActionLink("All Tags", "AllTags", "Dashboard", null, new { @class = "side-anchor" })
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">@Html.ActionLinkIcon("Newsletters", "SendNewsLetter", "Dashboard", "fa-envelope", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper fa-menu", new { type = "Page", langid = 1 }, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open fa-menu", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Promo codes", "PromoCodes", "Dashboard", "fa-solid fa-receipt", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf fa-menu", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import fa-menu", null, new { @class = "side-anchor" })</li>
-                <li class="nav-item">@Html.ActionLinkIcon("Charts", "GetCharts", "Dashboard", "fa-solid fa-chart-line", null, new { @class = "side-anchor" })</li>
-            </ul>
-            <div class="user-info">
-                <hr class="horizontal-rule-spec" />
-                <div class="user-info-container d-flex">
-                    <div class="user-image">
-                        @if (user.ImageSrc == null)
-                        {
-                            <img width="43" height="40" src="~/images/noimage-person.png" alt="userimage" />
-                        }
-                        else
-                        {
-                            <img width="43" height="40" src="@Url.Action("GetImage","Dashboard",new {path = user.ImageSrc})" />
-                        }
+            <div class="aside-header">
+                <a href="#" class="home-section d-flex align-items-center justify-content-center p-4 gap-2" style="text-decoration: none; color: grey; font;">
+                    <img src="~/images/Logo.svg" class="home-section" width="35" height="auto" />
+                    <span class="home-link">Universal</span>
+                </a>
+            </div>
 
-                    </div>
-                    <div class="user-meta">
-                        <span class="username-meta">
-                            @user.FirstName @user.LastName
+            <div class="aside-body">
+                <ul class="side-list sidenav">
+                    <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-thin fa-users", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-solid fa-file-pen", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item dropdown-btn">
+                        <span class="side-anchor">
+                            <i class="fa-solid fa-photo-film fa-menu icon-spacing"></i>
+                            <span class="nav-item-title">Media</span>
+                            <i class="fa fa-chevron-down mt-1"></i>
                         </span>
-                        <span class="email-meta">
-                            @user.Email
+                        <ul class="navbar-nav dropdown-container">
+                            <li>
+                                @Html.ActionLink("Photo Gallery", "AllGallery", "Dashboard", null, new { @class = "side-anchor" })
+                                @Html.ActionLink("Video Gallery", "AllVideos", "Dashboard", null, new { @class = "side-anchor" })
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown-btn">
+                        <span class="side-anchor">
+                            <i class="fa fa-table-list icon-spacing fa-menu "></i>
+                            <span class="nav-item-title">Categories</span>
+                            <i class="fa fa-chevron-down mt-1"></i>
                         </span>
+                        <ul class="navbar-nav dropdown-container">
+                            <li>
+                                @*TODO Promeniti lang da ide iz sesije*@
+                                @Html.ActionLink("Category Tree", "AllCategories", "Dashboard", null, new { @class = "side-anchor" })
+                                @Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new { @class = "side-anchor" })
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Declarations", "AllDeclaration", "Dashboard", "fa-solid fa-certificate fa-menu icon-spacing", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item dropdown-btn">
+                        <span class="side-anchor">
+                            <i class="fa fa-solid fa-blog icon-spacing"></i>
+                            <span class="nav-item-title">Blogs</span>
+                            <i class="fa fa-chevron-down mt-1"></i>
+                        </span>
+                        <ul class="navbar-nav dropdown-container">
+                            <li>
+                                @Html.ActionLink("Blogs", "AllSiteContent", "Dashboard", new { type = "Blog" }, new { @class = "side-anchor" })
+                                @Html.ActionLink("All Tags", "AllTags", "Dashboard", null, new { @class = "side-anchor" })
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Newsletters", "SendNewsLetter", "Dashboard", "fa-envelope", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper fa-menu", new { type = "Page", langid = 1 }, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open fa-menu", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Promo codes", "PromoCodes", "Dashboard", "fa-solid fa-receipt", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf fa-menu", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import fa-menu", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Charts", "GetCharts", "Dashboard", "fa-solid fa-chart-line", null, new { @class = "side-anchor" })</li>
+                </ul>
+            </div>
+            
+            <div class="aside-footer">
+                    <hr class="horizontal-rule-spec" />
+                    <div class="user-info-container">
+                      <div class="user-info">
+                        <div class="user-image">
+                            @if (user.ImageSrc == null)
+                            {
+                                <img width="46" height="43" src="~/images/noimage-person.png" alt="userimage" />
+                            }
+                            else
+                            {
+                                <img width="46" height="43" src="@Url.Action("GetImage","Dashboard",new {path = user.ImageSrc})" />
+                            }
+
+                        </div>
+                        <div class="user-meta">
+                            <span class="username-meta">
+                                @user.FirstName @user.LastName
+                            </span>
+                            <span class="email-meta">
+                                @user.Email
+                            </span>
+                        </div>
+                        <div class="logout-user">
+                            <a href="/Authentication/Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                        </div>
+                      </div>
                     </div>
-                    <div class="logout-user">
-                        <a href="/Authentication/Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-                    </div>
-                </div>
             </div>
         </aside>
         <div class="content-wrapper">
