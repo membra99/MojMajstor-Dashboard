@@ -930,10 +930,14 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 			try
 			{
-
 				var product = await _mainDataServices.AddProduct(dataIDTO.ProductIDTO);
 
-				AWSFileUpload awsFile = new AWSFileUpload();
+                if (dataIDTO.MediaId != null)
+                {
+                    await _mainDataServices.AddMediaForProduct(dataIDTO.MediaId, "Featured Image", product.ProductId);
+                }
+
+                AWSFileUpload awsFile = new AWSFileUpload();
 				awsFile.Attachments = new List<IFormFile>();
 				if (dataIDTO.FeaturedImage != null)
 					awsFile.Attachments.Add(dataIDTO.FeaturedImage);

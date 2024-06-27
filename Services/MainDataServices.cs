@@ -363,10 +363,24 @@ namespace Services
 			return await _context.SaleTypes.Select(x => _mapper.Map<SaleTypeODTO>(x)).ToListAsync();
 		}
 
-		public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
+        public async Task<MediaODTO> AddMediaForProduct(int? MediaId, string mediaType, int? productId)
+        {
+            var mediaSrc = await _context.Medias.Where(x => x.MediaId == MediaId).Select(x => x.Src).SingleOrDefaultAsync();
+            var media = new Media();
+            media.ProductId = productId;
+            media.Extension = Path.GetExtension(mediaSrc);
+            media.Src = mediaSrc;
+            media.MetaTitle = media.Src.Substring(media.Src.LastIndexOf('/') + 1);
+            media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
+            _context.Medias.Add(media);
+            await SaveContextChangesAsync();
+            return _mapper.Map<MediaODTO>(media);
+        }
+
+        public async Task<ProductIDTO> GetProductsByIdForEdit(int id)
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
-			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 4).Select(x => x.Src).SingleOrDefaultAsync();
+			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 3).Select(x => x.Src).SingleOrDefaultAsync();
 			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
@@ -465,7 +479,7 @@ namespace Services
 
 		public async Task EditFeaturedImage(int productId, int mediaId)
 		{
-			var currentImage = _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 4).FirstOrDefault();
+			var currentImage = _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3).FirstOrDefault();
 			if (currentImage != null)
 			{
 				currentImage.ProductId = null;
@@ -476,7 +490,7 @@ namespace Services
 				if (newMedia.ProductId == null)
 				{
 					newMedia.ProductId = productId;
-					newMedia.MediaTypeId = 4;
+					newMedia.MediaTypeId = 3;
 					_context.Entry(newMedia).State = EntityState.Modified;
 					await SaveContextChangesAsync();
 				}
@@ -484,7 +498,7 @@ namespace Services
 				{
 					Media newInsertMedia = new Media();
 					newInsertMedia.ProductId = productId;
-					newInsertMedia.MediaTypeId = 4;
+					newInsertMedia.MediaTypeId = 3;
 					newInsertMedia.Src = await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
 					newInsertMedia.Extension = Path.GetExtension(newInsertMedia.Src);
 					int lastIndex = newInsertMedia.Src.LastIndexOf('/');
@@ -497,7 +511,7 @@ namespace Services
 			{
 				Media newInsertMedia = new Media();
 				newInsertMedia.ProductId = productId;
-				newInsertMedia.MediaTypeId = 4;
+				newInsertMedia.MediaTypeId = 3;
 				newInsertMedia.Src = await _context.Medias.Where(x => x.MediaId == mediaId).Select(x => x.Src).SingleOrDefaultAsync();
 				newInsertMedia.Extension = Path.GetExtension(newInsertMedia.Src);
 				int lastIndex = newInsertMedia.Src.LastIndexOf('/');

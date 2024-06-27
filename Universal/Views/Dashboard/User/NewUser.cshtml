@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal fade" id="addImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <!-- Use modal-lg class for a larger modal -->
                 <div class="modal-content">
@@ -133,9 +133,8 @@
 
         <div class="row">
             <div class="form-group col-12 mb-3">
-                @Html.LabelRequiredFor(model => model.Avatar, "Avatar:", true)
+                @Html.LabelFor(model => model.Avatar, "Avatar:")
                 <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
-                @Html.ValidationMessageFor(model => model.Avatar, null, new { @class = "text-danger" })
             </div>
 
         </div>
@@ -150,6 +149,7 @@
 @section Scripts {
     <script id="loadScriptDynamic">
         let loaded = false;
+        let IsImgUnset = false;
         let loadFile = function (event) {
             let image = document.getElementById('avatar-preview');
             image.src = URL.createObjectURL(event.target.files[0]);
@@ -235,10 +235,31 @@
         });
 
         let mediaId = null;
-        $("#saveImageButton").click(function () {
+        $("#saveImageButton").click(function (event) {
             $("#input-media").val(mediaId);
-            console.log($("#input-media").val());
+            if (mediaId != null) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Dashboard/GetImageFromGallery?mediaId=' + mediaId,
+                    contentType: 'application/json',
+                    success: function (response) {
+                        let image = document.getElementById('avatar-preview');
+                        image.src = '/Dashboard/GetImage?path=' + response + '';
+                        let element = document.getElementById('unset');
+                        element.classList.add("hover-unset");
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            }
             $('#addImageModal').modal('hide');
+            if (IsImgUnset) {
+                IsImgUnset = false;
+                let image = document.getElementById('content-preview');
+                image.src = '@Url.Action("GetImage", "Dashboard", null)';
+                event.preventDefault();
+            }
         });
     </script>
 }
