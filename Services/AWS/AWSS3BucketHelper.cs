@@ -96,17 +96,34 @@ namespace Services.AWS
 			return listObjectsV2Responses;
 		}
 
-		public async Task<List<string>> FilesListSearch(string fileName)
-		{
-			var data = _amazonS3.ListVersionsAsync(_settings.AWSS3.BucketName).Result;
-			ListObjectsV2Request req = new ListObjectsV2Request
-			{
-				BucketName = _settings.AWSS3.BucketName
-			};
-			return _amazonS3.ListObjectsV2Async(req).Result.S3Objects.Where(e => e.Key.Contains(fileName)).Select(e => _settings.AWSS3.BucketURL + e.Key).ToList();
-		}
+        public async Task<List<string>> FilesListSearch(string fileName)
+        {
+            var allObjects = new List<S3Object>();
+            string continuationToken = null;
 
-		public async Task<Stream> GetFile(string key)
+            do
+            {
+                var req = new ListObjectsV2Request
+                {
+                    BucketName = _settings.AWSS3.BucketName,
+                    ContinuationToken = continuationToken
+                };
+
+                var response = await _amazonS3.ListObjectsV2Async(req);
+                allObjects.AddRange(response.S3Objects);
+                continuationToken = response.NextContinuationToken;
+
+            } while (continuationToken != null);
+
+            var filteredObjects = allObjects
+                .Where(e => e.Key.Contains(fileName))
+                .Select(e => _settings.AWSS3.BucketURL + e.Key)
+                .ToList();
+
+            return filteredObjects;
+        }
+
+        public async Task<Stream> GetFile(string key)
 		{
 			GetObjectRequest request = new GetObjectRequest
 			{
