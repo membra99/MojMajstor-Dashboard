@@ -1608,16 +1608,22 @@ namespace Services
 
 		#region Charts
 
-		public async Task<ChartsODTO> GetOrderForChart()
+		public async Task<ChartsODTO> GetOrderForChart(int? year)
 		{
 			ChartsODTO retval = new ChartsODTO();
+            retval.barChartODTO = new BarChartODTO();
 
+            int Currentyear = DateTime.Now.Year;
+			if(year != null)
+			{
+				Currentyear = (int)year;
+			}
 			List<int> SumByMonth = new List<int>();
 			int sumQuantity = 0;
 			int sumOrders = 0;
 			for (int i = 1; i <= 12; i++)
 			{
-				var OrderByMonthSum = await _context.Orders.Where(x => x.OrderDate.Year == DateTime.Now.Year && x.OrderDate.Month == i).Select(x => x.OrderId).ToListAsync();
+				var OrderByMonthSum = await _context.Orders.Where(x => x.OrderDate.Year == Currentyear && x.OrderDate.Month == i).Select(x => x.OrderId).ToListAsync();
 				int SUMM = 0;
 				foreach (var item in OrderByMonthSum)
 				{
@@ -1629,14 +1635,58 @@ namespace Services
 
 				}
 				SumByMonth.Add(SUMM);
-			}
+            }
 			retval.SumByYear = SumByMonth;
 			retval.SumRegistredUser = await _context.Users.CountAsync(x => x.Role == "User" && x.IsActive == true);
 			retval.SumOrders = sumOrders;
 			retval.TotalByYear = SumByMonth.Sum();
 			retval.TotalProductsDelivered = sumQuantity;
 
-			return retval;
+            var topProducts = await _context.OrderDetails
+                                     .GroupBy(p => p.ProductId)
+                                     .Select(g => new
+                                     {
+                                         ProductId = g.Key,
+                                         TotalQuantity = g.Sum(p => p.Quantity),
+										 TotalOrder = g.Count()
+                                     })
+                                     .OrderByDescending(p => p.TotalQuantity)
+                                     .Take(5)
+                                     .ToListAsync();
+			retval.TopProductsCharts = new List<TopProductsChartODTO>();
+            var totalOrderCount = await _context.Orders.CountAsync();
+            foreach (var item in topProducts)
+			{
+				TopProductsChartODTO topProductsChartODTO = new();
+				topProductsChartODTO.ProductsName = await _context.Products.Where(x => x.ProductId == item.ProductId).Select(x => x.ProductName).SingleOrDefaultAsync();
+				topProductsChartODTO.ProductOrders = (int)item.TotalQuantity;
+				
+				topProductsChartODTO.TotalOrdersPercentage = (((double)item.TotalOrder / totalOrderCount) * 100);
+				retval.TopProductsCharts.Add(topProductsChartODTO);
+            }
+
+            int currentYear = DateTime.Now.Year;
+			retval.barChartODTO.Years = new List<string>();
+			retval.barChartODTO.Values = new List<int>();
+            for (int i = 9; i >= 0; i--)
+            {
+                retval.barChartODTO.Years.Add((currentYear - i).ToString());
+            }
+
+            for (int i = 0; i < retval.barChartODTO.Years.Count(); i++)
+            {
+                var OrderByMonthSum = await _context.Orders.Where(x => x.OrderDate.Year == int.Parse(retval.barChartODTO.Years[i])).Select(x => x.OrderId).ToListAsync();
+                int SUMM = 0;
+                foreach (var item in OrderByMonthSum)
+                {
+                    var summary = await _context.OrderDetails.Where(x => x.OrderId == item).Select(x => new { x.Quantity, x.ProductId }).SingleOrDefaultAsync();
+                    var price = await _context.Products.Where(x => x.ProductId == summary.ProductId).Select(x => x.Price).SingleOrDefaultAsync();
+                    SUMM += summary.Quantity * (int)price;
+                }
+				retval.barChartODTO.Values.Add(SUMM);
+            }
+
+            return retval;
 		}
 		#endregion
 	}

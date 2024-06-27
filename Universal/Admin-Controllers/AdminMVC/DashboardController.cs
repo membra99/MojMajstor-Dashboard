@@ -1459,7 +1459,7 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             try
             {
-                var orders = await _mainDataServices.GetOrderForChart();
+				var orders = await _mainDataServices.GetOrderForChart(null);
                 return View("Charts/Charts", orders);
             }
             catch (Exception ex)
@@ -1467,6 +1467,14 @@ namespace Universal.Admin_Controllers.AdminMVC
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("Home");
             }
+        }
+
+		[HttpGet]
+		public async Task<List<int>> GetChartDataByYear(int year)
+		{
+            var val =  await _mainDataServices.GetOrderForChart(year);
+			return val.SumByYear;
+
         }
     }
 }

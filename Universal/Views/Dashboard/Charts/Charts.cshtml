@@ -5,6 +5,140 @@
     var CurrentYear = DateTime.Now.Year;
 }
 <style>
+
+    .w_left {
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        float: left;
+        text-align: left;
+    }
+
+    .w_center {
+        text-align: left;
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        width: 55%;
+        float: left;
+    }
+
+    .w_right {
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        width: 10%;
+        float: left;
+        text-align: right;
+    }
+
+    .progress {
+        text-align: left;
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        display: flex;
+        font-size: .75rem;
+        overflow: hidden;
+        height: 20px;
+        margin-bottom: 20px;
+        background-color: #f5f5f5;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+        position: relative;
+        border-radius: 0;
+    }
+
+
+    .progress-bar {
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-weight: 400;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        white-space: nowrap;
+        float: left;
+        height: 100%;
+        font-size: 12px;
+        text-align: center;
+        box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+        transition: width .6s ease;
+        background: #1ABB9C !important;
+        border: 1px solid #1ABB9C !important;
+        color: #fff;
+        position: absolute;
+        overflow: hidden;
+        line-height: 20px;
+        width: 66%;
+    }
+
+
+    .widget_summary {
+        text-align: left;
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        width: 100%;
+        display: inline-flex;
+        justify-content: space-between;
+    }
+
+    .x_content {
+        text-align: left;
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        padding: 0 3px 6px;
+        position: relative;
+        width: 25%;
+        clear: both;
+        margin-top: 25px;
+        background-color: #F0F5FC;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .x_panel tile fixed_height_320 {
+        text-align: center;
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.471;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px 17px;
+        display: inline-block;
+        background: #fff;
+        border: 1px solid #E6E9ED;
+        -webkit-column-break-inside: avoid;
+        opacity: 1;
+        transition: all .2s ease;
+        zoom: 71%;
+        height: inherit;
+    }
+
+
     .tile_stats_count {
         text-align: left;
         color: #73879C;
@@ -72,7 +206,7 @@
     </div>
 
     <div class="d-flex flex-row align-items-center gap-3">
-        Choose Year: 
+        Choose Year:
         <select class="selectpicker form-select" style="width: 90px">
             @for (int i = 0; i <= 9; i++)
             {
@@ -87,15 +221,64 @@
     </div>
 
     <div>
+        <div class="x_panel tile fixed_height_320">
+                <div class="x_content">
+                    <h4>Top Products By Order</h4>
+
+                @for (int i = 0; i < Model.TopProductsCharts.Count(); i++)
+                {
+                    <div class="widget_summary">
+                        <div class="w_left w_25">
+                            <span>@Model.TopProductsCharts[i].ProductsName</span>
+                        </div>
+                        <div class="w_center w_55">
+                            <div class="progress">
+
+                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @Model.TopProductsCharts[i].TotalOrdersPercentage%;">
+                                    <span class="sr-only">60% Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w_right w_20">
+                            <span>@Model.TopProductsCharts[i].ProductOrders</span>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                }
+
+                </div>
+            </div>
+        </div>
+
+
+    <div>
+        <canvas height="400px" width="1000px" id="myChartPrice"></canvas>
     </div>
-</div>
+ </div>
 
 
 @section Scripts
 {
     <script>
-        var Values = @Json.Serialize(Model.SumByYear);
-        document.addEventListener("DOMContentLoaded", function () {
+        let myChart;
+        let myChartPrice;
+        $(".selectpicker").on("change", function () {
+            let year = $(this).val();
+
+
+            $.ajax({
+                url: '/Dashboard/GetChartDataByYear?year=' + year,
+                type: 'GET',
+                success: function (response) {
+                    LoadData(response);
+                },
+                error: function (xhr, status, error) {
+
+                }
+            });
+        });
+
+        function LoadData(Values) {
             const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             const data = {
                 labels: labels,
@@ -123,8 +306,53 @@
                 },
             };
 
+            if (myChart) {
+                myChart.destroy();
+                myChart = null;// Destroy the existing chart instance
+            }
+
             var ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, config);
+            myChart = new Chart(ctx, config);
+        }
+
+        var PriceByYear = @Json.Serialize(Model.barChartODTO.Years);
+        var PriceByYearVal = @Json.Serialize(Model.barChartODTO.Values);
+        function LoadDataPrice() {
+            const data = {
+                labels: PriceByYear,
+                datasets: [
+                    {
+                        label: 'Money Earned by Month in Current Year',
+                        data: PriceByYearVal,
+                        backgroundColor: '#0A80D8',
+                    }
+                ]
+            };
+
+            const configPrice = {
+                type: 'bar',
+                data: data,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                },
+            };
+
+            var ctxPrice = document.getElementById('myChartPrice').getContext('2d');
+            myChartPrice = new Chart(ctxPrice, configPrice);
+        }
+
+
+
+        var Values = @Json.Serialize(Model.SumByYear);
+        document.addEventListener("DOMContentLoaded", function () {
+            LoadData(Values);
+            LoadDataPrice();
         });
     </script>
 

@@ -13,5 +13,20 @@ namespace Universal.DTO.ODTO
         public int SumOrders { get; set; }
         public int TotalByYear { get; set; }
         public int TotalProductsDelivered { get; set; }
+        public List<TopProductsChartODTO> TopProductsCharts { get; set; }
+        public BarChartODTO barChartODTO { get; set; }
+    }
+
+    public class TopProductsChartODTO
+    {
+        public string ProductsName { get; set; }
+        public int ProductOrders { get; set; }
+        public double TotalOrdersPercentage { get; set; }
+    }
+
+    public class BarChartODTO
+    {
+        public List<string> Years { get; set; }
+        public List<int> Values { get; set; }
     }
 }
