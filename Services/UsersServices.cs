@@ -223,7 +223,7 @@ namespace Services
 			{
 				_context.Entry(user).Property(x => x.MediaId).IsModified = false;
 			}
-			_context.Entry(user).Property(x => x.Password).IsModified = false;
+			user.IsActive = true;
 			await SaveContextChangesAsync();
 
 			return await GetUserById(user.UsersId);

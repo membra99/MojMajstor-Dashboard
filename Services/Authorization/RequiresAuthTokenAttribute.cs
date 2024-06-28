@@ -8,8 +8,11 @@ public class RequiresAuthTokenAttribute : ActionFilterAttribute
 {
 	public override void OnActionExecuting(ActionExecutingContext context)
 	{
-		// Check if the auth token is present in the session
-		if (context.HttpContext.Session.GetString("AuthToken") == null)
+        var allowAnonymous = context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().Any();
+        if (allowAnonymous)
+            return;
+        // Check if the auth token is present in the session
+        if (context.HttpContext.Session.GetString("AuthToken") == null)
 		{
 			// Redirect to the login page or perform other actions as needed
 			context.Result = new RedirectToRouteResult(new RouteValueDictionary

@@ -66,7 +66,7 @@ namespace Services
 			#region checkCurrentImages
 			if (galleryImg == null)
 			{
-				var media = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 3).ToListAsync();
+				var media = await _context.Medias.Where(x => x.ProductId == productId && x.MediaTypeId == 4).ToListAsync();
 				_context.Medias.RemoveRange(media);
 				await SaveContextChangesAsync();
 			}

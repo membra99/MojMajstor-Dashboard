@@ -786,6 +786,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 			}
 		}
 
+		[AllowAnonymous]
 		public async Task<IActionResult> SetPassword(string key)
 		{
 			try
@@ -961,7 +962,7 @@ namespace Universal.Admin_Controllers.AdminMVC
 						}
 						else
 						{
-							await _mainDataServices.UploadProductImage(awsFile, "FeaturedImage", product.ProductId);
+							await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId);
 						}
 					}
 				}
