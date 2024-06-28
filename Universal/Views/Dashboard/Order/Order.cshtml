@@ -1,60 +1,59 @@
 ﻿@model List<Universal.DTO.ODTO.OrderODTO>
 
 @{
-	ViewData["Title"] = "All Orders";
+    ViewData["Title"] = "All Orders";
 }
 
 <div class="col-12">
-	<table id="orderTable" class="table table-striped display text-center">
-		<thead>
-			<tr>
-				<th>OrderNumber</th>
-				<th>CreatedAt</th>
-				<th>UpdatedAt</th>
-				<th>Status</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
+    <table id="orderTable" class="table table-striped display text-center">
+        <thead>
+            <tr>
+                <th>OrderNumber</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 @section Scripts
-	{
-	<script>
-		toggleLoading();
-		console.log(@Json.Serialize(Model))
-		$(document).ready(function () {
-    // Edit button click handler
-		$(document).on('click', '.btn', function () {
-        var id = $(this).data('id');
-				window.location.href = '/Dashboard/EditOrders?id=' + id;
-		});
-			let data = @Json.Serialize(Model);
-			let isPaginate = data.length > 10 ? true : false;
-			$('#orderTable').DataTable({
-				data: data ,
-				columns: [
-					{ data: "orderId" },
-					{ data: "orderDate" },
-					{ data: "updatedAt" },
-					{ data: "orderStatus" },
-					{
-						render: function (data, type, row) {
-							var button1 = "<button class='btn' data-id='" + row.orderId + "'><i class='fa fa-eye'></i></button>";
-							return button1
-						}
-					},
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-				bPaginate: isPaginate,
-				initComplete: function (settings, json) {
-					toggleLoading();
-				}
-			});
-		});
-	</script>
+{
+    <script>
+        toggleLoading();
+        $(document).ready(function () {
+            // Edit button click handler
+            $(document).on('click', '.btn', function () {
+                var id = $(this).data('id');
+                window.location.href = '/Dashboard/EditOrders?id=' + id;
+            });
+            let data = @Json.Serialize(Model);
+            let isPaginate = data.length > 10 ? true : false;
+            $('#orderTable').DataTable({
+                data: data,
+                columns: [
+                    { data: "orderId" },
+                    { data: "orderDate" },
+                    { data: "updatedAt" },
+                    { data: "orderStatus" },
+                    {
+                        render: function (data, type, row) {
+                            var button1 = "<button class='btn' data-id='" + row.orderId + "'><i class='fa fa-eye'></i></button>";
+                            return button1
+                        }
+                    },
+                ],
+                columnDefs: [
+                    { targets: '_all', className: 'dt-left' }
+                ],
+                bPaginate: isPaginate,
+                initComplete: function (settings, json) {
+                    toggleLoading();
+                }
+            });
+        });
+    </script>
 }

@@ -137,7 +137,6 @@
                     <img src="@Url.Action("GetImage", "Dashboard", new {path = (Model.ProductIDTO.GalleyImg.Count > 1) ? Model.ProductIDTO.GalleyImg[1] : null})" id="gallery-preview-1" width="75" height="75" style="border: 2px solid indigo">
                     <img src="@Url.Action("GetImage", "Dashboard", new {path = (Model.ProductIDTO.GalleyImg.Count > 2) ? Model.ProductIDTO.GalleyImg[2] : null})" id="gallery-preview-2" width="75" height="75" style="border: 2px solid indigo">
                     <img src="@Url.Action("GetImage", "Dashboard", new {path = (Model.ProductIDTO.GalleyImg.Count > 3) ? Model.ProductIDTO.GalleyImg[3] : null})" id="gallery-preview-3" width="75" height="75" style="border: 2px solid indigo">
-                    @* <img id="gallery-preview-4" width="75" height="75" style="border: 2px solid indigo"> *@
                 </div>
             </div>
             <hr>
@@ -149,14 +148,14 @@
 @section Scripts{
     <script>
         let loadFile = function (event) {
-            let image = document.getElementById('featured-preview');
-            image.src = URL.createObjectURL(event.target.files[0]);
+            let image = $('#featured-preview');
+            image.attr("src", URL.createObjectURL(event.target.files[0]));
         };
 
         let loadMultipleFile = function (event) {
             for (let i = 0; i < event.target.files.length; i++) {
-                let image = document.getElementById('gallery-preview-' + i);
-                image.src = URL.createObjectURL(event.target.files[i]);
+                let image = $('#gallery-preview-' + i);
+                image.attr("src", URL.createObjectURL(event.target.files[i]));
             }
         };
 
@@ -206,7 +205,6 @@
         let generateMultiselect = function () {
             $('.multipleSelect').multiselect({
                 nonSelectedText: '-Select value-',
-                //allSelectedText: 'All values are selected',
                 numberDisplayed: 100,
                 nSelectedText: ' Values selected',
                 includeSelectAllOption: true,

@@ -45,9 +45,6 @@
 <script>
 	let data = @Json.Serialize(Model);
 
-	console.log("Raw startDate:", data.startDate);
-	console.log("Raw endDate:", data.endDate);
-
 	let startDate = new Date(data.startDate);
 	startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
 	startDate = startDate.toISOString().split('T')[0];

@@ -3,163 +3,163 @@
 
 
 @{
-	ViewData["Title"] = "Order Info";
-	string domain = Configuration["URL:MainUrl"];
+    ViewData["Title"] = "Order Info";
+    string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="row">
-	<div class="col-md-4">
-		<div class="user">USER DATA</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.Email, "Email:")
-			@Html.TextBoxFor(model => model.UsersODTO.Email, null, new { @class="form-control", placeholder = "Email", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.Email, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.FirstName, "First name:")
-			@Html.TextBoxFor(model => model.UsersODTO.FirstName, new { @class="form-control", placeholder = "First Name", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.FirstName, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.LastName, "Last name:")
-			@Html.TextBoxFor(model => model.UsersODTO.LastName, new { @class="form-control", placeholder = "Last Name", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.LastName, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.Phone, "Phone:")
-			@Html.TextBoxFor(model => model.UsersODTO.Phone, new { @class="form-control", placeholder = "Phone", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.Phone, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.Address, "Address:")
-			@Html.TextBoxFor(model => model.UsersODTO.Address, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.Address, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.City, "City:")
-			@Html.TextBoxFor(model => model.UsersODTO.City, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.City, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.LabelFor(model => model.UsersODTO.Country, "Country:")
-			@Html.TextBoxFor(model => model.UsersODTO.Country, new { @class="form-control", placeholder = "Address", @readonly="readonly"})
-			@Html.ValidationMessageFor(model => model.UsersODTO.Country, null, new { @class="text-danger" })
-		</div>
-		<div class="mb-3">
-			@Html.HiddenFor(model => model.OrderId)
-		</div>
+    <div class="col-md-4">
+        <div class="user">USER DATA</div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.Email, "Email:")
+            @Html.TextBoxFor(model => model.UsersODTO.Email, null, new { @class = "form-control", placeholder = "Email", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.Email, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.FirstName, "First name:")
+            @Html.TextBoxFor(model => model.UsersODTO.FirstName, new { @class = "form-control", placeholder = "First Name", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.FirstName, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.LastName, "Last name:")
+            @Html.TextBoxFor(model => model.UsersODTO.LastName, new { @class = "form-control", placeholder = "Last Name", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.LastName, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.Phone, "Phone:")
+            @Html.TextBoxFor(model => model.UsersODTO.Phone, new { @class = "form-control", placeholder = "Phone", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.Phone, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.Address, "Address:")
+            @Html.TextBoxFor(model => model.UsersODTO.Address, new { @class = "form-control", placeholder = "Address", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.Address, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.City, "City:")
+            @Html.TextBoxFor(model => model.UsersODTO.City, new { @class = "form-control", placeholder = "Address", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.City, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(model => model.UsersODTO.Country, "Country:")
+            @Html.TextBoxFor(model => model.UsersODTO.Country, new { @class = "form-control", placeholder = "Address", @readonly = "readonly" })
+            @Html.ValidationMessageFor(model => model.UsersODTO.Country, null, new { @class = "text-danger" })
+        </div>
+        <div class="mb-3">
+            @Html.HiddenFor(model => model.OrderId)
+        </div>
 
 
 
-		@using (Html.BeginForm("EditStatus", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-		{
-			<div class="mb-3" style="margin-top:120px">
-				@Html.HiddenFor(model => model.OrderId, new { @class="form-control"})
-				@Html.ValidationMessageFor(model => model.OrderId, null, new { @class="text-danger" })
-			</div>
+        @using (Html.BeginForm("EditStatus", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="mb-3" style="margin-top:120px">
+                @Html.HiddenFor(model => model.OrderId, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OrderId, null, new { @class = "text-danger" })
+            </div>
 
 
-			<div class="mb-3">
-				@Html.LabelFor(model => model.Status, "Status:")
-				@Html.DropDownListFor(model => model.Status, new List<SelectListItem>
-			{
-			new SelectListItem() { Text = "On hold", Value = "On hold"},
-			new SelectListItem() { Text = "Delivered", Value = "Delivered"},
-			new SelectListItem() { Text = "Not Delivered", Value = "Not Delivered"}
-			},
-			new { @class="form-control" })
-				@Html.ValidationMessageFor(model => model.Status, null, new { @class="text-danger" })
-			</div>
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Status, "Status:")
+                @Html.DropDownListFor(model => model.Status, new List<SelectListItem>
+            {
+            new SelectListItem() { Text = "On hold", Value = "On hold"},
+            new SelectListItem() { Text = "Delivered", Value = "Delivered"},
+            new SelectListItem() { Text = "Not Delivered", Value = "Not Delivered"}
+            },
+                         new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Status, null, new { @class = "text-danger" })
+            </div>
 
 
-			<div class="mx-auto mb-3 w-50">
-				<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
-			</div>
-		}
+            <div class="mx-auto mb-3 w-50">
+                <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+            </div>
+        }
 
 
-	</div>
-	<div class="col-md-8">
-		<div class="user">ORDER DATA</div>
-		<div class="col-12">
-			<table id="orderTable" class="table table-striped display text-center w-100">
-				<thead>
-					<tr>
-						<th>Product Name</th>
-						<th>Product Code</th>
-						<th>Quantity</th>
-						<th>Category</th>
-						<th>Price</th>
-						<th>Sum</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-			<div id="totalPrice" style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
-			<button type="button" class="btn btn-dotnet" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
-			<input id="dateofpayment" type="hidden" value="@Model.CreatedAt" />
-		</div>
-	</div>
+    </div>
+    <div class="col-md-8">
+        <div class="user">ORDER DATA</div>
+        <div class="col-12">
+            <table id="orderTable" class="table table-striped display text-center w-100">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Product Code</th>
+                        <th>Quantity</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Sum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div id="totalPrice" style="font-weight:bold; font-size:20px">Order Total Price: @Model.TotalPrice</div>
+            <button type="button" class="btn btn-dotnet" id="invoice" style="position:absolute; right:20px">CREATE INVOICE</button>
+            <input id="dateofpayment" type="hidden" value="@Model.CreatedAt" />
+        </div>
+    </div>
 </div>
 
 @section Scripts
-	{
-			<script>
-				$(document).ready(function () {
-				let data = @Json.Serialize(Model.ProductODTO);
-				let isPaginate = data.length > 10 ? true : false;
-				$('#orderTable').DataTable({
-						data: data,
-						columns: [
-					{ data: "productName" },
-					{ data: "productCode" },
-					{ data: "quantity" },
-					{ data: "categoryName" },
-					{ data: "price" },
-					{ data: "sum" },
-						],
-						columnDefs: [
-							{ targets: '_all', className: 'dt-left' }
-						],
-				bPaginate: isPaginate
-					});
-			let htmltableForRender = $('#orderTable').html();
-			var totalPriceElement = document.getElementById("totalPrice");
-			var totalPrice = totalPriceElement.textContent;
-			var priceValue = totalPrice.match(/\d+/)[0];
+{
+    <script>
+        $(document).ready(function () {
+            let data = @Json.Serialize(Model.ProductODTO);
+            let isPaginate = data.length > 10 ? true : false;
+            $('#orderTable').DataTable({
+                data: data,
+                columns: [
+                    { data: "productName" },
+                    { data: "productCode" },
+                    { data: "quantity" },
+                    { data: "categoryName" },
+                    { data: "price" },
+                    { data: "sum" },
+                ],
+                columnDefs: [
+                    { targets: '_all', className: 'dt-left' }
+                ],
+                bPaginate: isPaginate
+            });
+            let htmltableForRender = $('#orderTable').html();
+            var totalPriceElement = $("#totalPrice");
+            var totalPrice = totalPriceElement.textContent;
+            var priceValue = totalPrice.match(/\d+/)[0];
 
-			let orderNumber = $("#OrderId").val();
-			let customerName = $("#UsersODTO_FirstName").val() + " " + $("#UsersODTO_LastName").val();
-			let address = $("#UsersODTO_Address").val();
-			let city = $("#UsersODTO_City").val();
+            let orderNumber = $("#OrderId").val();
+            let customerName = $("#UsersODTO_FirstName").val() + " " + $("#UsersODTO_LastName").val();
+            let address = $("#UsersODTO_Address").val();
+            let city = $("#UsersODTO_City").val();
 
 
-			var dateOfPay = document.getElementById("dateofpayment");
-			let dateVal = dateOfPay.value;
-			data = {
-				htmltable: htmltableForRender,
-				TotalPrice: priceValue,
-				Dateofpayment: dateVal,
-				OrderNumber: orderNumber,
-				BuyerName: customerName,
-				Address: address,
-				City:city
-			};
-			$("#invoice").click(function(){
-				$.ajax({
-					url: '@domain' + 'api/Order/CreateInvoice',
-					type: 'POST',
-					contentType: 'application/json',
-					dataType: 'JSON',
-					data: JSON.stringify(data),
-					success: function (response){
-						showToast("Invoice is created succesfully", "success");
-					}
+            var dateOfPay = document.getElementById("dateofpayment");
+            let dateVal = dateOfPay.value;
+            data = {
+                htmltable: htmltableForRender,
+                TotalPrice: priceValue,
+                Dateofpayment: dateVal,
+                OrderNumber: orderNumber,
+                BuyerName: customerName,
+                Address: address,
+                City: city
+            };
+            $("#invoice").click(function () {
+                $.ajax({
+                    url: '@domain' + 'api/Order/CreateInvoice',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        showToast("Invoice is created succesfully", "success");
+                    }
 
-				});
-			});
-				});
-		
-			</script>
+                });
+            });
+        });
+
+    </script>
 }

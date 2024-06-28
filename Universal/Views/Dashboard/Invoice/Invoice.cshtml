@@ -28,7 +28,7 @@
 			$(document).on('click', '.edit-btn', function () {
 				var filepath = $(this).data('id');
 				window.open('/Dashboard/PDFViewer?path=' + filepath, '_blank');
-				});
+			});
 
 			let data = @Json.Serialize(Model);
 			let isPaginate = data.length > 10 ? true : false;
@@ -43,8 +43,6 @@
 					{
 						render: function (data, type, row) {
 							var button1 = "<button class='btn edit-btn' data-id='" + row.src + "'><i class='fa fa-pen'></button>";
-							//var button2 = "<button class='btn btn-danger delete-btn' data-id='" + row.usersId + "'>Delete</button>";
-
 							return button1;
 						}
 					},

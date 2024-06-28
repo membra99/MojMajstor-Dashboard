@@ -98,14 +98,6 @@
 				}
 			});
 
-			// $.ajaxSetup({
-			// 	headers: {
-			// 		headers: {
-			// 			'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
-			// 		},
-			// 	}
-			// });
-
 			$('#codesTable tbody').on('click', 'td.actions-control', function () {
 				var tr = $(this).closest('tr');
 				var row = codesTable.row(tr);

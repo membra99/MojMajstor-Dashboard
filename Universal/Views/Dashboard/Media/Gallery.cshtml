@@ -109,9 +109,6 @@
 				<form id="form" method="post" class="w-100" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
 					<div class="form-group">
 						<div id="dropzone">
-							@* <div class="p-2 text-center rounded-top" style="background-color: #0A80D8">
-								<label style="font-size:20px; color:white;">Add New Picture</label>
-							</div> *@
 							<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
 						</div>
 					</div>
@@ -139,15 +136,14 @@
 				$("#uploadPicture").modal("show");
 			});
 
-			let view_buttons = document.getElementsByClassName("fa-eye");
-			let view_modal_image = document.getElementById("viewImage");
-			let view_modal_heading = document.getElementById("view-modal-heading");
+			let view_buttons = $(".fa-eye");
+			let view_modal_image = $("#viewImage");
+			let view_modal_heading = $("#view-modal-heading");
 			for (let i = 0; i < view_buttons.length; i++) {
-				view_buttons[i].addEventListener("click", function () {
+				$(view_buttons[i]).on("click", function () {
 					let modalHeading = this.dataset.mediaTitle;
 					let imageSrc = this.dataset.mediaSrc;
-					console.log(imageSrc);
-					view_modal_image.src = "/Dashboard/GetImage?path=" + imageSrc;
+					view_modal_image.attr("src", "/Dashboard/GetImage?path=" + imageSrc);
 					if (modalHeading.length == 0) {
 						let parts = imageSrc.split('/');
 						view_modal_heading.textContent = parts[1];
@@ -158,9 +154,7 @@
 				});
 			}
 
-
-
-			let edit_buttons = document.getElementsByClassName("fa-edit");
+			let edit_buttons = $(".fa-edit");
 			for (let i = 0; i < edit_buttons.length; i++) {
 				edit_buttons[i].addEventListener("click", function () {
 					let mediaId = this.dataset.mediaId;
@@ -174,9 +168,9 @@
 				});
 			}
 
-			let delete_buttons = document.getElementsByClassName("fa-trash");
+			let delete_buttons = $(".fa-trash");
 			for (let i = 0; i < delete_buttons.length; i++) {
-				delete_buttons[i].addEventListener("click", function () {
+				$(delete_buttons[i]).on("click", function () {
 					let mediaId = this.dataset.mediaId;
 					let mediaTypeId = this.dataset.mediaMediatype;
 					let mediaTitle = this.dataset.mediaTitle;
@@ -202,7 +196,6 @@
 			}
 
 			$("#closeModal").click(function () {
-				console.log("click");
 				$("#uploadPicture").modal('hide');
 			});
 

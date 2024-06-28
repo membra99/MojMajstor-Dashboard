@@ -21,8 +21,6 @@
                         @foreach (var language in languagesList)
                         {
                             <button class="nav-link @isActive" id="v-pills-lang-tab"
-                            @* data-bs-toggle="pill" *@
-                            @* data-bs-target="#v-pills-language-@language.LanguageID" *@
                                     type="button" role="tab"
                                     aria-controls="v-pills-language-@language.LanguageID" aria-selected="true"
                                     onclick="setLanguage(@language.LanguageID, event)">
@@ -106,15 +104,7 @@
                         </ul>
                     </div>
                     @Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class = "text-danger" })
-                    @*<div class="form-group mb-3">
-                @Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-                @Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
-                new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
-                "Select Category",new { @class="form-control"})
-                @Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
-                </div>*@
-                    <div id="attributeSection" class="form-group mb-3">
-                    </div>
+                    <div id="attributeSection" class="form-group mb-3"></div>
                     <hr>
                     <div class="form-group col-6 mb-3">
                         <h4>Sale</h4>
@@ -141,16 +131,6 @@
                             @Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
                             @Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
                         </div>
-                        @*<div class="form-group col-6 mb-3">
-                    @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
-                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
-                    @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
-                    </div>
-                    <div class="form-group col-6 mb-3">
-                    @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
-                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
-                    @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
-                    </div>*@
                     </div>
                     <hr>
                     <div class="form-group mb-3">
@@ -379,12 +359,11 @@
                             },
                             success: function (callResponse) {
                                 uploadedImages.push(...callResponse);
-                                console.log(uploadedImages);
                                 for (let i = 0; i < uploadedImages.length; ++i) {
                                     if (uploadedImages[i] != 0) {
                                         $("#uploadedImgArray").append(`
-                                                    <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
-                                                `);
+                                            <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
+                                        `);
                                     }
                                     else {
                                         continue;
@@ -406,12 +385,12 @@
 
         let loadFile = function (event) {
             IsImgUnset = false;
-            let image = document.getElementById('content-preview');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            let image1 = document.getElementById('content-preview2');
-            image1.src = URL.createObjectURL(event.target.files[0]);
-            let element = document.getElementById('unset');
-            element.classList.add("hover-unset");
+            let image = $('#content-preview');
+            image.attr("src", URL.createObjectURL(event.target.files[0]));
+            let image1 = $('#content-preview2');
+            image1.attr("src", URL.createObjectURL(event.target.files[0]));
+            let element = $('#unset');
+            element.addClass("hover-unset");
 
         };
 
@@ -419,15 +398,15 @@
         function unsetImage(event) {
             IsImgUnset = true;
             mediaId = null;
-            let image = document.getElementById('content-preview');
-            image.src = '@Url.Action("GetImage","Dashboard",null)';
+            let image = $('#content-preview');
+            image.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
 
-            let image1 = document.getElementById('content-preview2');
-            image1.src = '@Url.Action("GetImage", "Dashboard", null)';
+            let image1 = $('#content-preview2');
+            image1.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
             $("#file").val(null);
 
-            let element = document.getElementById('unset');
-            element.classList.remove("hover-unset");
+            let element = $('#unset');
+            element.removeClass("hover-unset");
             event.preventDefault();
         }
 
@@ -439,10 +418,10 @@
             loadFile(e);
         });
 
-        const openModalButton = document.getElementById("openModalButton");
-        const addImageModal = document.getElementById("addImageModal");
+        const openModalButton = $("#openModalButton");
+        const addImageModal = $("#addImageModal");
 
-        openModalButton.addEventListener("click", function () {
+        openModalButton.on("click", function () {
             $(addImageModal).modal("show");
         });
 
@@ -453,10 +432,10 @@
             loaded = false;
         });
 
-        const openGalleryModalButton = document.getElementById("openGalleryModalButton");
-        const editGalleryModal = document.getElementById("editGalleryModal");
+        const openGalleryModalButton = $("#openGalleryModalButton");
+        const editGalleryModal = $("#editGalleryModal");
 
-        openGalleryModalButton.addEventListener("click", function () {
+        openGalleryModalButton.on("click", function () {
             $(editGalleryModal).modal("show");
         });
 
@@ -524,24 +503,24 @@
             }
         });
 
-        document.getElementById("tab1Link").classList.add("active");
+        $("#tab1Link").addClass("active");
 
-        document.getElementById("tab1Link").addEventListener("click", function () {
-            document.getElementById("tab1Link").classList.add("active");
-            document.getElementById("tab2Link").classList.remove("active");
+        $("#tab1Link").on("click", function () {
+            $("#tab1Link").addClass("active");
+            $("#tab2Link").removeClass("active");
 
-            document.getElementById("tab1").classList.add("active");
-            document.getElementById("tab2").classList.remove("active");
+            $("#tab1").addClass("active");
+            $("#tab2").removeClass("active");
 
             //unselectGallery();
         });
 
-        document.getElementById("tab2Link").addEventListener("click", function (event) {
-            document.getElementById("tab2Link").classList.add("active");
-            document.getElementById("tab1Link").classList.remove("active");
+        $("#tab2Link").on("click", function (event) {
+            $("#tab2Link").addClass("active");
+            $("#tab1Link").removeClass("active");
 
-            document.getElementById("tab2").classList.add("active");
-            document.getElementById("tab1").classList.remove("active");
+            $("#tab2").addClass("active");
+            $("#tab1").removeClass("active");
 
             //unsetImage(event);
             if (!loaded) {
@@ -578,12 +557,11 @@
                     $(".addedImages").html(""); // Clear existing content
                     for (let i = 0; i < response.length; ++i) {
                         $(".addedImages").append(`
-                                                <div class="image-container">
-                                                    <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160"/>
-                                                    <a class="unset-button hover-unset" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i}, '#editGalleryModal')" title="Unset Image">x</a>
-                                                </div>
-                                                    `);
-                        //document.getElementById('unset').classList.add("hover-unset");
+                            <div class="image-container">
+                                <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160"/>
+                                <a class="unset-button hover-unset" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i}, '#editGalleryModal')" title="Unset Image">x</a>
+                            </div>
+                        `);
                     }
                 },
                 error: function (mediaSrc) {
@@ -591,11 +569,11 @@
                 }
             });
 
-            document.getElementById("tab1editLink").classList.add("active");
-            document.getElementById("tab2editLink").classList.remove("active");
+            $("#tab1editLink").addClass("active");
+            $("#tab2editLink").removeClass("active");
 
-            document.getElementById("galleryEditTab2").classList.remove("active");
-            document.getElementById("galleryEditTab1").classList.add("active");
+            $("#galleryEditTab2").removeClass("active");
+            $("#galleryEditTab1").addClass("active");
             loaded = false;
         });
 
@@ -608,12 +586,12 @@
                     url: '/Dashboard/GetImageFromGallery?mediaId=' + mediaId,
                     contentType: 'application/json',
                     success: function (response) {
-                        let image = document.getElementById('content-preview2');
-                        let image1 = document.getElementById('content-preview');
-                        image.src = '/Dashboard/GetImage?path=' + response + '';
-                        image1.src = '/Dashboard/GetImage?path=' + response + '';
-                        let element = document.getElementById('unset');
-                        element.classList.add("hover-unset");
+                        let image = $('#content-preview2');
+                        let image1 = $('#content-preview');
+                        image.attr("src", '/Dashboard/GetImage?path=' + response + '');
+                        image1.attr("src", '/Dashboard/GetImage?path=' + response + '');
+                        let element = $('#unset');
+                        element.addClass("hover-unset");
                     },
                     error: function (xhr, status, error) {
                         console.log(error);
@@ -623,8 +601,8 @@
             $('#addImageModal').modal('hide');
             if (IsImgUnset) {
                 IsImgUnset = false;
-                let image = document.getElementById('content-preview2');
-                image.src = '@Url.Action("GetImage", "Dashboard", null)';
+                let image = $('#content-preview2');
+                image.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
                 event.preventDefault();
             }
 
@@ -634,8 +612,8 @@
             $('#editGalleryModal').modal('hide');
             for (let i = 0; i < selectedMediaIds.length; ++i) {
                 $("#galleryImgArray").append(`
-                                            <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
-                                        `);
+                    <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
+                `);
             }
             unselectGallery();
         });
@@ -653,6 +631,7 @@
                         isExpanded = "active-cat";
                         isDown = "multi-cat-down";
                     }
+
                     children.wrapAll("<ul class='nested parent_" + categories[i][j].categoryId + " " + isExpanded + "'></ul>");
 
                     $(".parent_" + categories[i][j].categoryId).wrap("<li class='mb-2 child_of_" + categories[i][j].parentCategoryId + "'></li>");
@@ -676,52 +655,50 @@
 
         let loadMultipleFile = function (event) {
             for (let i = 0; i < event.target.files.length; i++) {
-                let image = document.getElementById('gallery-preview-' + i);
-                image.src = URL.createObjectURL(event.target.files[i]);
+                let image = $('#gallery-preview-' + i);
+                image.attr("src", URL.createObjectURL(event.target.files[i]));
                 let element = image.nextElementSibling;
-                element.classList.add("hover-unset");
+                element.addClass("hover-unset");
             }
         };
 
         let loadMultipleFileArray = function (files, type, start) {
-            //console.log(files);
             for (let i = 0; i < files.length; i++) {
-                let image = document.getElementById('gallery-preview-' + (i + start));
-                //image.src = URL.createObjectURL(files[i]);
+                let image = $('#gallery-preview-' + (i + start));
                 if (type == "upload")
-                    image.src = URL.createObjectURL(files[i]);
+                    image.attr("src", URL.createObjectURL(files[i]));
                 else
-                    image.src = "/Dashboard/GetImage?path=" + files[i];
+                    image.attr("src", "/Dashboard/GetImage?path=" + files[i]);
                 let element = image.nextElementSibling;
-                element.classList.add("hover-unset");
+                element.addClass("hover-unset");
             }
         };
 
         function unsetImageMultiple(event, position) {
             $('[id^=gallery-preview-]').each(function () {
                 let image = this;
-                image.src = '@Url.Action("GetImage","Dashboard",null)';
+                image.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
                 let element = image.nextElementSibling;
-                element.classList.remove("hover-unset");
+                element.removeClass("hover-unset");
             });
-            let fileInput = document.getElementById("file-gallery");
+            let fileInput = $("#file-gallery");
             let selectedFiles = Array.from(fileInput.files);
             selectedFiles.splice(position, 1);
             let newList = new DataTransfer();
             for (let file of selectedFiles) {
                 newList.items.add(file);
             }
-            fileInput.files = newList.files
-            loadMultipleFileArray(selectedFiles)
+            fileInput.files = newList.files;
+            loadMultipleFileArray(selectedFiles);
             event.preventDefault();
         }
 
         function unsetAllImages() {
             $('[id^=gallery-preview-]').each(function () {
                 let image = this;
-                image.src = '@Url.Action("GetImage", "Dashboard", null)';
+                image.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
                 let element = image.nextElementSibling;
-                element.classList.remove("hover-unset");
+                element.removeClass("hover-unset");
             });
         }
 
@@ -731,7 +708,6 @@
             let position = selectedMediaIds.indexOf(element);
             if (position !== -1) {
                 selectedMediaIds.splice(position, 1);
-                console.log(selectedMediaIds);
             }
             $("#gallery-new-preview-" + imageTagAt).remove();
 
@@ -744,7 +720,6 @@
         let generateMultiselect = function () {
             $('.multipleSelect').multiselect({
                 nonSelectedText: '-Select value-',
-                //allSelectedText: 'All values are selected',
                 numberDisplayed: 100,
                 nSelectedText: ' Values selected',
                 includeSelectAllOption: true,
@@ -766,9 +741,9 @@
             });
         }
 
-        let catrgory_elements = document.getElementsByClassName("multi-cat");
+        let catrgory_elements = $(".multi-cat");
         for (let i = 0; i < catrgory_elements.length; i++) {
-            catrgory_elements[i].addEventListener("click", function () {
+            $(catrgory_elements[i]).on("click", function () {
                 this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
                 this.classList.toggle("multi-cat-down");
             });
@@ -853,7 +828,7 @@
                     $('.lang').val(langId);
                 }
                 else {
-                    showToast("Save the product for the current language!", "warning")
+                    showToast("Save the product for the current language!", "warning");
                 }
             }
         }
