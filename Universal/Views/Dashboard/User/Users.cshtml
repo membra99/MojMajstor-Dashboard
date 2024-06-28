@@ -1,10 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @model List<Universal.DTO.ODTO.UsersODTO>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 
 @{
 	ViewData["Title"] = "All Users";
 	var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
+	string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="col-12">
@@ -127,7 +130,7 @@
 								'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
 							},
 							type: 'DELETE',
-							url: 'https://localhost:7213/api/Users/' + selectedUserId,
+							url: '@domain' + 'api/Users/' + selectedUserId,
 							contentType: 'application/json',
 							success: function (response) {
 								console.log(response);

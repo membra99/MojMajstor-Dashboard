@@ -1,8 +1,10 @@
-﻿
-@model List<Universal.DTO.ODTO.SiteContentODTO>
+﻿@model List<Universal.DTO.ODTO.SiteContentODTO>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 
 @{
 	ViewData["Title"] = ViewBag.siteType;
+	string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="pb-2 d-flex justify-content-end">
@@ -113,7 +115,7 @@ else
 
 						$.ajax({
 							type: 'DELETE',
-							url: 'https://localhost:7213/api/SiteContent/' + selectedAttributeId,
+							url: '@domain' + 'api/SiteContent/' + selectedAttributeId,
 							contentType: 'application/json',
 							success: function (response) {
 								showToast("SiteContet deleted succesfully.", "success");

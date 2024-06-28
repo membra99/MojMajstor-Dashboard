@@ -1,10 +1,13 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @model List<Universal.DTO.ODTO.PromocodesODTO>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 
 @{
     ViewData["Title"] = "All promo codes";
 	var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
+	string domain = Configuration["URL:MainUrl"];
 }
 
 @Html.ActionLink("Add new promo code", "AddNewPromocode", "Dashboard", null, new { @class="btn btn-dotnet" })
@@ -122,7 +125,7 @@
 								'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
 							},
 							type: 'DELETE',
-							url: 'https://localhost:7213/api/Promocodes/DeletePromocode?promoCodesId=' + selectedPromocodeId,
+							url: '@domain' + 'api/Promocodes/DeletePromocode?promoCodesId=' + selectedPromocodeId,
 							contentType: 'application/json',
 							success: function (response) {
 								console.log(response);

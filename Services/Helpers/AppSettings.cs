@@ -17,4 +17,9 @@ namespace Services.Helpers
         public string? EmailUserName { get; set; }
         public string? EmailUserPassword { get; set; }
     }
+
+    public class URL
+    {
+        public string? MainUrl { get; set; }
+    }
 }

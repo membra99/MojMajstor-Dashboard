@@ -1,6 +1,9 @@
 ﻿@model List<Universal.DTO.ODTO.CategoriesODTO>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 @{
     ViewData["Title"] = "Data";
+    string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="row">
@@ -281,7 +284,7 @@
 
                         $.ajax({
                             type: 'DELETE',
-                            url: 'https://localhost:7213/api/Categories/' + selectedAttributeId,
+                            url: '@domain' + 'api/Categories/' + selectedAttributeId,
                             contentType: 'application/json',
                             success: function (response) {
                                 updateTableData(response.parentCategoryId);
@@ -320,7 +323,7 @@
                     // Send the JSON object to the API using AJAX
                     $.ajax({
                         type: 'POST',
-                        url: 'https://localhost:7213/api/Categories',
+                        url: '@domain' + 'api/Categories',
                         contentType: 'application/json',
                         data: JSON.stringify(newAttribute),
                         success: function (response) {
@@ -372,7 +375,7 @@
                     // Send the JSON object to the API using AJAX
                     $.ajax({
                         type: 'PUT',
-                        url: 'https://localhost:7213/api/Categories',
+                        url: '@domain' + 'api/Categories',
                         contentType: 'application/json',
                         data: JSON.stringify(newAttribute),
                         success: function (response) {
@@ -412,7 +415,7 @@
                     // Send the JSON object to the API using AJAX
                     $.ajax({
                         type: 'POST',
-                        url: 'https://localhost:7213/api/Attributes',
+                        url: '@domain' + 'api/Attributes',
                         contentType: 'application/json',
                         data: JSON.stringify(newAttribute),
                         success: function (response) {
@@ -453,7 +456,7 @@
 
                         $.ajax({
                             type: 'DELETE',
-                            url: 'https://localhost:7213/api/Attributes/' + attributeId,
+                            url: '@domain' + 'api/Attributes/' + attributeId,
                             success: function (response) {
                                 updateTableData(selectedParentCategoryId);
                                 showToast("Value " + response.value + " is deleted succesfully from " + response.categoryName + ".", "success");

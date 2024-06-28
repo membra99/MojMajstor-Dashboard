@@ -1,7 +1,10 @@
 ﻿@model List<Universal.DTO.ODTO.DeclarationODTO>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 
 @{
 	ViewData["Title"] = "Declaration";
+	string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="col-12">
@@ -75,7 +78,7 @@
 
 						$.ajax({
 							type: 'DELETE',
-							url: 'https://localhost:7213/api/Declaration/' + selectedAttributeId,
+							url: '@domain' + 'api/Declaration/' + selectedAttributeId,
 							contentType: 'application/json',
 							success: function (response) {
 								showToast("Declaration " + response.declarationName + " deleted succesfully.", "success");

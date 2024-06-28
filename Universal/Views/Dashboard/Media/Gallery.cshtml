@@ -1,7 +1,10 @@
 ﻿@model Universal.DTO.ViewDTO.MultiMediaIDTO
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 
 @{
 	ViewData["Title"] = "Gallery";
+	string domain = Configuration["URL:MainUrl"];
 }
 
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
@@ -180,7 +183,7 @@
 
 
 					$.ajax({
-						url: 'https://localhost:7213/api/Media/CheckMediaId?MediaId=' + mediaId,
+						url: '@domain' + 'api/Media/CheckMediaId?MediaId=' + mediaId,
 						type: 'GET',
 						data: mediaId,
 						success: function (response) {

@@ -25,16 +25,19 @@ namespace Services
 		private readonly IJwtUtils _jwtUtils;
 		private readonly IAWSS3FileService _AWSS3FileService;
 		private readonly IOptions<EmailSettings> _emailSettings;
-		private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IOptions<URL> _urlDomain;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
 		public static string AppBaseUrl = "";
 
-		public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings) : base(context, mapper)
+		public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings, IOptions<URL> urlDomain) : base(context, mapper)
 		{
 			_jwtUtils = jwtUtils;
 			_AWSS3FileService = AWSS3FileService;
 			_emailSettings = emailSettings;
 			_httpContextAccessor = httpContext;
-			AppBaseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}";
+            _urlDomain = urlDomain;
+            AppBaseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}";
 		}
 
 		#region Users
@@ -169,7 +172,7 @@ namespace Services
 			{
 				To = user.Email,
 				Subject = user.FirstName + ", please activate your account!",
-				Body = "Thank you for registering on our site.<br> To verify your registration, click on this link: <br> <a href='https://localhost:7213/api/Users/Redirect?key=" + userKey + "'>Activate Your Mail</a>"
+				Body = "Thank you for registering on our site.<br> To verify your registration, click on this link: <br> <a href='"+_urlDomain.Value.MainUrl+"api/Users/Redirect?key=" + userKey + "'>Activate Your Mail</a>"
 			});
 			_context.Users.Add(user);
 

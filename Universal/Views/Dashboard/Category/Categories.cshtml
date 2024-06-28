@@ -1,7 +1,9 @@
 ﻿@model Universal.DTO.ViewDTO.CategoryAttributeIDTO
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Categories";
+    string domain = Configuration["URL:MainUrl"];
 }
 
 <style>
@@ -172,7 +174,7 @@
                 let categoryId = this.dataset.catId;
                 let parentId = this.dataset.parentId;
                 $.ajax({
-                    url: 'https://localhost:7213/api/Categories/' + categoryId,
+                    url: '@domain' + 'api/Categories/' + categoryId,
                     type: 'GET',
                     data: categoryId,
                     success: function (response) {
