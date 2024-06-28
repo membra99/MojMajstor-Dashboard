@@ -1,7 +1,10 @@
 ﻿@model List<Universal.DTO.ODTO.TagODTO>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 
 @{
     ViewData["Title"] = "All Tags";
+    string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
@@ -69,7 +72,7 @@
 
                         $.ajax({
                             type: 'DELETE',
-                            url: 'https://localhost:7213/api/SiteContent/Tag' + selectedAttributeId,
+                            url: '@domain' + 'api/SiteContent/Tag' + selectedAttributeId,
                             contentType: 'application/json',
                             success: function (response) {
                                 showToast("Tag deleted succesfully.", "success");
