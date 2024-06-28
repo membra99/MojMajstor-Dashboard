@@ -78,18 +78,9 @@
                 @Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
                 <div class="form-control mb-3 rounded-3 p-2">
                     @Html.HiddenFor(model => model.ProductIDTO.CategoriesId, new { @id = "categoryID" })
-                    <ul id="main-list">
-                    </ul>
+                    <ul id="main-list"></ul>
                 </div>
-                @*<div class="form-group mb-3">
-            @Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
-            @Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
-            new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
-            "Select Category",new { @class="form-control"})
-            @Html.ValidationMessageFor(model => model.ProductIDTO.CategoriesId, null, new { @class="text-danger" })
-            </div>*@
-                <div id="attributeSection" class="form-group mb-3">
-                </div>
+                <div id="attributeSection" class="form-group mb-3"></div>
                 <hr>
                 <div class="form-group col-6 mb-3">
                     <h4>Sale</h4>
@@ -116,16 +107,6 @@
                         @Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.StartDate)
                         @Html.HiddenFor(model => model.ProductIDTO.SaleIDTO.EndDate)
                     </div>
-                    @*<div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
-                @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", disabled="disabled" })
-                @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { @class="text-danger" })
-                </div>
-                <div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
-                @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", disabled="disabled" })
-                @Html.ValidationMessageFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { @class="text-danger" })
-                </div>*@
                 </div>
                 <hr>
                 <div class="form-group mb-3">
@@ -159,15 +140,6 @@
                 <div class="form-group mb-3">
                     <h4>Feature Image</h4>
                 </div>
-                @* 				<div class="form-group mb-3">
-            @Html.LabelRequiredFor(model => model.FeaturedImage, "Product image:", true)
-            @Html.TextBoxFor(model => model.FeaturedImage, null, new { type = "file", @class = "form-control mb-3", id = "file-featured", runat = "server", onchange = "loadFile(event)" })
-            @Html.ValidationMessageFor(model => model.FeaturedImage, null, new { @class = "text-danger" })
-            <div class="text-center image-container">
-            <img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="featured-preview" width="75" height="75" style="border: 2px solid indigo">
-            <a class="unset-button" id="unset" onclick="unsetImage(event)" title="Unset Image">x</a>
-            </div>
-            </div> *@
                 <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <!-- Use modal-lg class for a larger modal -->
@@ -204,7 +176,6 @@
                                             </div>
                                         </form>
                                     </div>
-
                                     <!-- Tab 2 Content -->
                                     <div id="tab2" class="tab-pane">
                                         @Html.HiddenFor(model => model.MediaId, new { @id = "input-media" });
@@ -250,14 +221,10 @@
                                         <div id="addImageForm" style="color: black">
                                             <div class="form-group">
                                                 <div class="form-group mt-3 mb-3">
-                                                    @* @Html.LabelFor(model => model.GalleryImages, "Event gallery images:")
-                                                @Html.TextBoxFor(model => model.GalleryImages, null, new { type="file",@id="file-gallery", @class="form-control mb-3", runat="server" , multiple="multiple", onchange="loadMultipleFile(event)" })
-                                                @Html.ValidationMessageFor(model => model.GalleryImages, null, new { @class="text-danger" }) *@
                                                     <div id="gallery-images">
                                                         <div id="newArrayVals">
                                                             @foreach (var img in Model.ProductIDTO.GalleyImg)
                                                                 @Html.Hidden("ProductIDTO.GalleyImg[]", value: img)
-
                                                         </div>
                                                         <div class="currentImgs">
                                                             <h4>Current images</h4>
@@ -382,8 +349,8 @@
                                 for (let i = 0; i < uploadedImages.length; ++i) {
                                     if (uploadedImages[i] != 0) {
                                         $("#uploadedImgArray").append(`
-                                                                    <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
-                                                                `);
+                                             <input type="hidden" name="UploadedImages[${i}]" value="${uploadedImages[i]}" />
+                                        `);
                                     }
                                     else {
                                         continue;
@@ -400,10 +367,10 @@
         };
         //handle-image-upload_end
 
-        const openModalButton = document.getElementById("openModalButton");
-        const addImageModal = document.getElementById("addImageModal");
+        const openModalButton = $("#openModalButton");
+        const addImageModal = $("#addImageModal");
 
-        openModalButton.addEventListener("click", function () {
+        openModalButton.on("click", function () {
             $(addImageModal).modal("show");
         });
 
@@ -411,10 +378,10 @@
             $('#addImageModal').modal('hide');
         });
 
-        const openGalleryModalButton = document.getElementById("openGalleryModalButton");
-        const editGalleryModal = document.getElementById("editGalleryModal");
+        const openGalleryModalButton = $("#openGalleryModalButton");
+        const editGalleryModal = $("#editGalleryModal");
 
-        openGalleryModalButton.addEventListener("click", function () {
+        openGalleryModalButton.on("click", function () {
             $(editGalleryModal).modal("show");
         });
 
@@ -436,29 +403,25 @@
 
         let loadFile = function (event) {
             IsImgUnset = false;
-            let image = document.getElementById('content-preview');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            let image1 = document.getElementById('content-preview2');
-            image1.src = URL.createObjectURL(event.target.files[0]);
-            let element = document.getElementById('unset');
-            element.classList.add("hover-unset");
-
+            let image = $('#content-preview').attr("src", URL.createObjectURL(event.target.files[0]));
+            let image1 = $('#content-preview2').attr("src", URL.createObjectURL(event.target.files[0]));
+            let element = $('#unset');
+            element.addClass("hover-unset");
         };
 
         let IsImgUnset = false;
         function unsetImage(event) {
             IsImgUnset = true;
             mediaId = null;
-            let image = document.getElementById('content-preview'); //image is null
-            console.log(image);
-            image.src = '@Url.Action("GetImage", "Dashboard", null)';
+            let image = $('#content-preview'); //image is null
+            image.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
 
-            let image1 = document.getElementById('content-preview2');
-            image1.src = '@Url.Action("GetImage", "Dashboard", null)';
+            let image1 = $('#content-preview2');
+            image1.attr("src", '@Url.Action("GetImage", "Dashboard", null)');
             $("#file").val(null);
 
-            let element = document.getElementById('unset');
-            element.classList.remove("hover-unset");
+            let element = $('#unset');
+            element.removeClass("hover-unset");
             event.preventDefault();
         }
 
@@ -469,32 +432,6 @@
         $('input[name="FeaturedImage"]').on('change', function (e) {
             loadFile(e);
         });
-
-        // const openModalButton = document.getElementById("openModalButton");
-        // const addImageModal = document.getElementById("addImageModal");
-
-        // openModalButton.addEventListener("click", function () {
-        //     $(addImageModal).modal("show");
-        // });
-
-        // $("#closeImageButton").click(function (event) {
-        //     unsetImage(event);
-        //     $('#addImageModal').modal('hide');
-        //     unselectGallery();
-        //     loaded = false;
-        // });
-
-        // const openGalleryModalButton = document.getElementById("openGalleryModalButton");
-        // const editGalleryModal = document.getElementById("editGalleryModal");
-
-        // openGalleryModalButton.addEventListener("click", function () {
-        //     $(editGalleryModal).modal("show");
-        // });
-
-        // $("#closeGalleryImageButton").click(function (event) {
-        //     $(editGalleryModal).modal("hide");
-        //     loadedGallery = false;
-        // });
 
         function unselectGallery(modal) {
             $(modal + " .overlay-checked").each(function () {
@@ -507,22 +444,20 @@
 
         let selectedMediaIds = [];
 
-        document.getElementById("tab1editLink").classList.add("active");
-        document.getElementById("tab2editLink").classList.remove("active");
+        $("#tab1editLink").addClass("active");
+        $("#tab2editLink").removeClass("active");
 
-        document.getElementById("tab1editLink").addEventListener("click", function () {
-            document.getElementById("tab1editLink").classList.add("active");
-            document.getElementById("tab2editLink").classList.remove("active");
+        $("#tab1editLink").on("click", function () {
+            $("#tab1editLink").addClass("active");
+            $("#tab2editLink").removeClass("active");
 
             $("#galleryEditTab1").addClass("active");
             $("#galleryEditTab2").removeClass("active");
-
-            //unselectGallery();
         });
 
-        document.getElementById("tab2editLink").addEventListener("click", function (event) {
-            document.getElementById("tab2editLink").classList.add("active");
-            document.getElementById("tab1editLink").classList.remove("active");
+        $("#tab2editLink").on("click", function (event) {
+            $("#tab2editLink").addClass("active");
+            $("#tab1editLink").removeClass("active");
 
             $("#galleryEditTab1").removeClass("active");
             $("#galleryEditTab2").addClass("active");
@@ -555,26 +490,25 @@
             }
         });
 
-        document.getElementById("tab1Link").classList.add("active");
+        $("#tab1Link").addClass("active");
 
-        document.getElementById("tab1Link").addEventListener("click", function () {
-            document.getElementById("tab1Link").classList.add("active");
-            document.getElementById("tab2Link").classList.remove("active");
+        $("#tab1Link").on("click", function () {
+            $("#tab1Link").addClass("active");
+            $("#tab2Link").removeClass("active");
 
-            document.getElementById("tab1").classList.add("active");
-            document.getElementById("tab2").classList.remove("active");
+            $("#tab1").addClass("active");
+            $("#tab2").removeClass("active");
 
             unselectGallery();
         });
 
-        document.getElementById("tab2Link").addEventListener("click", function (event) {
-            document.getElementById("tab2Link").classList.add("active");
-            document.getElementById("tab1Link").classList.remove("active");
+        $("#tab2Link").on("click", function (event) {
+            $("#tab2Link").addClass("active");
+            $("#tab1Link").removeClass("active");
 
-            document.getElementById("tab2").classList.add("active");
-            document.getElementById("tab1").classList.remove("active");
+            $("#tab2").addClass("active");
+            $("#tab1").removeClass("active");
 
-            //unsetImage(event);
             if (!loaded) {
                 let url = '@Url.Action("GalleryGrid", "Dashboard")'
                 $("#tab2-gallery").load(url, function () {
@@ -582,14 +516,13 @@
                         loaded = true;
                         mediaId = this.dataset.mediaId;
                         let parentElement = this.parentElement;
-                        let children = parentElement.getElementsByClassName('fas');
+                        let children = $('.fas');
 
                         unselectGallery('#tab2-gallery');
 
                         for (var i = 0; i < children.length; i++) {
                             children[i].classList.toggle('disable-icon');
                         }
-
                         parentElement.parentElement.classList.add("overlay-checked");
                     });
                 });
@@ -609,12 +542,11 @@
                     $(".addedImages").html(""); // Clear existing content
                     for (let i = 0; i < response.length; ++i) {
                         $(".addedImages").append(`
-                                                                <div class="image-container">
-                                                                    <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160"/>
-                                                                    <a class="unset-button hover-unset" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i}, '#editGalleryModal')" title="Unset Image">x</a>
-                                                                </div>
-                                                                    `);
-                        //document.getElementById('unset').classList.add("hover-unset");
+                            <div class="image-container">
+                                <img src="/Dashboard/GetImage?path=${response[i]}" id="gallery-new-preview-${i}" width="auto" height="160"/>
+                                <a class="unset-button hover-unset" onclick="unsetGalleryImage(event, ${selectedMediaIds[i]}, ${i}, '#editGalleryModal')" title="Unset Image">x</a>
+                            </div>
+                        `);
                     }
                 },
                 error: function (mediaSrc) {
@@ -622,11 +554,11 @@
                 }
             });
 
-            document.getElementById("tab1editLink").classList.add("active");
-            document.getElementById("tab2editLink").classList.remove("active");
+            $("#tab1editLink").addClass("active");
+            $("#tab2editLink").removeClass("active");
 
-            document.getElementById("galleryEditTab2").classList.remove("active");
-            document.getElementById("galleryEditTab1").classList.add("active");
+            $("#galleryEditTab2").removeClass("active");
+            $("#galleryEditTab1").addClass("active");
             loaded = false;
         });
 
@@ -639,12 +571,10 @@
                     url: '/Dashboard/GetImageFromGallery?mediaId=' + mediaId,
                     contentType: 'application/json',
                     success: function (response) {
-                        let image = document.getElementById('content-preview2');
-                        let image1 = document.getElementById('content-preview');
-                        image.src = '/Dashboard/GetImage?path=' + response + '';
-                        image1.src = '/Dashboard/GetImage?path=' + response + '';
-                        let element = document.getElementById('unset');
-                        element.classList.add("hover-unset");
+                        let image = $('#content-preview2').attr("src", '/Dashboard/GetImage?path=' + response + '');
+                        let image1 = $('#content-preview').attr("src", '/Dashboard/GetImage?path=' + response + '');
+                        let element = $('#unset');
+                        element.addClass("hover-unset");
                     },
                     error: function (xhr, status, error) {
                         console.log(error);
@@ -654,11 +584,10 @@
             $('#addImageModal').modal('hide');
             if (IsImgUnset) {
                 IsImgUnset = false;
-                let image = document.getElementById('content-preview2');
+                let image = $('#content-preview2');
                 image.src = '@Url.Action("GetImage", "Dashboard", null)';
                 event.preventDefault();
             }
-
         });
 
         $("#saveGalleryImagesButton").click(function (event) {
@@ -719,7 +648,7 @@
             }
         }
 
-        let catrgory_elements = document.getElementsByClassName("multi-cat");
+        let catrgory_elements = $(".multi-cat");
         for (let i = 0; i < catrgory_elements.length; i++) {
             catrgory_elements[i].addEventListener("click", function () {
                 this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
@@ -729,24 +658,22 @@
 
         let loadMultipleFile = function (event) {
             for (let i = 0; i < event.target.files.length; i++) {
-                let image = document.getElementById('gallery-preview-' + i);
-                image.src = URL.createObjectURL(event.target.files[i]);
+                let image = $('#gallery-preview-' + i);
+                image.attr("src", URL.createObjectURL(event.target.files[i]));
                 let element = image.nextElementSibling;
-                element.classList.add("hover-unset");
+                element.addClass("hover-unset");
             }
         };
 
         let loadMultipleFileArray = function (files, type, start) {
-            //console.log(files);
             for (let i = 0; i < files.length; i++) {
-                let image = document.getElementById('gallery-preview-' + (i + start));
-                //image.src = URL.createObjectURL(files[i]);
+                let image = $('#gallery-preview-' + (i + start));
                 if (type == "upload")
-                    image.src = URL.createObjectURL(files[i]);
+                    image.attr("src", URL.createObjectURL(files[i]));
                 else
-                    image.src = "/Dashboard/GetImage?path=" + files[i];
+                    image.attr("src", "/Dashboard/GetImage?path=" + files[i]);
                 let element = image.nextElementSibling;
-                element.classList.add("hover-unset");
+                element.addClass("hover-unset");
             }
         };
 
@@ -755,9 +682,9 @@
                 let image = this;
                 image.src = '@Url.Action("GetImage", "Dashboard", null)';
                 let element = image.nextElementSibling;
-                element.classList.remove("hover-unset");
+                element.removeClass("hover-unset");
             });
-            let fileInput = document.getElementById("file-gallery");
+            let fileInput = $("#file-gallery");
             let selectedFiles = Array.from(fileInput.files);
             selectedFiles.splice(position, 1);
             let newList = new DataTransfer();
@@ -774,7 +701,7 @@
                 let image = this;
                 image.src = '@Url.Action("GetImage", "Dashboard", null)';
                 let element = image.nextElementSibling;
-                element.classList.remove("hover-unset");
+                element.removeClass("hover-unset");
             });
         }
 
@@ -784,7 +711,6 @@
             let position = selectedMediaIds.indexOf(element);
             if (position !== -1) {
                 selectedMediaIds.splice(position, 1);
-                console.log(selectedMediaIds);
             }
             $("#gallery-new-preview-" + imageTagAt).remove();
 
@@ -796,19 +722,17 @@
         function loadCurrentImages(galleryImages) {
             for (let i = 0; i < galleryImages.length; i++) {
                 $(".currentImgs").append(`
-                                                    <div class="image-container">
-                                                        <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
-                                                        <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
-                                                    </div>
-                                                `);
+                    <div class="image-container">
+                        <img src="/Dashboard/GetImage?path=${galleryImages[i]}" id="gallery-preview-${i}" width="auto" height="160" style="border: 2px solid indigo">
+                        <a class="unset-button hover-unset" onclick="unsetImageMultiple(event, ${galleryImages.indexOf(galleryImages[i])} ,${[i]})" title="Unset Image">x</a>
+                    </div>
+                `);
             }
         }
 
 
         function unsetImageMultiple(event, position, imageTagAt) {
             let isUpload = !event.target.previousElementSibling.src.includes("GetImage");
-            console.log(position);
-            //let position = galleryImages.indexOf(element);
 
             if (galleryImages.length > 0) {
                 if (isUpload == false) {
@@ -821,20 +745,18 @@
         }
 
         $(document).ready(function () {
-
-            let image = document.getElementById('content-preview');
-            var parts = image.src.split('/');
-            var result = parts.slice(3).join('/');
-            //console.log("Aba", result);
+            let image = $('#content-preview').attr("src");
+            let parts = image.split('/');
+            let result = parts.slice(3).join('/');
             if (result != "Dashboard/GetImage") {
-                let element = document.getElementById('unset');
-                element.classList.add("hover-unset");
+                let element = $('#unset');
+                element.addClass("hover-unset");
             }
 
             let saleIdto = @Json.Serialize(Model.ProductIDTO.SaleIDTO);
             if (saleIdto != null) {
-                var startDate = saleIdto.startDate.split('-').reverse().join('/');
-                var endDate = saleIdto.endDate.split('-').reverse().join('/');
+                let startDate = saleIdto.startDate.split('-').reverse().join('/');
+                let endDate = saleIdto.endDate.split('-').reverse().join('/');
                 $('input[name="datefilter"]').daterangepicker({
                     endDate: Date.parse(saleIdto.endDate),
                     startDate: Date.parse(saleIdto.startDate),
@@ -863,7 +785,6 @@
                 $(this).val('');
             });
 
-            // console.log(@Json.Serialize(Model))
             if ($("#ProductIDTO_IsOnSale").attr('checked')) {
                 $("input[name*='SaleIDTO'], select[name*='SaleIDTO'], [name^='datefilter'] ").removeAttr("disabled");
             }
@@ -873,9 +794,6 @@
 
 
             $.ajax({
-                headers: {
-
-                },
                 type: "GET",
                 url: "/Dashboard/AllAttributesByCategory",
                 data: { CategoryId: productCategoryID },
@@ -923,11 +841,10 @@
                 enableHTML: true
             });
 
-            var elements = $("[data-toggle]");
+            let elements = $("[data-toggle]");
 
             elements.each(function () {
-                var oldValue = $(this).attr("data-toggle");
-
+                let oldValue = $(this).attr("data-toggle");
                 $(this).removeAttr("data-toggle");
                 $(this).attr("data-bs-toggle", oldValue);
             });
@@ -983,7 +900,6 @@
         });
 
         let langID = @Json.Serialize(Model.ProductIDTO.LanguageID);
-        console.log(langID);
 
         $('.lang').val($('#language').val());
 

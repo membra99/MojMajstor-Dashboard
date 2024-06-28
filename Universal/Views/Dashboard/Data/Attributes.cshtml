@@ -181,8 +181,8 @@
             });
 
             $('#userTable tbody').on('click', 'td.details-control', function () {
-                var tr = $(this).closest('tr');
-                var row = userTable.row(tr);
+                let tr = $(this).closest('tr');
+                let row = userTable.row(tr);
 
                 if (row.child.isShown()) {
                     // This row is already open - close it
@@ -190,9 +190,9 @@
                     tr.removeClass('shown');
                 } else {
                     // Open this row
-                    var data = row.data();
+                    let data = row.data();
                     $.get("https://localhost:7213/api/Attributes/GetAllAttributesValueByAttributeName?categoryId=" + data.categoryId, function (attributesData) {
-                        var childTable = '<table class="table table-bordered">' +
+                        let childTable = '<table class="table table-bordered">' +
                             '<thead>' +
                             '<tr>' +
                             '<th>Value</th>' +
@@ -201,8 +201,8 @@
                             '</thead>' +
                             '<tbody>';
 
-                        for (var i = 0; i < attributesData.length; i++) {
-                            var attributesId = attributesData[i].attributesId;
+                        for (let i = 0; i < attributesData.length; i++) {
+                            let attributesId = attributesData[i].attributesId;
 
                             childTable += '<tr>' +
                                 '<td>' + attributesData[i].value + '</td>' +
@@ -219,23 +219,23 @@
 
                         $('.delete-child-row').on('click', function (event) {
                             event.stopPropagation();
-                            var attributeId = $(this).data('attributeId');
+                            let attributeId = $(this).data('attributeId');
                             deleteAttribute(attributeId);
                         });
 
                     }).fail(function (xhr, status, error) {
-                        // Handle error
+                        console.log(error);
                     });
                 }
             });
 
             $('#userTable tbody').on('click', 'td.actions-control', function () {
-                var tr = $(this).closest('tr');
-                var row = userTable.row(tr);
-                var rowData = row.data();
+                let tr = $(this).closest('tr');
+                let row = userTable.row(tr);
+                let rowData = row.data();
                 let selectedAttributeId = rowData.categoryId;
 
-                var targetElement = $(event.target);
+                let targetElement = $(event.target);
                 if (targetElement.hasClass('fa-plus')) {
                     $('#addValueModal').modal('show');
                     $('#saveValueButton').val(selectedAttributeId);
@@ -246,12 +246,12 @@
             });
 
             $('#userTable tbody').on('click', 'td.actions-control', function () {
-                var tr = $(this).closest('tr');
-                var row = userTable.row(tr);
-                var rowData = row.data();
+                let tr = $(this).closest('tr');
+                let row = userTable.row(tr);
+                let rowData = row.data();
                 let selectedAttributeId = rowData.categoryId;
 
-                var targetElement = $(event.target);
+                let targetElement = $(event.target);
                 if (targetElement.hasClass('fa-pen')) {
                     $('#editAttributeModal').modal('show');
                     $('#saveEditButton').val(selectedAttributeId);
@@ -261,13 +261,13 @@
             });
 
             $('#userTable tbody').on('click', 'td.actions-control', function () {
-                var tr = $(this).closest('tr');
-                var row = userTable.row(tr);
+                let tr = $(this).closest('tr');
+                let row = userTable.row(tr);
 
-                var targetElement = $(event.target);
+                let targetElement = $(event.target);
 
                 if (targetElement.hasClass('fa-trash-can')) {
-                    var rowData = row.data();
+                    let rowData = row.data();
 
                     let selectedAttributeId = rowData.categoryId;
 
@@ -293,9 +293,7 @@
                         });
                     });
 
-                    $('#confirmDeleteModal').on('hidden.bs.modal', function () {
-
-                    });
+                    $('#confirmDeleteModal').on('hidden.bs.modal', function () {});
                 }
             });
 
@@ -345,23 +343,20 @@
 
             $('#saveEditButton').on('click', function () {
 
-                var tr = $(this).closest('tr');
-                var row = userTable.row(tr);
+                let tr = $(this).closest('tr');
+                let row = userTable.row(tr);
 
                 console.log(row);
 
                 let selectedParentCategoryId = $("#attrSelect").val();
                 let attributeName = $("#editAttributeName").val();
                 $("#editAttributeNameError").text("");
-
-                var rowData = row.data();
-
+                let rowData = row.data();
                 let selectedCategoryId = $('#saveEditButton').val();
 
                 // Validate the attribute name input
                 if (attributeName == "") {
                     $("#editAttributeNameError").text("Value Name cannot be empty.");
-
                     return; // Stop further processing
                 } else {
                     // Create the JSON object
@@ -392,13 +387,11 @@
             });
 
             $("#attrSelect").on("change", function () {
-                console.log("cao");
                 let id = $("#attrSelect").val();
                 updateTableData(id);
             });
 
             $('#saveValueButton').on('click', function () {
-
                 let selectedCategoryId = $("#saveValueButton").val();
                 let attributeName = $("#valueName").val();
                 $("#valueNameError").text("");
@@ -435,9 +428,7 @@
             });
 
             function updateTableData(categoryId) {
-                console.log(categoryId);
                 $.get("https://localhost:7213/api/Attributes/GetAllAttributesByCategoryName?categoryId=" + categoryId, function (data) {
-                    console.log(data);
                     userTable.clear().rows.add(data).draw();
                 }).fail(function (xhr, status, error) {
                     userTable.clear().draw();
@@ -445,11 +436,10 @@
             }
 
             function deleteAttribute(attributeId) {
-                console.log(attributeId);
-                var tr = $(this).closest('tr');
-                var row = userTable.row(tr);
+                let tr = $(this).closest('tr');
+                let row = userTable.row(tr);
                 let selectedParentCategoryId = $("#attrSelect").val();
-                var targetElement = $(event.target);
+                let targetElement = $(event.target);
 
                 if (targetElement.hasClass('fa-trash-can')) {
 
@@ -469,14 +459,12 @@
                                 showToast("Value " + response.value + " is deleted succesfully from " + response.categoryName + ".", "success");
                             },
                             error: function (xhr, status, error) {
-                                // Handle error
+                                console.log(error);
                             }
                         });
                     });
 
-                    $('#confirmDeleteValueModal').on('hidden.bs.modal', function () {
-
-                    });
+                    $('#confirmDeleteValueModal').on('hidden.bs.modal', function () {});
                 }
             }
         });

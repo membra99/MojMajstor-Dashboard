@@ -99,12 +99,12 @@ namespace Services
 				foreach (var mediaId in MediaIds)
 				{
 					var checkImage = await _context.Medias.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
-					if (checkImage.ProductId != null || checkImage.MediaTypeId != 5)
+					if (checkImage.ProductId != null || checkImage.MediaTypeId != 4)
 					{
 						var newMed = new Media();
 						newMed.MediaId = 0;
 						newMed.ProductId = productId;
-						newMed.MediaTypeId = 5;
+						newMed.MediaTypeId = 4;
 						newMed.Src = checkImage.Src;
 						newMed.Extension = checkImage.Extension;
 						newMed.MetaDescription = checkImage.MetaDescription;
@@ -117,7 +117,7 @@ namespace Services
 					else
 					{
 						checkImage.ProductId = productId;
-						checkImage.MediaTypeId = 5;
+						checkImage.MediaTypeId = 4;
 						_context.Medias.Entry(checkImage).State = EntityState.Modified;
 						await SaveContextChangesAsync();
 					}
@@ -133,7 +133,7 @@ namespace Services
 				{
 					var updateMedia = await _context.Medias.Where(x => x.MediaId == uploadedImgId).SingleOrDefaultAsync();
 					updateMedia.ProductId = productId;
-					updateMedia.MediaTypeId = 5;
+					updateMedia.MediaTypeId = 4;
 					_context.Medias.Entry(updateMedia).State = EntityState.Modified;
 					await SaveContextChangesAsync();
 				}
@@ -381,7 +381,7 @@ namespace Services
 		{
 			var product = _mapper.Map<ProductIDTO>(await GetProducts(id, 0).AsNoTracking().SingleOrDefaultAsync());
 			product.FeatureImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 3).Select(x => x.Src).SingleOrDefaultAsync();
-			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 5).Select(x => x.Src).ToListAsync();
+			product.GalleyImg = await _context.Medias.Where(x => x.ProductId == product.ProductId && x.MediaTypeId == 4).Select(x => x.Src).ToListAsync();
 			product.SaleIDTO = _mapper.Map<SaleIDTO>(await _context.Sales.FirstOrDefaultAsync(x => x.ProductId == product.ProductId));
 			product.SeoIDTO = _mapper.Map<SeoIDTO>(await _context.Seos.FirstOrDefaultAsync(x => x.SeoId == product.SeoId));
 			if (product.SaleIDTO != null)

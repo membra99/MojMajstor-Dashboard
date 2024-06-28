@@ -47,98 +47,118 @@
             </tbody>
         </table>
     </div>
-    @section Scripts
-        {
-        <script>
-            let defaultLangID = @Json.Serialize(languagesList?.First().LanguageID);
-            let isPaginate = false;
-            let dataTable = null;
 
-            function loadData(langID) {
-                toggleLoading();
-                $.ajax({
-                    headers: {
-                        'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
-                    },
-                    url: '/api/Product/GetAllProducts',
-                    method: 'GET',
-                    data: { langID: langID },
-                    dataType: 'json',
-                    success: function (data) {
-                        isPaginate = data.length > 10 ? true : false;
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
 
-                        if (dataTable) {
-                            dataTable.destroy();
-                        }
-                        dataTable = $('#userTable').DataTable({
-                            data: data,
-                            scrollX: true,
-                            columns: [
-                                { data: "productName" },
-                                { data: "categoryName" },
-                                { data: "isOnSale" },
-                                { data: "price" },
-                                { data: "productCode" },
-                                {
-                                    data: "isActive",
-                                    render: function (data, type, row) {
-                                        // Format "Active" or "Not Active" based on the boolean value
-                                        return data != false && data != null ? "Active" : "Not Active";
-                                    }
-                                },
-                                { data: "quantity" },
-                                {
-                                    data: 'productId',
-                                    render: function (data, type, row) {
-                                        return '<a href="/Dashboard/EditData?dataId=' + data + '"><i class="fa-solid fa-pen icon-spacing"></i></a>' +
-                                            '<a href="/Dashboard/PreviewData?dataId=' + data + '"><i class="fa-solid fa-eye icon-spacing"></i></a>' +
-                                            '<a href="/Dashboard/DeleteData?dataId=' + data + '"><i class="fa-solid fa-trash-can icon-spacing trsh"></i></a>'
-                                    }
-                                },
-                            ],
-                            columnDefs: [
-                                { targets: '_all', className: 'dt-left' }
-                            ],
-                            dom: 'Bfrtip',
-                            buttons: [
-                                {
-                                    text: 'Add New Data',
-                                    className: 'btn btn-dotnet',
-                                    action: function () {
-                                        location = '/Dashboard/NewData';
-                                    }
-                                }
-                            ],
-                            bPaginate: isPaginate,
-                            preXhr: function (e, settings, data) {
-                                toggleLoading();
-                            },
-                            initComplete: function (settings, json) {
-                                $('.dt-buttons, .dataTables_filter').wrapAll('<div class="d-flex justify-content-end"></div>');
-                                toggleLoading();
-                            },
-                            order: [[2, 'asc']],
-                        });
-                    },
-                    error: function (error) {
-                        console.error('Error loading data: ' + JSON.stringify(error));
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this product?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+                    <button type="button" class="btn btn-danger btn-dotnet">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script>
+        let defaultLangID = @Json.Serialize(languagesList?.First().LanguageID);
+        let isPaginate = false;
+        let dataTable = null;
+
+        function loadData(langID) {
+            toggleLoading();
+            $.ajax({
+                headers: {
+                    'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+                },
+                url: '/api/Product/GetAllProducts',
+                method: 'GET',
+                data: { langID: langID },
+                dataType: 'json',
+                success: function (data) {
+                    isPaginate = data.length > 10 ? true : false;
+
+                    if (dataTable) {
+                        dataTable.destroy();
                     }
-                });
-            }
-            loadData(defaultLangID);
-
-            function setLanguage(langId, event) {
-                if (defaultLangID != langId) {
-                    for (let child of event.target.parentElement.children) {
-                        child.classList.remove("language-active");
-                        child.classList.remove("active");
-                    };
-
-                    event.target.classList.add("language-active");
-                    event.target.classList.add("active");
-                    defaultLangID = langId;
-                    loadData(defaultLangID);
+                    dataTable = $('#userTable').DataTable({
+                        data: data,
+                        scrollX: true,
+                        columns: [
+                            { data: "productName" },
+                            { data: "categoryName" },
+                            { data: "isOnSale" },
+                            { data: "price" },
+                            { data: "productCode" },
+                            {
+                                data: "isActive",
+                                render: function (data, type, row) {
+                                    // Format "Active" or "Not Active" based on the boolean value
+                                    return data != false && data != null ? "Active" : "Not Active";
+                                }
+                            },
+                            { data: "quantity" },
+                            {
+                                data: 'productId',
+                                render: function (data, type, row) {
+                                    return '<a href="/Dashboard/EditData?dataId=' + data + '"><i class="fa-solid fa-pen icon-spacing"></i></a>' +
+                                        '<a href="/Dashboard/PreviewData?dataId=' + data + '"><i class="fa-solid fa-eye icon-spacing"></i></a>' +
+                                        '<a href="/Dashboard/DeleteData?dataId=' + data + '"><i class="fa-solid fa-trash-can icon-spacing trsh"></i></a>'
+                                }
+                            },
+                        ],
+                        columnDefs: [
+                            { targets: '_all', className: 'dt-left' }
+                        ],
+                        dom: 'Bfrtip',
+                        buttons: [
+                            {
+                                text: 'Add New Data',
+                                className: 'btn btn-dotnet',
+                                action: function () {
+                                    location = '/Dashboard/NewData';
+                                }
+                            }
+                        ],
+                        bPaginate: isPaginate,
+                        preXhr: function (e, settings, data) {
+                            toggleLoading();
+                        },
+                        initComplete: function (settings, json) {
+                            $('.dt-buttons, .dataTables_filter').wrapAll('<div class="d-flex justify-content-end"></div>');
+                            toggleLoading();
+                        },
+                        order: [[2, 'asc']],
+                    });
+                },
+                error: function (error) {
+                    console.error('Error loading data: ' + JSON.stringify(error));
                 }
+            });
+        }
+
+        loadData(defaultLangID);
+
+        function setLanguage(langId, event) {
+            if (defaultLangID != langId) {
+                for (let child of event.target.parentElement.children) {
+                    child.classList.remove("language-active");
+                    child.classList.remove("active");
+                };
+
+                event.target.classList.add("language-active");
+                event.target.classList.add("active");
+                defaultLangID = langId;
+                loadData(defaultLangID);
             }
-        </script>
-    }
+        }
+    </script>
+}

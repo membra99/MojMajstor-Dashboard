@@ -265,7 +265,6 @@
         $(".selectpicker").on("change", function () {
             let year = $(this).val();
 
-
             $.ajax({
                 url: '/Dashboard/GetChartDataByYear?year=' + year,
                 type: 'GET',
@@ -311,12 +310,12 @@
                 myChart = null;// Destroy the existing chart instance
             }
 
-            var ctx = document.getElementById('myChart').getContext('2d');
+            let ctx = document.getElementById('myChart').getContext('2d');
             myChart = new Chart(ctx, config);
         }
 
-        var PriceByYear = @Json.Serialize(Model.barChartODTO.Years);
-        var PriceByYearVal = @Json.Serialize(Model.barChartODTO.Values);
+        let PriceByYear = @Json.Serialize(Model.barChartODTO.Years);
+        let PriceByYearVal = @Json.Serialize(Model.barChartODTO.Values);
         function LoadDataPrice() {
             const data = {
                 labels: PriceByYear,
@@ -343,14 +342,12 @@
                 },
             };
 
-            var ctxPrice = document.getElementById('myChartPrice').getContext('2d');
+            let ctxPrice = document.getElementById('myChartPrice').getContext('2d');
             myChartPrice = new Chart(ctxPrice, configPrice);
         }
 
-
-
-        var Values = @Json.Serialize(Model.SumByYear);
-        document.addEventListener("DOMContentLoaded", function () {
+        let Values = @Json.Serialize(Model.SumByYear);
+        $(document).ready(function () {
             LoadData(Values);
             LoadDataPrice();
         });

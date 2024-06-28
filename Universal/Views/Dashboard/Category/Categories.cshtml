@@ -11,8 +11,7 @@
 <div class="col-10">
     @if (Model.AllCategories.Count > 0)
     {
-        <ul id="main-list">
-        </ul>
+        <ul id="main-list"></ul>
     }
     else
     {
@@ -85,23 +84,19 @@
 @section Scripts{
     <script>
         let loadFile = function (event) {
-            let image = document.getElementById('category_preview');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            let element = document.getElementById('unset');
+            let image = $('#category_preview').src = URL.createObjectURL(event.target.files[0]);
+            let element = $('#unset');
             element.classList.add("hover-unset");
-            var hiddenInput = document.getElementById("IsImageChanged");
-            hiddenInput.value = null;
-
+            var hiddenInput = $("#IsImageChanged").val(null);
         };
 
         function unsetImage(event) {
-            let image = document.getElementById('category_preview');
+            let image = $('#category_preview');
             image.src = '@Url.Action("GetImage","Dashboard",null)';
             $("#file").val(null);
-            var hiddenInput = document.getElementById("IsImageChanged");
-            hiddenInput.value = "true";
+            var hiddenInput = $("#IsImageChanged").val("true");
 
-            let element = document.getElementById('unset');
+            let element = $('#unset');
             element.classList.remove("hover-unset");
             event.preventDefault();
         }
@@ -134,18 +129,18 @@
             }
         }
 
-        let catrgory_elements = document.getElementsByClassName("multi-cat");
+        let catrgory_elements = $(".multi-cat");
         for (let i = 0; i < catrgory_elements.length; i++) {
-            catrgory_elements[i].addEventListener("click", function () {
+            $(catrgory_elements[i]).on("click", function () {
                 this.parentElement.parentElement.querySelector(".nested").classList.toggle("active-cat");
                 this.classList.toggle("multi-cat-down");
             });
         }
 
         //v v v BUTTONS v v v
-        let add_buttons = document.getElementsByClassName("fa-plus");
+        let add_buttons = $(".fa-plus");
         for (let i = 0; i < add_buttons.length; i++) {
-            add_buttons[i].addEventListener("click", function () {
+            $(add_buttons[i]).on("click", function () {
                 let categoryId = this.dataset.catId;
                 $("#input-parent").val(categoryId);
 
@@ -157,7 +152,6 @@
 
             let lang = $("#language").val();
             $(".lang").val(lang);
-            //console.log(lang);
         }
 
         $("#closeAddModalButton").click(function () {
@@ -172,9 +166,9 @@
             $('.lang').val($(this).val());
         });
 
-        let edit_buttons = document.getElementsByClassName("fa-pen");
+        let edit_buttons = $(".fa-pen");
         for (let i = 0; i < edit_buttons.length; i++) {
-            edit_buttons[i].addEventListener("click", function () {
+            $(edit_buttons[i]).on("click", function () {
                 let categoryId = this.dataset.catId;
                 let parentId = this.dataset.parentId;
                 $.ajax({
@@ -182,7 +176,6 @@
                     type: 'GET',
                     data: categoryId,
                     success: function (response) {
-                        console.log(response);
                         $('#input-name').val(response.categoryName);
                         $('#input-seoDesc').val(response.googleDesc);
                         $('#input-seoKeyword').val(response.googleKeywords);
@@ -191,20 +184,16 @@
                         let url = '@Url.Action("GetImage", "Dashboard", new { path = "js-id" })'.replace("js-id", encodeURIComponent(response.mediaSrc == null ? "" : response.mediaSrc));
                         $('#category_preview').attr("src", url);
 
-                        let image = document.getElementById('category_preview');
+                        let image = $('#category_preview');
                         var parts = image.src.split('/');
                         var result = parts.slice(3).join('/');
                         if (result != "Dashboard/GetImage?path=") {
-                            let element = document.getElementById('unset');
+                            let element = $('#unset');
                             element.classList.add("hover-unset");
                         }
-
                     },
-                    error: function () {
-
-                    }
+                    error: function () {}
                 });
-
 
                 $("#input-category").val(categoryId);
                 $("#input-parent").val(parentId);
@@ -216,12 +205,9 @@
             });
         }
 
-
-
-
-        let delete_buttons = document.getElementsByClassName("fa-trash-can");
+        let delete_buttons = $(".fa-trash-can");
         for (let i = 0; i < delete_buttons.length; i++) {
-            delete_buttons[i].addEventListener("click", function () {
+            $(delete_buttons[i]).on("click", function () {
                 let categoryId = this.dataset.catId;
                 $("#input-delete").val(categoryId);
                 $("#delete-modal").modal("toggle");
