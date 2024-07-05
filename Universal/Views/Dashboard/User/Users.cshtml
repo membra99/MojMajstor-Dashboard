@@ -5,157 +5,157 @@
 
 
 @{
-	ViewData["Title"] = "All Users";
-	var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
-	string domain = Configuration["URL:MainUrl"];
+    ViewData["Title"] = "All Users";
+    var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
+    string domain = Configuration["URL:MainUrl"];
 }
 
 <div class="col-12">
-	<div class="pb-2 d-flex justify-content-end">
-		@Html.ActionLink("Add New User", "NewUser", "Dashboard", null, new { @class="btn btn-dotnet" })
-	</div>
-	<table id="userTable" class="table table-striped display text-center w-100">
-		<thead>
-			<tr>
-				<th>Role</th>
-				<th>Email</th>
-				<th>FirstName</th>
-				<th>LastName</th>
-				<th>Phone</th>
-				<th>Address</th>
-				<th>City</th>
-				<th>Zip</th>
-				<th>Country</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
+    <div class="pb-2 d-flex justify-content-end">
+        @Html.ActionLink("Add New User", "NewUser", "Dashboard", null, new { @class = "btn btn-dotnet" })
+    </div>
+    <table id="userTable" class="table table-striped display text-center w-100">
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Email</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Zip</th>
+                <th>Country</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
 
-			</div>
-			<div class="modal-body">
-				Are you sure you want to delete this user?
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeConfirmDeleteButton">No</button>
-				<button type="button" class="btn btn-danger btn-dotnet">Yes</button>
-			</div>
-		</div>
-	</div>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this user?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+                <button type="button" class="btn btn-danger btn-dotnet">Yes</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
-	{
-	<script>
-		toggleLoading();;
+{
+    <script>
+        toggleLoading();;
 
-		$(document).ready(function () {
-			let data = @Json.Serialize(Model);
-			let isPaginate = data.length > 10 ? true : false;
+        $(document).ready(function () {
+            let data = @Json.Serialize(Model);
+            let isPaginate = data.length > 10 ? true : false;
 
-			let userTable = $('#userTable').DataTable({
-				//sDom: '<"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"lfr>t<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"<"#testbutton">ip>',
-				data: @Json.Serialize(Model),
-				scrollX: true,
-				columns: [
-					{ data: "role" },
-					{ data: "email" },
-					{ data: "firstName" },
-					{ data: "lastName" },
-					{ data: "phone" },
-					{ data: "address" },
-					{ data: "city" },
-					{ data: "zip" },
-					{ data: "country" },
-					{
-						data: 'usersId',
-						className: 'actions-control',
-						render: function (data, type, row) {
-							return '<a href="/Dashboard/EditUser?userId=' + data + '">' +
-								'<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
-								'<a href="/Dashboard/PreviewUser?userId=' + data + '">' +
-								'<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
-								'<i class="fa-solid fa-trash-can icon-spacing"></i>'
-						}
-					},
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-				bPaginate: isPaginate,
-				order: [[3, 'desc']],
-				initComplete: function (settings, json) {
-					toggleLoading();
-				}
-			});
+            let userTable = $('#userTable').DataTable({
+                //sDom: '<"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"lfr>t<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"<"#testbutton">ip>',
+                data: @Json.Serialize(Model),
+                scrollX: true,
+                columns: [
+                    { data: "role" },
+                    { data: "email" },
+                    { data: "firstName" },
+                    { data: "lastName" },
+                    { data: "phone" },
+                    { data: "address" },
+                    { data: "city" },
+                    { data: "zip" },
+                    { data: "country" },
+                    {
+                        data: 'usersId',
+                        className: 'actions-control',
+                        render: function (data, type, row) {
+                            return '<a href="/Dashboard/EditUser?userId=' + data + '">' +
+                                '<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
+                                '<a href="/Dashboard/PreviewUser?userId=' + data + '">' +
+                                '<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
+                                '<i class="fa-solid fa-trash-can icon-spacing"></i>'
+                        }
+                    },
+                ],
+                columnDefs: [
+                    { targets: '_all', className: 'dt-left' }
+                ],
+                bPaginate: isPaginate,
+                order: [[3, 'desc']],
+                initComplete: function (settings, json) {
+                    toggleLoading();
+                }
+            });
 
-			$.ajaxSetup({
-				headers: {
-					headers: {
-						'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
-					},								
-				}
-			});
+            $.ajaxSetup({
+                headers: {
+                    headers: {
+                        'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+                    },
+                }
+            });
 
-			$('#userTable tbody').on('click', 'td.actions-control', function () {
-				var tr = $(this).closest('tr');
-				var row = userTable.row(tr);
+            $('#userTable tbody').on('click', 'td.actions-control', function () {
+                var tr = $(this).closest('tr');
+                var row = userTable.row(tr);
 
-				var targetElement = $(event.target);
+                var targetElement = $(event.target);
 
-				if (targetElement.hasClass('fa-trash-can')) {
-					var rowData = row.data();
-					let selectedUserId = rowData.usersId;
+                if (targetElement.hasClass('fa-trash-can')) {
+                    var rowData = row.data();
+                    let selectedUserId = rowData.usersId;
 
-					// Show a confirmation modal
-					$('#confirmDeleteModal').modal('show');
+                    // Show a confirmation modal
+                    $('#confirmDeleteModal').modal('show');
 
-					$('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+                    $('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
 
-						// Close the confirmation modal
-						$('#confirmDeleteModal').modal('hide');
-						updateTableData();
+                        // Close the confirmation modal
+                        $('#confirmDeleteModal').modal('hide');
+                        updateTableData();
 
-						$.ajax({
-							headers: {
-								'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
-							},
-							type: 'DELETE',
-							url: '@domain' + 'api/Users/' + selectedUserId,
-							contentType: 'application/json',
-							success: function (response) {
-								console.log(response);
-								updateTableData();
-							},
-							error: function (xhr, status, error) {
-								// Handle error
-							}
-						});
-					});
+                        $.ajax({
+                            headers: {
+                                'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+                            },
+                            type: 'DELETE',
+                            url: '@domain' + 'api/Users/' + selectedUserId,
+                            contentType: 'application/json',
+                            success: function (response) {
+                                console.log(response);
+                                updateTableData();
+                            },
+                            error: function (xhr, status, error) {
+                                // Handle error
+                            }
+                        });
+                    });
 
-					$('#confirmDeleteModal').on('hidden.bs.modal', function () {
+                    $('#confirmDeleteModal').on('hidden.bs.modal', function () {
 
-					});
-				}
-			});
+                    });
+                }
+            });
 
-			function updateTableData() {
-				$.get("https://localhost:7213/api/Users", function (data) {
-					userTable.clear().rows.add(data).draw();
-				}).fail(function (xhr, status, error) {
-					userTable.clear().draw();
-				});
-			}
-		});
+            function updateTableData() {
+                $.get("https://localhost:7213/api/Users", function (data) {
+                    userTable.clear().rows.add(data).draw();
+                }).fail(function (xhr, status, error) {
+                    userTable.clear().draw();
+                });
+            }
+        });
 
-	</script>
+    </script>
 }

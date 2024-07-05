@@ -5,58 +5,58 @@
 }
 <h2 class="p-2">Edit promo code</h2>
 <div class="w-75 mx-auto">
-	@using (Html.BeginForm("EditPromoCodeAction", "Dashboard", FormMethod.Post, "multipart/form-data"))
-	{
-		@Html.HiddenFor(model => model.CreatedAt)
-		@Html.HiddenFor(model => model.PromoCodesId)
-		<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.PromoCode, "Promocode title:", true)
-			@Html.TextBoxFor(model => model.PromoCode, null, new { @class="form-control", placeholder = "Title"})
-			@Html.ValidationMessageFor(model => model.PromoCode, null, new { @class="text-danger" })
-		</div>
-		<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.PromoCodeValue, "Promocode value:", true)
-			@Html.TextBoxFor(model => model.PromoCodeValue, new { @class="form-control", placeholder = "Value"})
-			@Html.ValidationMessageFor(model => model.PromoCodeValue, null, new { @class="text-danger" })
-		</div>
-		<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.StartDate, "From:", true)
-			@Html.TextBoxFor(model => model.StartDate, new { type="date", @class="form-control", placeholder = "From"})
-			@Html.ValidationMessageFor(model => model.StartDate, null, new { @class="text-danger" })
-		</div>
-		<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.EndDate, "To:", true)
-			@Html.TextBoxFor(model => model.EndDate, new { type="date", @class="form-control", placeholder = "To"})
-			@Html.ValidationMessageFor(model => model.EndDate, null, new { @class="text-danger" })
-		</div>
-		<div class="form-group mb-3">
-			@Html.LabelRequiredFor(model => model.Message, "Content:", true)
-			@Html.TextAreaFor(model => model.Message, 10,1, new { @Id="tiny", @class="form-control", placeholder = "Content"})
-			@Html.ValidationMessageFor(model => model.Message, null, new { @class="text-danger" })
-		</div>
+    @using (Html.BeginForm("EditPromoCodeAction", "Dashboard", FormMethod.Post, "multipart/form-data"))
+    {
+        @Html.HiddenFor(model => model.CreatedAt)
+        @Html.HiddenFor(model => model.PromoCodesId)
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.PromoCode, "Promocode title:", true)
+            @Html.TextBoxFor(model => model.PromoCode, null, new { @class = "form-control", placeholder = "Title" })
+            @Html.ValidationMessageFor(model => model.PromoCode, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.PromoCodeValue, "Promocode value:", true)
+            @Html.TextBoxFor(model => model.PromoCodeValue, new { @class = "form-control", placeholder = "Value" })
+            @Html.ValidationMessageFor(model => model.PromoCodeValue, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.StartDate, "From:", true)
+            @Html.TextBoxFor(model => model.StartDate, new { type = "date", @class = "form-control", placeholder = "From" })
+            @Html.ValidationMessageFor(model => model.StartDate, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.EndDate, "To:", true)
+            @Html.TextBoxFor(model => model.EndDate, new { type = "date", @class = "form-control", placeholder = "To" })
+            @Html.ValidationMessageFor(model => model.EndDate, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.Message, "Content:", true)
+            @Html.TextAreaFor(model => model.Message, 10, 1, new { @Id = "tiny", @class = "form-control", placeholder = "Content" })
+            @Html.ValidationMessageFor(model => model.Message, null, new { @class = "text-danger" })
+        </div>
 
-		<div class="mx-auto mb-3 w-50">
-			<input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
-		</div>
-	}
+        <div class="mx-auto mb-3 w-50">
+            <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+        </div>
+    }
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
-	let data = @Json.Serialize(Model);
+    let data = @Json.Serialize(Model);
 
-	let startDate = new Date(data.startDate);
-	startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
-	startDate = startDate.toISOString().split('T')[0];
+    let startDate = new Date(data.startDate);
+    startDate.setMinutes(startDate.getMinutes() - startDate.getTimezoneOffset());
+    startDate = startDate.toISOString().split('T')[0];
 
-	Convert end date to local time zone
-	let endDate = new Date(data.endDate);
-	endDate.setMinutes(endDate.getMinutes() - endDate.getTimezoneOffset());
-	endDate = endDate.toISOString().split('T')[0];
+        //Convert end date to local time zone
+    let endDate = new Date(data.endDate);
+    endDate.setMinutes(endDate.getMinutes() - endDate.getTimezoneOffset());
+    endDate = endDate.toISOString().split('T')[0];
 
-	console.log("Converted start date:", startDate);
-	console.log("Converted end date:", endDate);
+    console.log("Converted start date:", startDate);
+    console.log("Converted end date:", endDate);
 
-	$("#StartDate").val(startDate);
-	$("#EndDate").val(endDate);
+    $("#StartDate").val(startDate);
+    $("#EndDate").val(endDate);
 </script>

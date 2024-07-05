@@ -426,10 +426,7 @@
         });
 
         $("#closeImageButton").click(function (event) {
-            unsetImage(event);
             $('#addImageModal').modal('hide');
-            unselectGallery();
-            loaded = false;
         });
 
         const openGalleryModalButton = $("#openGalleryModalButton");
@@ -441,7 +438,7 @@
 
         $("#closeGalleryImageButton").click(function (event) {
             $(editGalleryModal).modal("hide");
-            loadedGallery = false;
+            loaded = false;
         });
 
         function unselectGallery(modal) {
@@ -511,8 +508,6 @@
 
             $("#tab1").addClass("active");
             $("#tab2").removeClass("active");
-
-            //unselectGallery();
         });
 
         $("#tab2Link").on("click", function (event) {
@@ -522,7 +517,6 @@
             $("#tab2").addClass("active");
             $("#tab1").removeClass("active");
 
-            //unsetImage(event);
             if (!loaded) {
                 let url = '@Url.Action("GalleryGrid","Dashboard")'
                 $("#tab2-gallery").load(url, function () {
@@ -615,7 +609,7 @@
                     <input type="hidden" name="MediaIds[${i}]" value="${selectedMediaIds[i]}" />
                 `);
             }
-            unselectGallery();
+            //unselectGallery();
         });
 
 

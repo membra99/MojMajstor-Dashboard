@@ -3,211 +3,206 @@
 
 
 @{
-	ViewData["Title"] = "Gallery";
-	string domain = Configuration["URL:MainUrl"];
+    ViewData["Title"] = "Gallery";
+    string domain = Configuration["URL:MainUrl"];
 }
 
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 <div class="action-button pt-2">
-	<button type="button" class="btn btn-dotnet" id="uploadPictureModal">Add new picture</button>
+    <button type="button" class="btn btn-dotnet" id="uploadPictureModal">Add new picture</button>
 </div>
 
 @{
-	await Html.RenderPartialAsync("/Views/Partials/_GalleryGrid.cshtml", Model);
+    await Html.RenderPartialAsync("/Views/Partials/_GalleryGrid.cshtml", Model);
 }
 
 <style>
-	.fa-eye:hover{
-		cursor: pointer;
-	}
+    .fa-eye:hover {
+        cursor: pointer;
+    }
 </style>
 
 <!-- view_picture_modal -->
 <div id="view-image-modal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h6 class="modal-title text-center" id="view-modal-heading"></h6>
-			</div>
-			<div class="modal-body">
-				<img id="viewImage" name="viewImage" alt="image.png" width="100%" />
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-dotnet" data-bs-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title text-center" id="view-modal-heading"></h6>
+            </div>
+            <div class="modal-body">
+                <img id="viewImage" name="viewImage" alt="image.png" width="100%" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dotnet" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- view_picture_modal -->
-
 <!-- edit_picture_modal -->
 <div id="edit-image-modal" class="modal fade" tabindex="-1" role="dialog">
-	@using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
-	{
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Edit Image Properties</h5>
-					<button type="button" class="close closeEditModalButton" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					@Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id="input-edit-mediaId" })
-					@Html.TextBoxFor(model => model.MediaIDTO.MetaTitle, new { @id="input-edit-title", @class = "form-control mb-3", placeholder = "Meta Title" })
-					@Html.TextBoxFor(model => model.MediaIDTO.MetaDescription, new { @id="input-edit-desc", @class = "form-control mb-3", placeholder = "Meta Description" })
-					@Html.TextBoxFor(model => model.MediaIDTO.AltTitle, new { @id="input-edit-alt", @class = "form-control mb-3", placeholder = "Alt Title" })
-				</div>
-				<div class="modal-footer">
-					<input type="submit" class="btn btn-dotnet" value="Save" />
-					<button type="button" class="btn btn-secondary closeEditModalButton" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	}
+    @using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
+    {
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Image Properties</h5>
+                    <button type="button" class="close closeEditModalButton" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id = "input-edit-mediaId" })
+                    @Html.TextBoxFor(model => model.MediaIDTO.MetaTitle, new { @id = "input-edit-title", @class = "form-control mb-3", placeholder = "Meta Title" })
+                    @Html.TextBoxFor(model => model.MediaIDTO.MetaDescription, new { @id = "input-edit-desc", @class = "form-control mb-3", placeholder = "Meta Description" })
+                    @Html.TextBoxFor(model => model.MediaIDTO.AltTitle, new { @id = "input-edit-alt", @class = "form-control mb-3", placeholder = "Alt Title" })
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-dotnet" value="Save" />
+                    <button type="button" class="btn btn-secondary closeEditModalButton" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 <!-- edit_picture_modal -->
-
-
 <!-- delete_picture_modal -->
 <div id="delete-image-modal" class="modal fade" tabindex="-1" role="dialog">
-	@using (Html.BeginForm("DeleteMeidaImage", "Dashboard", FormMethod.Post))
-	{
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Delete Image?</h5>
-					<button type="button" class="close closeDeleteModalButton" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p id="delete-message"></p>
-					@Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id="input-delete-mediaId" })
-					@Html.HiddenFor(model => model.MediaIDTO.MediaTypeId, new { @id="input-delete-mediaTypeId" })
-					@Html.HiddenFor(model => model.MediaIDTO.MetaTitle, new { @id="input-delete-mediaMeta" })
-				</div>
-				<div class="modal-footer">
-					<input type="submit" class="btn btn-dotnet" value="Delete" />
-					<button type="button" class="btn btn-secondary closeDeleteModalButton" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	}
+    @using (Html.BeginForm("DeleteMeidaImage", "Dashboard", FormMethod.Post))
+    {
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Image?</h5>
+                    <button type="button" class="close closeDeleteModalButton" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="delete-message"></p>
+                    @Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id = "input-delete-mediaId" })
+                    @Html.HiddenFor(model => model.MediaIDTO.MediaTypeId, new { @id = "input-delete-mediaTypeId" })
+                    @Html.HiddenFor(model => model.MediaIDTO.MetaTitle, new { @id = "input-delete-mediaMeta" })
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-dotnet" value="Delete" />
+                    <button type="button" class="btn btn-secondary closeDeleteModalButton" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 <!-- delete_picture_modal -->
-
 <!-- upload_picture_modal -->
 <div class="modal fade" id="uploadPicture" tabindex="-1" aria-labelledby="uploadPictureLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 40%">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="uploadPictureLabel">Upload picture</h1>
-			</div>
-			<div class="modal-body">
-				<!-- Image upload -->
-				<form id="form" method="post" class="w-100" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
-					<div class="form-group">
-						<div id="dropzone">
-							<div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
-						</div>
-					</div>
-				</form>
-				<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-				<!-- Image upload -->
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-dotnet" id="closeModal">Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 40%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="uploadPictureLabel">Upload picture</h1>
+            </div>
+            <div class="modal-body">
+                <!-- Image upload -->
+                <form id="form" method="post" class="w-100" enctype="multipart/form-data" data-pasley-validate class="form-horizontal form-label-left">
+                    <div class="form-group">
+                        <div id="dropzone">
+                            <div action="/Dashboard/uploadMedia" class="dropzone" id="uploader"></div>
+                        </div>
+                    </div>
+                </form>
+                <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+                <!-- Image upload -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dotnet" id="closeModal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- upload_picture_modal -->
+@section Scripts {
+    <script>
+        toggleLoading();
 
-@section Scripts{
-	<script>
-		toggleLoading();
+        let data = @Json.Serialize(Model.MediaList);
+        //console.log(data);
+        $(document).ready(function () {
 
-		let data = @Json.Serialize(Model.MediaList);
-		//console.log(data);
-		$(document).ready(function () {
+            $("#uploadPictureModal").on("click", function () {
+                $("#uploadPicture").modal("show");
+            });
 
-			$("#uploadPictureModal").on("click", function () {
-				$("#uploadPicture").modal("show");
-			});
+            let view_buttons = $(".fa-eye");
+            let view_modal_image = $("#viewImage");
+            let view_modal_heading = $("#view-modal-heading");
+            for (let i = 0; i < view_buttons.length; i++) {
+                $(view_buttons[i]).on("click", function () {
+                    let modalHeading = this.dataset.mediaTitle;
+                    let imageSrc = this.dataset.mediaSrc;
+                    view_modal_image.attr("src", "/Dashboard/GetImage?path=" + imageSrc);
+                    if (modalHeading.length == 0) {
+                        let parts = imageSrc.split('/');
+                        view_modal_heading.textContent = parts[1];
+                    } else {
+                        view_modal_heading.textContent = modalHeading;
+                    }
+                    $("#view-image-modal").modal("toggle");
+                });
+            }
 
-			let view_buttons = $(".fa-eye");
-			let view_modal_image = $("#viewImage");
-			let view_modal_heading = $("#view-modal-heading");
-			for (let i = 0; i < view_buttons.length; i++) {
-				$(view_buttons[i]).on("click", function () {
-					let modalHeading = this.dataset.mediaTitle;
-					let imageSrc = this.dataset.mediaSrc;
-					view_modal_image.attr("src", "/Dashboard/GetImage?path=" + imageSrc);
-					if (modalHeading.length == 0) {
-						let parts = imageSrc.split('/');
-						view_modal_heading.textContent = parts[1];
-					} else {
-						view_modal_heading.textContent = modalHeading;
-					}
-					$("#view-image-modal").modal("toggle");
-				});
-			}
+            let edit_buttons = $(".fa-edit");
+            for (let i = 0; i < edit_buttons.length; i++) {
+                edit_buttons[i].addEventListener("click", function () {
+                    let mediaId = this.dataset.mediaId;
+                    const media = data.find(obj => obj.mediaId == mediaId);
 
-			let edit_buttons = $(".fa-edit");
-			for (let i = 0; i < edit_buttons.length; i++) {
-				edit_buttons[i].addEventListener("click", function () {
-					let mediaId = this.dataset.mediaId;
-					const media = data.find(obj => obj.mediaId == mediaId);
-					
-					$("#input-edit-mediaId").val(mediaId);
-					$("#input-edit-title").val(media.metaTitle);
-					$("#input-edit-desc").val(media.metaDescription);
-					$("#input-edit-alt").val(media.AltTitle);
-					$("#edit-image-modal").modal("toggle");
-				});
-			}
+                    $("#input-edit-mediaId").val(mediaId);
+                    $("#input-edit-title").val(media.metaTitle);
+                    $("#input-edit-desc").val(media.metaDescription);
+                    $("#input-edit-alt").val(media.AltTitle);
+                    $("#edit-image-modal").modal("toggle");
+                });
+            }
 
-			let delete_buttons = $(".fa-trash");
-			for (let i = 0; i < delete_buttons.length; i++) {
-				$(delete_buttons[i]).on("click", function () {
-					let mediaId = this.dataset.mediaId;
-					let mediaTypeId = this.dataset.mediaMediatype;
-					let mediaTitle = this.dataset.mediaTitle;
+            let delete_buttons = $(".fa-trash");
+            for (let i = 0; i < delete_buttons.length; i++) {
+                $(delete_buttons[i]).on("click", function () {
+                    let mediaId = this.dataset.mediaId;
+                    let mediaTypeId = this.dataset.mediaMediatype;
+                    let mediaTitle = this.dataset.mediaTitle;
 
 
-					$.ajax({
-						url: '@domain' + 'api/Media/CheckMediaId?MediaId=' + mediaId,
-						type: 'GET',
-						data: mediaId,
-						success: function (response) {
-							$("#delete-message").html(`Do you want to delete "${mediaTitle}" image?<br><br> <span class="text-danger">${response}</span>`)
-						},
-						error: function (repsonse) {
-							console.error(response);
-						}
-					});
+                    $.ajax({
+                        url: '@domain' + 'api/Media/CheckMediaId?MediaId=' + mediaId,
+                        type: 'GET',
+                        data: mediaId,
+                        success: function (response) {
+                            $("#delete-message").html(`Do you want to delete "${mediaTitle}" image?<br><br> <span class="text-danger">${response}</span>`)
+                        },
+                        error: function (repsonse) {
+                            console.error(response);
+                        }
+                    });
 
-					$("#input-delete-mediaId").val(mediaId);
-					$("#input-delete-mediaMeta").val(mediaTitle);
-					$("#input-delete-mediaTypeId").val(mediaTypeId);
-					$("#delete-image-modal").modal("toggle");
-				});
-			}
+                    $("#input-delete-mediaId").val(mediaId);
+                    $("#input-delete-mediaMeta").val(mediaTitle);
+                    $("#input-delete-mediaTypeId").val(mediaTypeId);
+                    $("#delete-image-modal").modal("toggle");
+                });
+            }
 
-			$("#closeModal").click(function () {
-				$("#uploadPicture").modal('hide');
-			});
+            $("#closeModal").click(function () {
+                $("#uploadPicture").modal('hide');
+            });
 
-			$(".closeEditModalButton").click(function () {
-				$('#edit-image-modal').modal('hide');
-			});
+            $(".closeEditModalButton").click(function () {
+                $('#edit-image-modal').modal('hide');
+            });
 
-			$(".closeDeleteModalButton").click(function () {
-				$('#delete-image-modal').modal('hide');
-			});
+            $(".closeDeleteModalButton").click(function () {
+                $('#delete-image-modal').modal('hide');
+            });
 
-			setTimeout(() => { toggleLoading() }, 700)
-		});
-	</script>
+            setTimeout(() => { toggleLoading() }, 700)
+        });
+    </script>
 }

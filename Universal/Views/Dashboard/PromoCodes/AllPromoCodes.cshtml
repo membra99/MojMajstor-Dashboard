@@ -6,139 +6,138 @@
 
 @{
     ViewData["Title"] = "All promo codes";
-	var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
-	string domain = Configuration["URL:MainUrl"];
+    var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
+    string domain = Configuration["URL:MainUrl"];
 }
 
-@Html.ActionLink("Add new promo code", "AddNewPromocode", "Dashboard", null, new { @class="btn btn-dotnet" })
+@Html.ActionLink("Add new promo code", "AddNewPromocode", "Dashboard", null, new { @class = "btn btn-dotnet" })
 
 <div>
-	<table id="codesTable" class="table table-striped display text-center w-100">
-		<thead>
-			<tr>
-				<th>Code</th>
-				<th>Value</th>
-				<th>CreatedAt</th>
-				<th>From</th>
-				<th>To</th>
-				<th>Active</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
+    <table id="codesTable" class="table table-striped display text-center w-100">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Value</th>
+                <th>CreatedAt</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 <!-- Delete_modal-testemonials -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
 
-			</div>
-			<div class="modal-body">
-				Are you sure you want to delete this promocode?
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeConfirmDeleteButton">No</button>
-				<button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
-			</div>
-		</div>
-	</div>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this promocode?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeConfirmDeleteButton">No</button>
+                <button type="button" class="btn btn-danger btn-confirm-delete">Yes</button>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Delete_modal-testemonials -->
-
 @section Scripts {
-	<script>
-		let data = @Json.Serialize(Model);
-		toggleLoading();
+    <script>
+        let data = @Json.Serialize(Model);
+        toggleLoading();
 
-		$(document).ready(function () {
-			let isPaginate = data.length > 10 ? true : false;
+        $(document).ready(function () {
+            let isPaginate = data.length > 10 ? true : false;
 
-			let codesTable = $('#codesTable').DataTable({
-				data: @Json.Serialize(Model),
-				scrollX: true,
-				columns: [
-					{ data: "promoCode" },
-					{ data: "promoCodeValue" },
-					{ data: "createdAt" },
-					{ data: "startDate" },
-					{ data: "endDate" },
-					{ data: "isActive" },
-					{
-						data: 'promoCodesId',
-						className: 'actions-control',
-						render: function (data, type, row) {
-							return '<a href="/Dashboard/SendPromoCode?promoCodesId=' + data + '">' +
-								'<i class="fa-solid fa-envelope icon-spacing" > </i></a>' +
-							'<a href="/Dashboard/EditPromoCode?promoCodesId=' + data + '">' +
-								'<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
-								'<i class="fa-solid fa-trash-can icon-spacing"></i>'
-						}
-					},
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-				bPaginate: isPaginate,
-				order: [[3, 'desc']],
-				initComplete: function (settings, json) {
-					toggleLoading();
-				}
-			});
+            let codesTable = $('#codesTable').DataTable({
+                data: @Json.Serialize(Model),
+                scrollX: true,
+                columns: [
+                    { data: "promoCode" },
+                    { data: "promoCodeValue" },
+                    { data: "createdAt" },
+                    { data: "startDate" },
+                    { data: "endDate" },
+                    { data: "isActive" },
+                    {
+                        data: 'promoCodesId',
+                        className: 'actions-control',
+                        render: function (data, type, row) {
+                            return '<a href="/Dashboard/SendPromoCode?promoCodesId=' + data + '">' +
+                                '<i class="fa-solid fa-envelope icon-spacing" > </i></a>' +
+                                '<a href="/Dashboard/EditPromoCode?promoCodesId=' + data + '">' +
+                                '<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
+                                '<i class="fa-solid fa-trash-can icon-spacing"></i>'
+                        }
+                    },
+                ],
+                columnDefs: [
+                    { targets: '_all', className: 'dt-left' }
+                ],
+                bPaginate: isPaginate,
+                order: [[3, 'desc']],
+                initComplete: function (settings, json) {
+                    toggleLoading();
+                }
+            });
 
-			$.ajaxSetup({
-				headers: {
-					headers: {
-						'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
-					},
-				}
-			});
+            $.ajaxSetup({
+                headers: {
+                    headers: {
+                        'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+                    },
+                }
+            });
 
-			$('#codesTable tbody').on('click', 'td.actions-control', function () {
-				var tr = $(this).closest('tr');
-				var row = codesTable.row(tr);
-				var targetElement = $(event.target);
+            $('#codesTable tbody').on('click', 'td.actions-control', function () {
+                var tr = $(this).closest('tr');
+                var row = codesTable.row(tr);
+                var targetElement = $(event.target);
 
-				if (targetElement.hasClass('fa-trash-can')) {
-					var rowData = row.data();
-					let selectedPromocodeId = rowData.promoCodesId;
+                if (targetElement.hasClass('fa-trash-can')) {
+                    var rowData = row.data();
+                    let selectedPromocodeId = rowData.promoCodesId;
 
-					$('#confirmDeleteModal').modal('show');
-					$('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
-						$('#confirmDeleteModal').modal('hide');
-						updateTableData();
+                    $('#confirmDeleteModal').modal('show');
+                    $('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+                        $('#confirmDeleteModal').modal('hide');
+                        updateTableData();
 
-						$.ajax({
-							headers: {
-								'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
-							},
-							type: 'DELETE',
-							url: '@domain' + 'api/Promocodes/DeletePromocode?promoCodesId=' + selectedPromocodeId,
-							contentType: 'application/json',
-							success: function (response) {
-								console.log(response);
-								location.reload(true);
-							},
-							error: function (xhr, status, error) {
-								// Handle error
-							}
-						});
-					});
-				}
-			});
+                        $.ajax({
+                            headers: {
+                                'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+                            },
+                            type: 'DELETE',
+                            url: '@domain' + 'api/Promocodes/DeletePromocode?promoCodesId=' + selectedPromocodeId,
+                            contentType: 'application/json',
+                            success: function (response) {
+                                console.log(response);
+                                location.reload(true);
+                            },
+                            error: function (xhr, status, error) {
+                                // Handle error
+                            }
+                        });
+                    });
+                }
+            });
 
-			function updateTableData() {
-				$.get("https://localhost:7213/api/Promocodes/GetAllPromocodes", function (data) {
-					codesTable.clear().rows.add(data).draw();
-				}).fail(function (xhr, status, error) {
-					codesTable.clear().draw();
-				});
-			}
-		});
-	</script>
+            function updateTableData() {
+                $.get("https://localhost:7213/api/Promocodes/GetAllPromocodes", function (data) {
+                    codesTable.clear().rows.add(data).draw();
+                }).fail(function (xhr, status, error) {
+                    codesTable.clear().draw();
+                });
+            }
+        });
+    </script>
 }
 

@@ -1,43 +1,43 @@
 ﻿@model Universal.DTO.IDTO.DeclarationIDTO
 
 @{
-	ViewData["Title"] = "Preview Declaration";
+    ViewData["Title"] = "Preview Declaration";
 }
 
 <div class="container bg-light w-50">
-	<div class="text-center">
-		<h2>Preview Declaration</h2>
-	</div>
-	<div class="form-group mb-3">
-		@Html.LabelFor(model => model.DeclarationName, "Declaration name:")
-		@Html.TextBoxFor(model => model.DeclarationName, null, new { @class="form-control", placeholder = "Declaration Name", disabled="disabled"})
-		@Html.ValidationMessageFor(model => model.DeclarationName, null, new { @class="text-danger" })
-	</div>
-	<div class="row">
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.DeclarationName, "Declaration model:")
-			@Html.TextBoxFor(model => model.Model, new { @class="form-control", placeholder = "Model", disabled="disabled"})
-			@Html.ValidationMessageFor(model => model.Model, null, new { @class="text-danger" })
-		</div>
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.DeclarationName, "Name and Type of product:")
-			@Html.TextBoxFor(model => model.NameAndTypeOfProduct, new { @class="form-control", placeholder = "Name and Type of Product", disabled="disabled"})
-			@Html.ValidationMessageFor(model => model.NameAndTypeOfProduct, null, new { @class="text-danger" })
-		</div>
-	</div>
-	<div class="form-group mb-3">
-		@Html.LabelFor(model => model.DeclarationName, "Distributor:")
-		@Html.TextBoxFor(model => model.Distributor, new { @class="form-control", placeholder = "Distributor", disabled="disabled"})
-		@Html.ValidationMessageFor(model => model.Distributor, null, new { @class="text-danger" })
-	</div>
-	<div class="form-group mb-3">
-		@Html.LabelFor(model => model.DeclarationName, "Country of origin:")
-		@Html.TextBoxFor(model => model.CountryOfOrigin, new { @class="form-control", placeholder = "Country of Origin", disabled="disabled"})
-		@Html.ValidationMessageFor(model => model.CountryOfOrigin, null, new { @class="text-danger" })
-	</div>
-	<div class="form-group mb-3">
-		@Html.LabelFor(model => model.DeclarationName, "Consumer rights:")
-		@Html.TextBoxFor(model => model.ConsumerRights, new { @class="form-control", placeholder = "Consumer Rights", disabled="disabled"})
-		@Html.ValidationMessageFor(model => model.ConsumerRights, null, new { @class="text-danger" })
-	</div>
+    <div class="text-center">
+        <h2>Preview Declaration</h2>
+    </div>
+    <div class="form-group mb-3">
+        @Html.LabelFor(model => model.DeclarationName, "Declaration name:")
+        @Html.TextBoxFor(model => model.DeclarationName, null, new { @class = "form-control", placeholder = "Declaration Name", disabled = "disabled" })
+        @Html.ValidationMessageFor(model => model.DeclarationName, null, new { @class = "text-danger" })
+    </div>
+    <div class="row">
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.DeclarationName, "Declaration model:")
+            @Html.TextBoxFor(model => model.Model, new { @class = "form-control", placeholder = "Model", disabled = "disabled" })
+            @Html.ValidationMessageFor(model => model.Model, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.DeclarationName, "Name and Type of product:")
+            @Html.TextBoxFor(model => model.NameAndTypeOfProduct, new { @class = "form-control", placeholder = "Name and Type of Product", disabled = "disabled" })
+            @Html.ValidationMessageFor(model => model.NameAndTypeOfProduct, null, new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        @Html.LabelFor(model => model.DeclarationName, "Distributor:")
+        @Html.TextBoxFor(model => model.Distributor, new { @class = "form-control", placeholder = "Distributor", disabled = "disabled" })
+        @Html.ValidationMessageFor(model => model.Distributor, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group mb-3">
+        @Html.LabelFor(model => model.DeclarationName, "Country of origin:")
+        @Html.TextBoxFor(model => model.CountryOfOrigin, new { @class = "form-control", placeholder = "Country of Origin", disabled = "disabled" })
+        @Html.ValidationMessageFor(model => model.CountryOfOrigin, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group mb-3">
+        @Html.LabelFor(model => model.DeclarationName, "Consumer rights:")
+        @Html.TextBoxFor(model => model.ConsumerRights, new { @class = "form-control", placeholder = "Consumer Rights", disabled = "disabled" })
+        @Html.ValidationMessageFor(model => model.ConsumerRights, null, new { @class = "text-danger" })
+    </div>
 </div>

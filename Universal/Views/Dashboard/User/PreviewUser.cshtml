@@ -1,75 +1,63 @@
 ﻿@model Universal.DTO.ODTO.UsersODTO
 
 @{
-	ViewData["Title"] = "Preview User";
+    ViewData["Title"] = "Preview User";
 }
 
 <div class="container bg-light w-50">
-	<div class="text-center">
-		<h2>User Preview</h2>
-	</div>
-	<div class="row">
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.Role, "Role:")
-			@Html.TextBoxFor(model => model.Role, new { @class="form-control", @readonly="readonly" })
-		</div>
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.UserTypes, "User type:")
-			@Html.TextBoxFor(model => model.UserTypes, new { @class="form-control", @readonly="readonly" })
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.FirstName, "First name:")
-			@Html.TextBoxFor(model => model.FirstName, new { @class="form-control", @readonly="readonly" })
-		</div>
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.LastName, "Last name:")
-			@Html.TextBoxFor(model => model.LastName, new { @class="form-control", @readonly="readonly" })
-		</div>
-	</div>
-	<div class="form-group col-12 mb-3">
-		@Html.LabelFor(model => model.Email, "Email:")
-		@Html.TextBoxFor(model => model.Email, null, new { @class="form-control", @readonly="readonly" })
-	</div>
-	<div class="row">
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.Phone, "Phone:")
-			@Html.TextBoxFor(model => model.Phone, new { @class="form-control", @readonly="readonly" })
-		</div>
-		<div class="form-group col-6 mb-3">
-			@Html.LabelFor(model => model.Address, "Address:")
-			@Html.TextBoxFor(model => model.Address, new { @class="form-control", @readonly="readonly" })
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group col-5 mb-3">
-			@Html.LabelFor(model => model.Country, "Country:")
-			@Html.TextBoxFor(model => model.Country, new { @class="form-control", @readonly="readonly" })
-		</div>
-		<div class="form-group col-5 mb-3">
-			@Html.LabelFor(model => model.City, "City:")
-			@Html.TextBoxFor(model => model.City, new { @class="form-control", @readonly="readonly" })
-		</div>
-		<div class="form-group col-2 mb-3">
-			@Html.LabelFor(model => model.Zip, "Zip:")
-			@Html.TextBoxFor(model => model.Zip, new { @class="form-control", @readonly="readonly" })
-		</div>
-	</div>
-
-	@*<div class="form-group col-6 mb-3">
-	@Html.PasswordFor(model => model.Password, new { @class="form-control", placeholder = "Password"})
-	@Html.ValidationMessageFor(model => model.Password, null, new { @class="text-danger" })
-	</div>*@
-
-	@*<div class="form-group col-10 mb-3">
-	<input type="file" name="Avatar" runat="server" class="form-control" onchange="loadFile(event)" />
-	@Html.ValidationMessageFor(model => model.Avatar, null, new { @class="text-danger" })
-	</div>*@
-
-	<div class="d-flex flex-column justify-content-center mb-3">
-		@Html.Label("Avatar:")
-		<img src="@Url.Action("GetImage", "Dashboard", new {path = @Model.ImageSrc})" id="avatar-preview" width="150" height="150" style="border: 2px solid indigo">
-	</div>
-
+    <div class="text-center">
+        <h2>User Preview</h2>
+    </div>
+    <div class="row">
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.Role, "Role:")
+            @Html.TextBoxFor(model => model.Role, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.UserTypes, "User type:")
+            @Html.TextBoxFor(model => model.UserTypes, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.FirstName, "First name:")
+            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.LastName, "Last name:")
+            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+    </div>
+    <div class="form-group col-12 mb-3">
+        @Html.LabelFor(model => model.Email, "Email:")
+        @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+    <div class="row">
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.Phone, "Phone:")
+            @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="form-group col-6 mb-3">
+            @Html.LabelFor(model => model.Address, "Address:")
+            @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-5 mb-3">
+            @Html.LabelFor(model => model.Country, "Country:")
+            @Html.TextBoxFor(model => model.Country, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="form-group col-5 mb-3">
+            @Html.LabelFor(model => model.City, "City:")
+            @Html.TextBoxFor(model => model.City, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="form-group col-2 mb-3">
+            @Html.LabelFor(model => model.Zip, "Zip:")
+            @Html.TextBoxFor(model => model.Zip, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+    </div>
+    <div class="d-flex flex-column justify-content-center mb-3">
+        @Html.Label("Avatar:")
+        <img src="@Url.Action("GetImage", "Dashboard", new {path = @Model.ImageSrc})" id="avatar-preview" width="150" height="150" style="border: 2px solid indigo">
+    </div>
 </div>

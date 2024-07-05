@@ -154,11 +154,11 @@
                     <li class="nav-item">@Html.ActionLinkIcon("Charts", "GetCharts", "Dashboard", "fa-solid fa-chart-line", null, new { @class = "side-anchor" })</li>
                 </ul>
             </div>
-            
+
             <div class="aside-footer">
-                    <hr class="horizontal-rule-spec" />
-                    <div class="user-info-container">
-                      <div class="user-info">
+                <hr class="horizontal-rule-spec" />
+                <div class="user-info-container">
+                    <div class="user-info">
                         <div class="user-image">
                             @if (user.ImageSrc == null)
                             {
@@ -181,8 +181,8 @@
                         <div class="logout-user">
                             <a href="/Authentication/Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
                         </div>
-                      </div>
                     </div>
+                </div>
             </div>
         </aside>
         <div class="content-wrapper">
@@ -279,7 +279,7 @@
                 let fullURL = window.location;
                 let methodName = fullURL.pathname.split('/')[2];
                 let search = fullURL.search != "" ? fullURL.search : null;
-                if(search != null) {
+                if (search != null) {
                     let startIndex = search.indexOf("=") + 1;
                     let endIndex = search.indexOf("&") !== -1 ? search.indexOf("&") : search.length;
                     methodName = search.substring(startIndex, endIndex) + "s";

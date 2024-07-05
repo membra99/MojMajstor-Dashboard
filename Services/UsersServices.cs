@@ -232,7 +232,25 @@ namespace Services
 			return await GetUserById(user.UsersId);
 		}
 
-		public async Task<UsersODTO> DeleteUser(int id)
+        public async Task<string> SendPasswordResetMail(string userMail)
+        {
+            var oldPaswd = await _context.Users.Where(x => x.Email == userMail).FirstOrDefaultAsync();
+            if (oldPaswd == null)
+                return "Korisnik nije pronađen";
+
+            MailService ms = new MailService(_emailSettings);
+            ms.SendEmail(new EmailIDTO
+            {
+                To = userMail,
+                Subject = "Reset password",
+                Body = "Hello, we have received a request to change your password. If you did not initiate this request, feel free to ignore this email" + "<br/>" +
+                "If you have requested a password change, click on the following link and enter your new password " + "<a href='https://localhost:7213/Dashboard/SetPassword?key=" + oldPaswd.Password + "'> Change Password</a>"
+            });
+
+            return "Password reset mail has been sent to your email address";
+        }
+
+        public async Task<UsersODTO> DeleteUser(int id)
 		{
 			var user = await _context.Users.FindAsync(id);
 			if (user == null) return null;

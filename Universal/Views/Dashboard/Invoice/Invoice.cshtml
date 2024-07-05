@@ -1,60 +1,60 @@
 ﻿@model List<Universal.DTO.ODTO.InvoiceEntitiesODTO>
 
 @{
-	ViewData["Title"] = "All Invoices";
+    ViewData["Title"] = "All Invoices";
 }
 <div class="col-12">
-	<table id="invoiceTable" class="table table-striped display text-center w-100">
-		<thead>
-			<tr>
-				<th>Pdf Name</th>
-				<th>Date of Payment</th>
-				<th>Created Date</th>
-				<th>Updated Date</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
+    <table id="invoiceTable" class="table table-striped display text-center w-100">
+        <thead>
+            <tr>
+                <th>Pdf Name</th>
+                <th>Date of Payment</th>
+                <th>Created Date</th>
+                <th>Updated Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 
 @section Scripts
-	{
-	<script>
-		toggleLoading();
-		$(document).ready(function () {
-			$(document).on('click', '.edit-btn', function () {
-				var filepath = $(this).data('id');
-				window.open('/Dashboard/PDFViewer?path=' + filepath, '_blank');
-			});
+{
+    <script>
+        toggleLoading();
+        $(document).ready(function () {
+            $(document).on('click', '.edit-btn', function () {
+                var filepath = $(this).data('id');
+                window.open('/Dashboard/PDFViewer?path=' + filepath, '_blank');
+            });
 
-			let data = @Json.Serialize(Model);
-			let isPaginate = data.length > 10 ? true : false;
-			$('#invoiceTable').DataTable({
-				data: data,
-				scrollX: true,
-				columns: [
-					{ data: "pdfName" },
-					{ data: "dateOfPayment" },
-					{ data: "createdAt" },
-					{ data: "updatedAt" },
-					{
-						render: function (data, type, row) {
-							var button1 = "<button class='btn edit-btn' data-id='" + row.src + "'><i class='fa fa-pen'></button>";
-							return button1;
-						}
-					},
-				],
-				columnDefs: [
-					{ targets: '_all', className: 'dt-left' }
-				],
-				bPaginate: isPaginate,
-				initComplete: function (settings, json) {
-					toggleLoading();
-				}
-			});
-		});
-	</script>
+            let data = @Json.Serialize(Model);
+            let isPaginate = data.length > 10 ? true : false;
+            $('#invoiceTable').DataTable({
+                data: data,
+                scrollX: true,
+                columns: [
+                    { data: "pdfName" },
+                    { data: "dateOfPayment" },
+                    { data: "createdAt" },
+                    { data: "updatedAt" },
+                    {
+                        render: function (data, type, row) {
+                            var button1 = "<button class='btn edit-btn' data-id='" + row.src + "'><i class='fa fa-pen'></button>";
+                            return button1;
+                        }
+                    },
+                ],
+                columnDefs: [
+                    { targets: '_all', className: 'dt-left' }
+                ],
+                bPaginate: isPaginate,
+                initComplete: function (settings, json) {
+                    toggleLoading();
+                }
+            });
+        });
+    </script>
 }

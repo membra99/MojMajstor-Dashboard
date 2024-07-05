@@ -13,35 +13,35 @@
             <div class="row">
                 <div class="form-group col-6 mb-3">
                     @Html.LabelRequiredFor(model => model.ProductIDTO.ProductCode, "Product code:", true)
-                    @Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class="form-control", placeholder = "Product Code", @readonly = "readonly"})
+                    @Html.TextBoxFor(model => model.ProductIDTO.ProductCode, null, new { @class = "form-control", placeholder = "Product Code", @readonly = "readonly" })
                 </div>
                 <div class="form-group col-6 mb-3">
                     @Html.LabelRequiredFor(model => model.ProductIDTO.ProductName, "Product name:", true)
-                    @Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class="form-control", placeholder = "Product Name", @readonly = "readonly" })
+                    @Html.TextBoxFor(model => model.ProductIDTO.ProductName, null, new { @class = "form-control", placeholder = "Product Name", @readonly = "readonly" })
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-6 mb-3">
                     @Html.LabelFor(model => model.ProductIDTO.Quantity, "Product quantity:")
-                    @Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type="number", @class="form-control", placeholder="Quantity", @readonly = "readonly" })
+                    @Html.TextBoxFor(model => model.ProductIDTO.Quantity, null, new { type = "number", @class = "form-control", placeholder = "Quantity", @readonly = "readonly" })
                 </div>
                 <div class="form-group col-6 mb-3">
                     @Html.LabelRequiredFor(model => model.ProductIDTO.Price, "Product price:", true)
-                    @Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type="number", @class="form-control", placeholder="Price", @readonly = "readonly" })
+                    @Html.TextBoxFor(model => model.ProductIDTO.Price, null, new { type = "number", @class = "form-control", placeholder = "Price", @readonly = "readonly" })
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="form-check from-switch form-group col-3 mb-3">
-                    @Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class="form-check-input", role="switch", disabled = "disabled" })
-                    @Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On sale", new{ @class="form-check-label" })
+                    @Html.CheckBoxFor(model => model.ProductIDTO.IsOnSale, new { @class = "form-check-input", role = "switch", disabled = "disabled" })
+                    @Html.LabelFor(model => model.ProductIDTO.IsOnSale, "On sale", new { @class = "form-check-label" })
                 </div>
                 <div class="form-check from-switch form-group col-3 mb-3">
-                    @Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class="form-check-input", role="switch" , disabled = "disabled" })
-                    @Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended", new{ @class="form-check-label" })
+                    @Html.CheckBoxFor(model => model.ProductIDTO.Recommended, new { @class = "form-check-input", role = "switch", disabled = "disabled" })
+                    @Html.LabelFor(model => model.ProductIDTO.Recommended, "Recommended", new { @class = "form-check-label" })
                 </div>
                 <div class="form-check from-switch form-group col-3 mb-3">
-                    @Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class="form-check-input", role="switch" , disabled = "disabled" })
-                    @Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best product", new{ @class="form-check-label" })
+                    @Html.CheckBoxFor(model => model.ProductIDTO.BestProduct, new { @class = "form-check-input", role = "switch", disabled = "disabled" })
+                    @Html.LabelFor(model => model.ProductIDTO.BestProduct, "Best product", new { @class = "form-check-label" })
                 </div>
             </div>
             <div class="form-group mb-3">
@@ -65,8 +65,8 @@
             <div class="form-group mb-3">
                 @Html.LabelRequiredFor(model => model.ProductIDTO.CategoriesId, "Product Category:", true)
                 @Html.DropDownListFor(model => model.ProductIDTO.CategoriesId, Model.CategoriesODTOs.Select(cat =>
-                new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
-                "Select Category",new { @class="form-control", disabled = "disabled"})
+                         new SelectListItem() { Value = cat.CategoryId.ToString(), Text = cat.CategoryName }),
+                         "Select Category", new { @class = "form-control", disabled = "disabled" })
             </div>
             <div id="attributeSection" class="form-group mb-3">
             </div>
@@ -78,20 +78,20 @@
                 <div class="form-group col-6 mb-3">
                     @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, "Sale type:")
                     @Html.DropDownListFor(model => model.ProductIDTO.SaleIDTO.SaleTypeId, Model.SaleTypeODTOs.Select(sale =>
-                    new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
-                    "Select Sale Type",new { @class="form-control", disabled = "disabled"})
+                             new SelectListItem() { Value = sale.SaleTypeId.ToString(), Text = sale.Value }),
+                             "Select Sale Type", new { @class = "form-control", disabled = "disabled" })
                 </div>
                 <div class="form-group col-6 mb-3">
                     @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.Value, "Sale value:")
-                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", @readonly = "readonly"})
+                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.Value, null, new { type = "number", @class = "form-control", placeholder = "Sale Value", @readonly = "readonly" })
                 </div>
                 <div class="form-group col-6 mb-3">
                     @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.StartDate, "Sale start date:")
-                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type="date", @class="form-control", @readonly = "readonly" })
+                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.StartDate, null, new { type = "date", @class = "form-control", @readonly = "readonly" })
                 </div>
                 <div class="form-group col-6 mb-3">
                     @Html.LabelFor(model => model.ProductIDTO.SaleIDTO.EndDate, "Sale end date:")
-                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type="date", @class="form-control", @readonly = "readonly" })
+                    @Html.TextBoxFor(model => model.ProductIDTO.SaleIDTO.EndDate, null, new { type = "date", @class = "form-control", @readonly = "readonly" })
                 </div>
             </div>
             <hr>
@@ -101,8 +101,8 @@
             <div class="form-group mb-3">
                 @Html.LabelFor(model => model.ProductIDTO.DeclarationId, "Declaration:")
                 @Html.DropDownListFor(model => model.ProductIDTO.DeclarationId, Model.DeclarationODTOs.Select(dec =>
-                new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
-                "Select Declaration", new { @class="form-control", disabled = "disabled" })
+                         new SelectListItem() { Value = dec.DeclarationId.ToString(), Text = dec.DeclarationName }),
+                         "Select Declaration", new { @class = "form-control", disabled = "disabled" })
             </div>
             <hr>
             <div class="form-group mb-3">
@@ -110,11 +110,11 @@
             </div>
             <div class="form-group mb-3">
                 @Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, "Meta description:")
-                @Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class="form-control", placeholder = "Google Description", @readonly = "readonly" })
+                @Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleDesc, null, new { @class = "form-control", placeholder = "Google Description", @readonly = "readonly" })
             </div>
             <div class="form-group mb-3">
                 @Html.LabelFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, "Meta keywords:")
-                @Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class="form-control", placeholder = "Google Keywords", @readonly = "readonly" })
+                @Html.TextBoxFor(model => model.ProductIDTO.SeoIDTO.GoogleKeywords, null, new { @class = "form-control", placeholder = "Google Keywords", @readonly = "readonly" })
             </div>
             <hr>
             <div class="form-group mb-3">
@@ -145,7 +145,7 @@
 
 </div>
 
-@section Scripts{
+@section Scripts {
     <script>
         let loadFile = function (event) {
             let image = $('#featured-preview');

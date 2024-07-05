@@ -143,7 +143,14 @@ namespace Universal.Admin_Controllers.AdminAPI
 			}
 		}
 
-		[HttpDelete("{id}")]
+        [AllowAnonymous]
+        [HttpPost("SendChangePasswordMail/{email}")]
+        public async Task<string> SendChangePasswordMail(string email)
+        {
+            return await _userDataServices.SendPasswordResetMail(email);
+        }
+
+        [HttpDelete("{id}")]
 		[AllowAnonymous]
 		public async Task<ActionResult<UsersODTO>> DeleteUsers(int id)
 		{

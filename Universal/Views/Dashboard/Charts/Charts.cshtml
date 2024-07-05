@@ -222,8 +222,8 @@
 
     <div>
         <div class="x_panel tile fixed_height_320">
-                <div class="x_content">
-                    <h4>Top Products By Order</h4>
+            <div class="x_content">
+                <h4>Top Products By Order</h4>
 
                 @for (int i = 0; i < Model.TopProductsCharts.Count(); i++)
                 {
@@ -246,15 +246,15 @@
                     </div>
                 }
 
-                </div>
             </div>
         </div>
+    </div>
 
 
     <div>
         <canvas height="400px" width="1000px" id="myChartPrice"></canvas>
     </div>
- </div>
+</div>
 
 
 @section Scripts
@@ -352,5 +352,4 @@
             LoadDataPrice();
         });
     </script>
-
 }
