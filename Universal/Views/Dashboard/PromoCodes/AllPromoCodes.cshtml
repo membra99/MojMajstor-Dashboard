@@ -18,9 +18,9 @@
             <tr>
                 <th>Code</th>
                 <th>Value</th>
-                <th>CreatedAt</th>
-                <th>From</th>
-                <th>To</th>
+                <th>Created at</th>
+                <th>Active from</th>
+                <th>Active until</th>
                 <th>Active</th>
                 <th>Actions</th>
             </tr>
@@ -71,9 +71,7 @@
                         data: 'promoCodesId',
                         className: 'actions-control',
                         render: function (data, type, row) {
-                            return '<a href="/Dashboard/SendPromoCode?promoCodesId=' + data + '">' +
-                                '<i class="fa-solid fa-envelope icon-spacing" > </i></a>' +
-                                '<a href="/Dashboard/EditPromoCode?promoCodesId=' + data + '">' +
+                            return '<a href="/Dashboard/EditPromoCode?promoCodesId=' + data + '">' +
                                 '<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
                                 '<i class="fa-solid fa-trash-can icon-spacing"></i>'
                         }
