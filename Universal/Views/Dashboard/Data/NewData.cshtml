@@ -314,6 +314,9 @@
 
 @section Scripts {
     <script>
+        toggleLoading();
+        setTimeout(() => { toggleLoading(); }, 500);
+
         //handle-image-upload_start
         let uploadedImages = [];
         let dropzoneQ = null;

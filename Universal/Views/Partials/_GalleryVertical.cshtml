@@ -1,0 +1,72 @@
+﻿@model Universal.DTO.ViewDTO.MultiMediaIDTO
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    .gallery-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .gallery-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 2rem;
+        border: 1px solid white;
+        border-radius: 10px;
+        padding: 1.5rem;
+    }
+
+        .gallery-item:hover {
+            border: 1px solid #0A80D8;
+        }
+
+    .gallery-item-left {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: baseline;
+    }
+
+    .thumbnail {
+        width: 70px;
+        height: auto;
+    }
+
+    .thumbnail img {
+        object-fit: cover;
+    }
+
+    .view-icon{
+        display: inline !important;
+    }
+</style>
+
+<div class="p-3">
+    <div class="gallery-wrapper">
+        @foreach (var mediaImage in Model.MediaList)
+        {
+            if (mediaImage.MetaTitle.Contains("noimage"))
+            {
+                continue;
+            }
+            <div class="gallery-item">
+                <div class="gallery-item-left">
+                    <div class="thumbnail">
+                        <img src="@Url.Action("GetImage", "Dashboard", new { path = mediaImage.Src })" alt="@mediaImage.AltTitle" class="img-thumbnail" loading="lazy" />
+                    </div>
+                    <div class="info">
+                        <p class="title">@mediaImage.MetaTitle</p>
+                    </div>
+                </div>
+                <div class="gallery-item-right">
+                    <i class="fas fa-eye view-icon" date-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle" data-media-src="@mediaImage.Src"></i>
+                    <i class="fas fa-edit edit-icon" data-media-id="@mediaImage.MediaId"></i>
+                    <i class="fas fa-trash delete-icon" data-media-id="@mediaImage.MediaId" data-media-title="@mediaImage.MetaTitle" data-media-mediatype="@mediaImage.MediaTypeId"></i>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 //configure dynamic appsetting.json trough env file NOTE: appsetting.json musn't be empty, otherwise this won't work
 Env.Load("./.env");
 builder.Configuration
-    .AddJsonFile($"appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.json", optional: false) //if prop from .env file isn't loaded as expected, chances are that ".env" misses . in name or prop key has faulty name
     .AddEnvironmentVariables();
 
 // Add services to the container.

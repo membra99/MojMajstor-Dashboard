@@ -34,6 +34,7 @@
 
 .user-image img {
     border-radius: 25px;
+    object-fit: contain;
 }
 
 .user-meta {
@@ -209,6 +210,7 @@ body {
 
 #addImageForm {
     position: relative;
+    padding: 0.5em;
 }
 
 .addedImages {
@@ -299,6 +301,7 @@ body {
     z-index: 15;
     top: 45%;
     left: 45%;
+    overflow-y: hidden;
 }
 
 .loading-backdrop {
@@ -306,7 +309,7 @@ body {
     position: absolute;
     z-index: 10;
     width: 100%;
-    height: calc(100vh - 50px);
+    height: 100vh;
 }
 
 .loading-inactive {

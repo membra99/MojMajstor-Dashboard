@@ -8,14 +8,6 @@
 }
 
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
-<div class="action-button pt-2">
-    <button type="button" class="btn btn-dotnet" id="uploadPictureModal">Add new picture</button>
-</div>
-
-@{
-    await Html.RenderPartialAsync("/Views/Partials/_GalleryGrid.cshtml", Model);
-}
-
 <style>
     .fa-eye:hover {
         cursor: pointer;
@@ -26,9 +18,9 @@
 <div id="view-image-modal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+@*             <div class="modal-header">
                 <h6 class="modal-title text-center" id="view-modal-heading"></h6>
-            </div>
+            </div> *@
             <div class="modal-body">
                 <img id="viewImage" name="viewImage" alt="image.png" width="100%" />
             </div>
@@ -39,6 +31,7 @@
     </div>
 </div>
 <!-- view_picture_modal -->
+
 <!-- edit_picture_modal -->
 <div id="edit-image-modal" class="modal fade" tabindex="-1" role="dialog">
     @using (Html.BeginForm("EditMeidaImage", "Dashboard", FormMethod.Post))
@@ -47,9 +40,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Image Properties</h5>
-                    <button type="button" class="close closeEditModalButton" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 <div class="modal-body">
                     @Html.HiddenFor(model => model.MediaIDTO.MediaId, new { @id = "input-edit-mediaId" })
@@ -58,25 +48,23 @@
                     @Html.TextBoxFor(model => model.MediaIDTO.AltTitle, new { @id = "input-edit-alt", @class = "form-control mb-3", placeholder = "Alt Title" })
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-dotnet" value="Save" />
                     <button type="button" class="btn btn-secondary closeEditModalButton" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-dotnet" value="Save" />
                 </div>
             </div>
         </div>
     }
 </div>
 <!-- edit_picture_modal -->
+
 <!-- delete_picture_modal -->
 <div id="delete-image-modal" class="modal fade" tabindex="-1" role="dialog">
     @using (Html.BeginForm("DeleteMeidaImage", "Dashboard", FormMethod.Post))
     {
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Delete Image?</h5>
-                    <button type="button" class="close closeDeleteModalButton" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 <div class="modal-body">
                     <p id="delete-message"></p>
@@ -85,14 +73,15 @@
                     @Html.HiddenFor(model => model.MediaIDTO.MetaTitle, new { @id = "input-delete-mediaMeta" })
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-dotnet" value="Delete" />
                     <button type="button" class="btn btn-secondary closeDeleteModalButton" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-dotnet" value="Delete" />
                 </div>
             </div>
         </div>
     }
 </div>
 <!-- delete_picture_modal -->
+
 <!-- upload_picture_modal -->
 <div class="modal fade" id="uploadPicture" tabindex="-1" aria-labelledby="uploadPictureLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 40%">
@@ -121,19 +110,15 @@
 <!-- upload_picture_modal -->
 @section Scripts {
     <script>
+
         toggleLoading();
-
         let data = @Json.Serialize(Model.MediaList);
-        //console.log(data);
-        $(document).ready(function () {
+        let galleryContent = $(".gallery");
 
-            $("#uploadPictureModal").on("click", function () {
-                $("#uploadPicture").modal("show");
-            });
-
+        function viewButtonEvent() {
+            let view_modal_heading = $("#view-modal-heading");
             let view_buttons = $(".fa-eye");
             let view_modal_image = $("#viewImage");
-            let view_modal_heading = $("#view-modal-heading");
             for (let i = 0; i < view_buttons.length; i++) {
                 $(view_buttons[i]).on("click", function () {
                     let modalHeading = this.dataset.mediaTitle;
@@ -148,7 +133,9 @@
                     $("#view-image-modal").modal("toggle");
                 });
             }
+        }
 
+        function editButtonEvent() {
             let edit_buttons = $(".fa-edit");
             for (let i = 0; i < edit_buttons.length; i++) {
                 edit_buttons[i].addEventListener("click", function () {
@@ -162,7 +149,9 @@
                     $("#edit-image-modal").modal("toggle");
                 });
             }
+        }
 
+        function deleteButtonEvent() {
             let delete_buttons = $(".fa-trash");
             for (let i = 0; i < delete_buttons.length; i++) {
                 $(delete_buttons[i]).on("click", function () {
@@ -189,20 +178,50 @@
                     $("#delete-image-modal").modal("toggle");
                 });
             }
+        }
 
-            $("#closeModal").click(function () {
-                $("#uploadPicture").modal('hide');
-            });
 
-            $(".closeEditModalButton").click(function () {
-                $('#edit-image-modal').modal('hide');
-            });
 
-            $(".closeDeleteModalButton").click(function () {
-                $('#delete-image-modal').modal('hide');
-            });
-
-            setTimeout(() => { toggleLoading() }, 700)
+        $("#layout1").click(function () {
+            galleryContent.html(`@{
+                await Html.RenderPartialAsync("/Views/Partials/_GalleryGrid.cshtml", Model);
+            }`);
+            viewButtonEvent();
+            editButtonEvent();
+            deleteButtonEvent();
         });
+
+        $("#layout2").click(function () {
+            galleryContent.html(`@{
+                await Html.RenderPartialAsync("/Views/Partials/_GalleryVertical.cshtml", Model);
+            }`);
+            viewButtonEvent();
+            editButtonEvent();
+            deleteButtonEvent();
+        });
+
+        $("#uploadPictureModal").on("click", function () {
+            $("#uploadPicture").modal("show");
+        });
+
+        $("#closeModal").click(function () {
+            $("#uploadPicture").modal('hide');
+        });
+
+        $(".closeEditModalButton").click(function () {
+            $('#edit-image-modal').modal('hide');
+        });
+
+        $(".closeDeleteModalButton").click(function () {
+            $('#delete-image-modal').modal('hide');
+        });
+
+        viewButtonEvent();
+        editButtonEvent();
+        deleteButtonEvent();
+
+        setTimeout(() => { toggleLoading() }, 700)
+
+
     </script>
 }

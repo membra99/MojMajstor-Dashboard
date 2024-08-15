@@ -2,17 +2,13 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Services.Helpers;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Authorization
 {
-    public interface IJwtUtils
+	public interface IJwtUtils
     {
         public string GenerateJwtToken(Users user);
         public int? ValidateJwtToken(string? token);
