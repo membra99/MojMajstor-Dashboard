@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Universal/.env
 /Universal/appsettings-backup.json
+/Universal/appsettings.json
