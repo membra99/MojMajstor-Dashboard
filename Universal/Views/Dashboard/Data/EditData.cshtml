@@ -274,7 +274,7 @@
                     @Html.LabelRequiredFor(model => model.FeaturedImage, "Image:", false)
                 </div>
                 <div class="image-container mb-2">
-                    <img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="content-preview2" style="margin-top:10px; width:auto; max-height:100px;">
+                    <img src="@Url.Action("GetImage","Dashboard",new {path = Model.ProductIDTO.FeatureImg})" id="content-preview2" style="margin-top:10px; width:200px; height:auto; border-radius: 10px; border: 1px solid #0A80D8;">
                     <a class="unset-button" id="unset" title="Unset Image">x</a>
                 </div>
                 <div>

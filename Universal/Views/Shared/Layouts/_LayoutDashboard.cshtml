@@ -55,6 +55,11 @@
             float: right;
             padding-right: 8px;
         }
+
+        .stop-scrolling {
+            height: 100%;
+            overflow: hidden;
+        }
     </style>
     <script>
         function getIcon() {
@@ -271,6 +276,7 @@
 
         let toggleLoading = function () {
             $(".loading-backdrop").toggleClass("loading-inactive loading-active");
+            $("body").toggleClass("stop-scrolling");
         }
 
         $(document).ready(function () {

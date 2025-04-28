@@ -36,7 +36,7 @@
 
 .user-image img {
     border-radius: 25px;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .email-meta {
