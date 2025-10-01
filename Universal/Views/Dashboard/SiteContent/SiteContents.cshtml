@@ -131,7 +131,7 @@ else
 
 			function updateTableData() {
 				let lang = $('#language').val();
-				$.get("https://localhost:7213/api/SiteContent/AllByType?type=" + '@ViewBag.siteType' + "&langId=" + lang, function (data) {
+				$.get('@domain' + 'api/SiteContent/AllByType?type=" + '@ViewBag.siteType' + "&langId=' + lang, function (data) {
 					dataTable.clear().rows.add(data).draw();
                 }).fail(function (xhr, status, error) {
                     dataTable.clear().draw();

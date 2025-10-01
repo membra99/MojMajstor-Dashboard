@@ -99,29 +99,37 @@
     <script id="loadScriptDynamic">
         let loaded = false;
         let loadFile = function (event) {
-            let image = document.getElementById('tag-preview');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            let element = document.getElementById('unset');
-            element.classList.add("hover-unset");
+            // let image = document.getElementById('tag-preview');
+            // image.src = URL.createObjectURL(event.target.files[0]);
+            // let element = document.getElementById('unset');
+            // element.classList.add("hover-unset");
+
+            $('#tag-preview').attr('src', URL.createObjectURL(event.target.files[0]));
+            $('#unset').addClass('hover-unset');
 
         };
 
         function unsetImage(event) {
-            let image = document.getElementById('tag-preview');
-            image.src = '@Url.Action("GetImage", "Dashboard", null)';
+            // let image = document.getElementById('tag-preview');
+            // image.src = '@Url.Action("GetImage", "Dashboard", null)';
+            $('#tag-preview').attr('src', '@Url.Action("GetImage", "Dashboard", null)');
+
             $("#file").val(null);
 
-            let element = document.getElementById('unset');
-            element.classList.remove("hover-unset");
+            // let element = document.getElementById('unset');
+            // element.classList.remove("hover-unset");
+            $("#unset").addClass("hover-unset");
             event.preventDefault();
         };
 
-        const openModalButton = document.getElementById("openModalButton");
-        const addImageModal = document.getElementById("addImageModal");
+        const openModalButton = $("#openModalButton");// document.getElementById("openModalButton");
+        const addImageModal = $("#addImageModal");// document.getElementById("addImageModal");
 
-        openModalButton.addEventListener("click", function () {
+        $("#openModalButton").on("click", function () {
             $(addImageModal).modal("show");
-        });
+        })
+            
+        
 
         $("#closeImageButton").click(function (event) {
             unsetImage(event);
@@ -142,42 +150,84 @@
             $("#input-media").val(null);
         };
 
-        document.getElementById("tab1Link").classList.add("active");
+        $("#tab1Link").addClass("active");//document.getElementById("tab1Link").classList.add("active");
 
-        document.getElementById("tab1Link").addEventListener("click", function () {
-            document.getElementById("tab1Link").classList.add("active");
-            document.getElementById("tab2Link").classList.remove("active");
+        // document.getElementById("tab1Link").addEventListener("click", function () {
+        //     document.getElementById("tab1Link").classList.add("active");
+        //     document.getElementById("tab2Link").classList.remove("active");
 
-            document.getElementById("tab1").classList.add("active");
-            document.getElementById("tab2").classList.remove("active");
+        //     document.getElementById("tab1").classList.add("active");
+        //     document.getElementById("tab2").classList.remove("active");
+
+        //     unselectGallery();
+        // });
+
+        $('#tab1Link').on('click', function () {
+            $('#tab1Link').addClass('active');
+            $('#tab2Link').removeClass('active');
+
+            $('#tab1').addClass('active');
+            $('#tab2').removeClass('active');
 
             unselectGallery();
         });
 
-        document.getElementById("tab2Link").addEventListener("click", function (event) {
-            document.getElementById("tab2Link").classList.add("active");
-            document.getElementById("tab1Link").classList.remove("active");
+        // document.getElementById("tab2Link").addEventListener("click", function (event) {
+        //     document.getElementById("tab2Link").classList.add("active");
+        //     document.getElementById("tab1Link").classList.remove("active");
 
-            document.getElementById("tab2").classList.add("active");
-            document.getElementById("tab1").classList.remove("active");
+        //     document.getElementById("tab2").classList.add("active");
+        //     document.getElementById("tab1").classList.remove("active");
 
-            unsetImage(event);
+        //     unsetImage(event);
+        //     if (!loaded) {
+        //         let url = '@Url.Action("GalleryGrid", "Dashboard")'
+        //         $("#tab2-gallery").load(url, function () {
+        //             $(".fa-hand-pointer").click(function () {
+        //                 loaded = true;
+        //                 mediaId = this.dataset.mediaId;
+        //                 let parentElement = this.parentElement;
+        //                 let children = parentElement.getElementsByClassName('fas');
+
+        //                 unselectGallery();
+
+        //                 for (var i = 0; i < children.length; i++) {
+        //                     children[i].classList.toggle('disable-icon');
+        //                 }
+
+        //                 parentElement.parentElement.classList.add("overlay-checked");
+        //             });
+        //         });
+        //     }
+        // });
+
+        $('#tab2Link').on('click', function (event) {
+            //event.preventDefault();  mozda bude trebalo
+
+            $('#tab2Link').addClass('active');
+            $('#tab1Link').removeClass('active');
+
+            $('#tab2').addClass('active');
+            $('#tab1').removeClass('active');
+
+            unsetImage(event); 
+
             if (!loaded) {
-                let url = '@Url.Action("GalleryGrid", "Dashboard")'
-                $("#tab2-gallery").load(url, function () {
-                    $(".fa-hand-pointer").click(function () {
+                let url = '@Url.Action("GalleryGrid", "Dashboard")';
+                $('#tab2-gallery').load(url, function () {
+                    $('.fa-hand-pointer').on('click', function () {
                         loaded = true;
-                        mediaId = this.dataset.mediaId;
-                        let parentElement = this.parentElement;
-                        let children = parentElement.getElementsByClassName('fas');
+                        mediaId = $(this).data('mediaId');
+                        let parentElement = $(this).parent();
+                        let children = parentElement.find('.fas');
 
-                        unselectGallery();
+                        unselectGallery(); 
 
-                        for (var i = 0; i < children.length; i++) {
-                            children[i].classList.toggle('disable-icon');
-                        }
+                        children.each(function () {
+                            $(this).toggleClass('disable-icon');
+                        });
 
-                        parentElement.parentElement.classList.add("overlay-checked");
+                        parentElement.parent().addClass('overlay-checked');
                     });
                 });
             }

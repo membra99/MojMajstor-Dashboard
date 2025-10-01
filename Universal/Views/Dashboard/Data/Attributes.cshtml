@@ -193,9 +193,9 @@
                     tr.removeClass('shown');
                 } else {
                     // Open this row
-                    let data = row.data();
-                    $.get("https://localhost:7213/api/Attributes/GetAllAttributesValueByAttributeName?categoryId=" + data.categoryId, function (attributesData) {
-                        let childTable = '<table class="table table-bordered">' +
+                    var data = row.data();
+                    $.get('@domain' + 'api/Attributes/GetAllAttributesValueByAttributeName?categoryId=' + data.categoryId, function (attributesData) {
+                        var childTable = '<table class="table table-bordered">' +
                             '<thead>' +
                             '<tr>' +
                             '<th>Value</th>' +
@@ -431,7 +431,9 @@
             });
 
             function updateTableData(categoryId) {
-                $.get("https://localhost:7213/api/Attributes/GetAllAttributesByCategoryName?categoryId=" + categoryId, function (data) {
+                console.log(categoryId);
+                $.get('@domain' + 'api/Attributes/GetAllAttributesByCategoryName?categoryId=' + categoryId, function (data) {
+                    console.log(data);
                     userTable.clear().rows.add(data).draw();
                 }).fail(function (xhr, status, error) {
                     userTable.clear().draw();

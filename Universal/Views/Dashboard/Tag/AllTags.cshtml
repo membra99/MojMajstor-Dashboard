@@ -114,7 +114,7 @@
             });
 
             function updateTableData() {
-                $.get("https://localhost:7213/api/SiteContent/GetAllTags", function (data) {
+                $.get('@domain' + 'api/SiteContent/GetAllTags', function (data) {
                     tagTable.clear().rows.add(data).draw();
                 }).fail(function (xhr, status, error) {
                     tagTable.clear().draw();

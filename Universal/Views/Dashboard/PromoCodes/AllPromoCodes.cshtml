@@ -128,14 +128,14 @@
                 }
             });
 
-            function updateTableData() {
-                $.get("https://localhost:7213/api/Promocodes/GetAllPromocodes", function (data) {
-                    codesTable.clear().rows.add(data).draw();
-                }).fail(function (xhr, status, error) {
-                    codesTable.clear().draw();
-                });
-            }
-        });
-    </script>
+			function updateTableData() {
+				$.get('@domain' + 'api/Promocodes/GetAllPromocodes', function (data) {
+					codesTable.clear().rows.add(data).draw();
+				}).fail(function (xhr, status, error) {
+					codesTable.clear().draw();
+				});
+			}
+		});
+	</script>
 }
 
