@@ -1652,7 +1652,7 @@ namespace Services
             retval.SumOrders = sumOrders;
             retval.TotalByYear = SumByMonth.Sum();
             retval.TotalProductsDelivered = sumQuantity;
-
+            //prvi push
             var topProducts = await _context.OrderDetails
                                      .GroupBy(p => p.ProductId)
                                      .Select(g => new
