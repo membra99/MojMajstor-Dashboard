@@ -144,72 +144,11 @@ namespace Services.AWS
 				var deleteRequest = new DeleteObjectRequest
 				{
 					BucketName = _settings.AWSS3.BucketName,
-					Key = "Universal/" + key
+					Key = "SomsedUser/" + key
 				};
 				DeleteObjectResponse response = await _amazonS3.DeleteObjectAsync(deleteRequest);
 				if (response.HttpStatusCode == System.Net.HttpStatusCode.NoContent)
 				{
-					switch (mediaTypeId)
-					{
-						case 1:
-							var user = await _context.Users.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
-							if (user != null)
-							{
-								user.MediaId = null;
-								_context.Entry(user).State = EntityState.Modified;
-								await _context.SaveChangesAsync();
-							}
-							var mediaImageUser = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-							await _context.SaveChangesAsync();
-							break;
-
-						case 3:
-							var mediaImageGallery = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-							await _context.SaveChangesAsync();
-							break;
-
-						case 4:
-							var siteContent = await _context.SiteContents.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
-							if (siteContent != null)
-							{
-								siteContent.MediaId = null;
-								_context.Entry(siteContent).State = EntityState.Modified;
-								await _context.SaveChangesAsync();
-							}
-							var mediaImageSiteContent = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-							await _context.SaveChangesAsync();
-							break;
-
-						case 5:
-							var tag = await _context.Tags.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
-							if(tag != null)
-							{
-								tag.MediaId = null;
-								_context.Entry(tag).State = EntityState.Modified;
-								await _context.SaveChangesAsync();
-							}
-							var mediaImageTag = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-							await _context.SaveChangesAsync();
-							break;
-
-						case 6:
-							var category = await _context.Categories.Where(x => x.MediaId == mediaId).SingleOrDefaultAsync();
-							if (category != null)
-							{
-								category.MediaId = null;
-								_context.Entry(category).State = EntityState.Modified;
-								await _context.SaveChangesAsync();
-							}
-							var mediaImageCategory = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-							await _context.SaveChangesAsync();
-							break;
-
-						case 7:
-							var mediaImageFeature = _context.Medias.Remove(await _context.Medias.SingleOrDefaultAsync(x => x.MediaId == mediaId));
-							await _context.SaveChangesAsync();
-							break;
-
-					}
 					return true;
 				}
 				else

@@ -1,0 +1,152 @@
+﻿@model Universal.DTO.ODTO.AdStatsODTO
+@{
+    ViewData["Title"] = "Ad statistics";
+}
+
+<div class="container py-4">
+
+    <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Ad statistics</h2>
+
+    <!-- 1️⃣ Broj oglasa -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5>Total ads</h5>
+                    <p class="fs-3 fw-bold" id="totalAds"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5>Active</h5>
+                    <p class="fs-3 fw-bold" id="activeAds"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5>Featured</h5>
+                    <p class="fs-3 fw-bold" id="featuredAds"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5>Premium</h5>
+                    <p class="fs-3 fw-bold" id="premiumAds"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2️⃣ Pregledi oglasa po profesiji -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5>Ad views by profession</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="viewsByProfessionChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Added ads per month</h5>
+            <div>
+                <input type="date" id="filterStart" class="form-control d-inline-block" style="width:auto;">
+                <input type="date" id="filterEnd" class="form-control d-inline-block ms-2" style="width:auto;">
+                <button class="btn btn-primary ms-2" id="applyFilter">Show</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <canvas id="adsByMonthChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.getElementById('totalAds').innerText = @Html.Raw(Json.Serialize(Model.TotalAds));
+        document.getElementById('activeAds').innerText = @Html.Raw(Json.Serialize(Model.Aktivni));
+        document.getElementById('featuredAds').innerText = @Html.Raw(Json.Serialize(Model.Istaknuti));
+        document.getElementById('premiumAds').innerText = @Html.Raw(Json.Serialize(Model.XL));
+
+        const professions = @Html.Raw(Json.Serialize(Model.Professions));
+        const professionViews = @Html.Raw(Json.Serialize(Model.ViewsByProfession));
+
+        const ctx1 = document.getElementById('viewsByProfessionChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: professions,
+                datasets: [{
+                    label: 'Broj pregleda',
+                    data: professionViews,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        const ctx = document.getElementById('adsByMonthChart').getContext('2d');
+
+        let adsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Dodati oglasi',
+                    data: [],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const end = new Date();
+            const start = new Date();
+            start.setMonth(start.getMonth() - 2);
+
+            document.getElementById('filterStart').value = start.toISOString().split('T')[0];
+            document.getElementById('filterEnd').value = end.toISOString().split('T')[0];
+
+            document.getElementById('applyFilter').click();
+        });
+
+        document.getElementById('applyFilter').addEventListener('click', function () {
+            const startDate = document.getElementById('filterStart').value;
+            const endDate = document.getElementById('filterEnd').value;
+
+            if (!startDate || !endDate) {
+                alert("Molimo izaberite oba datuma!");
+                return;
+            }
+
+            fetch(`/Dashboard/GetViewsByPeriod?startDate=${startDate}&endDate=${endDate}`)
+                .then(res => res.json())
+                .then(data => {
+                    adsChart.data.labels = data.labels;
+                    adsChart.data.datasets[0].data = data.counts;
+                    adsChart.update();
+                })
+                .catch(err => console.error(err));
+        });
+
+    </script>
+}

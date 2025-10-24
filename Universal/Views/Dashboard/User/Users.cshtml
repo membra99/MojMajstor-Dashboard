@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
-@model List<Universal.DTO.ODTO.UsersODTO>
+@model List<Universal.DTO.ODTO.UserMajstorODTO>
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 
@@ -19,12 +19,9 @@
             <tr>
                 <th>Role</th>
                 <th>Email</th>
-                <th>First name</th>
-                <th>Last name</th>
+                <th>Full name</th>
                 <th>Phone</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>Zip</th>
+                <th>Opstina</th>
                 <th>Country</th>
                 <th>Action</th>
             </tr>
@@ -56,10 +53,11 @@
 @section Scripts
 {
     <script>
-        toggleLoading();;
+        toggleLoading();
 
         $(document).ready(function () {
             let data = @Json.Serialize(Model);
+            console.log("alohaamigo", data);
             let isPaginate = data.length > 10 ? true : false;
 
             let userTable = $('#userTable').DataTable({
@@ -67,15 +65,17 @@
                 data: @Json.Serialize(Model),
                 scrollX: true,
                 columns: [
-                    { data: "role" },
+                    { data: "name" },
                     { data: "email" },
-                    { data: "firstName" },
-                    { data: "lastName" },
-                    { data: "phone" },
-                    { data: "address" },
-                    { data: "city" },
-                    { data: "zip" },
-                    { data: "country" },
+                    { data: "fullName" },
+                    { data: "phoneNumber" },
+                    { data: "opstinaIme" },
+                    {
+                        data: null,
+                        render: function () {
+                            return "Srbija";
+                        }
+                    },
                     {
                         data: 'usersId',
                         className: 'actions-control',
@@ -84,7 +84,9 @@
                                 '<i class="fa-solid fa-pen icon-spacing"></i></a> ' +
                                 '<a href="/Dashboard/PreviewUser?userId=' + data + '">' +
                                 '<i class="fa-solid fa-eye icon-spacing"></i></a> ' +
-                                '<i class="fa-solid fa-trash-can icon-spacing"></i>'
+                                '<i class="fa-solid fa-trash-can icon-spacing"></i>' +
+                                '<a href="/Dashboard/MetricByUserPartial" data-userid="' + data + '">' +
+                                '<i class="fa-solid fa-trophy icon-spacing"></i></a> ';
                         }
                     },
                 ],

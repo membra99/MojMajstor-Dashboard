@@ -1,0 +1,92 @@
+﻿@model Universal.DTO.ODTO.OverviewODTO
+
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Overview</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-gray-700"><i class="fas fa-chart-pie text-blue-500"></i> Admin Overview</h1>
+    </header>
+
+    <!-- Main Container -->
+    <main class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Ukupan broj korisnika -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-users text-blue-500"></i> Total Number of Users</h2>
+            <p class="text-3xl font-bold text-gray-800">@(Model.OverviewKorisnici.BrojKlijenata + Model.OverviewKorisnici.BrojMajstora)</p>
+            <ul class="mt-2 text-sm text-gray-600">
+                <li>Handyman: @Model.OverviewKorisnici.BrojMajstora</li>
+                <li>Client: @Model.OverviewKorisnici.BrojKlijenata</li>
+            </ul>
+        </div>
+
+        <!-- Ukupan broj oglasa -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-bullhorn text-green-500"></i> Total number of ads</h2>
+            <p class="text-3xl font-bold text-gray-800">@Model.OverviewOglasi.UkupanBrOglasa</p>
+
+            <!-- Lista u dve kolone -->
+            <ul class="mt-2 text-sm text-gray-600 grid grid-cols-2 gap-x-4">
+                <!-- Leva kolona -->
+                <li>Active: @Model.OverviewOglasi.AktivniOglasi</li>
+                <li>Premium: @Model.OverviewOglasi.PremiumOglasi</li>
+                <li>Eco: @Model.OverviewOglasi.EkonomicniOglasi</li>
+                <li>Featured: @Model.OverviewOglasi.IstaknutiOglasi</li>
+            </ul>
+        </div>
+
+        <!-- Ukupni prihodi -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-sack-dollar text-yellow-500"></i> Total revenue (month)</h2>
+            <p class="text-3xl font-bold text-gray-800">@Model.UkupanPrihod</p>
+            <p class="text-sm text-gray-600 mt-1">Purchased loan packages</p>
+        </div>
+
+        <!-- Top kategorija -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-star text-purple-500"></i> Top category (7 days)</h2>
+            <p class="text-xl font-bold text-gray-800">@Model.NajuspesnijaProfesija7Dana</p>
+            <p class="text-sm text-gray-600">Most deals made</p>
+        </div>
+
+        <!-- Top lokacija -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-red-500"></i> Top location</h2>
+            <p class="text-xl font-bold text-gray-800">@Model.TopLokacija</p>
+            <p class="text-sm text-gray-600">Most users in Serbia</p>
+        </div>
+
+        <!-- Broj aktivnih dogovora -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-handshake text-teal-500"></i> Active deals</h2>
+            <p class="text-3xl font-bold text-gray-800">@Model.BrojAktivnihDogovora</p>
+            <p class="text-sm text-gray-600">Currently in progress</p>
+        </div>
+
+        <!-- Novi korisnici -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-user-plus text-indigo-500"></i> New users (7 days)</h2>
+            <p class="text-3xl font-bold text-gray-800">@Model.NoviKorisnici7Dana</p>
+        </div>
+
+        <!-- Novi oglasi -->
+        <div class="bg-white rounded-2xl shadow p-5">
+            <h2 class="font-semibold text-gray-600 mb-2"><i class="fas fa-plus-circle text-orange-500"></i> New ads (7 days)</h2>
+            <p class="text-3xl font-bold text-gray-800">@Model.NoviOglasi7Dana</p>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Banner Management";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">🎨 Banner Management</h2>
+
+    <div class="card shadow-sm p-4 mb-5">
+        <h5>Add New Banner</h5>
+
+        <div class="row g-3 align-items-center">
+            <div class="col-md-5">
+                <label class="form-label">Select Image</label>
+                <input type="file" id="bannerFile" accept="image/*" class="form-control" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Position</label>
+                <input type="number" id="bannerPosition" class="form-control" placeholder="e.g. 1, 2, 3..." min="1" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Banner URL</label>
+                <input type="text" id="bannerUrl" class="form-control" placeholder="https://example.com..." />
+            </div>
+            <div class="d-grid d-flex justify-content-center">
+                <button id="uploadBannerBtn" class="btn btn-primary w-25 mt-4">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <h5>📋 Current Banners</h5>
+    <div id="bannerList" class="row mt-3 g-4">
+        <!-- Banners will appear here -->
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $("#uploadBannerBtn").click(function () {
+            var fileInput = $("#bannerFile")[0];
+            var position = $("#bannerPosition").val();
+            var url = $("#bannerUrl").val().trim(); 
+
+            if (fileInput.files.length === 0) {
+                alert("Please select an image.");
+                return;
+            }
+
+            if (!position) {
+                alert("Please enter a banner position.");
+                return;
+            }
+
+            if (!url) {
+                alert("Please enter a banner URL.");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("BannerImage", fileInput.files[0]);
+            formData.append("position", position);
+            formData.append("url", url);
+
+            $.ajax({
+                url: "/Dashboard/SaveBanner",
+                type: "POST",
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: function (response) {
+                    if (response.success) {
+                        alert("Banner uploaded successfully!");
+                        $("#bannerFile").val("");
+                        $("#bannerPosition").val("");
+                        $("#bannerUrl").val(""); 
+                        loadBanners();
+                    } else {
+                        alert(response.message || "Error uploading banner.");
+                    }
+                },
+                error: function (err) {
+                    console.error(err);
+                    alert("Upload failed.");
+                }
+            });
+        });
+
+
+        function loadBanners() {
+            $.get("/Dashboard/GetBanners", function (banners) {
+                $("#bannerList").empty();
+
+                if (banners.length === 0) {
+                    $("#bannerList").html("<p class='text-muted'>No banners added yet.</p>");
+                    return;
+                }
+
+                banners.forEach(banner => {
+                    $("#bannerList").append(`
+                        <div class="col-md-3 text-center">
+                            <div class="card shadow-sm border-0">
+                                <img src="${banner.imageUrl}" class="card-img-top rounded" style="height:150px; object-fit:cover;">
+                                <div class="card-body">
+                                    ${banner.url ? `
+                                        <p class="card-text mb-1">
+                                            <a href="${banner.url}" target="_blank" class="text-decoration-none text-primary">
+                                                ${banner.url}
+                                            </a>
+                                        </p>` : ''
+                        }
+                                    <p class="card-text mb-1">Position: <strong>${banner.position}</strong></p>
+                                    <button class="btn btn-sm btn-danger delete-banner" data-id="${banner.id}">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+        }
+
+
+        $(document).on("click", ".delete-banner", function () {
+            const bannerId = $(this).data("id");
+            const $bannerCard = $(this).closest(".banner-item");
+
+            if (confirm("Are you sure you want to delete this banner?")) {
+                $.ajax({
+                    url: "/Dashboard/DeleteBanner",
+                    type: "POST",
+                    data: { id: bannerId },
+                    success: function (response) {
+                        if (response.success) {
+                            loadBanners();
+                        } else {
+                            alert("Failed to delete banner: " + (response.message || ""));
+                        }
+                    },
+                    error: function () {
+                        alert("Error deleting banner.");
+                    }
+                });
+            }
+        });
+
+        $(document).ready(function () {
+            loadBanners();
+        });
+    </script>
+}

@@ -47,7 +47,7 @@ namespace Universal.Admin_Controllers.AdminAPI
 		}
 
 		[HttpPut]
-		public async Task<ActionResult<UsersODTO>> PutUsers(UsersIDTO userIDTO)
+		public async Task<ActionResult<UserMajstorODTO>> PutUsers(UserMajstorIDTO userIDTO)
 		{
 			try
 			{
@@ -128,11 +128,11 @@ namespace Universal.Admin_Controllers.AdminAPI
 
 		[AllowAnonymous]
 		[HttpPost("ChangePassword")]
-		public async Task<ActionResult<UsersODTO>> ChangePassword(ChangePasswordIDTO passwordData)
+		public async Task<ActionResult<UserMajstorODTO>> ChangePassword(ChangePasswordIDTO passwordData)
 		{
 			try
 			{
-				UsersIDTO userIDTO = await _userDataServices.GetUserByPassword(passwordData.Key);
+				UserMajstorIDTO userIDTO = await _userDataServices.GetUserByPassword(passwordData.Key);
 				if (userIDTO == null) return NotFound();
 				userIDTO.Password = BCrypt.Net.BCrypt.HashPassword(passwordData.Password);
 				return await _userDataServices.EditUser(userIDTO);

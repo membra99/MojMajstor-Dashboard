@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Context;
 using Entities.Universal.MainData;
+using Entities.Universal.MainDataNova;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IIS.Core;
@@ -12,10 +13,12 @@ using Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using Universal.Universal.MainDataNova;
 using static Universal.DTO.CommonModels.CommonModels;
 
 namespace Services
@@ -28,9 +31,9 @@ namespace Services
         private readonly IOptions<URL> _urlDomain;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public static string AppBaseUrl = "";
+        public static string AppBaseUrl = "";
 
-		public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings, IOptions<URL> urlDomain) : base(context, mapper)
+		public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings, IOptions<URL> urlDomain, MojMajstorContext context2) : base(context,  mapper, context2)
 		{
 			_jwtUtils = jwtUtils;
 			_AWSS3FileService = AWSS3FileService;
@@ -44,7 +47,7 @@ namespace Services
 
 		public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
 		{
-			var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == model.Username);
+			var user = await _context2.Users.SingleOrDefaultAsync(x => x.Email == model.Username && x.RoleId == 3);
 
 			if (user != null)
 			{
@@ -69,7 +72,82 @@ namespace Services
 				   select _mapper.Map<UsersODTO>(x);
 		}
 
-		private IQueryable<UsersIDTO> GetUsers(string password)
+        private IQueryable<UserMajstorODTO> GetMajstorUsers(int id)
+        {
+            return from x in _context2.Users
+				   .Include(x => x.Role)
+				   .Include(x => x.Opstine)
+                   where (id == 0 || x.UsersId == id)
+                   select _mapper.Map<UserMajstorODTO>(x);
+        }
+
+        public async Task<List<UserMajstorODTO>> GetAllMajstorUsers()
+        {
+            return await GetMajstorUsers(0).AsNoTracking().ToListAsync();
+        }
+
+		public async Task<UserMajstorIDTO> GetUserIDTO()
+		{
+			return new UserMajstorIDTO {
+				OpstineDropDowns = await _context2.Opstines.Select(x => new OpstineDropDown { OpstineId = x.OpstineId, OpstineIme = x.OpstinaIme }).ToListAsync(),
+				ProfessionDropDowns = await _context2.Professions.Select(x => new ProfessionDropDown { ProfessionId = x.ProfessionId, ProfessionName = x.ProfessionName }).ToListAsync()
+			};
+		}
+
+        public async Task<ViewsByPeriodODTO> GetViewsByPeriod(DateTime startDate, DateTime endDate) 
+		{
+            var ads = _context2.Advertisements
+         .Where(a => a.PostedDate >= startDate && a.PostedDate <= endDate)
+         .ToList();
+
+            var grouped = ads
+                .GroupBy(a => new { a.PostedDate.Year, a.PostedDate.Month })
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                .Select(g => new
+                {
+                    YearMonth = new DateTime(g.Key.Year, g.Key.Month, 1),
+                    Count = g.Count()
+                }).ToList();
+
+            var labels = grouped.Select(g => g.YearMonth.ToString("MMM yyyy")).ToList();
+            var counts = grouped.Select(g => g.Count).ToList();
+
+            return new ViewsByPeriodODTO
+            {
+                Labels = labels,
+                Counts = counts
+            };
+        }
+
+
+        public async Task<AdStatsODTO> GetAllAdvertisements()
+		{
+			var oglasi = await _context2.Advertisements.ToListAsync();
+            AdStatsODTO adStatsODTO = new AdStatsODTO();
+			adStatsODTO.TotalAds = oglasi.Count;
+			adStatsODTO.Aktivni = oglasi.Count(x => x.IsActive == true);
+			adStatsODTO.Istaknuti = oglasi.Count(x => x.IsActive == true && x.AdvertisementTypeId == 2);
+			adStatsODTO.XL = oglasi.Count(x => x.AdvertisementTypeId == 3 && x.IsActive == true);
+
+			//var profesije = oglasi.Select(x => x.ProfessionId).ToList();
+			//foreach (var item in profesije)
+			//{
+			//	var profesijaIme = await _context2.Professions.Where(x => x.ProfessionId == item).Select(x => x.ProfessionName).SingleOrDefaultAsync();
+			//	if (!adStatsODTO.Professions.Contains(profesijaIme))
+			//	{
+   //                 adStatsODTO.Professions.Add(profesijaIme);
+   //             }
+   //         }
+			var clickpoprofesiji = oglasi.GroupBy(x => x.ProfessionId).Select(x => new {professionId = x.Key, TotalClick = x.Sum(x => x.ClickCount)}).ToList();
+			foreach (var item in clickpoprofesiji)
+			{
+                adStatsODTO.Professions.Add(await _context2.Professions.Where(x => x.ProfessionId == item.professionId).Select(x => x.ProfessionName).SingleOrDefaultAsync());
+				adStatsODTO.ViewsByProfession.Add(item.TotalClick);
+            }
+            return adStatsODTO;
+        }
+
+        private IQueryable<UsersIDTO> GetUsers(string password)
 		{
 			return from x in _context.Users
 				   .Include(x => x.Media)
@@ -77,7 +155,14 @@ namespace Services
 				   select _mapper.Map<UsersIDTO>(x);
 		}
 
-		public async Task<List<UsersODTO>> GetAllUsers()
+        private IQueryable<UserMajstorIDTO> GetMajstorUsers(string password)
+        {
+            return from x in _context2.Users
+                   where (password == "" || x.Password == password)
+                   select _mapper.Map<UserMajstorIDTO>(x);
+        }
+
+        public async Task<List<UsersODTO>> GetAllUsers()
 		{
 			return await GetUsers(0).AsNoTracking().ToListAsync();
 		}
@@ -97,22 +182,116 @@ namespace Services
 
 		}
 
-		public async Task<UsersODTO> GetUserById(int id)
+        public async Task<UserMajstorODTO> GetMajstorUserById(int id)
+        {
+            return await GetMajstorUsers(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<UsersODTO> GetUserById(int id)
 		{
 			return await GetUsers(id).AsNoTracking().SingleOrDefaultAsync();
 		}
 
-		public async Task<UsersIDTO> GetUserByIdForEdit(int id)
+		public async Task<MetricByUserODTO> GetMetricByUser(int userId)
 		{
-			return _mapper.Map<UsersIDTO>(await _context.Users.Include(x => x.Media).Where(x => x.UsersId == id).AsNoTracking().SingleOrDefaultAsync());
+			var user = await _context2.Users.Where(x => x.UsersId == userId).SingleOrDefaultAsync();
+            var oglasi = await _context2.Advertisements.CountAsync(x => x.UsersId == userId && x.IsActive == true);
+            var dogovori = await _context2.MakeDeals.CountAsync(x => x.FirstUserAccept == true && x.SecondUserAccept == true && (x.FirstUserId == userId || x.SecondUserId == userId));
+            var brojNepostignutihDogovora = await _context2.MakeDeals.CountAsync(x => (x.FirstUserAccept == true && x.SecondUserAccept == false || x.FirstUserAccept == false && x.SecondUserAccept == true) && (x.FirstUserId == userId || x.SecondUserId == userId));
+
+            DateTime today = DateTime.Today;
+
+            #region Aktivnost
+            int months = (today.Year - user.RegistrationDate.Year) * 12 + today.Month - user.RegistrationDate.Month;
+            if (today.Day >= user.RegistrationDate.Day)
+            {
+                months++;
+            }
+            #endregion
+           
+            MetricByUserODTO metrics = new MetricByUserODTO();
+			metrics.Aktivnost = (oglasi + dogovori) / months;
+			metrics.Pouzdanost = (double)(dogovori - brojNepostignutihDogovora) / dogovori;
+
+            return metrics;
+        }
+
+
+        public async Task<UserMajstorIDTO> GetUserByIdForEdit(int id)
+		{
+			var user = _mapper.Map<UserMajstorIDTO>(await _context2.Users.Include(x => x.Opstine).Where(x => x.UsersId == id).AsNoTracking().SingleOrDefaultAsync());
+
+			var oglasi = await _context2.Advertisements.Where(x => x.UsersId == id).ToListAsync();
+
+			user.UkupanBrOglasa = oglasi.Count;
+			user.TrenutnoAktivniOglasi = oglasi.Count(x => x.IsActive == true);
+            user.BrojPostignutihDogovora = await _context2.MakeDeals.CountAsync(x => x.FirstUserAccept == true && x.SecondUserAccept == true && (x.FirstUserId == id || x.SecondUserId == id));
+            user.BrojNepostignutihDogovora = await _context2.MakeDeals.CountAsync(x => (x.FirstUserAccept == true && x.SecondUserAccept == false || x.FirstUserAccept == false && x.SecondUserAccept == true) && (x.FirstUserId == id || x.SecondUserId == id));
+			user.BrojKorisnikaPrekoReferala = await _context2.Invitations.CountAsync(x => x.OriginUserId == id);
+
+			var brkupljenihpaketa = await _context2.Orders.Where(x => x.UsersId == id).Select(x => x.TokenId).ToListAsync();
+			user.BrojKupljenihPateka = new BrojKupljenihPateka();
+			foreach (var item in brkupljenihpaketa)
+			{
+				switch (item)
+				{
+					case 1:
+						user.BrojKupljenihPateka.S += 1;
+						break;
+
+                    case 2:
+                        user.BrojKupljenihPateka.M += 1;
+                        break;
+
+                    case 3:
+                        user.BrojKupljenihPateka.L += 1;
+                        break;
+
+                    case 4:
+                        user.BrojKupljenihPateka.XL += 1;
+                        break;
+                }
+			}
+
+            return user;
 		}
 
-		public async Task<UsersIDTO> GetUserByPassword(string password)
+		public async Task<UserMajstorIDTO> GetUserByPassword(string password)
 		{
-			return await GetUsers(password).AsNoTracking().SingleOrDefaultAsync();
+			return await GetMajstorUsers(password).AsNoTracking().SingleOrDefaultAsync();
 		}
 
-		public async Task<UsersODTO> AddUser(UsersIDTO userIDTO)
+        public async Task<UserMajstorODTO> AddUserMojMajstor(UserMajstorIDTO userIDTO)
+		{
+            var CheckUser = await _context2.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
+            if (CheckUser != null)
+            {
+                return null;
+            }
+			userIDTO.Professions = string.Join(",", userIDTO.SelectedProfessionIds);
+            var user = _mapper.Map<User>(userIDTO);
+			user.RegistrationDate = DateTime.Now;
+            user.IsActive = true;
+
+            user.UsersId = 0;
+			user.IsActive = true;
+			user.ReferalCode = GenerateSecureRandomCode(10);
+            user.Password = BCrypt.Net.BCrypt.HashPassword("tempPasswordFix4You123456789012301231");
+            _context2.Users.Add(user);
+
+            await SaveContextChangesMajstorAsync();
+
+            return await GetMajstorUserById(user.UsersId);
+        }
+
+        static string GenerateSecureRandomCode(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            return new string(Enumerable.Range(0, length)
+                .Select(_ => chars[RandomNumberGenerator.GetInt32(chars.Length)]).ToArray());
+        }
+
+        public async Task<UsersODTO> AddUser(UsersIDTO userIDTO)
 		{
 			var CheckUser = await _context.Users.Where(x => x.Email == userIDTO.Email).FirstOrDefaultAsync();
 			if (CheckUser != null)
@@ -216,21 +395,17 @@ namespace Services
 			}
 		}
 
-		public async Task<UsersODTO> EditUser(UsersIDTO userIDTO)
+		public async Task<UserMajstorODTO> EditUser(UserMajstorIDTO userIDTO)
 		{
-			var user = _mapper.Map<Users>(userIDTO);
-			if (userIDTO.IsImageChanged == "true" && userIDTO.MediaId == null)
-				user.MediaId = null;
-			_context.Entry(user).State = EntityState.Modified;
-			if (userIDTO.Avatar == null && userIDTO.IsImageChanged != "true")
-			{
-				_context.Entry(user).Property(x => x.MediaId).IsModified = false;
-			}
-            _context.Entry(user).Property(x => x.Password).IsModified = false;
+			var user = _mapper.Map<User>(userIDTO);
+			_context2.Entry(user).State = EntityState.Modified;
+            _context2.Entry(user).Property(x => x.Password).IsModified = false;
+            _context2.Entry(user).Property(x => x.OpstineId).IsModified = false;
+            _context2.Entry(user).Property(x => x.RegistrationDate).IsModified = false;
             user.IsActive = true;
-			await SaveContextChangesAsync();
+			await SaveContextChangesMajstorAsync();
 
-			return await GetUserById(user.UsersId);
+			return await GetMajstorUserById(user.UsersId);
 		}
 
         public async Task<string> SendPasswordResetMail(string userMail)

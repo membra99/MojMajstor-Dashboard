@@ -3,7 +3,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject UsersServices userServices
 @{
-    var user = await userServices.GetUserById(int.Parse(HttpContextAccessor.HttpContext.Session.GetString("UserId")));
+    var user = await userServices.GetMajstorUserById(int.Parse(HttpContextAccessor.HttpContext.Session.GetString("UserId")));
 }
 
 <!DOCTYPE html>
@@ -11,7 +11,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] | Universal</title>
+    <title>@ViewData["Title"] | Moj Majstor</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,700">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
@@ -100,16 +100,20 @@
         <aside class="side-navigation">
             <div class="aside-header">
                 <a href="#" class="home-section d-flex align-items-center justify-content-center p-4 gap-2" style="text-decoration: none; color: grey; font;">
-                    <img src="~/images/Logo.svg" class="home-section" width="35" height="auto" />
-                    <span class="home-link">Universal</span>
+                    <img src="~/images/mojmajstor.png" class="home-section" width="35" height="auto" />
+                    <span class="home-link">Moj Majstor Dashboard</span>
                 </a>
             </div>
 
             <div class="aside-body">
                 <ul class="side-list sidenav">
+                    <li class="nav-item">@Html.ActionLinkIcon("Overview", "GetOverview", "Dashboard", "fa-solid fa-glasses", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Users", "AllUsers", "Dashboard", "fa fa-thin fa-users", null, new { @class = "side-anchor" })</li>
-                    <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-solid fa-file-pen", null, new { @class = "side-anchor" })</li>
-                    <li class="nav-item dropdown-btn">
+                    <li class="nav-item">@Html.ActionLinkIcon("Advertisements", "AllAdvertisements", "Dashboard", "fas fa-bullhorn", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Credit", "AllTokens", "Dashboard", "fa-solid fa-coins", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Banners", "GetBannersAction", "Dashboard", "fa-solid fa-panorama", null, new { @class = "side-anchor" })</li>
+                     @* <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-solid fa-file-pen", null, new { @class = "side-anchor" })</li>
+                     <li class="nav-item dropdown-btn">
                         <span class="side-anchor">
                             <i class="fa-solid fa-photo-film fa-menu icon-spacing"></i>
                             <span class="nav-item-title">Media</span>
@@ -121,8 +125,8 @@
                                 @Html.ActionLink("Video Gallery", "AllVideos", "Dashboard", null, new { @class = "side-anchor" })
                             </li>
                         </ul>
-                    </li>
-                    <li class="nav-item dropdown-btn">
+                    </li> 
+                     <li class="nav-item dropdown-btn">
                         <span class="side-anchor">
                             <i class="fa fa-table-list icon-spacing fa-menu "></i>
                             <span class="nav-item-title">Categories</span>
@@ -130,12 +134,11 @@
                         </span>
                         <ul class="navbar-nav dropdown-container">
                             <li>
-                                @*TODO Promeniti lang da ide iz sesije*@
                                 @Html.ActionLink("Category Tree", "AllCategories", "Dashboard", null, new { @class = "side-anchor" })
                                 @Html.ActionLink("Attributes", "AllAttributes", "Dashboard", null, new { @class = "side-anchor" })
                             </li>
                         </ul>
-                    </li>
+                       </li>
                     <li class="nav-item">@Html.ActionLinkIcon("Declarations", "AllDeclaration", "Dashboard", "fa-solid fa-certificate fa-menu icon-spacing", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item dropdown-btn">
                         <span class="side-anchor">
@@ -150,13 +153,13 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item">@Html.ActionLinkIcon("Newsletters", "SendNewsLetter", "Dashboard", "fa-envelope", null, new { @class = "side-anchor" })</li>
+                     <li class="nav-item">@Html.ActionLinkIcon("Newsletters", "SendNewsLetter", "Dashboard", "fa-envelope", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Pages", "AllSiteContent", "Dashboard", "fa-newspaper fa-menu", new { type = "Page", langid = 1 }, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Orders", "AllOrders", "Dashboard", "fa-box-open fa-menu", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Promo codes", "PromoCodes", "Dashboard", "fa-solid fa-receipt", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Invoice", "AllInvoices", "Dashboard", "fa-solid fa-file-pdf fa-menu", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Import", "ImportExc", "Dashboard", "fa-solid fa-file-import fa-menu", null, new { @class = "side-anchor" })</li>
-                    <li class="nav-item">@Html.ActionLinkIcon("Charts", "GetCharts", "Dashboard", "fa-solid fa-chart-line", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Charts", "GetCharts", "Dashboard", "fa-solid fa-chart-line", null, new { @class = "side-anchor" })</li> *@
                 </ul>
             </div>
 
@@ -165,19 +168,19 @@
                 <div class="user-info-container">
                     <div class="user-info">
                         <div class="user-image">
-                            @if (user.ImageSrc == null)
+                            @* @if (user.ImageSrc == null)
                             {
                                 <img width="46" height="43" src="~/images/noimage-person.png" alt="userimage" />
                             }
                             else
                             {
                                 <img width="46" height="43" src="@Url.Action("GetImage","Dashboard",new {path = user.ImageSrc})" />
-                            }
+                            } *@
 
                         </div>
                         <div class="user-meta">
                             <span class="username-meta">
-                                @user.FirstName @user.LastName
+                                @user.FullName
                             </span>
                             <span class="email-meta">
                                 @user.Email
@@ -229,6 +232,23 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" id="closeEditModelModalButton" data-dismiss="modal">Close</button>
                                 <input type="submit" class="btn btn-dotnet" id="submitEditFormBtn" value="Save" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal za Metrike -->
+                <div class="modal fade" id="metricModal" tabindex="-1" aria-labelledby="metricModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-chart-line me-2"></i> Metrike korisnika
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                            </div>
+                            <div class="modal-body" id="metricModalBody">
+                                <!-- Ovde se dinamički ubacuje Razor partial -->
+                                <div class="text-center text-muted">Učitavanje...</div>
                             </div>
                         </div>
                     </div>
@@ -453,22 +473,41 @@
             });
             //end of dynamic modal code
 
-            //start of code for dynamic edit model modal elements
+            // Dinamički modali za tabele
             $("body").on("click", "td.actions-control a", function (e) {
+                var $icon = $(this).find('i'); // pronalazi ikoncu u linku
+
+                // Ako je fa-trophy, otvori metric modal
+                if ($icon.hasClass("fa-trophy")) {
+                    e.preventDefault();
+                    var userId = $(this).data("userid"); // uzima data-userid atribut
+                    $("#metricModalBody").html('<div class="text-center text-muted">Učitavanje...</div>');
+
+                    // Učitaj partial view u modal
+                    $.get("/Dashboard/MetricByUserPartial", { userId: userId }, function (data) {
+                        $("#metricModalBody").html(data);
+                    });
+
+                    $("#metricModal").modal("show");
+                    return; // prekini dalje izvršavanje
+                }
+
+                // --- Ovo je stari kod za edit/prewiew/delete ---
                 let pageTitleExIcon = $('.page-title').clone().find('.fa').remove().end().html();
-                console.log(pageTitleExIcon);
                 if (pageTitleExIcon == 'All promo codes' || pageTitleExIcon.split(' ')[1] == 'Pages' || pageTitleExIcon.split(' ')[1] == "Blogs" || pageTitleExIcon.split(' ')[1] == "Events") return true;
+
                 e.preventDefault();
                 removePreviousHtml();
                 var hrefValue = $(this).attr("href");
-                $("#editModelTitle").html("Edit " + $(".page-title").html().split(' ')[4]);
+                var iconClass = $(".page-title").html().split(' ')[4];
+                $("#editModelTitle").html('Edit   <i class="fa ' + iconClass + '"></i>');
+
                 $.get(hrefValue, function (data) {
                     var tempElement = $('<div></div>').html(data);
                     var containerElem = tempElement.find('.container.bg-light.w-50');
-                    containerElem.toggleClass("bg-light");
-                    containerElem.toggleClass("w-50");
+                    containerElem.toggleClass("bg-light w-50");
                     var formElement = containerElem.find("form").length ? containerElem.find("form") : containerElem.closest("form");
-                    formElement.attr("id", "formToSend")
+                    formElement.attr("id", "formToSend");
                     var submitButton = formElement.find('input[type="submit"][value="Save"]');
                     var h2Element = formElement.find('h2');
                     submitButton.hide();
@@ -479,7 +518,6 @@
                         relatedInput.addClass("required-input");
                     });
                     var extractedHtml = formElement.prop('outerHTML');
-                    //console.log(extractedHtml);
                     $("#editModel .modal-body").html(extractedHtml);
                     initTiny();
                     loadScripts(tempElement);
@@ -487,6 +525,7 @@
 
                 $("#editModel").modal("toggle");
             });
+
 
             $("#submitEditFormBtn").click(function () {
                 $("[data-valmsg-for]").each(function () {

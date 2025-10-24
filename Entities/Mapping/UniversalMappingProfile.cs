@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using Entities.Universal.MainData;
+using Entities.Universal.MainDataNova;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using Universal.Universal.MainDataNova;
+using MediaType = Universal.Universal.MainDataNova.MediaType;
+using Order = Universal.Universal.MainDataNova.Order;
 
 namespace Entities.Mapping
 {
@@ -91,6 +95,35 @@ namespace Entities.Mapping
 			.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
 			.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("yyyy-MM-dd")));
 			CreateMap<PromoCodesIDTO, PromoCodes>();
+
+
+			CreateMap<User, UserMajstorODTO>()
+				.ForMember(dest => dest.Name, source => source.MapFrom(m => m.Role.Name))
+				.ForMember(dest => dest.OpstinaIme, source => source.MapFrom(m => m.Opstine.OpstinaIme));
+
+
+			CreateMap<User, UserMajstorIDTO>()
+                .ForMember(dest => dest.OpstinaIme, source => source.MapFrom(m => m.Opstine.OpstinaIme));
+            CreateMap<UserMajstorIDTO, User>()
+				.ForMember(dest => dest.Advertisements, opt => opt.Ignore())
+				.ForMember(dest => dest.Bookmarks, opt => opt.Ignore())
+				.ForMember(dest => dest.GradeUserLeftComments, opt => opt.Ignore())
+				.ForMember(dest => dest.GradeUserReceiveComments, opt => opt.Ignore())
+				.ForMember(dest => dest.InvitationInvitedUsers, opt => opt.Ignore())
+				.ForMember(dest => dest.InvitationOriginUsers, opt => opt.Ignore())
+				.ForMember(dest => dest.MakeDealFirstUsers, opt => opt.Ignore())
+				.ForMember(dest => dest.MakeDealSecondUsers, opt => opt.Ignore())
+				.ForMember(dest => dest.Media, opt => opt.Ignore())
+				.ForMember(dest => dest.NotificationDetailUserFromNavigations, opt => opt.Ignore())
+				.ForMember(dest => dest.NotificationDetailUserToNavigations, opt => opt.Ignore())
+				.ForMember(dest => dest.Opstine, opt => opt.Ignore())
+				.ForMember(dest => dest.Orders, opt => opt.Ignore())
+				.ForMember(dest => dest.Role, opt => opt.Ignore())
+				.ForMember(dest => dest.TokenUsers, opt => opt.Ignore());
+
+
+			CreateMap<Token, TokensODTO>();
+
         }
 	}
 }

@@ -1,0 +1,52 @@
+﻿@model List<Universal.DTO.ODTO.TokensODTO>
+
+<h2>Credit Packages</h2>
+
+<table class="table table-bordered text-center">
+    <thead class="table-light">
+        <tr>
+            <th>TokenId</th>
+            <th>Number Of Token</th>
+            <th>Price</th>
+            <th>Package</th>
+            <th>Description</th>
+            <th>Old Price</th>
+            <th>Recommended</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var token in Model)
+        {
+            <tr>
+                <td>@token.TokenId</td>
+                <td>@token.NumberOfToken</td>
+                <td>
+                    <input type="number" class="form-control price-input" value="@token.Price" data-id="@token.TokenId" />
+                </td>
+                <td>@token.Package</td>
+                <td>@token.Description</td>
+                <td>@token.OldPrice</td>
+                <td>@(token.IsRecommended ? "Yes" : "No")</td>
+                <td>
+                    <button class="btn btn-primary save-price" data-id="@token.TokenId">Save</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(".save-price").click(function () {
+            var id = $(this).data("id");
+            var newPrice = $(this).closest("tr").find(".price-input").val();
+
+            $.post("/Dashboard/UpdatePrice", { tokenId: id, newPrice: newPrice }, function (response) {
+                if (response.success) {
+                    alert("Price updated successfully!");
+                }
+            });
+        });
+    </script>
+}

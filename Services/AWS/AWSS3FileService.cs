@@ -38,7 +38,7 @@ namespace Services.AWS
                 {
 					string timeStamp = GetTimestamp(DateTime.Now);
                     string imageNametmp = file.FileName;
-                    imageName = "Universal/" + Path.GetFileNameWithoutExtension(imageNametmp) + "_" + timeStamp + Path.GetExtension(imageNametmp);
+                    imageName = "SomsedUser/" + Path.GetFileNameWithoutExtension(imageNametmp) + "_" + timeStamp + Path.GetExtension(imageNametmp);
 
                     using (var ms = new MemoryStream())
                     {

@@ -87,6 +87,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddDbContext<Entities.Universal.MainDataNova.MojMajstorContext>(options =>
+    options.UseSqlServer("Server=46.38.233.135,1433;Database=MojMajstor;TrustServerCertificate=true;User Id=Sa;Password=YourStrong(!Passw0rd);"));
 
 builder.Services.AddSession(options =>
 {

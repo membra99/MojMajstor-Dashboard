@@ -1,4 +1,4 @@
-﻿@model Universal.DTO.IDTO.UsersIDTO
+﻿@model Universal.DTO.IDTO.UserMajstorIDTO
 
 @{
     ViewData["Title"] = "New User";
@@ -12,72 +12,56 @@
         </div>
         <div class="row">
             <div class="form-group col-6 mb-3">
-                @Html.LabelRequiredFor(model => model.Role, "Role:", true)
-                @Html.DropDownListFor(model => model.Role, new List<SelectListItem>
+                @Html.LabelRequiredFor(model => model.RoleId, "Role:", true)
+                @Html.DropDownListFor(model => model.RoleId, new List<SelectListItem>
             {
-            new SelectListItem() { Text = "User", Value = "User"},
-            new SelectListItem() { Text = "Admin", Value = "Admin"}
+            new SelectListItem() { Text = "Majstor", Value = "1"},
+            new SelectListItem() { Text = "Klijent", Value = "2"}
             },
                          "Select Role", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Role, null, new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.RoleId, null, new { @class = "text-danger" })
             </div>
             <div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.UserType, "User type:")
-                @Html.DropDownListFor(model => model.UserTypes, new List<SelectListItem>
-            {
-            new SelectListItem() { Text = "Private", Value = "Private"},
-            new SelectListItem() { Text = "Company", Value = "Company"}
-            },
-                         "Select User Type", new { @class = "form-control" })
+                @Html.LabelRequiredFor(model => model.OpstineId, "Opština:", true)
+                @Html.DropDownListFor(
+                         model => model.OpstineId,
+                         new SelectList(Model.OpstineDropDowns, "OpstineId", "OpstineIme"),
+                         "Select Opština",
+                         new { @class = "form-control" }
+                         )
+                @Html.ValidationMessageFor(model => model.OpstineId, null, new { @class = "text-danger" })
             </div>
         </div>
         <div class="row">
             <div class="form-group col-6 mb-3">
-                @Html.LabelRequiredFor(model => model.FirstName, "First name:", true)
-                @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "First Name" })
-                @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "text-danger" })
+                @Html.LabelRequiredFor(model => model.FullName, "Full name:", true)
+                @Html.TextBoxFor(model => model.FullName, new { @class = "form-control", placeholder = "Full Name" })
+                @Html.ValidationMessageFor(model => model.FullName, null, new { @class = "text-danger" })
             </div>
             <div class="form-group col-6 mb-3">
-                @Html.LabelRequiredFor(model => model.LastName, "Last name:", true)
-                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", placeholder = "Last Name" })
-                @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "text-danger" })
+                @Html.LabelRequiredFor(model => model.Email, "Email:", true)
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control", placeholder = "Email" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group col-12 mb-3">
-            @Html.LabelRequiredFor(model => model.Email, "Email:", true)
-            @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
-            @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
-        </div>
+        @Html.HiddenFor(model => model.ReferalCode)
         <div class="row">
             <div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.Phone, "Phone:")
-                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = "Phone" })
-                @Html.ValidationMessageFor(model => model.Phone, null, new { @class = "text-danger" })
+                @Html.LabelFor(model => model.PhoneNumber, "Phone:")
+                @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control", placeholder = "Phone" })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, null, new { @class = "text-danger" })
             </div>
-            <div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.Address, "Address:")
-                @Html.TextBoxFor(model => model.Address, new { @class = "form-control", placeholder = "Address" })
-                @Html.ValidationMessageFor(model => model.Address, null, new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-5 mb-3">
-                @Html.LabelFor(model => model.Country, "Country:")
-                @Html.TextBoxFor(model => model.Country, new { @class = "form-control", placeholder = "Country" })
-                @Html.ValidationMessageFor(model => model.Country, null, new { @class = "text-danger" })
-            </div>
-            <div class="form-group col-5 mb-3">
-                @Html.LabelFor(model => model.City, "City:")
-                @Html.TextBoxFor(model => model.City, new { @class = "form-control", placeholder = "City" })
-                @Html.ValidationMessageFor(model => model.City, null, new { @class = "text-danger" })
-            </div>
-            <div class="form-group col-2 mb-3">
-                @Html.LabelFor(model => model.Zip, "Zip:")
-                @Html.TextBoxFor(model => model.Zip, new { @class = "form-control", placeholder = "Zip" })
-                @Html.ValidationMessageFor(model => model.Zip, null, new { @class = "text-danger" })
-            </div>
-        </div>
 
+            <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.SelectedProfessionIds, "Profesije:", new { @class = "form-label fw-bold" })
+                @Html.DropDownListFor(
+                         model => model.SelectedProfessionIds,
+                         new MultiSelectList(Model.ProfessionDropDowns, "ProfessionId", "ProfessionName"),
+                         new { @class = "form-control select2-multiple", multiple = "multiple", style = "width:100%;" }
+                         )
+                @Html.ValidationMessageFor(model => model.SelectedProfessionIds, null, new { @class = "text-danger" })
+            </div>
+        </div>
         <div class="modal fade" id="addImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <!-- Use modal-lg class for a larger modal -->
@@ -114,13 +98,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Tab 2 Content -->
-                            <div id="tab2" class="tab-pane">
-                                @Html.HiddenFor(model => model.MediaId, new { @id = "input-media" });
-                                <div id="tab2-gallery">
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -129,14 +106,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="form-group col-12 mb-3">
-                @Html.LabelFor(model => model.Avatar, "Avatar:")
-                <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
-            </div>
-
         </div>
         <div class="mx-auto mb-3 w-25">
             <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />

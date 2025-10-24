@@ -1,4 +1,4 @@
-﻿@model Universal.DTO.IDTO.UsersIDTO
+﻿@model Universal.DTO.IDTO.UserMajstorIDTO
 
 @{
     ViewData["Title"] = "Edit User";
@@ -11,74 +11,115 @@
     @using (Html.BeginForm("EditUserAction", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.HiddenFor(model => model.UsersId)
-        <div class="row">
+         <div class="row">
             <div class="form-group col-6 mb-3">
-                @Html.LabelRequiredFor(model => model.Role, "Role:", true)
-                @Html.DropDownListFor(model => model.Role, new List<SelectListItem>
+                @Html.LabelRequiredFor(model => model.RoleId, "Role:", true)
+                @Html.DropDownListFor(model => model.RoleId, new List<SelectListItem>
             {
-            new SelectListItem() { Text = "User", Value = "User"},
-            new SelectListItem() { Text = "Admin", Value = "Admin"}
+            new SelectListItem() { Text = "Majstor", Value = "1"},
+            new SelectListItem() { Text = "Klijent", Value = "2"}
             },
                          "Select Role", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Role, null, new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.RoleId, null, new { @class = "text-danger" })
             </div>
             <div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.UserType, "User type:")
-                @Html.DropDownListFor(model => model.UserTypes, new List<SelectListItem>
-            {
-            new SelectListItem() { Text = "Private", Value = "Private"},
-            new SelectListItem() { Text = "Company", Value = "Company"}
-            },
-                         "Select User Type", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.UserTypes, null, new { @class = "text-danger" })
+                @Html.LabelRequiredFor(model => model.OpstinaIme, "Opstina:", true)
+                @Html.TextBoxFor(model => model.OpstinaIme, new { @class = "form-control", placeholder = "Opstina" })
+                @Html.ValidationMessageFor(model => model.OpstinaIme, null, new { @class = "text-danger" })
             </div>
         </div>
         <div class="row">
             <div class="form-group col-6 mb-3">
-                @Html.LabelRequiredFor(model => model.FirstName, "First name:", true)
-                @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", placeholder = "First Name" })
-                @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "text-danger" })
+                @Html.LabelRequiredFor(model => model.FullName, "Full name:", true)
+                @Html.TextBoxFor(model => model.FullName, new { @class = "form-control", placeholder = "Full Name" })
+                @Html.ValidationMessageFor(model => model.FullName, null, new { @class = "text-danger" })
             </div>
             <div class="form-group col-6 mb-3">
-                @Html.LabelRequiredFor(model => model.LastName, "Last name:", true)
-                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", placeholder = "Last Name" })
-                @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "text-danger" })
+                @Html.LabelRequiredFor(model => model.RegistrationDate, "Registration Date:", true)
+                @Html.TextBoxFor(model => model.RegistrationDate, new { @class = "form-control", placeholder = "Registration Date" })
+                @Html.ValidationMessageFor(model => model.RegistrationDate, null, new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group col-12 mb-3">
-            @Html.LabelRequiredFor(model => model.Email, "Email:", true)
-            @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
-            @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
-        </div>
+        @Html.HiddenFor(model => model.ReferalCode)
+        @Html.HiddenFor(model => model.UserToken)
+        @Html.HiddenFor(model => model.IsVisible)
+        @Html.HiddenFor(model => model.Professions)
+       
         <div class="row">
             <div class="form-group col-6 mb-3">
-                @Html.LabelFor(model => model.Phone, "Phone:")
-                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = "Phone" })
-                @Html.ValidationMessageFor(model => model.Phone, null, new { @class = "text-danger" })
+                @Html.LabelFor(model => model.PhoneNumber, "Phone:")
+                @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control", placeholder = "Phone" })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, null, new { @class = "text-danger" })
             </div>
             <div class="form-group col-6 mb-3">
+                @Html.LabelRequiredFor(model => model.Email, "Email:", true)
+                @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control", placeholder = "Email" })
+                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
+            </div>
+            @* <div class="form-group col-6 mb-3">
                 @Html.LabelFor(model => model.Address, "Address:")
                 @Html.TextBoxFor(model => model.Address, new { @class = "form-control", placeholder = "Address" })
                 @Html.ValidationMessageFor(model => model.Address, null, new { @class = "text-danger" })
-            </div>
+            </div> *@
         </div>
         <div class="row">
-            <div class="form-group col-5 mb-3">
-                @Html.LabelFor(model => model.Country, "Country:")
-                @Html.TextBoxFor(model => model.Country, new { @class = "form-control", placeholder = "Country" })
-                @Html.ValidationMessageFor(model => model.Country, null, new { @class = "text-danger" })
-            </div>
-            <div class="form-group col-5 mb-3">
-                @Html.LabelFor(model => model.City, "City:")
-                @Html.TextBoxFor(model => model.City, new { @class = "form-control", placeholder = "City" })
-                @Html.ValidationMessageFor(model => model.City, null, new { @class = "text-danger" })
-            </div>
-            <div class="form-group col-2 mb-3">
-                @Html.LabelFor(model => model.Zip, "Zip:")
-                @Html.TextBoxFor(model => model.Zip, new { @class = "form-control", placeholder = "Zip" })
-                @Html.ValidationMessageFor(model => model.Zip, null, new { @class = "text-danger" })
+             <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.UkupanBrOglasa, "Ukupan Broj Oglasa:")
+                @Html.TextBoxFor(model => model.UkupanBrOglasa, new { @class = "form-control", placeholder = "UkupanBrOglasa" })
+                @Html.ValidationMessageFor(model => model.UkupanBrOglasa, null, new { @class = "text-danger" })
+             </div>
+            <div class="form-group col-6 mb-3">
+                @Html.LabelFor(model => model.TrenutnoAktivniOglasi, "Trenutno Aktivni Oglasi:")
+                @Html.TextBoxFor(model => model.TrenutnoAktivniOglasi, new { @class = "form-control", placeholder = "TrenutnoAktivniOglasi" })
+                @Html.ValidationMessageFor(model => model.TrenutnoAktivniOglasi, null, new { @class = "text-danger" })
             </div>
         </div>
+
+        <div class="row">
+            <div class="form-group col-3 mb-3">
+                @Html.LabelFor(model => model.BrojPostignutihDogovora, "Broj Postignutih Dogovora:")
+                @Html.TextBoxFor(model => model.BrojPostignutihDogovora, new { @class = "form-control", placeholder = "BrojPostignutihDogovora" })
+                @Html.ValidationMessageFor(model => model.BrojPostignutihDogovora, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-3 mb-3">
+                @Html.LabelFor(model => model.BrojNepostignutihDogovora, "Broj Nepostignutih Dogovora:")
+                @Html.TextBoxFor(model => model.BrojNepostignutihDogovora, new { @class = "form-control", placeholder = "BrojNepostignutihDogovora" })
+                @Html.ValidationMessageFor(model => model.BrojNepostignutihDogovora, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-3 mb-3">
+                @Html.LabelFor(model => model.BrojKorisnikaPrekoReferala, "Broj Korisnika Preko Referala:")
+                @Html.TextBoxFor(model => model.BrojKorisnikaPrekoReferala, new { @class = "form-control", placeholder = "BrojKorisnikaPrekoReferala" })
+                @Html.ValidationMessageFor(model => model.BrojKorisnikaPrekoReferala, null, new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="form-group col-6 mb-3">
+                <label>Broj kupljenih paketa:</label>
+                <div class="card shadow-sm border rounded-3 p-3">
+                    <div class="row text-center">
+                        <div class="col">
+                            <div class="fw-bold">S</div>
+                            <div>@Model.BrojKupljenihPateka.S</div>
+                        </div>
+                        <div class="col">
+                            <div class="fw-bold">M</div>
+                            <div>@Model.BrojKupljenihPateka.M</div>
+                        </div>
+                        <div class="col">
+                            <div class="fw-bold">L</div>
+                            <div>@Model.BrojKupljenihPateka.L</div>
+                        </div>
+                        <div class="col">
+                            <div class="fw-bold">XL</div>
+                            <div>@Model.BrojKupljenihPateka.XL</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -98,7 +139,7 @@
                             </li>
                         </ul>
 
-                        <!-- Tab panes -->
+                        @* <!-- Tab panes -->
                         <div class="tab-content">
                             <!-- Tab 1 Content -->
                             <div id="tab1" class="tab-pane active">
@@ -124,7 +165,7 @@
                                 <div id="tab2-gallery">
                                 </div>
                             </div>
-                        </div>
+                        </div> *@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" id="closeImageButton" data-dismiss="modal">Close</button>
@@ -134,12 +175,12 @@
             </div>
         </div>
 
-        <div class="row">
+        @* <div class="row">
             <div class="form-group col-12 mb-3">
                 @Html.LabelFor(model => model.Avatar, "Avatar:")
                 <button type="button" class="form-control p-2 btn-dotnet" id="openModalButton">Choose Image</button>
             </div>
-        </div>
+        </div> *@
 
 
         <div class="mx-auto mb-3 w-25">
@@ -147,6 +188,8 @@
         </div>
     }
 </div>
+
+
 
 @section Scripts {
     <script id="loadScriptDynamic">

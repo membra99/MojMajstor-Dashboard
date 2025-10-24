@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Context;
 using Entities.Universal.MainData;
+using Entities.Universal.MainDataNova;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,6 +10,7 @@ using Services.AWS;
 using Services.Helpers;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
+using Universal.Universal.MainDataNova;
 using static Universal.DTO.CommonModels.CommonModels;
 using Seo = Entities.Universal.MainData.Seo;
 
@@ -21,7 +23,7 @@ namespace Services
         private readonly IAWSS3BucketHelper _AWSS3BucketHelper;
         private readonly IOptions<EmailSettings> _emailSettings;
 
-        public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService, IAWSS3BucketHelper aWSS3BucketHelper, IOptions<EmailSettings> emailSettings) : base(context, mapper)
+        public MainDataServices(MainContext context, IMapper mapper, UsersServices usersServices, IAWSS3FileService AWSS3FileService, IAWSS3BucketHelper aWSS3BucketHelper, IOptions<EmailSettings> emailSettings, MojMajstorContext context2) : base(context, mapper, context2)
         {
             _userServices = usersServices;
             _AWSS3FileService = AWSS3FileService;
@@ -45,7 +47,7 @@ namespace Services
             }
         }
 
-        public async Task<MediaODTO> UploadProductImage(AWSFileUpload awsFile, string mediaType, int? productId)
+        public async Task<Medium> UploadProductImage(AWSFileUpload awsFile, string mediaType, int? productId, int position, string? url)
         {
             string successUpload = "";
 
@@ -55,16 +57,14 @@ namespace Services
             if (successUpload != null)
             {
                 var key = await _AWSS3FileService.FilesListSearch(successUpload);
-                var media = new Media();
-                media.ProductId = productId;
-                media.Extension = awsFile.Attachments.First().FileName.Split('.')[1];
+                var media = new Medium();
                 media.Src = key.First();
                 media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
-                var index = media.Src.LastIndexOf('/');
-                media.MetaTitle = media.Src.Substring(index + 1);
-                _context.Medias.Add(media);
-                await _context.SaveChangesAsync();
-                return _mapper.Map<MediaODTO>(media);
+                media.Postition = position;
+                media.Url = url;
+                _context2.Media.Add(media);
+                await SaveContextChangesMajstorAsync();
+                return media;
             }
             else
             {
@@ -233,6 +233,21 @@ namespace Services
             }
             return "Failed to delete image";
 
+        }
+
+
+        public async Task DeleteUploadedImageMajstor(int mediaId)
+        {
+            var imgToDelete = await _context2.Media.Where(x => x.MediaId == mediaId).AsNoTracking().SingleOrDefaultAsync();
+            if (imgToDelete != null)
+            {
+                var isDeleted = await _AWSS3BucketHelper.DeleteFile(imgToDelete.Src.ToString(), 0, 0);
+                if (isDeleted)
+                {
+                    _context2.Media.Remove(imgToDelete);
+                    await SaveContextChangesMajstorAsync();
+                }
+            }
         }
 
         #endregion FileUploads
@@ -926,7 +941,7 @@ namespace Services
             AWSFileUpload aws = new AWSFileUpload();
             aws.Attachments = new List<IFormFile>();
             aws.Attachments.Add(file);
-            var mediaOdto = await UploadProductImage(aws, "Invoice", null);
+            var mediaOdto = await UploadProductImage(aws, "Invoice", null, 1, null);
 
             InvoiceEntitiesIDTO entitiesIDTO = new InvoiceEntitiesIDTO();
             entitiesIDTO.InvoiceId = 0;
@@ -1039,7 +1054,7 @@ namespace Services
             order.OrderDate = DateTime.Now;
             order.OrderStatus = "On hold";
 
-            var orderForDB = _mapper.Map<Order>(order);
+            var orderForDB = _mapper.Map<Entities.Universal.MainData.Order>(order);
 
             _context.Orders.Add(orderForDB);
             await SaveContextChangesAsync();
@@ -1179,6 +1194,11 @@ namespace Services
             }
 
             return media;
+        }
+
+        public async Task<List<Medium>> GetBannersImages()
+        {
+            return await _context2.Media.Where(x => x.MediaTypeId == 3).ToListAsync();
         }
 
         public async Task<List<string>> GetGalleryImagesSrc(List<int> mediaIds)
@@ -1699,6 +1719,64 @@ namespace Services
 
             return retval;
         }
+        #endregion
+
+        #region Overview
+
+        public async Task<OverviewODTO> GetOverview()
+        {
+            OverviewODTO retval = new OverviewODTO();
+            retval.OverviewKorisnici = new OverviewKorisnici
+            {
+                BrojKlijenata = await _context2.Users.CountAsync(x => x.RoleId == 2 && x.IsActive == true),
+                BrojMajstora = await _context2.Users.CountAsync(x => x.RoleId == 1 && x.IsActive == true)
+            };
+            retval.OverviewOglasi = new OverviewOglasi
+            {
+                UkupanBrOglasa = await _context2.Advertisements.CountAsync(),
+                IstaknutiOglasi = await _context2.Advertisements.CountAsync(x => x.AdvertisementTypeId == 2 && x.IsActive == true),
+                AktivniOglasi = await _context2.Advertisements.CountAsync(x => x.IsActive == true),
+                PremiumOglasi = await _context2.Advertisements.CountAsync(x => x.AdvertisementTypeId == 3 && x.IsActive == true),
+                EkonomicniOglasi = await _context2.Advertisements.CountAsync(x => x.AdvertisementTypeId == 1 && x.IsActive == true)
+            };
+            var PoruceniTokeni = await _context2.Orders.Select(x => x.TokenId).ToListAsync();
+            foreach (var token in PoruceniTokeni)
+            {
+                retval.UkupanPrihod += (int)await _context2.Tokens.Where(x => x.TokenId == token).Select(x => x.Price).SingleOrDefaultAsync();
+            }
+            retval.BrojAktivnihDogovora = await _context2.MakeDeals.CountAsync(x => x.FirstUserAccept == true && x.SecondUserAccept == true);
+            var najvecaGrupaId = await _context2.Users.Where(x => x.OpstineId != null).GroupBy(u => u.OpstineId).OrderByDescending(g => g.Count()).Select(x => x.Key).FirstOrDefaultAsync();
+            retval.TopLokacija = await _context2.Opstines.Where(x => x.OpstineId == Convert.ToInt32(najvecaGrupaId)).Select(x => x.OpstinaIme).SingleOrDefaultAsync();
+            var sedamDanaUnazad = DateTime.Now.AddDays(-7);
+            var sklopljenidogovoriU7Dana = await _context2.MakeDeals.Where(x => x.AgreementReachedTime >= sedamDanaUnazad).Select(x => x.AdvertisementId).ToListAsync();
+            var najboljaProfesijaIdU7Dana = await _context2.Advertisements.Where(x => sklopljenidogovoriU7Dana.Contains(x.AdvertisementId)).GroupBy(x => x.ProfessionId).OrderByDescending(x => x.Count()).Select(x => x.Key).SingleOrDefaultAsync();
+            retval.NajuspesnijaProfesija7Dana = await _context2.Professions.Where(x => x.ProfessionId == najboljaProfesijaIdU7Dana).Select(x => x.ProfessionName).SingleOrDefaultAsync();
+            retval.NoviOglasi7Dana = await _context2.Advertisements.CountAsync(x => x.PostedDate >= sedamDanaUnazad);
+            retval.NoviKorisnici7Dana = await _context2.Users.CountAsync(x => x.RegistrationDate >= sedamDanaUnazad);
+
+            return retval;
+        }
+
+        #endregion
+
+        #region Tokens
+
+        public async Task<List<TokensODTO>> GetAllTokens()
+        {
+            return await _context2.Tokens.Select(x => _mapper.Map<TokensODTO>(x)).ToListAsync();
+        }
+
+        public void UpdateTokenPrice(int tokenId, double newPrice)
+        {
+            var token = _context2.Tokens.FirstOrDefault(t => t.TokenId == tokenId);
+            if (token != null)
+            {
+                token.Price = newPrice;
+                _context2.Entry(token).State = EntityState.Modified;
+                _context2.SaveChanges();
+            }
+        }
+
         #endregion
     }
 }

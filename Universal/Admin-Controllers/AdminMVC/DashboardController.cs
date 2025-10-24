@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Services;
 using Services.AWS;
@@ -7,7 +8,7 @@ using System.Net.Mime;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using Universal.DTO.ViewDTO;
-
+using Universal.Universal.MainDataNova;
 using Universal.Util;
 using static Universal.DTO.CommonModels.CommonModels;
 
@@ -36,16 +37,38 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         public async Task<IActionResult> Index()
         {
-            var users = await _userDataServices.GetAllUsers();
-            return View("User/Users", users);
+            var overview = await _mainDataServices.GetOverview();
+            return View("Overview/Overview", overview);
         }
 
         #region Users
 
-        public IActionResult NewUser()
+        public async Task<IActionResult> NewUser()
         {
             CheckForToast();
-            return View("User/NewUser");
+            var data = await _userDataServices.GetUserIDTO();
+            return View("User/NewUser", data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetViewsByPeriod(DateTime startDate, DateTime endDate)
+        {
+            var data = await _userDataServices.GetViewsByPeriod(startDate, endDate);
+            return Json(data);
+        }
+
+        public async Task<IActionResult> GetOverview()
+        {
+            try
+            {
+                var overview = await _mainDataServices.GetOverview();
+                return View("Overview/Overview", overview);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
         }
 
         public async Task<IActionResult> AllUsers()
@@ -53,7 +76,7 @@ namespace Universal.Admin_Controllers.AdminMVC
             try
             {
                 CheckForToast();
-                var users = await _userDataServices.GetAllUsers();
+                var users = await _userDataServices.GetAllMajstorUsers();
                 return View("User/Users", users);
             }
             catch (Exception ex)
@@ -63,75 +86,54 @@ namespace Universal.Admin_Controllers.AdminMVC
             }
         }
 
-        public async Task<IActionResult> AddUser(UsersIDTO userIDTO)
+        public async Task<IActionResult> AllAdvertisements()
         {
-            if (userIDTO.MediaId == null && userIDTO.Avatar == null)
-            {
-                ModelState.AddModelError(nameof(userIDTO.Avatar), "The Avatar field is required.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View("User/NewUser", new UsersIDTO());
-            }
-
-            //						FILE UPLOAD SYSTEM
-            AWSFileUpload awsFile = new AWSFileUpload();
-            awsFile.Attachments = new List<IFormFile>();
-            if (userIDTO.Avatar != null)
-                awsFile.Attachments.Add(userIDTO.Avatar);
             try
             {
-                if (awsFile.Attachments.Count > 0)
-                {
-                    string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-                    if (!IsSupportedExtension(extension))
-                    {
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                        return RedirectToAction("NewUser");
-                    }
-                    else
-                    {
-                        if (awsFile.Attachments[0].Length > 1000000)
-                        {
-                            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-                            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                            return RedirectToAction("NewUser");
-                        }
-                        else
-                        {
-                            var media = await _userDataServices.UploadUserPicture(awsFile, null);
-                            if (media != null) userIDTO.MediaId = media.MediaId;
-                            var users = await _userDataServices.AddUser(userIDTO);
-                            if (users == null)
-                            {
-                                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User with that mail already exists");
-                                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                                return RedirectToAction("NewUser");
-                            }
-                            return RedirectToAction("AllUsers", "Dashboard");
-                        }
-                    }
-                }
-                else
-                {
-                    var users = await _userDataServices.AddUser(userIDTO);
-                    if (users == null)
-                    {
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User with that mail already exists");
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                        return RedirectToAction("NewUser");
-                    }
-                    return RedirectToAction("AllUsers", "Dashboard");
-                }
-
+                var add = await _userDataServices.GetAllAdvertisements();
+                return View("Advertisements/Advertisements", add);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("Home");
             }
+        }
+
+        public IActionResult GetBannersAction()
+        {
+            return View("Banners/Banners");
+        }
+
+        public async Task<IActionResult> AllTokens()
+        {
+            try
+            {
+                var tokens = await _mainDataServices.GetAllTokens();
+                return View("Tokens/Tokens", tokens);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> AddUser(UserMajstorIDTO userIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("User/NewUser", new UsersIDTO());
+            }
+            
+            var users = await _userDataServices.AddUserMojMajstor(userIDTO);
+            if (users == null)
+            {
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User with that mail already exists");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+                return RedirectToAction("NewUser");
+            }
+            return RedirectToAction("AllUsers", "Dashboard");
         }
 
         public static bool IsSupportedExtension(string extension)
@@ -143,6 +145,12 @@ namespace Universal.Admin_Controllers.AdminMVC
         public async Task<IActionResult> EditUser(int userId)
         {
             return View("User/EditUser", await _userDataServices.GetUserByIdForEdit(userId));
+        }
+
+        public async Task<IActionResult> MetricByUserPartial(int userId)
+        {
+            var model = await _userDataServices.GetMetricByUser(userId);
+            return PartialView("Metric/MetricByUser", model);
         }
 
         public async Task<IActionResult> GetImage(string path)
@@ -208,65 +216,72 @@ namespace Universal.Admin_Controllers.AdminMVC
         }
 
 
-        public async Task<IActionResult> EditUserAction(UsersIDTO userIDTO)
+        public async Task<IActionResult> EditUserAction(UserMajstorIDTO userIDTO)
         {
             if (!ModelState.IsValid)
             {
+                foreach (var state in ModelState)
+                {
+                    var key = state.Key;
+                    var errors = state.Value.Errors;
+
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($"Polje: {key}, Greška: {error.ErrorMessage}");
+                    }
+                }
                 return View("User/EditUser", await _userDataServices.GetUserByIdForEdit((int)userIDTO.UsersId));
             }
 
             //						FILE UPLOAD SYSTEM
-            AWSFileUpload awsFile = new AWSFileUpload();
-            awsFile.Attachments = new List<IFormFile>();
-            if (userIDTO.Avatar != null)
-                awsFile.Attachments.Add(userIDTO.Avatar);
+            //AWSFileUpload awsFile = new AWSFileUpload();
+            //awsFile.Attachments = new List<IFormFile>();
+            //if (userIDTO.Avatar != null)
+            //    awsFile.Attachments.Add(userIDTO.Avatar);
             try
             {
-                if (awsFile.Attachments.Count > 0)
+                //if (awsFile.Attachments.Count > 0)
+                //{
+                //    string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
+                //    if (!IsSupportedExtension(extension))
+                //    {
+                //        _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
+                //        _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+                //        return RedirectToAction("NewUser");
+                //    }
+                //    else
+                //    {
+                //        if (awsFile.Attachments[0].Length > 1000000)
+                //        {
+                //            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
+                //            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
+                //            return RedirectToAction("NewUser");
+                //        }
+                //        else
+                //        {
+                //            var media = await _userDataServices.UploadUserPicture(awsFile, null);
+                //            if (media != null) userIDTO.MediaId = media.MediaId;
+                //            var users = await _userDataServices.EditUser(userIDTO);
+                //            if (users == null)
+                //            {
+                //                ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+                //                return View("User/NewUser");
+                //            }
+                //            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User is updated");
+                //            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                //            return RedirectToAction("AllUsers", "Dashboard");
+                //        }
+                //    }
+                //}
+                var users = await _userDataServices.EditUser(userIDTO);
+                if (users == null)
                 {
-                    string extension = System.IO.Path.GetExtension(awsFile.Attachments[0].FileName)?.ToLower();
-                    if (!IsSupportedExtension(extension))
-                    {
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Extension is not supported");
-                        _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                        return RedirectToAction("NewUser");
-                    }
-                    else
-                    {
-                        if (awsFile.Attachments[0].Length > 1000000)
-                        {
-                            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "This image is big dimension");
-                            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "error");
-                            return RedirectToAction("NewUser");
-                        }
-                        else
-                        {
-                            var media = await _userDataServices.UploadUserPicture(awsFile, null);
-                            if (media != null) userIDTO.MediaId = media.MediaId;
-                            var users = await _userDataServices.EditUser(userIDTO);
-                            if (users == null)
-                            {
-                                ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-                                return View("User/NewUser");
-                            }
-                            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User is updated");
-                            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-                            return RedirectToAction("AllUsers", "Dashboard");
-                        }
-                    }
+                    ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
+                    return View("User/NewUser");
                 }
-                else
-                {
-                    var users = await _userDataServices.EditUser(userIDTO);
-                    if (users == null)
-                    {
-                        ModelState.AddModelError("UserExist", $"User with that mail alredy exist");
-                        return View("User/NewUser");
-                    }
-                    _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User is updated");
-                    _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
-                    return RedirectToAction("AllUsers", "Dashboard");
-                }
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "User is updated");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("AllUsers", "Dashboard");
 
             }
             catch (Exception ex)
@@ -962,7 +977,7 @@ namespace Universal.Admin_Controllers.AdminMVC
                         }
                         else
                         {
-                            await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId);
+                            await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId, 1, null);
                         }
                     }
                 }
@@ -991,7 +1006,7 @@ namespace Universal.Admin_Controllers.AdminMVC
                         }
                         else
                         {
-                            await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId);
+                            await _mainDataServices.UploadProductImage(awsFile, "Gallery", product.ProductId, 1, null);
                         }
                     }
                 }
@@ -1126,7 +1141,7 @@ namespace Universal.Admin_Controllers.AdminMVC
                         else
                         {
                             await _mainDataServices.DeleteCurrentFeatureImage(product.ProductId, "Featured Image");
-                            await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId);
+                            await _mainDataServices.UploadProductImage(awsFile, "Featured Image", product.ProductId, 1, null);
                         }
                     }
                 }
@@ -1476,6 +1491,59 @@ namespace Universal.Admin_Controllers.AdminMVC
         {
             var val = await _mainDataServices.GetOrderForChart(year);
             return val.SumByYear;
+        }
+
+        [HttpPost]
+        public IActionResult UpdatePrice(int tokenId, double newPrice)
+        {
+            _mainDataServices.UpdateTokenPrice(tokenId, newPrice);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveBanner(IFormFile? BannerImage, int position, string url)
+        {
+            if (BannerImage == null || BannerImage.Length == 0)
+                return Json(new { success = false, message = "No file uploaded" });
+
+            AWSFileUpload aWSFileUpload = new AWSFileUpload();
+            aWSFileUpload.Attachments.Add(BannerImage);
+
+            Medium imageUrl = await _mainDataServices.UploadProductImage(aWSFileUpload, "Banner", null, position, url);
+            return Json(new { success = true, imageUrl });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBanners()
+        {
+            var banners = await _mainDataServices.GetBannersImages();
+            var result = new List<object>();
+            foreach (var banner in banners)
+            {
+                result.Add(new
+                {
+                    id = banner.MediaId,
+                    imageUrl = "https://somsed.s3.eu-central-1.amazonaws.com/" + banner.Src,
+                    position = banner.Postition,
+                    Url = banner.Url
+                });
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteBanner(int id)
+        {
+            try
+            {
+                await _mainDataServices.DeleteUploadedImageMajstor(id);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

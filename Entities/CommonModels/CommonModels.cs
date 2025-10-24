@@ -16,16 +16,14 @@ namespace Universal.DTO.CommonModels
         public class AuthenticateResponse
         {
             public int Id { get; set; }
-            public string? FirstName { get; set; }
-            public string? LastName { get; set; }
+            public string? FullName { get; set; }
             public string? Username { get; set; }
             public string Token { get; set; }
 
-            public AuthenticateResponse(Users user, string token)
+            public AuthenticateResponse(Universal.MainDataNova.User user, string token)
             {
                 Id = user.UsersId;
-                FirstName = user.FirstName;
-                LastName = user.LastName;
+                FullName = user.FullName;
                 Username = user.Email;
                 Token = token;
             }
@@ -52,7 +50,7 @@ namespace Universal.DTO.CommonModels
         //AWS models
         public class AWSFileUpload
         {
-            public List<IFormFile> Attachments { get; set; }
+            public List<IFormFile> Attachments { get; set; } = new List<IFormFile>();
         }
 
         public class ServiceConfiguration

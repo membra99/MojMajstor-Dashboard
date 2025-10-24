@@ -5,12 +5,13 @@ using Services.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Universal.Universal.MainDataNova;
 
 namespace Services.Authorization
 {
 	public interface IJwtUtils
     {
-        public string GenerateJwtToken(Users user);
+        string GenerateJwtToken(Universal.Universal.MainDataNova.User user);
         public int? ValidateJwtToken(string? token);
     }
 
@@ -26,7 +27,7 @@ namespace Services.Authorization
                 throw new Exception("JWT secret not configured");
         }
 
-        public string GenerateJwtToken(Users user)
+        public string GenerateJwtToken(Universal.Universal.MainDataNova.User user)
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
