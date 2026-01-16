@@ -1749,7 +1749,7 @@ namespace Services
             retval.TopLokacija = await _context2.Opstines.Where(x => x.OpstineId == Convert.ToInt32(najvecaGrupaId)).Select(x => x.OpstinaIme).SingleOrDefaultAsync();
             var sedamDanaUnazad = DateTime.Now.AddDays(-7);
             var sklopljenidogovoriU7Dana = await _context2.MakeDeals.Where(x => x.AgreementReachedTime >= sedamDanaUnazad).Select(x => x.AdvertisementId).ToListAsync();
-            var najboljaProfesijaIdU7Dana = await _context2.Advertisements.Where(x => sklopljenidogovoriU7Dana.Contains(x.AdvertisementId)).GroupBy(x => x.ProfessionId).OrderByDescending(x => x.Count()).Select(x => x.Key).SingleOrDefaultAsync();
+            var najboljaProfesijaIdU7Dana = await _context2.Advertisements.Where(x => sklopljenidogovoriU7Dana.Contains(x.AdvertisementId)).GroupBy(x => x.ProfessionId).OrderByDescending(x => x.Count()).Select(x => x.Key).FirstOrDefaultAsync();
             retval.NajuspesnijaProfesija7Dana = await _context2.Professions.Where(x => x.ProfessionId == najboljaProfesijaIdU7Dana).Select(x => x.ProfessionName).SingleOrDefaultAsync();
             retval.NoviOglasi7Dana = await _context2.Advertisements.CountAsync(x => x.PostedDate >= sedamDanaUnazad);
             retval.NoviKorisnici7Dana = await _context2.Users.CountAsync(x => x.RegistrationDate >= sedamDanaUnazad);
