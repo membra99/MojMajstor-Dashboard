@@ -20,16 +20,26 @@
         {
             <tr>
                 <td>@token.TokenId</td>
-                <td>@token.NumberOfToken</td>
                 <td>
-                    <input type="number" class="form-control price-input" value="@token.Price" data-id="@token.TokenId" />
+                    <input type="number" class="form-control number-of-token-input" value="@token.NumberOfToken" data-id="@token.TokenId" />
                 </td>
-                <td>@token.Package</td>
-                <td>@token.Description</td>
-                <td>@token.OldPrice</td>
-                <td>@(token.IsRecommended ? "Yes" : "No")</td>
                 <td>
-                    <button class="btn btn-primary save-price" data-id="@token.TokenId">Save</button>
+                    <input type="number" step="0.01" class="form-control price-input" value="@token.Price" data-id="@token.TokenId" />
+                </td>
+                <td>
+                    <input type="text" class="form-control package-input" value="@token.Package" data-id="@token.TokenId" />
+                </td>
+                <td>
+                    <textarea class="form-control description-input" rows="2" data-id="@token.TokenId">@token.Description</textarea>
+                </td>
+                <td>
+                    <input type="number" step="0.01" class="form-control oldprice-input" value="@token.OldPrice" data-id="@token.TokenId" />
+                </td>
+                <td>
+                    <input type="checkbox" class="form-check-input is-recommended-input" data-id="@token.TokenId" @(token.IsRecommended ? "checked" : "") />
+                </td>
+                <td>
+                    <button class="btn btn-primary save-token" data-id="@token.TokenId">Save</button>
                 </td>
             </tr>
         }
@@ -38,13 +48,30 @@
 
 @section Scripts {
     <script>
-        $(".save-price").click(function () {
+        $(".save-token").click(function () {
+            var $row = $(this).closest("tr");
             var id = $(this).data("id");
-            var newPrice = $(this).closest("tr").find(".price-input").val();
+            var numberOfToken = $row.find('.number-of-token-input').val();
+            var price = $row.find('.price-input').val();
+            var packageName = $row.find('.package-input').val();
+            var description = $row.find('.description-input').val();
+            var oldPrice = $row.find('.oldprice-input').val();
+            var isRecommended = $row.find('.is-recommended-input').is(':checked');
 
-            $.post("/Dashboard/UpdatePrice", { tokenId: id, newPrice: newPrice }, function (response) {
+            $.post('/Dashboard/UpdateToken', {
+                tokenId: id,
+                numberOfToken: numberOfToken,
+                price: price,
+                packageName: packageName,
+                description: description,
+                oldPrice: oldPrice,
+                isRecommended: isRecommended
+            }, function (response) {
                 if (response.success) {
-                    alert("Price updated successfully!");
+                    alert('Token updated successfully!');
+                }
+                else {
+                    alert('Failed to update token');
                 }
             });
         });

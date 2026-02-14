@@ -1777,6 +1777,22 @@ namespace Services
             }
         }
 
+        public void UpdateToken(int tokenId, int numberOfToken, double price, string packageName, string description, double oldPrice, bool isRecommended)
+        {
+            var token = _context2.Tokens.FirstOrDefault(t => t.TokenId == tokenId);
+            if (token != null)
+            {
+                token.NumberOfToken = numberOfToken;
+                token.Price = price;
+                token.Package = packageName;
+                token.Description = description ?? string.Empty;
+                token.OldPrice = oldPrice;
+                token.IsRecommended = isRecommended;
+                _context2.Entry(token).State = EntityState.Modified;
+                _context2.SaveChanges();
+            }
+        }
+
         #endregion
     }
 }

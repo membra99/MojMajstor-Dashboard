@@ -1501,6 +1501,20 @@ namespace Universal.Admin_Controllers.AdminMVC
         }
 
         [HttpPost]
+        public IActionResult UpdateToken(int tokenId, int numberOfToken, double price, string packageName, string description, double oldPrice, bool isRecommended)
+        {
+            try
+            {
+                _mainDataServices.UpdateToken(tokenId, numberOfToken, price, packageName, description, oldPrice, isRecommended);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SaveBanner(IFormFile? BannerImage, int position, string url)
         {
             if (BannerImage == null || BannerImage.Length == 0)
