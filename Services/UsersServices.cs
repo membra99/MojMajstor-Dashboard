@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Services.Authorization;
 using Services.AWS;
 using Services.Helpers;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -30,10 +33,10 @@ namespace Services
 		private readonly IOptions<EmailSettings> _emailSettings;
         private readonly IOptions<URL> _urlDomain;
         private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly IConfiguration _configuration;
 
         public static string AppBaseUrl = "";
-
-		public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings, IOptions<URL> urlDomain, MojMajstorContext context2) : base(context,  mapper, context2)
+        public UsersServices(MainContext context, IMapper mapper, IJwtUtils jwtUtils, IHttpContextAccessor httpContext, IAWSS3FileService AWSS3FileService, IOptions<EmailSettings> emailSettings, IOptions<URL> urlDomain, MojMajstorContext context2, IConfiguration configuration) : base(context,  mapper, context2)
 		{
 			_jwtUtils = jwtUtils;
 			_AWSS3FileService = AWSS3FileService;
@@ -41,7 +44,8 @@ namespace Services
 			_httpContextAccessor = httpContext;
             _urlDomain = urlDomain;
             AppBaseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}";
-		}
+			_configuration = configuration;
+        }
 
 		#region Users
 
@@ -59,8 +63,11 @@ namespace Services
 
 			// authentication successful so generate jwt token
 			var token = _jwtUtils.GenerateJwtToken(user);
+            var token2 = _jwtUtils.BuildToken(_configuration.GetSection("Jwt")["Key"].ToString(), _configuration.GetSection("Jwt")["Issuer"].ToString(), user);
+			
 
-			AuthenticateResponse authenticateResponse = new AuthenticateResponse(user, token);
+
+            AuthenticateResponse authenticateResponse = new AuthenticateResponse(user, token, token2);
 			return authenticateResponse;
 		}
 

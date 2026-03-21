@@ -5,12 +5,14 @@ using Services.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Universal.DTO.ODTO;
 using Universal.Universal.MainDataNova;
 
 namespace Services.Authorization
 {
 	public interface IJwtUtils
     {
+        string BuildToken(string key, string issuer, User user);
         string GenerateJwtToken(Universal.Universal.MainDataNova.User user);
         public int? ValidateJwtToken(string? token);
     }
@@ -18,13 +20,28 @@ namespace Services.Authorization
     public class JwtUtils : IJwtUtils
     {
         private readonly AppSettings _appSettings;
-
+        private const double EXPIRY_DURATION_MINUTES = 43800;
         public JwtUtils(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings.Value;
 
             if (string.IsNullOrEmpty(_appSettings.Secret))
                 throw new Exception("JWT secret not configured");
+        }
+
+        public string BuildToken(string key, string issuer, User user)
+        {
+            var claims = new[] {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.NameIdentifier,
+            Guid.NewGuid().ToString())
+        };
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            var tokenDescriptor = new JwtSecurityToken(issuer, issuer, claims,
+                expires: DateTime.Now.AddMinutes(EXPIRY_DURATION_MINUTES), signingCredentials: credentials);
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
         public string GenerateJwtToken(Universal.Universal.MainDataNova.User user)

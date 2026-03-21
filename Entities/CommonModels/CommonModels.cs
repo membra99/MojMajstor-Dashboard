@@ -19,13 +19,15 @@ namespace Universal.DTO.CommonModels
             public string? FullName { get; set; }
             public string? Username { get; set; }
             public string Token { get; set; }
+            public string Token2 { get; set; }
 
-            public AuthenticateResponse(Universal.MainDataNova.User user, string token)
+            public AuthenticateResponse(Universal.MainDataNova.User user, string token, string token2)
             {
                 Id = user.UsersId;
                 FullName = user.FullName;
                 Username = user.Email;
                 Token = token;
+                Token2 = token2;
             }
         }
 

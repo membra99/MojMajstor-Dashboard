@@ -49,6 +49,7 @@ namespace Universal.Controllers
 				{
 					_httpContextAccessor.HttpContext.Session.Set("UserId", model.Id); //save user to session and token for further use
 					_httpContextAccessor.HttpContext.Session.Set("AuthToken", model.Token);
+					_httpContextAccessor.HttpContext.Session.Set("AuthToken2", model.Token2);
 					return RedirectToAction("Index", "Dashboard");
 				}
 				else

@@ -7,7 +7,9 @@
 @{
     ViewData["Title"] = "All Users";
     var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
+    var authToken2 = HttpContextAccessor.HttpContext.Session.GetString("AuthToken2");
     string domain = Configuration["URL:MainUrl"];
+    string apiUrl = Configuration["ApiEndpoints"];
 }
 
 <div class="col-12">
@@ -44,7 +46,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeConfirmDeleteButton">No</button>
-                <button type="button" class="btn btn-danger btn-dotnet">Yes</button>
+                <button type="button" class="btn btn-danger btn-dotnet" id="YesBtn">Yes</button>
             </div>
         </div>
     </div>
@@ -121,18 +123,17 @@
                     // Show a confirmation modal
                     $('#confirmDeleteModal').modal('show');
 
-                    $('#confirmDeleteModal').on('click', '.btn-confirm-delete', function () {
+                    $('#confirmDeleteModal').on('click', '#YesBtn', function () {
 
                         // Close the confirmation modal
                         $('#confirmDeleteModal').modal('hide');
-                        updateTableData();
 
                         $.ajax({
                             headers: {
-                                'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '')
+                                'Authorization': 'Bearer ' + '@authToken2'.replace(/&quot;/g, '')
                             },
                             type: 'DELETE',
-                            url: '@domain' + 'api/Users/' + selectedUserId,
+                            url: '@apiUrl' + selectedUserId,
                             contentType: 'application/json',
                             success: function (response) {
                                 console.log(response);
@@ -151,7 +152,7 @@
             });
 
 			function updateTableData() {
-				$.get('@domain' + 'api/Users', function (data) {
+                $.get('@domain' + '/AllUsers', function (data) {
 					userTable.clear().rows.add(data).draw();
 				}).fail(function (xhr, status, error) {
 					userTable.clear().draw();
