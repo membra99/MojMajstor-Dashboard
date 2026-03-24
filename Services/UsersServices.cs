@@ -282,10 +282,19 @@ namespace Services
 
             user.UsersId = 0;
 			user.IsActive = true;
+			user.IsVisible = true;
 			user.ReferalCode = GenerateSecureRandomCode(10);
             user.Password = BCrypt.Net.BCrypt.HashPassword("tempPasswordFix4You123456789012301231");
             _context2.Users.Add(user);
 
+            await SaveContextChangesMajstorAsync();
+
+			TokenUser tokenUser = new TokenUser();
+			tokenUser.TokenUserId = 0;
+			tokenUser.TokensSummary = 100;
+			tokenUser.UsersId = user.UsersId;
+			tokenUser.IsActive = true;
+			_context2.TokenUsers.Add(tokenUser);
             await SaveContextChangesMajstorAsync();
 
             return await GetMajstorUserById(user.UsersId);
