@@ -1721,6 +1721,169 @@ namespace Services
         }
         #endregion
 
+        #region Professions
+
+        private IQueryable<ProfessionODTO> GetProfessions(int id)
+        {
+            return from x in _context2.Professions
+                   where (id == 0 || x.ProfessionId == id)
+                   select _mapper.Map<ProfessionODTO>(x);
+        }
+
+        private IQueryable<ProfessionIDTO> GetProfessionsIDTO(int id)
+        {
+            return from x in _context2.Professions
+                   where (id == 0 || x.ProfessionId == id)
+                   select _mapper.Map<ProfessionIDTO>(x);
+        }
+
+        public async Task<ProfessionODTO> GetProfessionById(int id)
+        {
+            var profession = await _context2.Professions
+                .Include(x => x.ProfessionTypes)
+                .Where(x => x.ProfessionId == id)
+                .FirstOrDefaultAsync();
+            
+            return _mapper.Map<ProfessionODTO>(profession);
+        }
+
+        public async Task<ProfessionIDTO> GetProfessionForEditById(int id)
+        {
+            return await GetProfessionsIDTO(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<List<ProfessionODTO>> GetAllProfessions()
+        {
+            return await _context2.Professions
+                .Include(x => x.ProfessionTypes)
+                .Select(x => _mapper.Map<ProfessionODTO>(x))
+                .ToListAsync();
+        }
+
+        public async Task<ProfessionODTO> AddProfession(ProfessionIDTO professionIDTO)
+        {
+            var profession = _mapper.Map<Profession>(professionIDTO);
+            profession.ProfessionId = 0;
+            _context2.Professions.Add(profession);
+            await SaveContextChangesMajstorAsync();
+
+            return await GetProfessionById(profession.ProfessionId);
+        }
+
+        public async Task<ProfessionODTO> EditProfession(ProfessionIDTO professionIDTO)
+        {
+            var profession = _mapper.Map<Profession>(professionIDTO);
+            _context2.Entry(profession).State = EntityState.Modified;
+            await SaveContextChangesMajstorAsync();
+
+            return await GetProfessionById(profession.ProfessionId);
+        }
+
+        public async Task<ProfessionODTO> DeleteProfession(int id)
+        {
+            var professionTypes = await _context2.ProfessionTypes.Where(x => x.ProfessionId == id).ToListAsync();
+            foreach (var professionType in professionTypes)
+            {
+                var advProfTypes = await _context2.AdvertisementProfessionTypes.Where(x => x.ProfessionTypeId == professionType.ProfessionTypeId).ToListAsync();
+                _context2.AdvertisementProfessionTypes.RemoveRange(advProfTypes);
+            }
+            _context2.ProfessionTypes.RemoveRange(professionTypes);
+
+            var advertisements = await _context2.Advertisements.Where(x => x.ProfessionId == id).ToListAsync();
+            foreach (var ad in advertisements)
+            {
+                ad.ProfessionId = 0;
+                _context2.Entry(ad).State = EntityState.Modified;
+            }
+            await SaveContextChangesMajstorAsync();
+
+            var profession = await _context2.Professions.FindAsync(id);
+            if (profession == null) return null;
+
+            var professionODTO = await GetProfessionById(id);
+            _context2.Professions.Remove(profession);
+            await SaveContextChangesMajstorAsync();
+
+            return professionODTO;
+        }
+
+        // Profession Types (Sub-Professions)
+        private IQueryable<ProfessionTypeODTO> GetProfessionTypes(int id)
+        {
+            return from x in _context2.ProfessionTypes
+                   .Include(x => x.Profession)
+                   where (id == 0 || x.ProfessionTypeId == id)
+                   select _mapper.Map<ProfessionTypeODTO>(x);
+        }
+
+        private IQueryable<ProfessionTypeIDTO> GetProfessionTypesIDTO(int id)
+        {
+            return from x in _context2.ProfessionTypes
+                   where (id == 0 || x.ProfessionTypeId == id)
+                   select _mapper.Map<ProfessionTypeIDTO>(x);
+        }
+
+        public async Task<ProfessionTypeODTO> GetProfessionTypeById(int id)
+        {
+            return await GetProfessionTypes(id).AsNoTracking().FirstOrDefaultAsync();
+        }
+
+        public async Task<ProfessionTypeIDTO> GetProfessionTypeForEditById(int id)
+        {
+            return await GetProfessionTypesIDTO(id).AsNoTracking().SingleOrDefaultAsync();
+        }
+
+        public async Task<List<ProfessionTypeODTO>> GetAllProfessionTypes()
+        {
+            return await GetProfessionTypes(0).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<List<ProfessionTypeODTO>> GetProfessionTypesByProfessionId(int professionId)
+        {
+            return await _context2.ProfessionTypes
+                .Include(x => x.Profession)
+                .Where(x => x.ProfessionId == professionId)
+                .Select(x => _mapper.Map<ProfessionTypeODTO>(x))
+                .ToListAsync();
+        }
+
+        public async Task<ProfessionTypeODTO> AddProfessionType(ProfessionTypeIDTO professionTypeIDTO)
+        {
+            var professionType = _mapper.Map<ProfessionType>(professionTypeIDTO);
+            professionType.ProfessionTypeId = 0;
+            _context2.ProfessionTypes.Add(professionType);
+            await SaveContextChangesMajstorAsync();
+
+            return await GetProfessionTypeById(professionType.ProfessionTypeId);
+        }
+
+        public async Task<ProfessionTypeODTO> EditProfessionType(ProfessionTypeIDTO professionTypeIDTO)
+        {
+            var professionType = _mapper.Map<ProfessionType>(professionTypeIDTO);
+            _context2.Entry(professionType).State = EntityState.Modified;
+            await SaveContextChangesMajstorAsync();
+
+            return await GetProfessionTypeById(professionType.ProfessionTypeId);
+        }
+
+        public async Task<ProfessionTypeODTO> DeleteProfessionType(int id)
+        {
+            var advProfTypes = await _context2.AdvertisementProfessionTypes.Where(x => x.ProfessionTypeId == id).ToListAsync();
+            _context2.AdvertisementProfessionTypes.RemoveRange(advProfTypes);
+            await SaveContextChangesMajstorAsync();
+
+            var professionType = await _context2.ProfessionTypes.FindAsync(id);
+            if (professionType == null) return null;
+
+            var professionTypeODTO = await GetProfessionTypeById(id);
+            _context2.ProfessionTypes.Remove(professionType);
+            await SaveContextChangesMajstorAsync();
+
+            return professionTypeODTO;
+        }
+
+        #endregion
+
         #region Overview
 
         public async Task<OverviewODTO> GetOverview()

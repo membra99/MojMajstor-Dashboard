@@ -1,0 +1,75 @@
+@model List<Universal.DTO.ODTO.ProfessionODTO>
+
+@{
+    ViewData["Title"] = "All Professions";
+}
+
+<div class="row">
+<div class="col-lg-12">
+    <div class="text-end mb-3">
+        <a class="btn btn-dotnet me-2" href="@Url.Action("NewProfession", "Dashboard")">Add New Profession</a>
+        <a class="btn btn-dotnet" href="@Url.Action("NewProfessionType", "Dashboard")">Add New Sub-Profession</a>
+    </div>
+    <div class="card">
+            <div class="card-header">
+                <h5 class="m-0">Professions List</h5>
+            </div>
+            <div class="card-body">
+                <table id="professionsTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Profession Name</th>
+                            <th>Sub-Professions Count</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var profession in Model)
+                        {
+                            <tr>
+                                <td>@profession.ProfessionId</td>
+                                <td>@profession.ProfessionName</td>
+                                <td>@(profession.ProfessionTypes?.Count ?? 0)</td>
+                                <td class="actions-control">
+                                    <a href="@Url.Action("EditProfession", "Dashboard", new { id = profession.ProfessionId })" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                    &nbsp;&nbsp;
+                                    <a href="#" onclick="if(confirm('Da li ste sigurni da želite da obrišete ovu profesiju?')) { window.location.href='@Url.Action("DeleteProfession", "Dashboard", new { id = profession.ProfessionId })'; } return false;" title="Delete"><i class="fa fa-trash-can"></i></a>
+                                </td>
+                            </tr>
+                            @if (profession.ProfessionTypes != null && profession.ProfessionTypes.Any())
+                            {
+                                foreach (var subProf in profession.ProfessionTypes)
+                                {
+                                    <tr style="background-color: #f8f9fa;">
+                                        <td style="padding-left: 30px;">@subProf.ProfessionTypeId</td>
+                                        <td style="padding-left: 30px;"><i class="fa fa-arrow-right" style="font-size: 12px; color: #666;"></i> @subProf.ProfessionTypeName</td>
+                                        <td style="padding-left: 30px;">-</td>
+                                        <td class="actions-control">
+                                            <a href="@Url.Action("EditProfessionType", "Dashboard", new { id = subProf.ProfessionTypeId })" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                            &nbsp;&nbsp;
+                                            <a href="#" onclick="if(confirm('Da li ste sigurni da želite da obrišete ovu pod-profesiju?')) { window.location.href='@Url.Action("DeleteProfessionType", "Dashboard", new { id = subProf.ProfessionTypeId })'; } return false;" title="Delete"><i class="fa fa-trash-can"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#professionsTable').DataTable({
+                "paging": false,
+                "ordering": false,
+                "info": true,
+                "searching": true
+            });
+        });
+    </script>
+}

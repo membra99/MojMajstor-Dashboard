@@ -1,0 +1,22 @@
+@model Universal.DTO.IDTO.ProfessionIDTO
+
+@{
+    ViewData["Title"] = "New Profession";
+}
+
+<div class="container bg-light w-50">
+    <div class="text-center">
+        <h2>Add New Profession</h2>
+    </div>
+    @using (Html.BeginForm("AddProfessions", "Dashboard", FormMethod.Post))
+    {
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.ProfessionName, "Profession name:", true)
+            @Html.TextBoxFor(model => model.ProfessionName, new { @class = "form-control", placeholder = "Profession Name" })
+            @Html.ValidationMessageFor(model => model.ProfessionName, null, new { @class = "text-danger" })
+        </div>
+        <div class="mx-auto mb-3 w-50">
+            <input type="submit" value="Save" class="form-control p-2 btn-dotnet" />
+        </div>
+    }
+</div>

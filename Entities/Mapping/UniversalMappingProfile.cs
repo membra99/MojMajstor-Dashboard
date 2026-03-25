@@ -124,6 +124,16 @@ namespace Entities.Mapping
 
 			CreateMap<Token, TokensODTO>();
 
+			CreateMap<Profession, ProfessionODTO>()
+				.ForMember(dest => dest.ProfessionTypes, source => source.MapFrom(m => m.ProfessionTypes));
+			CreateMap<ProfessionIDTO, Profession>();
+			CreateMap<Profession, ProfessionIDTO>();
+
+			CreateMap<ProfessionType, ProfessionTypeODTO>()
+				.ForMember(dest => dest.ProfessionName, source => source.MapFrom(m => m.Profession.ProfessionName));
+			CreateMap<ProfessionTypeIDTO, ProfessionType>();
+			CreateMap<ProfessionType, ProfessionTypeIDTO>();
+
         }
 	}
 }

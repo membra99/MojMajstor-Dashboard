@@ -112,6 +112,7 @@
                     <li class="nav-item">@Html.ActionLinkIcon("Advertisements", "AllAdvertisements", "Dashboard", "fas fa-bullhorn", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Credit", "AllTokens", "Dashboard", "fa-solid fa-coins", null, new { @class = "side-anchor" })</li>
                     <li class="nav-item">@Html.ActionLinkIcon("Banners", "GetBannersAction", "Dashboard", "fa-solid fa-panorama", null, new { @class = "side-anchor" })</li>
+                    <li class="nav-item">@Html.ActionLinkIcon("Professions", "AllProfessions", "Dashboard", "fa-solid fa-briefcase", null, new { @class = "side-anchor" })</li>
                      @* <li class="nav-item">@Html.ActionLinkIcon("Data", "AllData", "Dashboard", "fa fa-solid fa-file-pen", null, new { @class = "side-anchor" })</li>
                      <li class="nav-item dropdown-btn">
                         <span class="side-anchor">
@@ -492,15 +493,30 @@
                     return; // prekini dalje izvršavanje
                 }
 
-                // --- Ovo je stari kod za edit/prewiew/delete ---
+            // --- Ovo je stari kod za edit/prewiew/delete ---
                 let pageTitleExIcon = $('.page-title').clone().find('.fa').remove().end().html();
                 if (pageTitleExIcon == 'All promo codes' || pageTitleExIcon.split(' ')[1] == 'Pages' || pageTitleExIcon.split(' ')[1] == "Blogs" || pageTitleExIcon.split(' ')[1] == "Events") return true;
 
                 e.preventDefault();
                 removePreviousHtml();
                 var hrefValue = $(this).attr("href");
-                var iconClass = $(".page-title").html().split(' ')[4];
-                $("#editModelTitle").html('Edit   <i class="fa ' + iconClass + '"></i>');
+                
+                // Set modal title based on context
+                var modalTitle = "Edit";
+                if (pageTitleExIcon.trim() == "All Professions") {
+                    if (hrefValue.includes("EditProfession/")) {
+                        modalTitle = "Edit Profession";
+                    } else if (hrefValue.includes("EditProfessionType/")) {
+                        modalTitle = "Edit Sub-Profession";
+                    }
+                } else {
+                    var iconClass = $(".page-title i").attr("class");
+                    if (iconClass) {
+                        modalTitle = 'Edit <i class="' + iconClass + '"></i>';
+                    }
+                }
+                
+                $("#editModelTitle").html(modalTitle);
 
                 $.get(hrefValue, function (data) {
                     var tempElement = $('<div></div>').html(data);

@@ -1358,6 +1358,187 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         #endregion Categories
 
+        #region Professions
+
+        public async Task<IActionResult> AllProfessions()
+        {
+            CheckForToast();
+            try
+            {
+                var professions = await _mainDataServices.GetAllProfessions();
+                return View("Profession/Professions", professions);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public IActionResult NewProfession()
+        {
+            return View("Profession/NewProfession");
+        }
+
+        public async Task<IActionResult> AddProfessions(ProfessionIDTO professionIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Profession/NewProfession", new ProfessionIDTO());
+            }
+            try
+            {
+                var profession = await _mainDataServices.AddProfession(professionIDTO);
+
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Profession added successfully!");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+                return RedirectToAction("AllProfessions", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> EditProfession(int id)
+        {
+            try
+            {
+                var profession = await _mainDataServices.GetProfessionForEditById(id);
+                return View("Profession/EditProfession", profession);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> EditProfessionModel(ProfessionIDTO professionIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Profession/EditProfession", professionIDTO);
+            }
+            await _mainDataServices.EditProfession(professionIDTO);
+
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Profession " + professionIDTO.ProfessionName + " edited successfully!");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+            return RedirectToAction("AllProfessions");
+        }
+
+        public async Task<IActionResult> DeleteProfession(int id)
+        {
+            try
+            {
+                await _mainDataServices.DeleteProfession(id);
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Profession deleted successfully!");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("AllProfessions");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        // Profession Types (Sub-Professions)
+        public async Task<IActionResult> AllProfessionTypes()
+        {
+            CheckForToast();
+            try
+            {
+                var professionTypes = await _mainDataServices.GetAllProfessionTypes();
+                return View("Profession/ProfessionTypes", professionTypes);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> NewProfessionType()
+        {
+            ViewBag.Professions = await _mainDataServices.GetAllProfessions();
+            return View("Profession/NewProfessionType");
+        }
+
+        public async Task<IActionResult> AddProfessionTypes(ProfessionTypeIDTO professionTypeIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Professions = await _mainDataServices.GetAllProfessions();
+                return View("Profession/NewProfessionType", professionTypeIDTO);
+            }
+            try
+            {
+                var professionType = await _mainDataServices.AddProfessionType(professionTypeIDTO);
+
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Sub-profession added successfully!");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+                return RedirectToAction("AllProfessions", "Dashboard");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> EditProfessionType(int id)
+        {
+            try
+            {
+                ViewBag.Professions = await _mainDataServices.GetAllProfessions();
+                var professionType = await _mainDataServices.GetProfessionTypeForEditById(id);
+                return View("Profession/EditProfessionType", professionType);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        public async Task<IActionResult> EditProfessionTypeModel(ProfessionTypeIDTO professionTypeIDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Professions = await _mainDataServices.GetAllProfessions();
+                return View("Profession/EditProfessionType", professionTypeIDTO);
+            }
+            await _mainDataServices.EditProfessionType(professionTypeIDTO);
+
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Sub-profession " + professionTypeIDTO.ProfessionTypeName + " edited successfully!");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+
+            return RedirectToAction("AllProfessions");
+        }
+
+        public async Task<IActionResult> DeleteProfessionType(int id)
+        {
+            try
+            {
+                await _mainDataServices.DeleteProfessionType(id);
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Sub-profession deleted successfully!");
+                _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+                return RedirectToAction("AllProfessions");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        #endregion Professions
+
         #region Newsletter
         public async Task<ActionResult> SendNewsLetter()
         {
