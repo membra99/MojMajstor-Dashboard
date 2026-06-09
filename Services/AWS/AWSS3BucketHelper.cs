@@ -29,6 +29,8 @@ namespace Services.AWS
 
 		Task<Stream> GetFile(string key);
 
+		Task<string> GetPresignedUrl(string key, int expiryMinutes = 60);
+
 		Task<bool> DeleteFile(string key, int mediaId, int mediaTypeId);
 
 		Task<bool> DeleteMultipleFiles(string[] keys);
@@ -39,18 +41,23 @@ namespace Services.AWS
 		private readonly IAmazonS3 _amazonS3;
 		private readonly ServiceConfiguration _settings;
 		private readonly MainContext _context;
-		private readonly AmazonS3Config _s3Config;
 
-		public AWSS3BucketHelper(IAmazonS3 s3Client, IOptions<ServiceConfiguration> settings, MainContext context)
+		public AWSS3BucketHelper(IOptions<ServiceConfiguration> settings, MainContext context)
 		{
 			_context = context;
-			_s3Config = new AmazonS3Config
+			_settings = settings.Value;
+
+			var awsCfg = _settings.AWSS3;
+			var region = RegionEndpoint.GetBySystemName(awsCfg.Region ?? "eu-central-1");
+
+			if (!string.IsNullOrEmpty(awsCfg.AccessKey) && !string.IsNullOrEmpty(awsCfg.SecretKey))
 			{
-				RegionEndpoint = RegionEndpoint.GetBySystemName("eu-central-1")
-			};
-			s3Client = new AmazonS3Client(_s3Config);
-			this._amazonS3 = s3Client;
-			this._settings = settings.Value;
+				_amazonS3 = new AmazonS3Client(awsCfg.AccessKey, awsCfg.SecretKey, region);
+			}
+			else
+			{
+				_amazonS3 = new AmazonS3Client(region);
+			}
 		}
 
 		public async Task<bool> UploadFile(System.IO.Stream inputStream, string fileName)
@@ -160,6 +167,18 @@ namespace Services.AWS
 			{
 				throw ex;
 			}
+		}
+
+		public async Task<string> GetPresignedUrl(string key, int expiryMinutes = 60)
+		{
+			var request = new GetPreSignedUrlRequest
+			{
+				BucketName = _settings.AWSS3.BucketName,
+				Key = key,
+				Expires = DateTime.UtcNow.AddMinutes(expiryMinutes),
+				Verb = HttpVerb.GET
+			};
+			return _amazonS3.GetPreSignedURL(request);
 		}
 
 		public async Task<bool> DeleteMultipleFiles(string[] keys)

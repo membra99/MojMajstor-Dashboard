@@ -1539,6 +1539,110 @@ namespace Universal.Admin_Controllers.AdminMVC
 
         #endregion Professions
 
+        #region Problems
+
+        public async Task<IActionResult> AllProblems()
+        {
+            try
+            {
+                CheckForToast();
+                var problems = await _mainDataServices.GetAllProblems();
+                return View("Problem/Problems", problems);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProblemDetails(int id)
+        {
+            try
+            {
+                var problem = await _mainDataServices.GetProblemById(id);
+
+                var screenshotUrls = new List<string>();
+                if (!string.IsNullOrEmpty(problem.Screenshots))
+                {
+                    foreach (var key in problem.Screenshots.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => s.Length > 0))
+                    {
+                        try { screenshotUrls.Add(await _AWSS3FileService.GetPresignedUrl(key, 60)); } catch { }
+                    }
+                }
+
+                string videoUrl = null;
+                if (!string.IsNullOrEmpty(problem.Video))
+                {
+                    try { videoUrl = await _AWSS3FileService.GetPresignedUrl(problem.Video.Trim(), 60); } catch { }
+                }
+
+                return Json(new
+                {
+                    problem.ProblemID,
+                    problem.Email,
+                    problem.AppVersion,
+                    problem.Os,
+                    problem.OsVersion,
+                    problem.DeviceID,
+                    problem.ActualBehavior,
+                    problem.ExpectedBehavior,
+                    problem.StepsToReproduce,
+                    problem.Status,
+                    ScreenshotUrls = screenshotUrls,
+                    VideoUrl = videoUrl
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProblemStatus(int id, ProblemStatus status)
+        {
+            try
+            {
+                await _mainDataServices.UpdateProblemStatus(id, status);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> GetProblemFile(string key)
+        {
+            try
+            {
+                var url = await _AWSS3FileService.GetPresignedUrl(key, 60);
+                return Redirect(url);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProblemPresignedUrl(string key)
+        {
+            try
+            {
+                var url = await _AWSS3FileService.GetPresignedUrl(key, 60);
+                return Json(new { url });
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        #endregion Problems
+
         #region Newsletter
         public async Task<ActionResult> SendNewsLetter()
         {

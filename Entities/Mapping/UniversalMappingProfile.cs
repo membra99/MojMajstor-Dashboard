@@ -134,6 +134,8 @@ namespace Entities.Mapping
 			CreateMap<ProfessionTypeIDTO, ProfessionType>();
 			CreateMap<ProfessionType, ProfessionTypeIDTO>();
 
-        }
+			CreateMap<Problem, ProblemODTO>();
+
+		}
 	}
 }

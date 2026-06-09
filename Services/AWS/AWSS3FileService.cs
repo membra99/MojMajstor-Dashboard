@@ -14,6 +14,7 @@ namespace Services.AWS
         Task<List<string>> FilesList(string folder);
         Task<List<string>> FilesListSearch(string fileName);
         Task<Stream> GetFile(string key);
+        Task<string> GetPresignedUrl(string key, int expiryMinutes = 60);
         // Task<bool> UpdateFile(UploadFileName uploadFileName, string key);
         Task<bool> DeleteFile(string key,int mediaId, int mediaTypeId);
         Task<bool> DeleteMultipleFiles(string[] keys);
@@ -135,6 +136,11 @@ namespace Services.AWS
         //        throw ex;
         //    }
         //}
+        public async Task<string> GetPresignedUrl(string key, int expiryMinutes = 60)
+        {
+            return await _AWSS3BucketHelper.GetPresignedUrl(key, expiryMinutes);
+        }
+
         public async Task<bool> DeleteFile(string key, int mediaId, int mediaTypeId)
         {
             try

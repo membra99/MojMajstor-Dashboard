@@ -74,7 +74,6 @@ builder.Services.AddScoped<MainDataServices>();
 
 //configure aws services
 var appSettingsSectionAws = builder.Configuration.GetSection("ServiceConfiguration");
-builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.Configure<ServiceConfiguration>(appSettingsSectionAws);
 builder.Services.AddTransient<IAWSS3FileService, AWSS3FileService>();
 builder.Services.AddTransient<IAWSS3BucketHelper, AWSS3BucketHelper>();

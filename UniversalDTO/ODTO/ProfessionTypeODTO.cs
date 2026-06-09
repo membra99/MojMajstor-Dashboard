@@ -8,5 +8,6 @@ namespace Universal.DTO.ODTO
         public int ProfessionId { get; set; }
         public string ProfessionTypeName { get; set; }
         public string ProfessionName { get; set; }
+        public string? Translations { get; set; }
     }
 }

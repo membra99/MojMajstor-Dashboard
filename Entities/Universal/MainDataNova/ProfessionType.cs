@@ -11,6 +11,8 @@ public partial class ProfessionType
 
     public string? ProfessionTypeName { get; set; }
 
+    public string? Translations { get; set; }
+
     public virtual ICollection<AdvertisementProfessionType> AdvertisementProfessionTypes { get; set; } = new List<AdvertisementProfessionType>();
 
     public virtual Profession Profession { get; set; } = null!;

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using Services.AWS;
 using Services.Helpers;
+using System.Text.Json;
 using Universal.DTO.IDTO;
 using Universal.DTO.ODTO;
 using Universal.Universal.MainDataNova;
@@ -1772,6 +1773,16 @@ namespace Services
 
         public async Task<ProfessionODTO> EditProfession(ProfessionIDTO professionIDTO)
         {
+            if (!string.IsNullOrEmpty(professionIDTO.SelectedLanguage) && professionIDTO.TranslationValue != null)
+            {
+                var translationsDict = string.IsNullOrEmpty(professionIDTO.Translations)
+                    ? new Dictionary<string, string>()
+                    : JsonSerializer.Deserialize<Dictionary<string, string>>(professionIDTO.Translations) ?? new Dictionary<string, string>();
+
+                translationsDict[professionIDTO.SelectedLanguage] = professionIDTO.TranslationValue;
+                professionIDTO.Translations = JsonSerializer.Serialize(translationsDict);
+            }
+
             var profession = _mapper.Map<Profession>(professionIDTO);
             _context2.Entry(profession).State = EntityState.Modified;
             await SaveContextChangesMajstorAsync();
@@ -1859,6 +1870,16 @@ namespace Services
 
         public async Task<ProfessionTypeODTO> EditProfessionType(ProfessionTypeIDTO professionTypeIDTO)
         {
+            if (!string.IsNullOrEmpty(professionTypeIDTO.SelectedLanguage) && professionTypeIDTO.TranslationValue != null)
+            {
+                var translationsDict = string.IsNullOrEmpty(professionTypeIDTO.Translations)
+                    ? new Dictionary<string, string>()
+                    : JsonSerializer.Deserialize<Dictionary<string, string>>(professionTypeIDTO.Translations) ?? new Dictionary<string, string>();
+
+                translationsDict[professionTypeIDTO.SelectedLanguage] = professionTypeIDTO.TranslationValue;
+                professionTypeIDTO.Translations = JsonSerializer.Serialize(translationsDict);
+            }
+
             var professionType = _mapper.Map<ProfessionType>(professionTypeIDTO);
             _context2.Entry(professionType).State = EntityState.Modified;
             await SaveContextChangesMajstorAsync();
@@ -1954,6 +1975,33 @@ namespace Services
                 _context2.Entry(token).State = EntityState.Modified;
                 _context2.SaveChanges();
             }
+        }
+
+        #endregion
+
+        #region Problems
+
+        public async Task<List<ProblemODTO>> GetAllProblems()
+        {
+            return await _context2.Problems
+                .Select(x => _mapper.Map<ProblemODTO>(x))
+                .ToListAsync();
+        }
+
+        public async Task<ProblemODTO> GetProblemById(int id)
+        {
+            var problem = await _context2.Problems.FindAsync(id);
+            return _mapper.Map<ProblemODTO>(problem);
+        }
+
+        public async Task<ProblemODTO> UpdateProblemStatus(int id, Universal.DTO.ODTO.ProblemStatus status)
+        {
+            var problem = await _context2.Problems.FindAsync(id);
+            if (problem == null) return null;
+            problem.Status = status;
+            _context2.Entry(problem).State = EntityState.Modified;
+            await SaveContextChangesMajstorAsync();
+            return _mapper.Map<ProblemODTO>(problem);
         }
 
         #endregion

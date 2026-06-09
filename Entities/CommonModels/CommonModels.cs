@@ -64,6 +64,9 @@ namespace Universal.DTO.CommonModels
         {
             public string BucketName { get; set; }
             public string BucketURL { get; set; }
+            public string AccessKey { get; set; }
+            public string SecretKey { get; set; }
+            public string Region { get; set; }
         }
 
         public class CategoriesWithAttributes

@@ -12,5 +12,11 @@ namespace Universal.DTO.IDTO
 
         [Required(ErrorMessage = "Sub-profession name is required")]
         public string ProfessionTypeName { get; set; }
+
+        public string? Translations { get; set; }
+
+        // For editing a single language translation
+        public string? SelectedLanguage { get; set; }
+        public string? TranslationValue { get; set; }
     }
 }

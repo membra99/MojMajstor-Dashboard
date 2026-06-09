@@ -9,6 +9,8 @@ public partial class Profession
 
     public string? ProfessionName { get; set; }
 
+    public string? Translations { get; set; }
+
     public virtual ICollection<Advertisement> Advertisements { get; set; } = new List<Advertisement>();
 
     public virtual ICollection<ProfessionType> ProfessionTypes { get; set; } = new List<ProfessionType>();
