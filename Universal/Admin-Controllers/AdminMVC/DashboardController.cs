@@ -1867,8 +1867,8 @@ namespace Universal.Admin_Controllers.AdminMVC
                 AWSFileUpload aWSFileUpload = new AWSFileUpload();
                 aWSFileUpload.Attachments.Add(BannerImage);
 
-                Medium imageUrl = await _mainDataServices.UploadProductImage(aWSFileUpload, "Banner", null, position, url);
-                return Json(new { success = true, imageUrl });
+                Medium banner = await _mainDataServices.UploadProductImage(aWSFileUpload, "Banner", null, position, url);
+                return Json(new { success = true, imageUrl = banner?.Src });
             }
             catch (Exception ex)
             {
