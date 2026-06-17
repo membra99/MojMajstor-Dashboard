@@ -60,7 +60,8 @@ namespace Services
                 var key = await _AWSS3FileService.FilesListSearch(successUpload);
                 var media = new Medium();
                 media.Src = key.First();
-                media.MediaTypeId = _context.MediaTypes.FirstOrDefault(x => x.MediaTypeName == mediaType).MediaTypeId;
+                var mediaTypeEntity = await _context2.MediaTypes.FirstOrDefaultAsync(x => x.MediaTypeName == mediaType);
+                media.MediaTypeId = mediaTypeEntity?.MediaTypeId ?? 0;
                 media.Postition = position;
                 media.Url = url;
                 _context2.Media.Add(media);

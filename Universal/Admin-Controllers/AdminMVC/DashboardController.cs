@@ -1859,14 +1859,21 @@ namespace Universal.Admin_Controllers.AdminMVC
         [HttpPost]
         public async Task<IActionResult> SaveBanner(IFormFile? BannerImage, int position, string url)
         {
-            if (BannerImage == null || BannerImage.Length == 0)
-                return Json(new { success = false, message = "No file uploaded" });
+            try
+            {
+                if (BannerImage == null || BannerImage.Length == 0)
+                    return Json(new { success = false, message = "No file uploaded" });
 
-            AWSFileUpload aWSFileUpload = new AWSFileUpload();
-            aWSFileUpload.Attachments.Add(BannerImage);
+                AWSFileUpload aWSFileUpload = new AWSFileUpload();
+                aWSFileUpload.Attachments.Add(BannerImage);
 
-            Medium imageUrl = await _mainDataServices.UploadProductImage(aWSFileUpload, "Banner", null, position, url);
-            return Json(new { success = true, imageUrl });
+                Medium imageUrl = await _mainDataServices.UploadProductImage(aWSFileUpload, "Banner", null, position, url);
+                return Json(new { success = true, imageUrl });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message, detail = ex.InnerException?.Message });
+            }
         }
 
         [HttpGet]
