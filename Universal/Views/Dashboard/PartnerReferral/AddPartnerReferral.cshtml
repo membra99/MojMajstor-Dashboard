@@ -1,0 +1,30 @@
+@model Universal.DTO.IDTO.PartnerReferralIDTO
+
+@{
+    ViewData["Title"] = "Add Partner Referral Code";
+}
+
+<div class="w-75 mx-auto">
+    @using (Html.BeginForm("AddPartnerReferralAction", "Dashboard", FormMethod.Post))
+    {
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.Name, "Partner Name:", true)
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Partner name" })
+            @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.ReferalCode, "Referral Code:", true)
+            @Html.TextBoxFor(model => model.ReferalCode, new { @class = "form-control", placeholder = "e.g. TEST400" })
+            @Html.ValidationMessageFor(model => model.ReferalCode, null, new { @class = "text-danger" })
+        </div>
+        <div class="form-group mb-3">
+            @Html.LabelRequiredFor(model => model.TokenAmount, "Token Amount:", true)
+            @Html.TextBoxFor(model => model.TokenAmount, new { type = "number", @class = "form-control", min = "1" })
+            @Html.ValidationMessageFor(model => model.TokenAmount, null, new { @class = "text-danger" })
+        </div>
+        <div class="d-flex gap-2">
+            <input type="submit" value="Save" class="btn btn-dotnet px-4" />
+            <a href="@Url.Action("AllPartnerReferrals", "Dashboard")" class="btn btn-secondary px-4">Cancel</a>
+        </div>
+    }
+</div>

@@ -2005,5 +2005,117 @@ namespace Services
         }
 
         #endregion
+
+        #region PartnerReferrals
+
+        public async Task<List<PartnerReferralODTO>> GetAllPartnerReferrals()
+        {
+            return await _context2.PartnerReferrals
+                .Select(x => new PartnerReferralODTO
+                {
+                    PartnerReferralId = x.PartnerReferralId,
+                    Name = x.Name,
+                    ReferalCode = x.ReferalCode,
+                    TokenAmount = x.TokenAmount,
+                    UseCount = x.UseCount
+                })
+                .ToListAsync();
+        }
+
+        public async Task<PartnerReferralODTO> AddPartnerReferral(PartnerReferralIDTO dto)
+        {
+            var entity = new PartnerReferral
+            {
+                Name = dto.Name,
+                ReferalCode = dto.ReferalCode,
+                TokenAmount = dto.TokenAmount,
+                UseCount = 0
+            };
+            _context2.PartnerReferrals.Add(entity);
+            await SaveContextChangesMajstorAsync();
+            return new PartnerReferralODTO
+            {
+                PartnerReferralId = entity.PartnerReferralId,
+                Name = entity.Name,
+                ReferalCode = entity.ReferalCode,
+                TokenAmount = entity.TokenAmount,
+                UseCount = entity.UseCount
+            };
+        }
+
+        public async Task<PartnerReferralODTO> GetPartnerReferralById(int id)
+        {
+            var e = await _context2.PartnerReferrals.FindAsync(id);
+            if (e == null) return null;
+            return new PartnerReferralODTO { PartnerReferralId = e.PartnerReferralId, Name = e.Name, ReferalCode = e.ReferalCode, TokenAmount = e.TokenAmount, UseCount = e.UseCount };
+        }
+
+        public async Task<PartnerReferralStatsODTO> GetPartnerReferralStats(int id, DateTime? from, DateTime? to)
+        {
+            var referral = await _context2.PartnerReferrals.FindAsync(id);
+            if (referral == null) return null;
+
+            var fromDate = from ?? DateTime.UtcNow.AddDays(-30);
+            var toDate = (to ?? DateTime.UtcNow).Date.AddDays(1).AddTicks(-1);
+
+            var allUsers = await _context2.Users
+                .Where(u => u.ReferalPartnerCode == referral.ReferalCode)
+                .ToListAsync();
+
+            var usersInPeriod = allUsers
+                .Where(u => u.RegistrationDate >= fromDate && u.RegistrationDate <= toDate)
+                .ToList();
+
+            var dailyStats = usersInPeriod
+                .GroupBy(u => u.RegistrationDate.Date)
+                .OrderBy(g => g.Key)
+                .Select(g => new ReferralDailyStatODTO
+                {
+                    Date = g.Key.ToString("yyyy-MM-dd"),
+                    Count = g.Count()
+                })
+                .ToList();
+
+            return new PartnerReferralStatsODTO
+            {
+                PartnerReferralId = referral.PartnerReferralId,
+                Name = referral.Name,
+                ReferalCode = referral.ReferalCode,
+                TokenAmount = referral.TokenAmount,
+                TotalUses = usersInPeriod.Count,
+                TotalAllTime = allUsers.Count,
+                DailyStats = dailyStats
+            };
+        }
+
+        public async Task<PartnerReferralODTO> EditPartnerReferral(int id, PartnerReferralIDTO dto)
+        {
+            var entity = await _context2.PartnerReferrals.FindAsync(id);
+            if (entity == null) return null;
+            entity.Name = dto.Name;
+            entity.ReferalCode = dto.ReferalCode;
+            entity.TokenAmount = dto.TokenAmount;
+            _context2.Entry(entity).State = EntityState.Modified;
+            await SaveContextChangesMajstorAsync();
+            return new PartnerReferralODTO
+            {
+                PartnerReferralId = entity.PartnerReferralId,
+                Name = entity.Name,
+                ReferalCode = entity.ReferalCode,
+                TokenAmount = entity.TokenAmount,
+                UseCount = entity.UseCount
+            };
+        }
+
+        public async Task<string> DeletePartnerReferral(int id)
+        {
+            var entity = await _context2.PartnerReferrals.FindAsync(id);
+            if (entity == null) return "Not found";
+            _context2.PartnerReferrals.Remove(entity);
+            await SaveContextChangesMajstorAsync();
+            return "Deleted";
+        }
+
+        #endregion
     }
 }

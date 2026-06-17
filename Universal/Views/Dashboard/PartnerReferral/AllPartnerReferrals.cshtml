@@ -1,0 +1,54 @@
+@model List<Universal.DTO.ODTO.PartnerReferralODTO>
+
+@{
+    ViewData["Title"] = "Partner Referral Codes";
+}
+
+<div class="text-end mb-3">
+    <a class="btn btn-dotnet" href="@Url.Action("NewPartnerReferral", "Dashboard")">Add New Referral Code</a>
+</div>
+
+<table id="referralTable" class="table table-bordered table-striped display w-100">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Referral Code</th>
+            <th>Token Amount</th>
+            <th>Use Count</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Name</td>
+                <td>@r.ReferalCode</td>
+                <td>@r.TokenAmount</td>
+                <td>@r.UseCount</td>
+                <td>
+                    <a href="@Url.Action("PartnerReferralStats", "Dashboard", new { id = r.PartnerReferralId })" title="Statistika" style="text-decoration:none;">
+                        <i class="fa-solid fa-chart-line icon-spacing" style="color:#0A80D8;"></i>
+                    </a>
+                    &nbsp;
+                    <a href="@Url.Action("EditPartnerReferral", "Dashboard", new { id = r.PartnerReferralId })" title="Izmeni" style="text-decoration:none;">
+                        <i class="fa-solid fa-pen icon-spacing" style="color:#f0a500;"></i>
+                    </a>
+                    &nbsp;
+                    <a href="#" title="Obriši" style="text-decoration:none;"
+                       onclick="if(confirm('Da li ste sigurni da želite da obrišete ovaj referral kod?')) { window.location.href='@Url.Action("DeletePartnerReferral", "Dashboard", new { id = r.PartnerReferralId })'; } return false;">
+                        <i class="fa-solid fa-trash-can icon-spacing" style="color:#dc3545;"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#referralTable').DataTable({ order: [[0, 'asc']] });
+        });
+    </script>
+}

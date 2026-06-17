@@ -1745,6 +1745,63 @@ namespace Universal.Admin_Controllers.AdminMVC
         }
         #endregion
 
+        #region PartnerReferrals
+
+        public async Task<IActionResult> AllPartnerReferrals()
+        {
+            CheckForToast();
+            return View("PartnerReferral/AllPartnerReferrals", await _mainDataServices.GetAllPartnerReferrals());
+        }
+
+        public IActionResult NewPartnerReferral()
+        {
+            return View("PartnerReferral/AddPartnerReferral", new PartnerReferralIDTO());
+        }
+
+        public async Task<IActionResult> AddPartnerReferralAction(PartnerReferralIDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return View("PartnerReferral/AddPartnerReferral", dto);
+            await _mainDataServices.AddPartnerReferral(dto);
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Referral kod dodat!");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+            return RedirectToAction("AllPartnerReferrals");
+        }
+
+        public async Task<IActionResult> EditPartnerReferral(int id)
+        {
+            var r = await _mainDataServices.GetPartnerReferralById(id);
+            if (r == null) return RedirectToAction("AllPartnerReferrals");
+            return View("PartnerReferral/EditPartnerReferral", new PartnerReferralIDTO { Name = r.Name, ReferalCode = r.ReferalCode, TokenAmount = r.TokenAmount, Id = r.PartnerReferralId });
+        }
+
+        public async Task<IActionResult> EditPartnerReferralAction(PartnerReferralIDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return View("PartnerReferral/EditPartnerReferral", dto);
+            await _mainDataServices.EditPartnerReferral(dto.Id, dto);
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Referral kod izmenjen!");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+            return RedirectToAction("AllPartnerReferrals");
+        }
+
+        public async Task<IActionResult> DeletePartnerReferral(int id)
+        {
+            await _mainDataServices.DeletePartnerReferral(id);
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastMessage", "Referral kod obrisan!");
+            _httpContextAccessor.HttpContext.Session.Set<string>("ToastType", "success");
+            return RedirectToAction("AllPartnerReferrals");
+        }
+
+        public async Task<IActionResult> PartnerReferralStats(int id, DateTime? from, DateTime? to)
+        {
+            var stats = await _mainDataServices.GetPartnerReferralStats(id, from, to);
+            if (stats == null) return RedirectToAction("AllPartnerReferrals");
+            return View("PartnerReferral/PartnerReferralStats", stats);
+        }
+
+        #endregion PartnerReferrals
+
         #region Helpers
 
         private void CheckForToast()

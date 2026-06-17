@@ -31,6 +31,8 @@ public partial class User
 
     public string ReferalCode { get; set; } = null!;
 
+    public string? ReferalPartnerCode { get; set; }
+
     public DateTime RegistrationDate { get; set; }
 
     public virtual ICollection<Advertisement> Advertisements { get; set; } = new List<Advertisement>();

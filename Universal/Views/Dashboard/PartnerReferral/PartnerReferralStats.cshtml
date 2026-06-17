@@ -1,0 +1,106 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model Universal.DTO.ODTO.PartnerReferralStatsODTO
+@{
+    ViewData["Title"] = "Statistika — " + Model.Name;
+    var authToken = HttpContextAccessor.HttpContext.Session.GetString("AuthToken");
+
+    var defaultFrom = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd");
+    var defaultTo   = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="d-flex align-items-center gap-3 mb-4">
+    @Html.ActionLink("← Nazad", "AllPartnerReferrals", "Dashboard", null, new { @class = "btn btn-secondary" })
+    <h4 class="mb-0">@Model.Name <span class="text-muted fs-6">(@Model.ReferalCode)</span></h4>
+</div>
+
+<!-- Summary cards -->
+<div class="row g-3 mb-4">
+    <div class="col-auto">
+        <div class="card px-4 py-3 text-center">
+            <div id="totalCount" style="font-size:2rem;font-weight:600;color:#0A80D8;">@Model.TotalUses</div>
+            <div class="text-muted" style="font-size:.85rem;">Registracija u periodu</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="card px-4 py-3 text-center">
+            <div style="font-size:2rem;font-weight:600;color:#0A80D8;">@Model.TotalAllTime</div>
+            <div class="text-muted" style="font-size:.85rem;">Ukupno svih vremena</div>
+        </div>
+    </div>
+    <div class="col-auto">
+        <div class="card px-4 py-3 text-center">
+            <div style="font-size:2rem;font-weight:600;color:#0A80D8;">@Model.TokenAmount</div>
+            <div class="text-muted" style="font-size:.85rem;">Token Amount</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="card p-3 mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label class="form-label mb-1">Od</label>
+            <input type="date" id="fromDate" class="form-control" value="@defaultFrom" />
+        </div>
+        <div class="col-auto">
+            <label class="form-label mb-1">Do</label>
+            <input type="date" id="toDate" class="form-control" value="@defaultTo" />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-dotnet" id="applyFilter">Primeni</button>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card p-3">
+    <table id="dailyTable" class="table table-striped display w-100">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Broj registracija</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        const referralId = @Model.PartnerReferralId;
+        const authHeader = { 'Authorization': 'Bearer ' + '@authToken'.replace(/&quot;/g, '') };
+        let dailyTable = null;
+
+        $(document).ready(function () {
+            const initialStats = @Json.Serialize(Model.DailyStats);
+
+            dailyTable = $('#dailyTable').DataTable({
+                data: initialStats,
+                columns: [{ data: 'date' }, { data: 'count' }],
+                order: [[0, 'desc']],
+                bPaginate: false,
+                language: { emptyTable: 'Nema podataka za izabrani period' }
+            });
+
+            $('#applyFilter').on('click', function () {
+                const from = $('#fromDate').val();
+                const to   = $('#toDate').val();
+                if (!from || !to) { alert('Izaberite oba datuma.'); return; }
+
+                $.ajax({
+                    headers: authHeader,
+                    url: '/api/PartnerReferral/Stats?id=' + referralId + '&from=' + from + '&to=' + to,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#totalCount').text(data.totalUses);
+                        dailyTable.clear().rows.add(data.dailyStats).draw();
+                    },
+                    error: function (xhr) {
+                        alert('Greška ' + xhr.status + ': ' + (xhr.responseText || 'Nepoznata greška'));
+                    }
+                });
+            });
+        });
+    </script>
+}
